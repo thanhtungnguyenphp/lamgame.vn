@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\WelcomeMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -140,6 +142,14 @@ class CustomerAuthController extends Controller
 
         // Create the customer
         $customer = $this->createCustomer($request->all());
+
+        // Send welcome email
+        try {
+            Mail::to($customer->email)->send(new WelcomeMail($customer));
+        } catch (\Exception $e) {
+            // Log the error but don't prevent registration
+            \Log::error('Failed to send welcome email: ' . $e->getMessage());
+        }
 
         // Log the user in
         Auth::guard('customer')->login($customer);
