@@ -11,14 +11,17 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Webkul\Customer\Models\Customer;
 use Webkul\Customer\Repositories\CustomerRepository;
+use Webkul\Customer\Repositories\CustomerGroupRepository;
 class CustomerAuthController extends Controller
 {
 
     protected $customerRepository;
+    protected $customerGroupRepository;
 
-    public function __construct(CustomerRepository $customerRepository)
+    public function __construct(CustomerRepository $customerRepository, CustomerGroupRepository $customerGroupRepository)
     {
         $this->customerRepository = $customerRepository;
+        $this->customerGroupRepository = $customerGroupRepository;
         $this->middleware('guest:customer')->except('logout', 'profile', 'updateProfile');
     }
 
@@ -182,13 +185,18 @@ class CustomerAuthController extends Controller
      */
     protected function createCustomer(array $data)
     {
+        // Get default customer group ("general" group)
+        $defaultGroup = $this->customerGroupRepository->findOneWhere(['code' => 'general']);
+        
         return Customer::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'channel_id' => core()->getCurrentChannel()->id,
-            'customer_group_id' => core()->getDefaultCustomerGroup()->id,
+            'customer_group_id' => $defaultGroup ? $defaultGroup->id : 2, // fallback to ID 2 if not found
+            'is_verified' => 1, // Set as verified by default
+            'status' => 1, // Set as active
         ]);
     }
 
