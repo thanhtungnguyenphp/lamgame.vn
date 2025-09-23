@@ -1,0 +1,50 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle -->
+  <circle cx="100" cy="100" r="95" fill="white" stroke="black" stroke-width="8"/>
+  
+  <!-- Inner circle -->
+  <circle cx="100" cy="100" r="70" fill="white" stroke="black" stroke-width="4"/>
+  
+  <!-- Game controller shape -->
+  <ellipse cx="100" cy="100" rx="45" ry="25" fill="#FF4444" stroke="black" stroke-width="2"/>
+  
+  <!-- Controller buttons -->
+  <circle cx="115" cy="95" r="3" fill="black"/>
+  <circle cx="125" cy="95" r="3" fill="black"/>
+  <circle cx="115" cy="105" r="3" fill="black"/>
+  <circle cx="125" cy="105" r="3" fill="black"/>
+  
+  <!-- Evil eye -->
+  <ellipse cx="85" cy="95" rx="8" ry="6" fill="black"/>
+  <ellipse cx="87" cy="95" rx="4" ry="3" fill="yellow"/>
+  
+  <!-- Evil grin -->
+  <path d="M 75 110 Q 85 115 95 110" stroke="black" stroke-width="2" fill="none"/>
+  <rect x="78" y="108" width="2" height="4" fill="black"/>
+  <rect x="82" y="108" width="2" height="4" fill="black"/>
+  <rect x="86" y="108" width="2" height="4" fill="black"/>
+  <rect x="90" y="108" width="2" height="4" fill="black"/>
+  
+  <!-- Crown -->
+  <path d="M 85 80 L 90 70 L 95 75 L 100 65 L 105 75 L 110 70 L 115 80 Z" fill="gold" stroke="black" stroke-width="1"/>
+  <circle cx="100" cy="67" r="2" fill="gold"/>
+  
+  <!-- Top text: GAME NEWS -->
+  <path id="topCircle" d="M 30 100 A 70 70 0 0 1 170 100" fill="none"/>
+  <text font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FF4444">
+    <textPath href="#topCircle" startOffset="5%">GAME NEWS</textPath>
+  </text>
+  
+  <!-- Bottom text: GAME FOR LIFE -->
+  <path id="bottomCircle" d="M 170 100 A 70 70 0 0 1 30 100" fill="none"/>
+  <text font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FF4444">
+    <textPath href="#bottomCircle" startOffset="5%">GAME FOR LIFE</textPath>
+  </text>
+  
+  <!-- Side dots -->
+  <circle cx="20" cy="100" r="4" fill="black"/>
+  <circle cx="180" cy="100" r="4" fill="black"/>
+  
+  <!-- Center text: LAMGAME.VN -->
+  <text x="100" y="135" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#FF4444">LAMGAME.VN</text>
+</svg>

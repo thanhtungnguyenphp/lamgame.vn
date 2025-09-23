@@ -1,0 +1,33 @@
+<svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo circle (smaller for admin) -->
+  <circle cx="20" cy="20" r="18" fill="white" stroke="#6a4c93" stroke-width="2"/>
+  <circle cx="20" cy="20" r="12" fill="white" stroke="#6a4c93" stroke-width="1"/>
+  
+  <!-- Game controller shape -->
+  <ellipse cx="20" cy="20" rx="8" ry="5" fill="#6a4c93" stroke="#333" stroke-width="0.5"/>
+  
+  <!-- Controller buttons -->
+  <circle cx="25" cy="18" r="0.8" fill="white"/>
+  <circle cx="27" cy="18" r="0.8" fill="white"/>
+  <circle cx="25" cy="22" r="0.8" fill="white"/>
+  <circle cx="27" cy="22" r="0.8" fill="white"/>
+  
+  <!-- Evil eye -->
+  <ellipse cx="16" cy="18" rx="1.8" ry="1.5" fill="white"/>
+  <ellipse cx="16.5" cy="18" rx="1" ry="0.8" fill="#FFD700"/>
+  
+  <!-- Evil grin -->
+  <path d="M 14 22.5 Q 16 24 18 22.5" stroke="white" stroke-width="0.8" fill="none"/>
+  <rect x="14.5" y="22" width="0.5" height="1" fill="white"/>
+  <rect x="15.5" y="22" width="0.5" height="1" fill="white"/>
+  <rect x="16.5" y="22" width="0.5" height="1" fill="white"/>
+  <rect x="17.5" y="22" width="0.5" height="1" fill="white"/>
+  
+  <!-- Crown -->
+  <path d="M 16 12 L 18 8 L 19 10 L 20 6 L 21 10 L 22 8 L 24 12 Z" fill="#FFD700" stroke="#333" stroke-width="0.3"/>
+  <circle cx="20" cy="7" r="0.8" fill="#FFD700"/>
+  
+  <!-- Text -->
+  <text x="45" y="18" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#6a4c93">LÀM GAME</text>
+  <text x="45" y="30" font-family="Arial, sans-serif" font-size="8" fill="#666">Admin Panel</text>
+</svg>

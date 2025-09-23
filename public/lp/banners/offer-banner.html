@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner Ưu Đãi - Em Saigon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0a3b09;
+            --cream: #fdf9f1;
+            --yellow: #f4c430;
+            --white: #ffffff;
+            --dark: #1a1a1a;
+            --shadow: 0 8px 30px rgba(0,0,0,.15);
+            --accent: #2d8f47;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: var(--cream);
+        }
+
+        /* Offer Banner */
+        .offer-banner {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            max-width: 1200px;
+            margin: 20px auto;
+            background: linear-gradient(135deg, var(--green) 0%, var(--accent) 100%);
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .offer-content {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 0;
+            align-items: center;
+        }
+
+        .offer-text {
+            padding: 40px 50px;
+            color: var(--white);
+        }
+
+        .offer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--yellow);
+            color: var(--dark);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+            animation: flash 2s infinite;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; transform: scale(0.98); }
+        }
+
+        .offer-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(28px, 3.5vw, 42px);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .offer-subtitle {
+            font-family: 'Open Sans', sans-serif;
+            font-size: clamp(16px, 1.5vw, 20px);
+            font-weight: 600;
+            color: var(--cream);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .offer-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .offer-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .offer-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--yellow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--dark);
+            flex-shrink: 0;
+        }
+
+        .price-comparison {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .old-price {
+            font-size: 18px;
+            text-decoration: line-through;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .new-price {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--yellow);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .savings {
+            background: rgba(244,196,48,0.2);
+            color: var(--yellow);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .offer-cta {
+            margin-top: 20px;
+        }
+
+        .cta-button {
+            background: var(--yellow);
+            color: var(--dark);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(244,196,48,0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(244,196,48,0.4);
+            filter: brightness(1.1);
+        }
+
+        .offer-visual {
+            position: relative;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+            padding: 20px;
+        }
+
+        .visual-main {
+            width: 280px;
+            height: 200px;
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .visual-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .visual-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .visual-overlay h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .visual-overlay p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .visual-extras {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .extra-item {
+            width: 60px;
+            height: 60px;
+            background: var(--white);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .extra-item:hover {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .decorative-pattern {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(244,196,48,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+            z-index: 1;
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .floating-element {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(244,196,48,0.15);
+            border-radius: 50%;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            top: 70%;
+            left: 15%;
+            animation-delay: -1s;
+        }
+
+        .floating-element:nth-child(3) {
+            top: 30%;
+            left: 85%;
+            animation-delay: -2s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-15px) rotate(180deg);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .offer-banner {
+                margin: 20px;
+            }
+            
+            .offer-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr auto;
+            }
+            
+            .offer-text {
+                padding: 30px;
+            }
+            
+            .offer-visual {
+                padding: 20px 30px;
+                flex-direction: row;
+                justify-content: center;
+            }
+            
+            .visual-main {
+                width: 200px;
+                height: 140px;
+            }
+            
+            .visual-extras {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .extra-item {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .offer-banner {
+                height: auto;
+                margin: 16px;
+                border-radius: 16px;
+            }
+            
+            .offer-text {
+                padding: 24px 20px;
+                text-align: center;
+            }
+            
+            .offer-visual {
+                padding: 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .price-comparison {
+                justify-content: center;
+            }
+            
+            .offer-details {
+                align-items: center;
+            }
+            
+            .visual-main {
+                width: 100%;
+                max-width: 280px;
+                height: 160px;
+            }
+            
+            .visual-extras {
+                flex-direction: row;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .offer-text {
+                padding: 20px 16px;
+            }
+            
+            .offer-title {
+                font-size: 24px;
+            }
+            
+            .offer-subtitle {
+                font-size: 16px;
+            }
+            
+            .cta-button {
+                width: 100%;
+                justify-content: center;
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offer-banner">
+        <!-- Decorative Elements -->
+        <div class="decorative-pattern"></div>
+        <div class="floating-elements">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="offer-content">
+            <div class="offer-text">
+                <div class="offer-badge">
+                    ⚡ DEAL HOT • THỜI GIAN CÓ HẠN
+                </div>
+                
+                <h2 class="offer-title">
+                    Ưu đãi 50% + Quà tặng 25 triệu!
+                </h2>
+                
+                <p class="offer-subtitle">
+                    Học phí chỉ 25 triệu + Nhận thiết bị chăm sóc chuyên nghiệp miễn phí!
+                </p>
+                
+                <div class="price-comparison">
+                    <span class="old-price">50.000.000đ</span>
+                    <span class="new-price">25.000.000đ</span>
+                    <span class="savings">Tiết kiệm 50%</span>
+                </div>
+                
+                <div class="offer-details">
+                    <div class="offer-item">
+                        <div class="offer-icon">🎁</div>
+                        <span>Thiết bị chăm sóc Body cao cấp (15 triệu)</span>
+                    </div>
+                    <div class="offer-item">
+                        <div class="offer-icon">🛠️</div>
+                        <span>Bộ dụng cụ & sản phẩm nghề (10 triệu)</span>
+                    </div>
+                    <div class="offer-item">
+                        <div class="offer-icon">👥</div>
+                        <span>Đăng ký nhóm 3: Chỉ 22.5 triệu/người</span>
+                    </div>
+                    <div class="offer-item">
+                        <div class="offer-icon">⚡</div>
+                        <span>Chỉ áp dụng cho 50 suất đầu tiên</span>
+                    </div>
+                </div>
+                
+                <div class="offer-cta">
+                    <a href="#register" class="cta-button">
+                        📱 Inbox ngay để giữ suất ưu đãi!
+                    </a>
+                </div>
+            </div>
+            
+            <div class="offer-visual">
+                <div class="visual-main">
+                    <img src="../images/thmhnhspa/image2.jpeg" alt="Thiết bị chăm sóc chuyên nghiệp" />
+                    <div class="visual-overlay">
+                        <h4>Thiết bị cao cấp</h4>
+                        <p>Hỗ trợ giải tắc cơ sâu & dẫn lưu hệ bạch huyết</p>
+                    </div>
+                </div>
+                
+                <div class="visual-extras">
+                    <div class="extra-item" title="Dụng cụ massage">🙌</div>
+                    <div class="extra-item" title="Sản phẩm chăm sóc">🧴</div>
+                    <div class="extra-item" title="Chứng chỉ nghề">🏆</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

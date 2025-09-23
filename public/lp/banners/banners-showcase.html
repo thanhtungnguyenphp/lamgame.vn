@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Em Saigon Banner Showcase - All Banners</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #0a3b09;
+            --cream: #fdf9f1;
+            --yellow: #f4c430;
+            --white: #ffffff;
+            --dark: #1a1a1a;
+            --shadow: 0 8px 30px rgba(0,0,0,.15);
+            --accent: #2d8f47;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: var(--cream);
+            line-height: 1.6;
+        }
+
+        .showcase-header {
+            background: var(--green);
+            color: var(--white);
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+        }
+
+        .showcase-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .showcase-header p {
+            font-size: clamp(16px, 2vw, 20px);
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .banner-section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(24px, 3vw, 36px);
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 16px;
+        }
+
+        .section-description {
+            text-align: center;
+            color: var(--dark);
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-size: 16px;
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            max-width: 1920px;
+            margin: 0 auto 40px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #e8f5ea, #d6ffe0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('../images/thmhnhspa/image0.jpeg') center/cover no-repeat;
+            z-index: 1;
+        }
+
+        .hero-background::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(10,59,9,0.8) 0%, rgba(10,59,9,0.4) 50%, rgba(10,59,9,0.2) 100%);
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            max-width: 1200px;
+            width: 100%;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-text {
+            color: var(--white);
+            text-align: left;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(244,196,48,0.9);
+            color: var(--dark);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .hero-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(24px, 3.5vw, 42px);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(16px, 2vw, 22px);
+            font-weight: 600;
+            color: var(--cream);
+            margin-bottom: 24px;
+            font-style: italic;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .cta-primary {
+            background: var(--yellow);
+            color: var(--dark);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(244,196,48,0.4);
+        }
+
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .visual-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .visual-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .logo {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            z-index: 4;
+            width: 120px;
+            height: auto;
+            filter: drop-shadow(0 2px 10px rgba(0,0,0,0.3));
+        }
+
+        /* Offer Banner */
+        .offer-banner {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            max-width: 1200px;
+            margin: 20px auto;
+            background: linear-gradient(135deg, var(--green) 0%, var(--accent) 100%);
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .offer-content {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 0;
+            align-items: center;
+        }
+
+        .offer-text {
+            padding: 30px 40px;
+            color: var(--white);
+        }
+
+        .offer-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(24px, 3vw, 36px);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+
+        .price-comparison {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .old-price {
+            font-size: 18px;
+            text-decoration: line-through;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .new-price {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--yellow);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .offer-visual {
+            position: relative;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .visual-main {
+            width: 240px;
+            height: 160px;
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .visual-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Benefits Banner */
+        .benefits-banner {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            max-width: 1200px;
+            margin: 20px auto;
+            background: linear-gradient(135deg, var(--cream) 0%, #f8f6f0 100%);
+            border: 2px solid var(--green);
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .benefits-content {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 0;
+            align-items: center;
+        }
+
+        .benefits-text {
+            padding: 30px 40px;
+            color: var(--dark);
+        }
+
+        .benefits-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(24px, 3vw, 36px);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            color: var(--green);
+        }
+
+        .benefits-visual {
+            position: relative;
+            height: 100%;
+            background: linear-gradient(135deg, var(--green), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Controls */
+        .banner-controls {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .control-button {
+            background: var(--green);
+            color: var(--white);
+            border: none;
+            padding: 12px 24px;
+            margin: 0 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .control-button:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .control-button.active {
+            background: var(--yellow);
+            color: var(--dark);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .hero-banner {
+                margin: 0 20px 40px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .hero-content,
+            .offer-content,
+            .benefits-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .hero-text {
+                text-align: center;
+            }
+            
+            .hero-banner {
+                height: 500px;
+            }
+            
+            .offer-banner,
+            .benefits-banner {
+                height: auto;
+            }
+            
+            .visual-card {
+                max-width: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .showcase-header {
+                padding: 30px 16px;
+            }
+            
+            .hero-banner {
+                height: 400px;
+                margin: 0 16px 30px;
+                border-radius: 16px;
+            }
+            
+            .offer-banner,
+            .benefits-banner {
+                margin: 16px;
+                border-radius: 16px;
+            }
+            
+            .hero-content {
+                padding: 0 20px;
+            }
+            
+            .offer-text,
+            .benefits-text {
+                padding: 20px;
+            }
+            
+            .logo {
+                width: 100px;
+                top: 20px;
+                left: 20px;
+            }
+            
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cta-primary {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-banner {
+                height: 350px;
+            }
+            
+            .showcase-header {
+                padding: 20px 12px;
+            }
+            
+            .hero-content {
+                padding: 0 16px;
+            }
+            
+            .offer-text,
+            .benefits-text {
+                padding: 16px;
+            }
+            
+            .visual-card {
+                padding: 16px;
+            }
+            
+            .visual-card img {
+                height: 120px;
+            }
+        }
+
+        /* Animation utilities */
+        .fade-in {
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .fade-in.delay-1 { animation-delay: 0.2s; }
+        .fade-in.delay-2 { animation-delay: 0.4s; }
+        .fade-in.delay-3 { animation-delay: 0.6s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Showcase Header -->
+    <div class="showcase-header">
+        <h1>Em Saigon Banner Collection</h1>
+        <p>Thiết kế banner chuyên nghiệp cho khóa học Chăm sóc Cổ Vai Gáy & Mắt với màu sắc brand và typography tối ưu</p>
+    </div>
+
+    <!-- Hero Banner Section -->
+    <div class="banner-section fade-in">
+        <h2 class="section-title">Hero Banner (1920x600px)</h2>
+        <p class="section-description">Banner chính cho website với thông điệp mạnh mẽ và CTA thu hút</p>
+        
+        <div class="hero-banner">
+            <div class="hero-background"></div>
+            <img src="../images/LOGO-EMSAIGON.jpg" alt="Em Saigon Logo" class="logo" />
+            
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="hero-badge">
+                        🔥 ƯU ĐÃI 50% • CHỈ 50 SUẤT ĐẦU TIÊN
+                    </div>
+                    
+                    <h1 class="hero-title">
+                        KHÓA HỌC CHĂM SÓC CỔ VAI GÁY & MẮT<br>
+                        KHỞI NGHIỆP DỄ DÀNG, THU NHẬP NGAY!
+                    </h1>
+                    
+                    <p class="hero-subtitle">
+                        Thực hành 100% - Tự tin làm nghề ngay sau 2 tuần!
+                    </p>
+                    
+                    <div class="hero-cta">
+                        <a href="#register" class="cta-primary">
+                            🎯 Đăng ký ngay để nhận ưu đãi 50%!
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="hero-visual">
+                    <div class="visual-card">
+                        <img src="../images/hnhcholandingpagett/IMG_3123.JPG" alt="Thực hành kỹ thuật" />
+                        <h3 style="color: var(--green); font-size: 16px; font-weight: 700; margin-bottom: 4px;">Thực hành 100%</h3>
+                        <p style="font-size: 12px; color: var(--dark);">Học viên thực hành trực tiếp các kỹ thuật chuyên nghiệp</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Offer Banner Section -->
+    <div class="banner-section fade-in delay-1">
+        <h2 class="section-title">Banner Ưu Đãi (1200x400px)</h2>
+        <p class="section-description">Banner khuyến mãi với thông tin giá cả và quà tặng hấp dẫn</p>
+        
+        <div class="offer-banner">
+            <div class="offer-content">
+                <div class="offer-text">
+                    <h2 class="offer-title">
+                        Ưu đãi 50% + Quà tặng 25 triệu!
+                    </h2>
+                    
+                    <p style="color: var(--cream); margin-bottom: 16px;">
+                        Học phí chỉ 25 triệu + Nhận thiết bị chăm sóc chuyên nghiệp miễn phí!
+                    </p>
+                    
+                    <div class="price-comparison">
+                        <span class="old-price">50.000.000đ</span>
+                        <span class="new-price">25.000.000đ</span>
+                    </div>
+                    
+                    <a href="#register" class="cta-primary">
+                        📱 Inbox ngay để giữ suất ưu đãi!
+                    </a>
+                </div>
+                
+                <div class="offer-visual">
+                    <div class="visual-main">
+                        <img src="../images/thmhnhspa/image2.jpeg" alt="Thiết bị chăm sóc chuyên nghiệp" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Benefits Banner Section -->
+    <div class="banner-section fade-in delay-2">
+        <h2 class="section-title">Banner Lợi Ích (1200x400px)</h2>
+        <p class="section-description">Banner về chứng chỉ nghề và các lợi ích nổi bật của khóa học</p>
+        
+        <div class="benefits-banner">
+            <div class="benefits-content">
+                <div class="benefits-text">
+                    <h2 class="benefits-title">
+                        Tự tin làm nghề với chứng chỉ hợp pháp!
+                    </h2>
+                    
+                    <p style="color: var(--dark); opacity: 0.8; margin-bottom: 20px; font-style: italic;">
+                        Khóa học được cấp chứng chỉ nghề, mở ra cơ hội hợp tác với spa, resort hàng đầu
+                    </p>
+                    
+                    <div style="margin-bottom: 24px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                            <div style="width: 32px; height: 32px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px;">💯</div>
+                            <span><strong>Thực hành 100%</strong> - Học trực tiếp với giảng viên</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                            <div style="width: 32px; height: 32px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px;">🔥</div>
+                            <span><strong>Kỹ thuật độc quyền</strong> - Y thuật Ấn Độ + công nghệ hiện đại</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 32px; height: 32px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px;">🏠</div>
+                            <span><strong>Cơ hội khởi nghiệp</strong> - Hỗ trợ mở mini Homespa</span>
+                        </div>
+                    </div>
+                    
+                    <a href="#learn-more" style="background: white; color: var(--green); border: 2px solid var(--green); padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 700;">
+                        🔍 Tìm hiểu ngay!
+                    </a>
+                </div>
+                
+                <div class="benefits-visual">
+                    <div style="width: 240px; height: 160px; background: white; border: 3px solid var(--yellow); border-radius: 16px; overflow: hidden; position: relative; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                        <img src="../images/hnhcholandingpagett/DSC09237.JPEG" alt="Học viên nhận chứng chỉ" style="width: 100%; height: 100%; object-fit: cover;" />
+                        <div style="position: absolute; top: 12px; right: 12px; background: var(--yellow); color: var(--dark); padding: 6px 10px; border-radius: 6px; font-weight: 800; font-size: 10px;">CHỨNG CHỈ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Banner Controls -->
+    <div class="banner-controls fade-in delay-3">
+        <h3 style="font-family: 'Montserrat', sans-serif; color: var(--green); margin-bottom: 20px;">Tùy chọn hiển thị</h3>
+        <button class="control-button active" onclick="showAll()">Tất cả Banner</button>
+        <button class="control-button" onclick="showHero()">Chỉ Hero</button>
+        <button class="control-button" onclick="showOffer()">Chỉ Ưu đãi</button>
+        <button class="control-button" onclick="showBenefits()">Chỉ Lợi ích</button>
+    </div>
+
+    <!-- Footer Info -->
+    <div style="background: var(--green); color: var(--white); text-align: center; padding: 40px 20px; margin-top: 60px;">
+        <h3 style="font-family: 'Montserrat', sans-serif; margin-bottom: 16px;">Banner Specifications</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 800px; margin: 0 auto;">
+            <div>
+                <strong>Hero Banner:</strong> 1920x600px<br>
+                Toàn màn hình, CTA chính
+            </div>
+            <div>
+                <strong>Offer Banner:</strong> 1200x400px<br>
+                Khuyến mãi, giá cả
+            </div>
+            <div>
+                <strong>Benefits Banner:</strong> 1200x400px<br>
+                Lợi ích, chứng chỉ
+            </div>
+        </div>
+        <p style="margin-top: 20px; opacity: 0.9;">Tất cả banner đã được tối ưu responsive cho mobile và tablet</p>
+    </div>
+
+    <script>
+        function showAll() {
+            document.querySelectorAll('.banner-section').forEach(section => {
+                section.style.display = 'block';
+            });
+            updateActiveButton(0);
+        }
+
+        function showHero() {
+            document.querySelectorAll('.banner-section').forEach((section, index) => {
+                section.style.display = index === 0 ? 'block' : 'none';
+            });
+            updateActiveButton(1);
+        }
+
+        function showOffer() {
+            document.querySelectorAll('.banner-section').forEach((section, index) => {
+                section.style.display = index === 1 ? 'block' : 'none';
+            });
+            updateActiveButton(2);
+        }
+
+        function showBenefits() {
+            document.querySelectorAll('.banner-section').forEach((section, index) => {
+                section.style.display = index === 2 ? 'block' : 'none';
+            });
+            updateActiveButton(3);
+        }
+
+        function updateActiveButton(activeIndex) {
+            document.querySelectorAll('.control-button').forEach((button, index) => {
+                button.classList.toggle('active', index === activeIndex);
+            });
+        }
+
+        // Initialize animations
+        window.addEventListener('load', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.fade-in').forEach(element => {
+                observer.observe(element);
+            });
+        });
+    </script>
+</body>
+</html>

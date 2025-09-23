@@ -1,0 +1,12 @@
+{
+    "name": "webkul/menu",
+    "description": "Menu management module for Bagisto, per channel.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Menu\\": "src/"
+        }
+    },
+    "require": {}
+} 

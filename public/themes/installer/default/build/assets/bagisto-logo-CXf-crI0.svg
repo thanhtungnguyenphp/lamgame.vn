@@ -1,0 +1,18 @@
+<svg width="200" height="50" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="logoGradientInstaller" x1="0%" y1="0%" x2="100%" y2="0%">
+<stop offset="0%" style="stop-color:#FF6B9D;stop-opacity:1" />
+<stop offset="50%" style="stop-color:#4ECDC4;stop-opacity:1" />
+<stop offset="100%" style="stop-color:#45B7D1;stop-opacity:1" />
+</linearGradient>
+</defs>
+<!-- Logo Icon - Stylized Lotus Flower -->
+<g transform="translate(10, 8)">
+<path d="M17.5 30C21 26 25 20 17.5 10C10 20 14 26 17.5 30Z" fill="url(#logoGradientInstaller)" opacity="0.8"/>
+<path d="M5 25C15 20 20 15 5 5C-5 15 0 20 5 25Z" fill="url(#logoGradientInstaller)" opacity="0.6"/>
+<path d="M30 25C20 20 15 15 30 5C40 15 35 20 30 25Z" fill="url(#logoGradientInstaller)" opacity="0.6"/>
+<circle cx="17.5" cy="20" r="4" fill="#FFD700"/>
+</g>
+<!-- Text EMSAIGON -->
+<text x="55" y="32" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#2C3E50">EMSAIGON</text>
+</svg>

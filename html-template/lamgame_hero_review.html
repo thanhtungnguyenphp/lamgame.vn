@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LamGame — Hero UI Review</title>
+<meta name="description" content="Demo Hero Section LamGame.vn — carousel 3 slide, overlay, 3 CTA, arrows desktop-only.">
+<style>
+  :root{
+    --bg:#0a0f16; --text:#ffffff; --muted:#c9d1db;
+    --cta:#00FF00; --cta-hover:#00CC00; --border:#233043;
+    --header-h:64px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text)}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+  /* Header */
+  header{position:sticky;top:0;z-index:30;background:rgba(10,15,22,.86);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+  .nav{display:flex;align-items:center;gap:14px;height:var(--header-h)}
+  .logo{font-weight:800}
+  .spacer{flex:1}
+  .menu{display:flex;flex-wrap:wrap;gap:8px}
+  .menu a{padding:8px 10px;border-radius:10px;color:var(--muted)}
+  .menu a:hover{background:#111827;color:#fff}
+  .search{display:flex;align-items:center;gap:8px}
+  .search input{padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#0c121c;color:#fff;min-width:220px}
+  .search button{padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#101824;color:#fff}
+  /* Hero */
+  .hero{position:relative;height:400px;overflow:hidden;border-bottom:1px solid var(--border)}
+  .track{display:flex;height:100%;transform:translateX(0);transition:transform .6s ease}
+  .slide{position:relative;min-width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+  .bg{position:absolute;inset:0;z-index:0}
+  .bg.unity{background:
+    radial-gradient(800px 280px at 20% 20%,rgba(0,255,0,.2),transparent 60%),
+    radial-gradient(800px 280px at 80% 80%,rgba(0,204,0,.15),transparent 60%),
+    linear-gradient(120deg,#0e1420 0%, #0b1322 40%, #08111e 100%);}
+  .bg.forum{background:
+    radial-gradient(900px 300px at 10% 80%,rgba(0,255,0,.17),transparent 60%),
+    linear-gradient(120deg,#0e1420 0%, #0b1425 40%, #071220 100%);}
+  .bg.jobs{background:
+    radial-gradient(900px 360px at 80% 20%,rgba(0,204,0,.22),transparent 60%),
+    linear-gradient(120deg,#0e1420 0%, #081523 40%, #07121e 100%);}
+  .overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:1}
+  .content{position:relative;z-index:2;text-align:center;padding:0 16px;max-width:980px}
+  .content h1{margin:0 0 8px;font-size:clamp(24px,4.5vw,44px);line-height:1.15}
+  .content p{margin:0 0 18px;color:var(--muted);font-size:clamp(14px,2.2vw,20px)}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .btn{min-width:150px;height:40px;padding:8px 14px;border-radius:12px;border:0;cursor:pointer;font-weight:700}
+  .btn.primary{background:var(--cta);color:#06130a}
+  .btn.primary:hover{background:var(--cta-hover)}
+  .btn.secondary{background:#0f1724;border:1px solid var(--border);color:#fff}
+  .btn.secondary:hover{border-color:#3b536f}
+  .arrow{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:rgba(16,24,36,.9);color:#fff;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:3}
+  .arrow:hover{color:var(--cta);border-color:#3b536f}
+  .arrow.prev{left:8px} .arrow.next{right:8px}
+  @media(min-width:900px){ .arrow{display:flex} }
+  /* Dots */
+  .dots{position:absolute;left:0;right:0;bottom:10px;display:flex;gap:6px;justify-content:center;z-index:3}
+  .dot{width:8px;height:8px;border-radius:999px;background:#6b7280;opacity:.7}
+  .dot.active{background:#fff;opacity:1}
+  /* Helper label on slides */
+  .label{position:absolute;bottom:14px;left:14px;padding:6px 10px;border-radius:10px;background:rgba(0,0,0,.45);border:1px solid #26374f;color:#dbe7f6;font-size:12px}
+  /* Focus a11y */
+  :focus-visible{outline:2px solid var(--cta);outline-offset:2px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <div class="logo">LAMGAME</div>
+    <nav class="menu" aria-label="Primary">
+      <a href="#">Trang chủ</a>
+      <a href="#source">📁 Source</a>
+      <a href="#forum">💬 Forum</a>
+      <a href="#blog">📝 Blog</a>
+      <a href="#jobs">💼 Việc làm</a>
+      <a href="#about">Giới thiệu</a>
+      <a href="#contact">Liên hệ</a>
+    </nav>
+    <div class="spacer"></div>
+    <form class="search" role="search" onsubmit="event.preventDefault()">
+      <input type="search" placeholder="Tìm source, topic, job…" aria-label="Tìm kiếm">
+      <button type="submit">Tìm</button>
+    </form>
+  </div>
+</header>
+
+<section class="hero" aria-label="Hero Section" id="hero">
+  <button class="arrow prev" aria-label="Slide trước" tabindex="0">◄</button>
+  <button class="arrow next" aria-label="Slide sau" tabindex="0">►</button>
+  <div class="track" id="track">
+    <!-- Slide 1: Unity/Unreal editor -->
+    <div class="slide">
+      <div class="bg unity"></div>
+      <div class="overlay"></div>
+      <div class="content wrap">
+        <h1>LamGame.vn – Cộng đồng & Kiến thức Game Dev</h1>
+        <p>Chia sẻ Source Code, Ý tưởng, Tin tức &amp; Việc làm ngành Game.</p>
+        <div class="btns">
+          <a class="btn primary" href="/source-game">Tải Source Code Miễn Phí</a>
+          <a class="btn secondary" href="/forum">Tham gia Diễn Đàn</a>
+          <a class="btn secondary" href="/viec-lam-game">Tìm Việc Làm Game</a>
+        </div>
+      </div>
+      <div class="label">Slide 1: Unity/Unreal editor</div>
+    </div>
+    <!-- Slide 2: Forum lively -->
+    <div class="slide">
+      <div class="bg forum"></div>
+      <div class="overlay"></div>
+      <div class="content wrap">
+        <h1>Thảo luận sôi động, hỗ trợ nhanh</h1>
+        <p>Chủ đề kỹ thuật, showcase project, feedback, tuyển cộng tác viên.</p>
+        <div class="btns">
+          <a class="btn primary" href="/forum">Vào Forum ngay</a>
+          <a class="btn secondary" href="/source-game">Xem Source nổi bật</a>
+          <a class="btn secondary" href="/viec-lam-game">Việc làm mới</a>
+        </div>
+      </div>
+      <div class="label">Slide 2: Forum sôi động</div>
+    </div>
+    <!-- Slide 3: Job board -->
+    <div class="slide">
+      <div class="bg jobs"></div>
+      <div class="overlay"></div>
+      <div class="content wrap">
+        <h1>Cơ hội việc làm lương cao</h1>
+        <p>Senior Unity Dev 50–80 triệu VND · Remote/Onsite · Apply dễ dàng.</p>
+        <div class="btns">
+          <a class="btn primary" href="/viec-lam-game">Xem việc làm</a>
+          <a class="btn secondary" href="/forum">Hỏi kinh nghiệm phỏng vấn</a>
+          <a class="btn secondary" href="/source-game">Nâng cấp portfolio</a>
+        </div>
+      </div>
+      <div class="label">Slide 3: Job board 50–80tr</div>
+    </div>
+  </div>
+  <div class="dots" aria-hidden="true">
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  </div>
+</section>
+
+<script>
+(function(){
+  const track = document.getElementById('track');
+  const slides = Array.from(track.children);
+  const dots = document.querySelectorAll('.dot');
+  const prev = document.querySelector('.arrow.prev');
+  const next = document.querySelector('.arrow.next');
+  let index = 0, timer = null, paused = false;
+
+  function go(i){
+    index = (i + slides.length) % slides.length;
+    track.style.transform = `translateX(-${index*100}%)`;
+    dots.forEach((d,di)=>d.classList.toggle('active', di===index));
+  }
+  function auto(){
+    timer = setInterval(()=>{ if(!paused){ go(index+1); } }, 5000);
+  }
+  function stop(){ clearInterval(timer); timer=null; }
+
+  prev.addEventListener('click', ()=>go(index-1));
+  next.addEventListener('click', ()=>go(index+1));
+  track.addEventListener('mouseenter', ()=>paused=true);
+  track.addEventListener('mouseleave', ()=>paused=false);
+  // keyboard
+  prev.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); go(index-1);} });
+  next.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); go(index+1);} });
+
+  go(0); auto();
+})();
+</script>
+
+</body>
+</html>

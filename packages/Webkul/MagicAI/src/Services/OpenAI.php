@@ -1,0 +1,80 @@
+<?php
+
+namespace Webkul\MagicAI\Services;
+
+use OpenAI\Laravel\Facades\OpenAI as BaseOpenAI;
+
+class OpenAI
+{
+    /**
+     * New service instance.
+     */
+    public function __construct(
+        protected string $model,
+        protected string $prompt,
+        protected float $temperature,
+        protected bool $stream = false
+    ) {
+        $this->setConfig();
+    }
+
+    /**
+     * Sets OpenAI credentials.
+     */
+    public function setConfig(): void
+    {
+        config([
+            'openai.api_key'      => core()->getConfigData('general.magic_ai.settings.api_key'),
+            'openai.organization' => core()->getConfigData('general.magic_ai.settings.organization'),
+        ]);
+    }
+
+    /**
+     * Set LLM prompt text.
+     */
+    public function ask(): string
+    {
+        $result = BaseOpenAI::chat()->create([
+            'model'       => $this->model,
+            'temperature' => $this->temperature,
+            'messages'    => [
+                [
+                    'role'    => 'user',
+                    'content' => $this->prompt,
+                ],
+            ],
+        ]);
+
+        return $result->choices[0]->message->content;
+    }
+
+    /**
+     * Generate image.
+     */
+    public function images(array $options): array
+    {
+        // Build parameters for image generation
+        $params = [
+            'model'           => $this->model,
+            'prompt'          => $this->prompt,
+            'n'               => intval($options['n'] ?? 1),
+            'size'            => $options['size'],
+            'response_format' => 'b64_json',
+        ];
+        
+        // Only add quality parameter for DALL-E 3
+        if ($this->model === 'dall-e-3' && isset($options['quality'])) {
+            $params['quality'] = $options['quality'];
+        }
+        
+        $result = BaseOpenAI::images()->create($params);
+
+        $images = [];
+
+        foreach ($result->data as $image) {
+            $images[]['url'] = 'data:image/png;base64,'.$image->b64_json;
+        }
+
+        return $images;
+    }
+}

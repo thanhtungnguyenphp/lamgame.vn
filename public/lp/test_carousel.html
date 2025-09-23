@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Test Carousel</title>
+  <style>
+    :root {
+      --brand-yellow: #f4c430;
+    }
+    
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
+    
+    .training-gallery {
+      margin: 2rem auto;
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(10,59,9,0.1);
+      max-width: 800px;
+    }
+    
+    .gallery-container {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #ddd;
+    }
+    
+    .gallery-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.5s ease-in-out;
+      will-change: transform;
+    }
+    
+    .gallery-slide {
+      flex: 0 0 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+    }
+    
+    .gallery-slide:nth-child(1) { background: #e74c3c; }
+    .gallery-slide:nth-child(2) { background: #3498db; }
+    .gallery-slide:nth-child(3) { background: #2ecc71; }
+    .gallery-slide:nth-child(4) { background: #f39c12; }
+    .gallery-slide:nth-child(5) { background: #9b59b6; }
+    
+    /* Navigation dots */
+    .gallery-dots {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.5rem;
+      z-index: 10;
+    }
+    
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(255,255,255,0.8);
+    }
+    
+    .dot.active {
+      background: var(--brand-yellow);
+      transform: scale(1.3);
+      border-color: var(--brand-yellow);
+      box-shadow: 0 0 10px rgba(244,196,48,0.6);
+    }
+    
+    .dot:hover {
+      background: var(--brand-yellow);
+      transform: scale(1.2);
+    }
+    
+    /* Touch indicators */
+    .gallery-container::before {
+      content: '← Vuốt để xem thêm →';
+      position: absolute;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      z-index: 10;
+      opacity: 0;
+      animation: fadeInOut 3s ease-in-out;
+      pointer-events: none;
+    }
+    
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0; }
+      20%, 80% { opacity: 1; }
+    }
+    
+    /* Debug info */
+    .debug {
+      margin-top: 20px;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .debug h3 {
+      margin-top: 0;
+      color: #333;
+    }
+    
+    .status {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .status.success { background: #d4edda; color: #155724; }
+    .status.error { background: #f8d7da; color: #721c24; }
+    
+    .control-buttons {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .btn:hover {
+      background: #0056b3;
+    }
+    
+    .btn.danger {
+      background: #dc3545;
+    }
+    
+    .btn.danger:hover {
+      background: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <h1>Carousel Debug Test</h1>
+  
+  <div class="training-gallery">
+    <div class="gallery-container">
+      <div class="gallery-track" id="gallery-track">
+        <div class="gallery-slide">Slide 1</div>
+        <div class="gallery-slide">Slide 2</div>
+        <div class="gallery-slide">Slide 3</div>
+        <div class="gallery-slide">Slide 4</div>
+        <div class="gallery-slide">Slide 5</div>
+      </div>
+      <!-- Navigation dots -->
+      <div class="gallery-dots">
+        <span class="dot active" data-slide="0"></span>
+        <span class="dot" data-slide="1"></span>
+        <span class="dot" data-slide="2"></span>
+        <span class="dot" data-slide="3"></span>
+        <span class="dot" data-slide="4"></span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="debug">
+    <h3>Debug Information</h3>
+    <div id="debug-info">Initializing...</div>
+    
+    <div class="control-buttons">
+      <button class="btn" onclick="debugCarousel.testNext()">Next Slide</button>
+      <button class="btn" onclick="debugCarousel.testPrev()">Previous Slide</button>
+      <button class="btn" onclick="debugCarousel.testGoTo(0)">Go to Slide 1</button>
+      <button class="btn" onclick="debugCarousel.testGoTo(2)">Go to Slide 3</button>
+      <button class="btn danger" onclick="debugCarousel.testPause()">Pause Auto</button>
+      <button class="btn" onclick="debugCarousel.testResume()">Resume Auto</button>
+    </div>
+  </div>
+
+  <script>
+    let debugCarousel;
+    
+    // Training Gallery Carousel Handler
+    class TrainingGalleryCarousel {
+      constructor() {
+        // Use more robust selectors
+        this.container = document.querySelector('.gallery-container');
+        this.track = document.querySelector('#gallery-track, .gallery-track');
+        this.dots = document.querySelectorAll('.gallery-dots .dot');
+        this.slides = document.querySelectorAll('.gallery-slide');
+        
+        this.currentSlide = 0;
+        this.totalSlides = this.slides.length;
+        this.autoSlideInterval = null;
+        this.isAutoSliding = true;
+        this.slideInterval = 4000; // 4 giây
+        
+        // Touch/swipe support
+        this.startX = 0;
+        this.endX = 0;
+        this.isDragging = false;
+        this.swipeThreshold = 50;
+        
+        this.debugLog('TrainingGalleryCarousel initialized:', {
+          container: !!this.container,
+          track: !!this.track,
+          dots: this.dots.length,
+          slides: this.totalSlides
+        });
+        
+        this.init();
+      }
+      
+      debugLog(message, data = null) {
+        console.log(message, data);
+        const debugInfo = document.getElementById('debug-info');
+        if (debugInfo) {
+          const time = new Date().toLocaleTimeString();
+          const logEntry = `[${time}] ${message}${data ? ': ' + JSON.stringify(data) : ''}`;
+          debugInfo.innerHTML += `<div>${logEntry}</div>`;
+          debugInfo.scrollTop = debugInfo.scrollHeight;
+        }
+      }
+      
+      init() {
+        if (!this.track || this.totalSlides === 0) {
+          this.debugLog('❌ Carousel initialization failed: missing elements');
+          return;
+        }
+        
+        // Set initial position
+        this.updateSlidePosition();
+        this.updateDots();
+        
+        this.setupDotNavigation();
+        this.setupTouchEvents();
+        this.startAutoSlide();
+        
+        // Pause auto-slide when user hovers (desktop)
+        if (this.container) {
+          this.container.addEventListener('mouseenter', () => {
+            this.debugLog('🖱️ Mouse enter - pausing auto-slide');
+            this.pauseAutoSlide();
+          });
+          this.container.addEventListener('mouseleave', () => {
+            this.debugLog('🖱️ Mouse leave - resuming auto-slide');
+            this.resumeAutoSlide();
+          });
+        }
+        
+        // Pause when page becomes hidden
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            this.debugLog('👁️ Page hidden - pausing auto-slide');
+            this.pauseAutoSlide();
+          } else {
+            this.debugLog('👁️ Page visible - resuming auto-slide');
+            this.resumeAutoSlide();
+          }
+        });
+        
+        this.debugLog('✅ Carousel initialized successfully');
+      }
+      
+      setupDotNavigation() {
+        this.debugLog(`🎯 Setting up dot navigation for ${this.dots.length} dots`);
+        this.dots.forEach((dot, index) => {
+          dot.addEventListener('click', () => {
+            this.debugLog(`🎯 Dot ${index + 1} clicked`);
+            this.goToSlide(index);
+            this.pauseAutoSlide();
+            // Resume after 6 seconds
+            setTimeout(() => this.resumeAutoSlide(), 6000);
+          });
+        });
+      }
+      
+      setupTouchEvents() {
+        const container = this.container;
+        if (!container) {
+          this.debugLog('❌ Container not found for touch events');
+          return;
+        }
+        
+        this.debugLog('👆 Setting up touch/swipe events');
+        
+        // Touch events
+        container.addEventListener('touchstart', (e) => {
+          this.startX = e.touches[0].clientX;
+          this.isDragging = true;
+          this.debugLog('👆 Touch start');
+          this.pauseAutoSlide();
+        }, { passive: true });
+        
+        container.addEventListener('touchmove', (e) => {
+          if (!this.isDragging) return;
+          this.endX = e.touches[0].clientX;
+        }, { passive: true });
+        
+        container.addEventListener('touchend', () => {
+          if (!this.isDragging) return;
+          this.debugLog('👆 Touch end - handling swipe');
+          this.handleSwipe();
+          this.isDragging = false;
+          // Resume after 6 seconds
+          setTimeout(() => this.resumeAutoSlide(), 6000);
+        }, { passive: true });
+        
+        // Mouse events for desktop
+        container.addEventListener('mousedown', (e) => {
+          this.startX = e.clientX;
+          this.isDragging = true;
+          this.debugLog('🖱️ Mouse down');
+          this.pauseAutoSlide();
+          e.preventDefault();
+        });
+        
+        container.addEventListener('mousemove', (e) => {
+          if (!this.isDragging) return;
+          this.endX = e.clientX;
+        });
+        
+        container.addEventListener('mouseup', () => {
+          if (!this.isDragging) return;
+          this.debugLog('🖱️ Mouse up - handling swipe');
+          this.handleSwipe();
+          this.isDragging = false;
+          // Resume after 6 seconds
+          setTimeout(() => this.resumeAutoSlide(), 6000);
+        });
+        
+        container.addEventListener('mouseleave', () => {
+          if (this.isDragging) {
+            this.debugLog('🖱️ Mouse leave during drag');
+            this.isDragging = false;
+          }
+        });
+      }
+      
+      handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = this.startX - this.endX;
+        
+        this.debugLog(`📱 Swipe detected: diff=${diff}, threshold=${swipeThreshold}`);
+        
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) {
+            // Swipe left - next slide
+            this.debugLog('📱 Swipe left → next slide');
+            this.nextSlide();
+          } else {
+            // Swipe right - previous slide
+            this.debugLog('📱 Swipe right → previous slide');
+            this.prevSlide();
+          }
+        } else {
+          this.debugLog('📱 Swipe too short, ignored');
+        }
+      }
+      
+      goToSlide(slideIndex) {
+        this.debugLog(`🎯 Going to slide ${slideIndex + 1}`);
+        this.currentSlide = slideIndex;
+        this.updateSlidePosition();
+        this.updateDots();
+      }
+      
+      nextSlide() {
+        const oldSlide = this.currentSlide;
+        this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        this.debugLog(`➡️ Next slide: ${oldSlide + 1} → ${this.currentSlide + 1}`);
+        this.updateSlidePosition();
+        this.updateDots();
+      }
+      
+      prevSlide() {
+        const oldSlide = this.currentSlide;
+        this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        this.debugLog(`⬅️ Previous slide: ${oldSlide + 1} → ${this.currentSlide + 1}`);
+        this.updateSlidePosition();
+        this.updateDots();
+      }
+      
+      updateSlidePosition() {
+        const translateX = -this.currentSlide * 100;
+        this.track.style.transform = `translateX(${translateX}%)`;
+        this.debugLog(`📐 Updated position: translateX(${translateX}%)`);
+      }
+      
+      updateDots() {
+        this.dots.forEach((dot, index) => {
+          dot.classList.toggle('active', index === this.currentSlide);
+        });
+        this.debugLog(`🎯 Updated dots: active = ${this.currentSlide + 1}`);
+      }
+      
+      startAutoSlide() {
+        if (this.autoSlideInterval) {
+          this.debugLog('⚠️ Auto-slide already running');
+          return;
+        }
+        
+        this.debugLog(`🔄 Starting auto-slide (${this.slideInterval}ms interval)`);
+        this.autoSlideInterval = setInterval(() => {
+          if (this.isAutoSliding) {
+            this.debugLog('🔄 Auto-slide tick');
+            this.nextSlide();
+          }
+        }, this.slideInterval);
+      }
+      
+      pauseAutoSlide() {
+        this.debugLog('⏸️ Auto-slide paused');
+        this.isAutoSliding = false;
+      }
+      
+      resumeAutoSlide() {
+        this.debugLog('▶️ Auto-slide resumed');
+        this.isAutoSliding = true;
+      }
+      
+      destroy() {
+        if (this.autoSlideInterval) {
+          clearInterval(this.autoSlideInterval);
+          this.debugLog('🗑️ Carousel destroyed');
+        }
+      }
+      
+      // Test methods
+      testNext() { this.nextSlide(); }
+      testPrev() { this.prevSlide(); }
+      testGoTo(index) { this.goToSlide(index); }
+      testPause() { this.pauseAutoSlide(); }
+      testResume() { this.resumeAutoSlide(); }
+    }
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Clear debug info
+      document.getElementById('debug-info').innerHTML = '';
+      
+      // Initialize carousel with a slight delay
+      setTimeout(() => {
+        debugCarousel = new TrainingGalleryCarousel();
+      }, 100);
+    });
+  </script>
+</body>
+</html>
