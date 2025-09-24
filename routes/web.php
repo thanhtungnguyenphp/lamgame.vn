@@ -16,14 +16,19 @@ Route::get('blog/{slug}', [LamGamePageController::class, 'blogShow'])->name('blo
 
 // Forum routes
 Route::prefix('forum')->name('forum.')->group(function () {
-    // Main forum pages
+    // Main forum pages (public)
     Route::get('/', [ForumController::class, 'index'])->name('index');
     Route::get('/search', [ForumController::class, 'search'])->name('search');
+    Route::get('/posts/{post}', [ForumController::class, 'show'])->name('posts.show');
 
+    // Categories and tags (public)
+    Route::get('/category/{category}', [ForumController::class, 'category'])->name('category');
+    Route::get('/tag/{tag}', [ForumController::class, 'tag'])->name('tag');
+
+    // Protected routes - authentication handled in controller
     // Post management
     Route::get('/create', [ForumController::class, 'create'])->name('posts.create');
     Route::post('/posts', [ForumController::class, 'store'])->name('posts.store');
-    Route::get('/posts/{post}', [ForumController::class, 'show'])->name('posts.show');
     Route::get('/posts/{post}/edit', [ForumController::class, 'edit'])->name('posts.edit');
     Route::put('/posts/{post}', [ForumController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post}', [ForumController::class, 'destroy'])->name('posts.destroy');
@@ -33,10 +38,6 @@ Route::prefix('forum')->name('forum.')->group(function () {
 
     // Voting (AJAX)
     Route::post('/vote', [ForumController::class, 'vote'])->name('vote');
-
-    // Categories and tags
-    Route::get('/category/{category}', [ForumController::class, 'category'])->name('category');
-    Route::get('/tag/{tag}', [ForumController::class, 'tag'])->name('tag');
 
     // Reporting
     Route::post('/report', [ForumController::class, 'report'])->name('report');

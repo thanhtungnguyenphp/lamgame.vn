@@ -115,6 +115,12 @@ class ForumController extends Controller
      */
     public function create(Request $request)
     {
+        // Check if user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('auth.login')
+                ->with('error', 'Bạn cần đăng nhập để tạo bài viết mới.');
+        }
+
         $categories = ForumCategory::active()->ordered()->get();
         $tags = ForumTag::popular()->get();
         $selectedCategory = $request->get('category');
@@ -133,6 +139,11 @@ class ForumController extends Controller
      */
     public function store(ForumPostRequest $request)
     {
+        // Check if user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('auth.login')
+                ->with('error', 'Bạn cần đăng nhập để đăng bài viết.');
+        }
 
         // Create the post
         $post = ForumPost::create([
@@ -212,6 +223,12 @@ class ForumController extends Controller
      */
     public function edit(ForumPost $post)
     {
+        // Check if user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('auth.login')
+                ->with('error', 'Bạn cần đăng nhập để chỉnh sửa bài viết.');
+        }
+
         $categories = ForumCategory::active()->ordered()->get();
         $popularTags = ForumTag::popular()->get();
         $postTags = $post->tags->pluck('name')->toArray();
@@ -229,6 +246,11 @@ class ForumController extends Controller
      */
     public function update(ForumPostRequest $request, ForumPost $post)
     {
+        // Check if user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('auth.login')
+                ->with('error', 'Bạn cần đăng nhập để cập nhật bài viết.');
+        }
 
         // Store edit history if content changed
         $editHistory = $post->edit_history ?: [];
@@ -287,6 +309,12 @@ class ForumController extends Controller
      */
     public function destroy(ForumPost $post)
     {
+        // Check if user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('auth.login')
+                ->with('error', 'Bạn cần đăng nhập để xóa bài viết.');
+        }
+
         $post->delete();
 
         return redirect()->route('forum.index')
@@ -298,6 +326,12 @@ class ForumController extends Controller
      */
     public function storeComment(Request $request, ForumPost $post)
     {
+        // Check if user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('auth.login')
+                ->with('error', 'Bạn cần đăng nhập để bình luận.');
+        }
+
         $validator = Validator::make($request->all(), [
             'content' => 'required|string|min:10|max:2000',
             'author_name' => 'required|string|max:100',
@@ -332,6 +366,15 @@ class ForumController extends Controller
      */
     public function vote(Request $request)
     {
+        // Check if user is authenticated
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn cần đăng nhập để vote.',
+                'redirect' => route('auth.login')
+            ], 401);
+        }
+
         $validator = Validator::make($request->all(), [
             'voteable_type' => 'required|in:App\Models\ForumPost,App\Models\ForumComment',
             'voteable_id' => 'required|integer',
@@ -454,6 +497,15 @@ class ForumController extends Controller
      */
     public function report(Request $request)
     {
+        // Check if user is authenticated
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bạn cần đăng nhập để báo cáo.',
+                'redirect' => route('auth.login')
+            ], 401);
+        }
+
         $validator = Validator::make($request->all(), [
             'reportable_type' => 'required|in:post,comment',
             'reportable_id' => 'required|integer',
