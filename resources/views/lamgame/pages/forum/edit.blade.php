@@ -156,23 +156,19 @@
                     </div>
                 </div>
 
-                <!-- Author Info -->
+                <!-- Author Info Display -->
                 <div class="form-section">
-                    <h3>Thông tin tác giả</h3>
-                    <div class="author-fields">
-                        <div class="form-group">
-                            <label>Tên hiển thị <span class="required">*</span></label>
-                            <input type="text" name="author_name" required class="form-input" 
-                                   placeholder="Tên của bạn" value="{{ old('author_name', $post->author_name) }}">
+                    <h3>Đăng bởi</h3>
+                    <div class="author-display">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <span class="avatar-text">{{ strtoupper(substr($user->first_name, 0, 1)) }}{{ strtoupper(substr($user->last_name, 0, 1)) }}</span>
+                            </div>
+                            <div class="user-details">
+                                <div class="user-name">{{ $user->first_name }} {{ $user->last_name }}</div>
+                                <div class="user-email">{{ $user->email }}</div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Email <span class="required">*</span></label>
-                            <input type="email" name="author_email" required class="form-input" 
-                                   placeholder="Email của bạn" value="{{ old('author_email', $post->author_email) }}">
-                        </div>
-                    </div>
-                    <div class="form-help">
-                        Email sẽ không được hiển thị công khai
                     </div>
                 </div>
 
@@ -572,10 +568,46 @@
     color: white;
 }
 
-.author-fields {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.author-display {
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
     gap: 1rem;
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.user-details {
+    flex: 1;
+}
+
+.user-name {
+    font-weight: 700;
+    color: #1a202c;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.user-email {
+    color: #718096;
+    font-size: 0.9rem;
 }
 
 .form-group label {
@@ -645,8 +677,10 @@
         grid-template-columns: 1fr;
     }
     
-    .author-fields {
-        grid-template-columns: 1fr;
+    .user-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
     }
     
     .form-actions {
@@ -789,8 +823,6 @@ function saveDraft() {
         type: formData.get('type'),
         category_id: formData.get('category_id'),
         tags: selectedTags,
-        author_name: formData.get('author_name'),
-        author_email: formData.get('author_email'),
         edit_reason: formData.get('edit_reason'),
         timestamp: new Date().toISOString()
     };
@@ -820,8 +852,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('contentEditor').innerHTML = data.content || '';
                 document.querySelector(`[name="type"][value="${data.type}"]`).checked = true;
                 document.querySelector('[name="category_id"]').value = data.category_id || '';
-                document.querySelector('[name="author_name"]').value = data.author_name || '';
-                document.querySelector('[name="author_email"]').value = data.author_email || '';
                 document.querySelector('[name="edit_reason"]').value = data.edit_reason || '';
                 
                 if (data.tags) {

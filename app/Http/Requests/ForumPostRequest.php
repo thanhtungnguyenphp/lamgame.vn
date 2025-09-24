@@ -26,8 +26,6 @@ class ForumPostRequest extends FormRequest
             'content' => 'required|string|min:10',
             'category_id' => 'required|exists:forum_categories,id',
             'type' => 'required|in:discussion,idea,question,showcase,job,review',
-            'author_name' => 'required|string|max:100',
-            'author_email' => 'required|email|max:255',
             'tags' => 'nullable|string|max:500',
             'edit_reason' => 'nullable|string|max:255',
         ];
@@ -45,8 +43,6 @@ class ForumPostRequest extends FormRequest
             'content' => 'nội dung',
             'category_id' => 'danh mục',
             'type' => 'loại bài viết',
-            'author_name' => 'tên tác giả',
-            'author_email' => 'email tác giả',
             'tags' => 'tags',
             'edit_reason' => 'lý do chỉnh sửa',
         ];
@@ -66,11 +62,6 @@ class ForumPostRequest extends FormRequest
             'category_id.exists' => ':attribute được chọn không hợp lệ.',
             'type.required' => 'Vui lòng chọn :attribute.',
             'type.in' => ':attribute được chọn không hợp lệ.',
-            'author_name.required' => ':attribute là bắt buộc.',
-            'author_name.max' => ':attribute không được vượt quá :max ký tự.',
-            'author_email.required' => ':attribute là bắt buộc.',
-            'author_email.email' => ':attribute phải là địa chỉ email hợp lệ.',
-            'author_email.max' => ':attribute không được vượt quá :max ký tự.',
             'tags.max' => ':attribute không được vượt quá :max ký tự.',
             'edit_reason.max' => ':attribute không được vượt quá :max ký tự.',
         ];

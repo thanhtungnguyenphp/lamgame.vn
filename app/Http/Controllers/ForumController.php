@@ -125,12 +125,16 @@ class ForumController extends Controller
         $tags = ForumTag::popular()->get();
         $selectedCategory = $request->get('category');
         $selectedType = $request->get('type', 'discussion');
+        
+        // Get authenticated user info
+        $user = Auth::guard('customer')->user();
 
         return view('lamgame.pages.forum.create', compact(
             'categories', 
             'tags', 
             'selectedCategory', 
-            'selectedType'
+            'selectedType',
+            'user'
         ));
     }
 
@@ -145,13 +149,16 @@ class ForumController extends Controller
                 ->with('error', 'Bạn cần đăng nhập để đăng bài viết.');
         }
 
+        // Get authenticated user info
+        $user = Auth::guard('customer')->user();
+        
         // Create the post
         $post = ForumPost::create([
             'title' => $request->title,
             'content' => $request->content,
             'type' => $request->type,
-            'author_name' => $request->author_name,
-            'author_email' => $request->author_email,
+            'author_name' => $user->first_name . ' ' . $user->last_name,
+            'author_email' => $user->email,
             'category_id' => $request->category_id,
             'status' => 'published',
             'ip_address' => $request->ip(),
@@ -232,12 +239,16 @@ class ForumController extends Controller
         $categories = ForumCategory::active()->ordered()->get();
         $popularTags = ForumTag::popular()->get();
         $postTags = $post->tags->pluck('name')->toArray();
+        
+        // Get authenticated user info
+        $user = Auth::guard('customer')->user();
 
         return view('lamgame.pages.forum.edit', compact(
             'post',
             'categories',
             'popularTags',
-            'postTags'
+            'postTags',
+            'user'
         ));
     }
 
@@ -252,13 +263,16 @@ class ForumController extends Controller
                 ->with('error', 'Bạn cần đăng nhập để cập nhật bài viết.');
         }
 
+        // Get authenticated user info
+        $user = Auth::guard('customer')->user();
+        
         // Store edit history if content changed
         $editHistory = $post->edit_history ?: [];
         
         if ($post->title !== $request->title || $post->content !== $request->content) {
             $editHistory[] = [
                 'date' => now()->toISOString(),
-                'author' => $request->author_name,
+                'author' => $user->first_name . ' ' . $user->last_name,
                 'reason' => $request->edit_reason,
                 'changes' => [
                     'title_changed' => $post->title !== $request->title,
@@ -273,8 +287,6 @@ class ForumController extends Controller
             'content' => $request->content,
             'type' => $request->type,
             'category_id' => $request->category_id,
-            'author_name' => $request->author_name,
-            'author_email' => $request->author_email,
             'edit_history' => $editHistory,
         ]);
 
@@ -332,10 +344,11 @@ class ForumController extends Controller
                 ->with('error', 'Bạn cần đăng nhập để bình luận.');
         }
 
+        // Get authenticated user info
+        $user = Auth::guard('customer')->user();
+        
         $validator = Validator::make($request->all(), [
             'content' => 'required|string|min:10|max:2000',
-            'author_name' => 'required|string|max:100',
-            'author_email' => 'required|email|max:255',
             'parent_id' => 'nullable|exists:forum_comments,id',
         ]);
 
@@ -350,8 +363,8 @@ class ForumController extends Controller
             'post_id' => $post->id,
             'parent_id' => $request->parent_id,
             'content' => $request->content,
-            'author_name' => $request->author_name,
-            'author_email' => $request->author_email,
+            'author_name' => $user->first_name . ' ' . $user->last_name,
+            'author_email' => $user->email,
             'status' => 'published',
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
