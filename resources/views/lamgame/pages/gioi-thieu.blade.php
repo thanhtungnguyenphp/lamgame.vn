@@ -127,10 +127,10 @@
                         <div class="sidebar-block">
                             <h3>Thông tin liên hệ</h3>
                             <div class="contact-info">
-                                <p><i class="fa fa-map-marker"></i> Tầng 7, Tòa nhà ABC, Quận 1, TP.HCM</p>
-                                <p><i class="fa fa-phone"></i> 0909 123 456</p>
-                                <p><i class="fa fa-envelope"></i> info@lamgame.vn</p>
-                                <p><i class="fa fa-clock-o"></i> T2 - T7: 8:00 - 20:00</p>
+                                <p><i class="fa fa-map-marker"></i> Tòa nhà E.Town Central, 11 Đoàn Văn Bơ, P13, Q4, TP.HCM</p>
+                                <p><i class="fa fa-phone"></i> 09.1111.8300</p>
+                                <p><i class="fa fa-envelope"></i> salegamevui@gmail.com</p>
+                                <p><i class="fa fa-youtube"></i> <a href="https://www.youtube.com/channel/UCv2lripWdZDKtlrRy1J0dBw" target="_blank">YouTube Channel</a></p>
                             </div>
                         </div>
 

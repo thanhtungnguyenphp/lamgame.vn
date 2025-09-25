@@ -456,7 +456,7 @@
                             </div>
                             <div class="form-field">
                                 <label for="contact-phone">Số điện thoại *</label>
-                                <input id="contact-phone" name="phone" type="tel" required placeholder="0909 123 456">
+                                <input id="contact-phone" name="phone" type="tel" required placeholder="09.1111.8300">
                             </div>
                         </div>
                         <div class="form-field">
@@ -486,18 +486,17 @@
                 <div class="contact-info">
                     <div class="info-card">
                         <h3>📍 Địa chỉ trụ sở</h3>
-                        <p>Tầng 7, Tòa nhà ABC<br>123 Nguyễn Huệ, Quận 1<br>TP. Hồ Chí Minh</p>
+                        <p>Tòa nhà E.Town Central<br>11 Đoàn Văn Bơ, Phường 13<br>Quận 4, TP. Hồ Chí Minh, Việt Nam</p>
                     </div>
                     <div class="info-card">
                         <h3>📞 Liên hệ trực tiếp</h3>
-                        <p>Hotline: <a href="tel:0909123456">0909 123 456</a><br>
-                        Email: <a href="mailto:info@lamgame.vn">info@lamgame.vn</a></p>
+                        <p>Hotline: <a href="tel:0911118300">09.1111.8300</a><br>
+                        Email: <a href="mailto:salegamevui@gmail.com">salegamevui@gmail.com</a></p>
                     </div>
                     <div class="info-card">
-                        <h3>⏰ Giờ làm việc</h3>
-                        <p>Thứ 2 - Thứ 6: 8:00 - 20:00<br>
-                        Thứ 7: 9:00 - 17:00<br>
-                        Chủ nhật: 10:00 - 16:00</p>
+                        <h3>📺 Kênh truyền thông</h3>
+                        <p>YouTube: <a href="https://www.youtube.com/channel/UCv2lripWdZDKtlrRy1J0dBw" target="_blank">Làm Game Official</a><br>
+                        Website: <a href="https://lamgame.vn">lamgame.vn</a></p>
                     </div>
                 </div>
             </div>

@@ -123,7 +123,7 @@
                                     <i class="fa fa-map-marker"></i>
                                     <div>
                                         <h4>Địa chỉ</h4>
-                                        <p>Tầng 7, Tòa nhà ABC<br>123 Nguyễn Huệ, Quận 1<br>TP. Hồ Chí Minh</p>
+                                        <p>Tòa nhà E.Town Central<br>11 Đoàn Văn Bơ, Phường 13<br>Quận 4, TP. Hồ Chí Minh, Việt Nam</p>
                                     </div>
                                 </div>
                                 
@@ -131,8 +131,7 @@
                                     <i class="fa fa-phone"></i>
                                     <div>
                                         <h4>Điện thoại</h4>
-                                        <p>Hotline: <a href="tel:0909123456">0909 123 456</a><br>
-                                        Tư vấn: <a href="tel:0908654321">0908 654 321</a></p>
+                                        <p>Hotline: <a href="tel:0911118300">09.1111.8300</a></p>
                                     </div>
                                 </div>
                                 
@@ -140,8 +139,7 @@
                                     <i class="fa fa-envelope"></i>
                                     <div>
                                         <h4>Email</h4>
-                                        <p>Chung: <a href="mailto:info@lamgame.vn">info@lamgame.vn</a><br>
-                                        Hỗ trợ: <a href="mailto:support@lamgame.vn">support@lamgame.vn</a></p>
+                                        <p>Liên hệ: <a href="mailto:salegamevui@gmail.com">salegamevui@gmail.com</a></p>
                                     </div>
                                 </div>
                                 
@@ -165,7 +163,7 @@
                                     <i class="fa fa-facebook"></i>
                                     <span>Facebook</span>
                                 </a>
-                                <a href="#" class="social-link youtube">
+                                <a href="https://www.youtube.com/channel/UCv2lripWdZDKtlrRy1J0dBw" target="_blank" class="social-link youtube">
                                     <i class="fa fa-youtube"></i>
                                     <span>YouTube</span>
                                 </a>
