@@ -75,15 +75,15 @@
                 <h3>Làm Game</h3>
                 <p class="muted">Học lập trình game • Unity • Unreal Engine • C# Programming</p>
                 <p class="muted">Website: <strong>{{ config('app.url') }}</strong></p>
-                <p class="muted">📧 Email: info@lamgame.vn</p>
-                <p class="muted">📞 Hotline: 0909 123 456</p>
-                <p class="muted">📍 Địa chỉ: Tầng 7, Tòa nhà ABC, 123 Nguyễn Huế, Quận 1, TP.HCM</p>
+                <p class="muted">📧 Email: salegamevui@gmail.com</p>
+                <p class="muted">📞 Hotline: 09.1111.8300</p>
+                <p class="muted">📍 Địa chỉ: Tòa nhà E.Town Central, 11 Đoàn Văn Bơ, Phường 13, Quận 4, TP.HCM</p>
             </div>
             <div>
                 <div class="socials">
                     <a href="https://facebook.com/lamgamevn" aria-label="Facebook" target="_blank">f</a>
                     <a href="https://zalo.me/lamgamevn" aria-label="Zalo" target="_blank">Z</a>
-                    <a href="https://youtube.com/@lamgamevn" aria-label="YouTube" target="_blank">Y</a>
+                    <a href="https://www.youtube.com/channel/UCv2lripWdZDKtlrRy1J0dBw" aria-label="YouTube" target="_blank">Y</a>
                     <a href="https://tiktok.com/@lamgamevn" aria-label="TikTok" target="_blank">t</a>
                 </div>
                 <p class="muted mt-12">© {{ date('Y') }} Làm Game. All rights reserved.</p>
@@ -95,7 +95,7 @@
     <div class="floating" aria-label="Liên hệ nhanh">
         <a href="https://m.me/lamgamevn" title="Facebook Messenger" target="_blank">M</a>
         <a href="https://zalo.me/lamgamevn" title="Zalo" target="_blank">Z</a>
-        <a href="tel:0909123456" title="Gọi ngay" target="_blank">📞</a>
+        <a href="tel:0911118300" title="Gọi ngay">📞</a>
     </div>
 
     <!-- Scripts -->
