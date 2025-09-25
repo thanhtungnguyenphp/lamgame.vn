@@ -104,9 +104,11 @@
         
         /* Floating contacts */
         .floating-contacts { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
-        .floating-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .floating-btn.messenger { background: #0084ff; color: white; }
-        .floating-btn.zalo { background: #005ce7; color: white; }
+        .floating-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.3s ease; }
+        .floating-btn:hover { transform: scale(1.1); }
+        .floating-btn.phone { background: #25D366; color: white; }
+        .floating-btn.email { background: #EA4335; color: white; }
+        .floating-btn.youtube { background: #FF0000; color: white; }
         
         /* Mobile Menu Active States */
         .mobile-menu-link.active,
@@ -263,16 +265,16 @@
                 
                 <div class="footer-section">
                     <h4>Liên hệ</h4>
-                    <p>📍 Địa chỉ: Q7, TP.HCM</p>
-                    <p>📞 Hotline: 0908 123 456</p>
-                    <p>✉️ Email: info@lamgame.localhost</p>
+                    <p>📍 Địa chỉ: Tòa nhà E.Town Central, 11 Đoàn Văn Bơ, Phường 13, Quận 4, TP.HCM</p>
+                    <p>📞 Hotline: 09.1111.8300</p>
+                    <p>✉️ Email: salegamevui@gmail.com</p>
                 </div>
                 <div class="footer-section">
                     <h4>Theo dõi chúng tôi</h4>
                     <div class="social-links">
                         <a href="#" aria-label="Facebook">📘 Facebook</a>
                         <a href="#" aria-label="Instagram">📷 Instagram</a>
-                        <a href="#" aria-label="YouTube">📺 YouTube</a>
+                        <a href="https://www.youtube.com/channel/UCv2lripWdZDKtlrRy1J0dBw" target="_blank" aria-label="YouTube">📺 YouTube</a>
                     </div>
                 </div>
                 <div class="footer-section">
@@ -284,11 +286,14 @@
 
     <!-- Floating Contact Buttons -->
     <div class="floating-contacts">
-        <a href="https://m.me/lamgame" target="_blank" class="floating-btn messenger" aria-label="Chat Messenger">
-            💬
+        <a href="tel:0911118300" class="floating-btn phone" aria-label="Gọi điện thoại">
+            📞
         </a>
-        <a href="https://zalo.me/lamgame" target="_blank" class="floating-btn zalo" aria-label="Chat Zalo">
-            📱
+        <a href="mailto:salegamevui@gmail.com" class="floating-btn email" aria-label="Gửi email">
+            ✉️
+        </a>
+        <a href="https://www.youtube.com/channel/UCv2lripWdZDKtlrRy1J0dBw" target="_blank" class="floating-btn youtube" aria-label="YouTube">
+            📺
         </a>
     </div>
 
