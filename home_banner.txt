@@ -1,0 +1,22 @@
+đề xuất cập nhật banner thành một carousel slider động (4 slide) để phù hợp hơn với mục tiêu website: ưu tiên việc làm từ công ty, blog/source/ý tưởng game từ developer, và topic forum sôi động. Hiện tại, banner thiếu slider và chỉ quảng bá giáo dục (không liên quan trực tiếp đến cộng đồng), nên redesign này sẽ tăng tính tương tác, SEO (thêm keyword như "việc làm game dev", "topic forum Unity"), và retention (bằng cách tease nội dung mới).
+
+Tối ưu hóa tổng thể cho banner:
+
+Công nghệ: Sử dụng carousel từ Bootstrap/Swiper.js, auto-play 5-7 giây/slide, navigation arrows/pagination. Responsive: Full-width desktop, stack mobile.
+Thiết kế chung: Nền gradient game-themed (xanh dương/đen), overlay text trắng nổi bật. Mỗi slide có hình ảnh chất lượng cao (1920x600px), text ngắn gọn (tiêu đề 5-7 từ, mô tả 20-30 từ), CTA button (màu cam, hover effect).
+Tích hợp mục tiêu: Mỗi slide link đến section tương ứng (Job Board, Forum, Blog, Shares). Dynamic: Kéo dữ liệu real-time từ DB (ví dụ: jobs mới nhất, topic hot >50 comments, bài viết <7 ngày).
+Lợi ích: Tăng engagement 2-3x (tease nội dung mới), giảm bounce rate bằng cách dẫn user vào cộng đồng ngay từ banner.
+
+Dưới đây là phát triển nội dung chi tiết cho 4 slider, tối ưu để hấp dẫn developer (text thuyết phục, hình ảnh minh họa sáng tạo, CTA hành động). Tôi sử dụng dữ liệu giả định dựa trên đối tác hiện tại (VNG, Gameloft) và nội dung tiềm năng; có thể tích hợp API để update tự động.
+
+Slider,Tiêu Đề,Mô Tả Nội Dung,Hình Ảnh Gợi Ý,CTA,Lý Do Tối Ưu & Liên Kết Mục Tiêu
+1. Việc Làm,"""Khám Phá Việc Làm Game Dev Hot Nhất!""","""Hàng trăm vị trí từ VNG, Gameloft: Unity Developer lương 20-40tr VNĐ. Cập nhật mới: 50+ jobs tuần này, apply ngay để kết nối với công ty hàng đầu!"" (Stats động: Số jobs mới, lương trung bình).",Hình nền: Developer làm việc trong studio game (hình stock từ Unsplash: nhóm coder với màn hình Unity/Unreal). Overlay icon: Túi tiền + CV.,"Button: ""Xem Jobs Mới"" (link đến /viec-lam, mở job board với filter).","Tối ưu: Tập trung việc làm thực tế từ công ty (không chỉ stats chung như hiện tại). Phát triển: Thêm urgency (""cập nhật mới"") để tăng click, phù hợp 100% mục tiêu việc làm."
+2. Topic Hot Với Nhiều Comment & Tương Tác,"""Thảo Luận Sôi Động: Topic Forum Nóng Hổi!""","""Topic hot: 'Unity vs Unreal cho game mobile?' – 150 comments, 500 views, 80 likes trong 24h. Tham gia ngay để chia sẻ kinh nghiệm với cộng đồng dev!"" (Lấy top topic >50 comments, sort by tương tác mới nhất).","Hình nền: Biểu tượng chat bubble, timeline comment (hình minh họa: màn hình forum với replies nhộn nhịp, icon like/reply).","Button: ""Tham Gia Thảo Luận"" (link đến /forum/hot-topics, mở thread cụ thể với form comment).","Tối ưu: Nhấn mạnh ""nhiều comment & tương tác"" (flow cao, mới), khắc phục thiếu forum hiện tại. Phát triển: Tease nội dung cụ thể để khuyến khích tương tác, xây dựng cộng đồng."
+3. Bài Viết Mới,"""Bài Viết Mới Nhất Từ Developer!""","""Bài mới: 'Tối ưu hóa performance Unity cho game 3D' – Đăng bởi dev @UserX, 200 views, 50 shares. Đọc để cập nhật kiến thức hot nhất!"" (Lấy bài blog <7 ngày, sort by views).","Hình nền: Laptop với code editor mở (hình stock: bài viết blog với highlight code, icon bookmark).","Button: ""Đọc Bài Viết"" (link đến /blog/bai-viet-moi, mở full post với like/share).","Tối ưu: Tập trung ""bài viết mới"" từ dev (blog chia sẻ), bổ sung thiếu sót hiện tại. Phát triển: Thêm metrics (views/shares) để tạo FOMO, khuyến khích đọc & đăng bài."
+"4. Game Mới, Source Game Mới, Ý Tưởng Phát Triển Game","""Khám Phá Game Mới & Ý Tưởng Sáng Tạo!""","""Source mới: 'Roguelike Unity kit' trên GitHub. Ý tưởng: 'VR adventure Việt Nam folklore'. Game demo: 'Puzzle mobile' từ dev cộng đồng – Download & phát triển ngay!"" (Kết hợp source/idea/game mới nhất từ shares).","Hình nền: Screenshot game prototype (hình minh họa: code GitHub + concept art game, icon download/lightbulb).","Button: ""Khám Phá & Chia Sẻ"" (link đến /shares/game-moi, mở grid với download/discuss).","Tối ưu: Kết hợp ""game mới, source mới, ý tưởng phát triển"" từ dev. Phát triển: Tease đa dạng (source + idea + demo) để khuyến khích chia sẻ, phù hợp mục tiêu sáng tạo cộng đồng."
+
+Hướng dẫn triển khai:
+
+Dynamic Update: Sử dụng JS để fetch API (ví dụ: từ backend Supabase) mỗi 5 phút, đảm bảo nội dung mới (không placeholder như hiện tại).
+A/B Test: So sánh với banner cũ (chỉ quảng bá khóa học) bằng metrics click-through rate.
+Tích hợp với redesign trước: Đặt banner này ngay dưới header, trước Job Board section.

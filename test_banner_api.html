@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Banner API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .api-test { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .result { background: #e8f5e8; padding: 10px; margin: 10px 0; border-radius: 4px; font-family: monospace; }
+        .error { background: #ffe8e8; }
+        button { padding: 10px 20px; margin: 5px; background: #007cba; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #005a87; }
+    </style>
+</head>
+<body>
+    <h1>LamGame Banner API Test</h1>
+    <p>Test các API endpoints cho banner động</p>
+
+    <div class="api-test">
+        <h3>Test Jobs API</h3>
+        <button onclick="testAPI('/api/banner/jobs', 'jobs-result')">Test Jobs</button>
+        <div id="jobs-result" class="result"></div>
+    </div>
+
+    <div class="api-test">
+        <h3>Test Topics API</h3>
+        <button onclick="testAPI('/api/banner/topics', 'topics-result')">Test Topics</button>
+        <div id="topics-result" class="result"></div>
+    </div>
+
+    <div class="api-test">
+        <h3>Test Blogs API</h3>
+        <button onclick="testAPI('/api/banner/blogs', 'blogs-result')">Test Blogs</button>
+        <div id="blogs-result" class="result"></div>
+    </div>
+
+    <div class="api-test">
+        <h3>Test Sources API</h3>
+        <button onclick="testAPI('/api/banner/sources', 'sources-result')">Test Sources</button>
+        <div id="sources-result" class="result"></div>
+    </div>
+
+    <div class="api-test">
+        <h3>Test All API</h3>
+        <button onclick="testAPI('/api/banner/all', 'all-result')">Test All</button>
+        <div id="all-result" class="result"></div>
+    </div>
+
+    <script>
+        async function testAPI(endpoint, resultId) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.textContent = 'Loading...';
+            resultDiv.className = 'result';
+            
+            try {
+                const response = await fetch(endpoint);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.textContent = JSON.stringify(data, null, 2);
+                    resultDiv.className = 'result';
+                } else {
+                    resultDiv.textContent = `Error: ${response.status} - ${JSON.stringify(data, null, 2)}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = `Network Error: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        // Test performance
+        function testPerformance() {
+            console.log('Testing API performance...');
+            const startTime = performance.now();
+            
+            Promise.all([
+                fetch('/api/banner/jobs'),
+                fetch('/api/banner/topics'),
+                fetch('/api/banner/blogs'),
+                fetch('/api/banner/sources')
+            ]).then(() => {
+                const endTime = performance.now();
+                console.log(`All API calls completed in ${(endTime - startTime).toFixed(2)}ms`);
+            });
+        }
+
+        // Auto test on load
+        window.addEventListener('load', () => {
+            console.log('Banner API Test Page loaded');
+            testPerformance();
+        });
+    </script>
+</body>
+</html>
