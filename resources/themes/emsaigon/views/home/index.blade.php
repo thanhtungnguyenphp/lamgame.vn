@@ -1,150 +1,87 @@
-{{-- LAMGAME HOMEPAGE - Updated to match lamgame.vn --}}
+{{-- LAMGAME HOMEPAGE - Updated with Optimized 4-Slide Banner --}}
 @extends('layouts.master')
 
-@section('page_title', 'Làm Game • Học lập trình game, Unity, Unreal Engine từ cơ bản đến nâng cao')
+@section('page_title', 'LamGame.vn — Cộng đồng Game Developer Việt Nam | Việc làm Game Dev')
 
-@section('page_description', 'Làm Game - Trung tâm đào tạo lập trình game chuyên nghiệp. Học Unity, Unreal Engine, C#, Game Design từ cơ bản đến nâng cao. Cam kết việc làm sau khóa học.')
+@section('page_description', 'Cộng đồng Game Developer Việt Nam hàng đầu. Tìm việc làm game dev, thảo luận Unity/Unreal Engine, chia sẻ source code và ý tưởng game sáng tạo. 50+ jobs mới mỗi tuần từ VNG, Gameloft.')
 
 @push('styles')
-    <!-- Mobile-First Hero Banner CSS -->
-    <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/hero-banner-mobile-first.css') }}">
-    <style>
-        /* Override conflicting styles from old banner */
-        .hero-banner-v2 { display: none !important; }
-        .hero-modern { display: none !important; }
-    </style>
+    <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-optimized-banner.css') }}">
+@endpush
+
+@push('scripts')
+    <script src="{{ asset('themes/shop/emsaigon/assets/js/lamgame-optimized-banner.js') }}"></script>
 @endpush
 
 @section('content')
-    <!-- Mobile-First Hero Banner -->
-    <section class="hero-banner-v3" id="hero-banner-v3">
-        <!-- Simplified Background for Mobile Performance -->
-        <div class="hero-background-mobile"></div>
+    <!-- LamGame Optimized 4-Slide Banner -->
+    <section class="hero-optimized" id="hero-banner" aria-label="Banner chính LamGame.vn">
+        <button class="arrow banner-arrow prev" aria-label="Slide trước" tabindex="0">◄</button>
+        <button class="arrow banner-arrow next" aria-label="Slide sau" tabindex="0">►</button>
         
-        <!-- Main Content Container -->
-        <div class="hero-container-v3">
-            <!-- Content Section -->
-            <div class="hero-content-v3">
-                <!-- Mobile-Optimized Badge -->
-                <div class="hero-badge-v3 animate-fade-in">
-                    <span class="badge-icon-v3">🎮</span>
-                    <span class="badge-text">#1 Game Dev Center</span>
-                </div>
-                
-                <!-- Mobile-First Headlines -->
-                <h1 class="hero-title-v3 animate-slide-up">
-                    <span class="title-line">Trở Thành</span>
-                    <span class="title-highlight-v3">Game Developer</span>
-                    <span class="title-line">Chuyên Nghiệp</span>
-                </h1>
-                
-                <!-- Mobile-Optimized Value Proposition -->
-                <p class="hero-subtitle-v3 animate-slide-up delay-200">
-                    Từ <strong>Zero Code</strong> đến <strong>Pro Developer</strong> chỉ trong 
-                    <span class="highlight-text-v3">6 tháng</span>. 
-                    Học Unity, Unreal với <strong>dự án thực tế</strong>.
-                </p>
-                
-                <!-- Mobile-First Stats -->
-                <div class="hero-stats-mobile animate-slide-up delay-400">
-                    <div class="stat-card-mobile" data-counter="1250">
-                        <div class="stat-number-mobile" data-target="1250">0</div>
-                        <div class="stat-label-mobile">Học viên thành công</div>
-                        <div class="stat-growth-mobile">+15% tháng này</div>
-                    </div>
-                    <div class="stat-card-mobile" data-counter="97">
-                        <div class="stat-number-mobile" data-target="97">0</div>
-                        <div class="stat-label-mobile">% Có việc làm</div>
-                        <div class="stat-growth-mobile">Lương 15-45tr</div>
-                    </div>
-                    <div class="stat-card-mobile" data-counter="68">
-                        <div class="stat-number-mobile" data-target="68">0</div>
-                        <div class="stat-label-mobile">Công ty partner</div>
-                        <div class="stat-growth-mobile">VNG, Gameloft...</div>
-                    </div>
-                </div>
-                
-                <!-- Mobile-Optimized CTAs -->
-                <div class="hero-cta-mobile animate-slide-up delay-600">
-                    <!-- Primary CTA with enhanced mobile UX -->
-                    <button class="btn-primary-mobile" onclick="openCourseModal()" 
-                            aria-label="Đăng ký khóa học game development">
-                        <span class="btn-icon-mobile">🚀</span>
-                        <span>Đăng Ký Ngay</span>
-                    </button>
-                    
-                    <!-- Secondary CTA -->
-                    <button class="btn-secondary-mobile" onclick="playDemoVideo()" 
-                            aria-label="Xem video demo khóa học">
-                        <span class="btn-icon-mobile">▶️</span>
-                        <span>Xem Demo 2 phút</span>
-                    </button>
-                    
-                    <!-- Trust indicators -->
-                    <div class="trust-indicators-mobile">
-                        <div class="trust-item-mobile">✅ Học thử 7 ngày miễn phí</div>
-                        <div class="trust-item-mobile">✅ Hoàn tiền 100% nếu không hài lòng</div>
-                    </div>
-                </div>
-                
-                <!-- Social Proof for Mobile -->
-                <div class="social-proof-mobile animate-slide-up delay-800">
-                    <div class="student-avatars-mobile">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face" 
-                             alt="Học viên 1" class="avatar-mobile" loading="lazy">
-                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=80&h=80&fit=crop&crop=face" 
-                             alt="Học viên 2" class="avatar-mobile" loading="lazy">
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face" 
-                             alt="Học viên 3" class="avatar-mobile" loading="lazy">
-                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop&crop=face" 
-                             alt="Học viên 4" class="avatar-mobile" loading="lazy">
-                    </div>
-                    <div class="social-text-mobile">
-                        <strong>245+ học viên</strong> đã đăng ký tuần này
+        <div class="track" id="banner-track">
+            <!-- Slide 1: Việc làm Game Dev -->
+            <div class="slide">
+                <div class="bg jobs"></div>
+                <div class="overlay"></div>
+                <div class="content">
+                    <h1>Khám Phá Việc Làm Game Dev Hot Nhất!</h1>
+                    <p>Hàng trăm vị trí từ VNG, Gameloft: Unity Developer lương 20-40tr VNĐ. <span class="dynamic-content" id="job-stats">50+ jobs tuần này</span>, apply ngay để kết nối với công ty hàng đầu!</p>
+                    <div class="btns">
+                        <a class="btn primary" href="#viec-lam">Xem Jobs Mới</a>
+                        <a class="btn secondary" href="#forum">Hỏi kinh nghiệm phỏng vấn</a>
                     </div>
                 </div>
             </div>
             
-            <!-- Visual Section - Mobile Optimized -->
-            <div class="hero-visual-mobile animate-slide-up delay-1000">
-                <!-- Mobile-Optimized Video Demo -->
-                <div class="demo-video-mobile">
-                    <div class="video-thumbnail-mobile" onclick="playDemoVideo()" 
-                         role="button" aria-label="Phát video demo khóa học" tabindex="0">
-                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&h=340&fit=crop" 
-                             alt="Demo khóa học game development" loading="lazy">
-                        <div class="play-button-mobile">
-                            <div class="play-icon-mobile">▶️</div>
-                        </div>
-                        <div class="video-badge-mobile">2:30</div>
+            <!-- Slide 2: Topic Forum Hot -->
+            <div class="slide">
+                <div class="bg forum"></div>
+                <div class="overlay"></div>
+                <div class="content">
+                    <h1>Thảo Luận Sôi Động: Topic Forum Nóng Hổi!</h1>
+                    <p>Topic hot: <span class="dynamic-content" id="hot-topic">'Unity vs Unreal cho game mobile?'</span> – <span class="dynamic-content" id="topic-stats">150 comments, 500 views, 80 likes</span> trong 24h. Tham gia ngay để chia sẻ kinh nghiệm với cộng đồng dev!</p>
+                    <div class="btns">
+                        <a class="btn primary" href="#forum">Tham Gia Thảo Luận</a>
+                        <a class="btn secondary" href="#forum">Xem tất cả Topics</a>
                     </div>
                 </div>
-                
-                <!-- Mobile-First Tech Stack -->
-                <div class="tech-stack-mobile">
-                    <div class="tech-card-mobile" role="button" tabindex="0" aria-label="Unity Engine">
-                        <div class="card-icon">🎮</div>
-                        <div class="card-title">Unity</div>
+            </div>
+            
+            <!-- Slide 3: Bài viết mới -->
+            <div class="slide">
+                <div class="bg blog"></div>
+                <div class="overlay"></div>
+                <div class="content">
+                    <h1>Bài Viết Mới Nhất Từ Developer!</h1>
+                    <p>Bài mới: <span class="dynamic-content" id="new-blog">'Tối ưu hóa performance Unity cho game 3D'</span> – Đăng bởi dev @UserX, <span class="dynamic-content" id="blog-stats">200 views, 50 shares</span>. Đọc để cập nhật kiến thức hot nhất!</p>
+                    <div class="btns">
+                        <a class="btn primary" href="#blog">Đọc Bài Viết</a>
+                        <a class="btn secondary" href="#blog">Xem tất cả Blog</a>
                     </div>
-                    
-                    <div class="tech-card-mobile" role="button" tabindex="0" aria-label="Unreal Engine">
-                        <div class="card-icon">🎯</div>
-                        <div class="card-title">Unreal</div>
-                    </div>
-                    
-                    <div class="tech-card-mobile" role="button" tabindex="0" aria-label="C# Programming">
-                        <div class="card-icon">💻</div>
-                        <div class="card-title">C#</div>
+                </div>
+            </div>
+            
+            <!-- Slide 4: Game & Source mới -->
+            <div class="slide">
+                <div class="bg creative"></div>
+                <div class="overlay"></div>
+                <div class="content">
+                    <h1>Khám Phá Game Mới & Ý Tưởng Sáng Tạo!</h1>
+                    <p>Source mới: <span class="dynamic-content" id="new-source">'Roguelike Unity kit'</span> trên GitHub. Ý tưởng: <span class="dynamic-content" id="new-idea">'VR adventure Việt Nam folklore'</span>. Game demo từ dev cộng đồng – Download & phát triển ngay!</p>
+                    <div class="btns">
+                        <a class="btn primary" href="#source-game">Khám Phá & Chia Sẻ</a>
+                        <a class="btn secondary" href="#source-game">Xem Source Code</a>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Mobile-Optimized Scroll Indicator -->
-        <div class="scroll-indicator-mobile" onclick="scrollToNextSection()" 
-             role="button" aria-label="Cuộn xuống để xem thêm" tabindex="0">
-            <div class="scroll-text-mobile">Khám phá thêm</div>
-            <div class="scroll-arrow-mobile">↓</div>
+        <div class="dots" aria-hidden="true">
+            <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide 1"></div>
+            <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide 2"></div>
+            <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide 3"></div>
+            <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide 4"></div>
         </div>
     </section>
 
