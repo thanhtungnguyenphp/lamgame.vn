@@ -1,0 +1,61 @@
+Prompt for Optimizing and Redesigning the Homepage of https://lamgame.vn/
+
+Objective:
+The website https://lamgame.vn/ aims to be a Game Dev Hub focused on:
+- Job postings from game companies (e.g., VNG, Gameloft).
+- Blogs, game sources (e.g., GitHub repos), and game ideas shared by game developers.
+- Active forum topics with high comment flow and recent updates.
+
+Current homepage issues:
+- Primarily promotional for courses (Unity, Unreal Engine, C#), with static stats (e.g., '0 Học viên', placeholders).
+- Lacks real job listings, developer shares, and forum feeds.
+- Structure: Header with hero banner, featured courses, reasons to choose, success stories (incomplete), footer.
+- No dynamic elements, poor community engagement.
+
+Redesign Guidelines:
+Transform from a course-selling landing page to a community-driven hub. Prioritize community content (70%) over education (30%). Use responsive design (e.g., Next.js/Bootstrap). Ensure SEO for keywords like 'việc làm game dev Việt Nam', 'source code Unity', 'ý tưởng game'.
+
+New Structure (Wireframe):
+
+1. Header (Fixed Top):
+   - Logo: 'Làm Game'.
+   - Navigation Menu: Home | Việc Làm | Blog/Shares | Forum | Khóa Học.
+   - Search Bar: For jobs, topics, or shares (e.g., autocomplete suggestions).
+   - CTA: Login/Register (required for posting in forum/shares).
+   - Hero Banner: Video background of devs coding/sharing. Dynamic Stats: '500+ Jobs', '1k+ Shares', '10k Comments/Week'. Teaser: Latest hot job or topic.
+
+2. Job Board Section (Main Content Top):
+   - Title: 'Việc Làm Game Dev Mới Nhất'.
+   - Grid Layout (3 columns): 6-8 job cards.
+     - Each Card: Company (e.g., VNG), Position (e.g., Unity Developer), Salary (20-30tr), Deadline (30/09), Apply Button, Tags (Unity/Unreal).
+   - Filters: By tech stack, location (HN/HCM), salary range.
+   - Form: 'Công Ty Đăng Việc Làm Miễn Phí' (with fields for company, position, etc.).
+   - Dynamic: Infinite scroll, real-time updates from DB/API.
+
+3. Developer Shares Section (Below Jobs):
+   - Title: 'Chia Sẻ Từ Developer: Blog, Source Code & Ý Tưởng Game'.
+   - Carousel + Grid: 4-6 items.
+     - Types: Blog post teaser ('Ý tưởng game roguelike' with excerpt, author, likes).
+     - Source Code: GitHub embed ('Unity FPS Kit' with download/view button).
+     - Game Idea: Image preview ('VR Puzzle Concept' with description, discuss link).
+   - Button: 'Chia Sẻ Của Bạn' (modal for uploading post/source/idea).
+   - Dynamic: Auto-play carousel, voting/likes, sorted by recent/popular.
+
+4. Hot Forum Topics Section (Below Shares):
+   - Title: 'Forum Nóng – Thảo Luận Sôi Động'.
+   - List View: 5-7 topics.
+     - Each Item: Title ('Unity vs Unreal?'), Stats (120 comments, 2 hours ago, 500 views), Teaser (first comment), Link to full thread.
+   - Sorting: By newest/hot (min 50 comments).
+   - Dynamic: Real-time updates (WebSocket), infinite scroll, integration with Disqus or custom comments.
+
+5. Education Teaser Section (Small, Bottom):
+   - Title: 'Nâng Cao Kỹ Năng Với Khóa Học Chuyên Sâu'.
+   - 2 Featured Courses: Unreal Engine/C# with previews, links.
+   - Integration: 'Áp dụng source từ shares vào dự án học'.
+   - CTA: 'Học Thử Miễn Phí'.
+
+6. Footer:
+   - Links: To sections above, About Us.
+   - Social: Discord/Facebook Group for extended community.
+   - Newsletter Signup: 'Nhận Update Jobs & Topics Mới'.
+   - Contact: Address, Hotline, Email.
