@@ -1,0 +1,4 @@
+# Ignore large SQL backup files but keep info files
+*.sql
+!*_INFO.txt
+!BACKUP_INFO_*.md
