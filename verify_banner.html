@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner Verification Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .test-item { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .loading { color: orange; }
+        button { padding: 10px 20px; background: #007cba; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🎯 LamGame Banner Verification</h1>
+    <p>Testing banner functionality on <strong>lamgame.localhost</strong></p>
+
+    <div class="test-item">
+        <h3>✅ 1. API Endpoints Test</h3>
+        <button onclick="testAllAPIs()">Test All APIs</button>
+        <div id="api-results"></div>
+    </div>
+
+    <div class="test-item">
+        <h3>✅ 2. Banner HTML Structure</h3>
+        <button onclick="testBannerHTML()">Test HTML Structure</button>
+        <div id="html-results"></div>
+    </div>
+
+    <div class="test-item">
+        <h3>✅ 3. Assets Loading</h3>
+        <button onclick="testAssets()">Test CSS/JS Loading</button>
+        <div id="assets-results"></div>
+    </div>
+
+    <div class="test-item">
+        <h3>✅ 4. Open Live Site</h3>
+        <button onclick="openLiveSite()">Open lamgame.localhost</button>
+        <p>Click to verify the banner visually</p>
+    </div>
+
+    <script>
+        const BASE_URL = 'https://lamgame.localhost';
+
+        async function testAllAPIs() {
+            const resultsDiv = document.getElementById('api-results');
+            resultsDiv.innerHTML = '<span class="loading">Testing APIs...</span>';
+            
+            const endpoints = ['jobs', 'topics', 'blogs', 'sources'];
+            const results = [];
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(`${BASE_URL}/api/banner/${endpoint}`);
+                    const data = await response.json();
+                    
+                    if (response.ok && data.success) {
+                        results.push(`<span class="success">✓ ${endpoint}: OK</span>`);
+                    } else {
+                        results.push(`<span class="error">✗ ${endpoint}: Failed</span>`);
+                    }
+                } catch (error) {
+                    results.push(`<span class="error">✗ ${endpoint}: Network Error</span>`);
+                }
+            }
+            
+            resultsDiv.innerHTML = results.join('<br>');
+        }
+
+        async function testBannerHTML() {
+            const resultsDiv = document.getElementById('html-results');
+            resultsDiv.innerHTML = '<span class="loading">Checking HTML structure...</span>';
+            
+            try {
+                const response = await fetch(BASE_URL);
+                const html = await response.text();
+                
+                const checks = [
+                    { name: 'Hero Section', pattern: 'hero-optimized' },
+                    { name: '4 Slides', pattern: 'slide.*slide.*slide.*slide' },
+                    { name: 'Navigation Arrows', pattern: 'banner-arrow' },
+                    { name: 'Dots Navigation', pattern: 'banner-dot' },
+                    { name: 'Dynamic Content IDs', pattern: 'id="job-stats".*id="hot-topic"' }
+                ];
+                
+                const results = checks.map(check => {
+                    const found = new RegExp(check.pattern, 'i').test(html);
+                    const status = found ? 'success' : 'error';
+                    const icon = found ? '✓' : '✗';
+                    return `<span class="${status}">${icon} ${check.name}</span>`;
+                });
+                
+                resultsDiv.innerHTML = results.join('<br>');
+            } catch (error) {
+                resultsDiv.innerHTML = '<span class="error">✗ Failed to check HTML</span>';
+            }
+        }
+
+        async function testAssets() {
+            const resultsDiv = document.getElementById('assets-results');
+            resultsDiv.innerHTML = '<span class="loading">Testing asset loading...</span>';
+            
+            const assets = [
+                { name: 'Banner CSS', url: `${BASE_URL}/themes/shop/emsaigon/assets/css/lamgame-optimized-banner.css` },
+                { name: 'Banner JS', url: `${BASE_URL}/themes/shop/emsaigon/assets/js/lamgame-optimized-banner.js` }
+            ];
+            
+            const results = [];
+            
+            for (const asset of assets) {
+                try {
+                    const response = await fetch(asset.url, { method: 'HEAD' });
+                    const status = response.ok ? 'success' : 'error';
+                    const icon = response.ok ? '✓' : '✗';
+                    const size = response.headers.get('content-length');
+                    const sizeText = size ? `(${Math.round(size/1024)}KB)` : '';
+                    
+                    results.push(`<span class="${status}">${icon} ${asset.name} ${sizeText}</span>`);
+                } catch (error) {
+                    results.push(`<span class="error">✗ ${asset.name}: Network Error</span>`);
+                }
+            }
+            
+            resultsDiv.innerHTML = results.join('<br>');
+        }
+
+        function openLiveSite() {
+            window.open(BASE_URL, '_blank');
+        }
+
+        // Auto-run basic tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testAllAPIs();
+                testBannerHTML();
+                testAssets();
+            }, 1000);
+        });
+    </script>
+
+    <hr style="margin: 30px 0;">
+    <h2>📋 Manual Verification Checklist</h2>
+    <ul>
+        <li>✅ Banner shows 4 different slides</li>
+        <li>✅ Navigation arrows work (desktop only)</li>
+        <li>✅ Dots navigation clickable</li>
+        <li>✅ Auto-play every 6 seconds</li>
+        <li>✅ Pause on hover</li>
+        <li>✅ Dynamic content updates</li>
+        <li>✅ Mobile responsive</li>
+        <li>✅ Touch/swipe on mobile</li>
+    </ul>
+
+    <p><strong>Expected slides:</strong></p>
+    <ol>
+        <li><strong>Jobs:</strong> "Khám Phá Việc Làm Game Dev Hot Nhất!"</li>
+        <li><strong>Forum:</strong> "Thảo Luận Sôi Động: Topic Forum Nóng Hổi!"</li>
+        <li><strong>Blog:</strong> "Bài Viết Mới Nhất Từ Developer!"</li>
+        <li><strong>Creative:</strong> "Khám Phá Game Mới & Ý Tưởng Sáng Tạo!"</li>
+    </ol>
+</body>
+</html>
