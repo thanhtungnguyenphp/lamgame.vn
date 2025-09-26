@@ -1,19 +1,89 @@
-{{-- LAMGAME HOMEPAGE - Updated with Enhanced Hero Banner V2 --}}
+{{-- LAMGAME HOMEPAGE - Updated with Optimized 4-Slide Banner --}}
 @extends('layouts.master')
 
-@section('page_title', 'Làm Game • Học lập trình game, Unity, Unreal Engine từ cơ bản đến nâng cao')
+@section('page_title', 'LamGame.vn — Cộng đồng Game Developer Việt Nam | Việc làm Game Dev')
 
-@section('page_description', 'Làm Game - Trung tâm đào tạo lập trình game chuyên nghiệp. Học Unity, Unreal Engine, C#, Game Design từ cơ bản đến nâng cao. Cam kết việc làm sau khóa học.')
+@section('page_description', 'Cộng đồng Game Developer Việt Nam hàng đầu. Tìm việc làm game dev, thảo luận Unity/Unreal Engine, chia sẻ source code và ý tưởng game sáng tạo. 50+ jobs mới mỗi tuần từ VNG, Gameloft.')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-optimized-banner.css') }}">
+@endpush
+
+@push('scripts')
+    <script src="{{ asset('themes/shop/emsaigon/assets/js/lamgame-optimized-banner.js') }}"></script>
+@endpush
 
 @section('content')
-    <!-- Enhanced Hero Banner -->
-    <section class="hero-banner-v2" id="hero-banner">
-        <!-- Dynamic Background Slider -->
-        <div class="hero-backgrounds">
-            <div class="bg-slide active" data-bg="unity"></div>
-            <div class="bg-slide" data-bg="unreal"></div>
-            <div class="bg-slide" data-bg="coding"></div>
+    <!-- LamGame Optimized 4-Slide Banner -->
+    <section class="hero-optimized" id="hero-banner" aria-label="Banner chính LamGame.vn">
+        <button class="arrow banner-arrow prev" aria-label="Slide trước" tabindex="0">◄</button>
+        <button class="arrow banner-arrow next" aria-label="Slide sau" tabindex="0">►</button>
+        
+        <div class="track" id="banner-track">
+            <!-- Slide 1: Việc làm Game Dev -->
+            <div class="slide">
+                <div class="bg jobs"></div>
+                <div class="overlay"></div>
+                <div class="content">
+                    <h1>Khám Phá Việc Làm Game Dev Hot Nhất!</h1>
+                    <p>Hàng trăm vị trí từ VNG, Gameloft: Unity Developer lương 20-40tr VNĐ. <span class="dynamic-content" id="job-stats">50+ jobs tuần này</span>, apply ngay để kết nối với công ty hàng đầu!</p>
+                    <div class="btns">
+                        <a class="btn primary" href="{{ route('jobs.index') }}">Xem Jobs Mới</a>
+                        <a class="btn secondary" href="{{ route('forum.index') }}">Hỏi kinh nghiệm phỏng vấn</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 2: Topic Forum Hot -->
+            <div class="slide">
+                <div class="bg forum"></div>
+                <div class="overlay"></div>
+                <div class="content">
+                    <h1>Thảo Luận Sôi Động: Topic Forum Nóng Hổi!</h1>
+                    <p>Topic hot: <span class="dynamic-content" id="hot-topic">'Unity vs Unreal cho game mobile?'</span> – <span class="dynamic-content" id="topic-stats">150 comments, 500 views, 80 likes</span> trong 24h. Tham gia ngay để chia sẻ kinh nghiệm với cộng đồng dev!</p>
+                    <div class="btns">
+                        <a class="btn primary" href="{{ route('forum.hot-topics') }}">Tham Gia Thảo Luận</a>
+                        <a class="btn secondary" href="{{ route('forum.index') }}">Xem tất cả Topics</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 3: Bài viết mới -->
+            <div class="slide">
+                <div class="bg blog"></div>
+                <div class="overlay"></div>
+                <div class="content">
+                    <h1>Bài Viết Mới Nhất Từ Developer!</h1>
+                    <p>Bài mới: <span class="dynamic-content" id="new-blog">'Tối ưu hóa performance Unity cho game 3D'</span> – Đăng bởi dev @UserX, <span class="dynamic-content" id="blog-stats">200 views, 50 shares</span>. Đọc để cập nhật kiến thức hot nhất!</p>
+                    <div class="btns">
+                        <a class="btn primary" href="{{ route('blog.latest') }}">Đọc Bài Viết</a>
+                        <a class="btn secondary" href="{{ route('blog.index') }}">Xem tất cả Blog</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 4: Game & Source mới -->
+            <div class="slide">
+                <div class="bg creative"></div>
+                <div class="overlay"></div>
+                <div class="content">
+                    <h1>Khám Phá Game Mới & Ý Tưởng Sáng Tạo!</h1>
+                    <p>Source mới: <span class="dynamic-content" id="new-source">'Roguelike Unity kit'</span> trên GitHub. Ý tưởng: <span class="dynamic-content" id="new-idea">'VR adventure Việt Nam folklore'</span>. Game demo từ dev cộng đồng – Download & phát triển ngay!</p>
+                    <div class="btns">
+                        <a class="btn primary" href="{{ route('shares.games') }}">Khám Phá & Chia Sẻ</a>
+                        <a class="btn secondary" href="{{ route('sources.index') }}">Xem Source Code</a>
+                    </div>
+                </div>
+            </div>
         </div>
+        
+        <div class="dots" aria-hidden="true">
+            <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide 1"></div>
+            <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide 2"></div>
+            <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide 3"></div>
+            <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide 4"></div>
+        </div>
+    </section>
         
         <!-- Animated Particles Layer -->
         <canvas id="particles-canvas"></canvas>

@@ -197,7 +197,9 @@
     
     <!-- Homepage specific CSS -->
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-homepage.css') }}">
-    <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/hero-banner-v2.css') }}">
+    
+    <!-- Dynamic styles from pages -->
+    @stack('styles')
     
     <!-- Pagination CSS -->
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
@@ -418,7 +420,7 @@
         });
     </script>
     
-    <!-- Hero Banner V2 Interactive Features -->
-    <script src="{{ asset('themes/shop/emsaigon/assets/js/hero-banner-v2.js') }}"></script>
+    <!-- Additional page scripts -->
+    @stack('scripts')
 </body>
 </html>
