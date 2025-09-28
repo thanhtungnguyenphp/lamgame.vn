@@ -300,26 +300,53 @@
     </div>
 
     <!-- Vue.js 3 and Axios for dynamic content -->
-    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js" onload="initializeVueApp()" onerror="handleVueLoadError()"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     
     <!-- Initialize Vue App -->
     <script>
-        const { createApp } = Vue;
-        const app = createApp({});
+        function handleVueLoadError() {
+            console.warn("Failed to load Vue.js. Some features may not work.");
+        }
         
-        // Add axios to app config
-        app.config.globalProperties.$axios = axios;
-        
-        // Event emitter for component communication  
-        app.config.globalProperties.$emitter = {
-            emit: (event, data) => {
-                document.dispatchEvent(new CustomEvent(event, { detail: data }));
-            },
-            on: (event, callback) => {
-                document.addEventListener(event, (e) => callback(e.detail));
+        function initializeVueApp() {
+            try {
+                // Check if Vue is available
+                if (typeof Vue === "undefined") {
+                    console.warn("Vue is not loaded. Some features may not work.");
+                    return;
+                }
+                
+                const { createApp } = Vue;
+                const app = createApp({});
+                
+                // Add axios to app config if available
+                if (typeof axios !== "undefined") {
+                    app.config.globalProperties.$axios = axios;
+                }
+                
+                // Event emitter for component communication  
+                app.config.globalProperties.$emitter = {
+                    emit: (event, data) => {
+                        document.dispatchEvent(new CustomEvent(event, { detail: data }));
+                    },
+                    on: (event, callback) => {
+                        document.addEventListener(event, (e) => callback(e.detail));
+                    }
+                };
+                
+                console.log("Vue app initialized successfully");
+            } catch (error) {
+                console.error("Vue initialization error:", error);
             }
-        };
+        }
+        
+        // Fallback: try to initialize if Vue is already loaded
+        document.addEventListener("DOMContentLoaded", () => {
+            if (typeof Vue !== "undefined") {
+                initializeVueApp();
+            }
+        });
     </script>
     
     <!-- Vite Assets -->

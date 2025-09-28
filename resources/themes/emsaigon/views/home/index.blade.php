@@ -9,9 +9,6 @@
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-optimized-banner.css') }}">
 @endpush
 
-@push('scripts')
-    <script src="{{ asset('themes/shop/emsaigon/assets/js/lamgame-optimized-banner.js') }}"></script>
-@endpush
 
 @section('content')
     <!-- LamGame Optimized 4-Slide Banner -->
