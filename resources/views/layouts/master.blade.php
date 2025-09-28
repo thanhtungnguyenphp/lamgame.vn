@@ -217,7 +217,7 @@
                 
                 {{-- Navigation Menu --}}
                 <nav class="nav">
-                    <a href="{{ route('shop.home.index') }}" class="{{ request()->routeIs('shop.home.index') ? 'active' : '' }}">Trang chủ</a>
+                    <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Trang chủ</a>
                     <a href="{{ route('lamgame.source-game') }}" class="{{ request()->routeIs('lamgame.source-game') ? 'active' : '' }}">Source Game</a>
                     <a href="{{ route('forum.index') }}" class="{{ request()->routeIs('forum.*') ? 'active' : '' }}">Forum</a>
                     <a href="{{ route('lamgame.blog') }}" class="{{ request()->routeIs('lamgame.blog*', 'blog.*') ? 'active' : '' }}">Blog</a>
