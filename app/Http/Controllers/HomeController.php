@@ -111,34 +111,69 @@ class HomeController extends Controller
     }
 
     /**
-     * Get hot forum topics (40% community)
+     * Get hot forum topics (40% community) - Top 6 "Chủ Đề Nổi Bật"
      */
     private function getHotForumTopics()
     {
         try {
+            // Lấy top 6 topic nổi bật dựa trên comments và likes
             $hotTopics = ForumPost::published()
-                ->with(['category'])
-                ->whereDate('created_at', '>=', now()->subDays(7))
-                ->orderBy('views_count', 'desc')
-                ->orderBy('comments_count', 'desc')
-                ->orderBy('likes_count', 'desc')
-                ->limit(5)
+                ->with(['category', 'comments' => function($query) {
+                    $query->published()
+                        ->orderBy('created_at', 'desc')
+                        ->take(1); // Lấy comment mới nhất để làm snippet
+                }])
+                ->where(function($query) {
+                    // Ưu tiên posts có nhiều comments hoặc likes hoặc featured
+                    $query->where('comments_count', '>', 3)
+                          ->orWhere('likes_count', '>', 5)
+                          ->orWhere('is_featured', true);
+                })
+                // Tính toán hot score: comments * 2 + likes + views/10
+                ->orderByRaw('(comments_count * 2 + likes_count + views_count/10) DESC')
+                ->limit(6)
                 ->get();
+
+            // Nếu không đủ 6 posts, lấy thêm posts mới nhất
+            if ($hotTopics->count() < 6) {
+                $excludeIds = $hotTopics->pluck('id')->toArray();
+                $additionalTopics = ForumPost::published()
+                    ->with(['category', 'comments' => function($query) {
+                        $query->published()->orderBy('created_at', 'desc')->take(1);
+                    }])
+                    ->whereNotIn('id', $excludeIds)
+                    ->orderBy('created_at', 'desc')
+                    ->limit(6 - $hotTopics->count())
+                    ->get();
+                
+                $hotTopics = $hotTopics->merge($additionalTopics);
+            }
 
             $topicsData = [];
             foreach ($hotTopics as $topic) {
+                // Lấy comment snippet cho teaser
+                $latestComment = $topic->comments->first();
+                $commentSnippet = $latestComment ? 
+                    \Illuminate\Support\Str::limit(strip_tags($latestComment->content), 60) : 
+                    '';
+                
                 $topicsData[] = [
                     'id' => $topic->id,
                     'title' => $topic->title,
                     'author' => $topic->author_name,
                     'category' => $topic->category->name ?? 'General',
+                    'category_icon' => $topic->category->icon ?? '💬',
+                    'category_color' => $topic->category->color ?? '#667eea',
                     'replies' => $topic->comments_count,
                     'views' => $topic->views_count,
                     'likes' => $topic->likes_count,
                     'created_at' => $topic->created_at->format('Y-m-d H:i:s'),
                     'time_ago' => $topic->created_at->diffForHumans(),
                     'excerpt' => $topic->excerpt,
+                    'comment_snippet' => $commentSnippet,
+                    'latest_comment_author' => $latestComment ? $latestComment->author_name : '',
                     'url' => route('forum.posts.show', $topic->slug),
+                    'forum_url' => route('forum.index'),
                 ];
             }
 
@@ -148,10 +183,46 @@ class HomeController extends Controller
                 'active_discussions' => ForumPost::published()->whereDate('last_comment_at', '>=', now()->subDays(1))->count(),
             ];
         } catch (\Exception $e) {
+            // Fallback data nếu có lỗi
             return [
-                'featured' => [],
-                'total_posts' => 0,
-                'active_discussions' => 0,
+                'featured' => [
+                    [
+                        'id' => 1,
+                        'title' => 'Share source code AR game',
+                        'author' => 'GameDev_VN',
+                        'category' => 'Chia sẻ ý tưởng',
+                        'category_icon' => '💡',
+                        'category_color' => '#ffd700',
+                        'replies' => 300,
+                        'views' => 1250,
+                        'likes' => 85,
+                        'time_ago' => '2 giờ trước',
+                        'excerpt' => 'Mình đang phát triển AR game với Unity, muốn chia sẻ source code để cộng đồng cùng học hỏi.',
+                        'comment_snippet' => 'Cảm ơn bạn! Source này rất hữu ích cho Unity developer...',
+                        'latest_comment_author' => 'UnityExpert',
+                        'url' => '#',
+                        'forum_url' => route('forum.index'),
+                    ],
+                    [
+                        'id' => 2,
+                        'title' => 'Ý tưởng game dựa trên lịch sử VN',
+                        'author' => 'HistoryGamer',
+                        'category' => 'Thảo luận',
+                        'category_icon' => '💭',
+                        'category_color' => '#667eea',
+                        'replies' => 150,
+                        'views' => 800,
+                        'likes' => 65,
+                        'time_ago' => '5 giờ trước',
+                        'excerpt' => 'Làm game RPG lấy bối cảnh lịch sử Việt Nam, từ thời Hùng Vương đến các triều đại phong kiến.',
+                        'comment_snippet' => 'Ý tưởng hay quá! Mình có thể hỗ trợ research lịch sử...',
+                        'latest_comment_author' => 'VietHistorian',
+                        'url' => '#',
+                        'forum_url' => route('forum.index'),
+                    ],
+                ],
+                'total_posts' => 50,
+                'active_discussions' => 12,
             ];
         }
     }

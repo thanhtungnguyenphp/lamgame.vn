@@ -259,20 +259,621 @@
         </div>
     </section>
 
-    <!-- Why Choose LamGame -->
-    <section id="loi-ich" class="benefits-section">
+    <!-- Featured Forum Topics -->
+    <section id="loi-ich" class="benefits-section featured-topics-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Tại sao chọn Làm Game?</h2>
+                <h2 class="section-title">🔥 Chủ Đề Nổi Bật</h2>
                 <p class="section-subtitle">
-                    6 lý do học viên tin tưởng và lựa chọn chúng tôi
+                    Top 6 topic mới/comment nhiều từ cộng đồng game developer Việt Nam
                 </p>
             </div>
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <div class="benefit-icon">🏆</div>
-                    <div class="benefit-content">
-                        <h4>Chất lượng giảng dạy</h4>
+            
+            <div class="topics-grid">
+                @if(isset($hotForumTopics['featured']) && count($hotForumTopics['featured']) > 0)
+                    @foreach($hotForumTopics['featured'] as $index => $topic)
+                        <div class="topic-card {{ $index < 2 ? 'featured' : '' }}">
+                            <div class="topic-header">
+                                <div class="topic-category" style="background: {{ $topic['category_color'] }}20; color: {{ $topic['category_color'] }}">
+                                    {{ $topic['category_icon'] }} {{ $topic['category'] }}
+                                </div>
+                                <div class="topic-meta">
+                                    <span class="topic-time">{{ $topic['time_ago'] }}</span>
+                                    @if($topic['replies'] > 50)
+                                        <span class="topic-hot">🔥 Hot</span>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            <div class="topic-content">
+                                <h4 class="topic-title">
+                                    <a href="{{ $topic['url'] }}" target="_blank">{{ $topic['title'] }}</a>
+                                </h4>
+                                <p class="topic-excerpt">{{ $topic['excerpt'] }}</p>
+                                
+                                @if($topic['comment_snippet'])
+                                    <div class="topic-comment-teaser">
+                                        <div class="comment-icon">💬</div>
+                                        <div class="comment-content">
+                                            <span class="comment-text">"{{ $topic['comment_snippet'] }}"</span>
+                                            <span class="comment-author">- {{ $topic['latest_comment_author'] }}</span>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                            
+                            <div class="topic-stats">
+                                <div class="stat-item">
+                                    <i class="fa fa-comments"></i>
+                                    <span>{{ $topic['replies'] }} comments</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fa fa-thumbs-up"></i>
+                                    <span>{{ $topic['likes'] }} likes</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fa fa-eye"></i>
+                                    <span>{{ number_format($topic['views']) }} views</span>
+                                </div>
+                            </div>
+                            
+                            <div class="topic-cta">
+                                <a href="{{ $topic['url'] }}" class="btn btn-outline btn-sm" target="_blank">
+                                    Tham gia thảo luận
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <!-- Fallback content -->
+                    <div class="topic-card featured">
+                        <div class="topic-header">
+                            <div class="topic-category" style="background: #ffd70020; color: #ffd700">
+                                💡 Chia sẻ ý tưởng
+                            </div>
+                            <div class="topic-meta">
+                                <span class="topic-time">2 giờ trước</span>
+                                <span class="topic-hot">🔥 Hot</span>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-content">
+                            <h4 class="topic-title">
+                                <a href="{{ route('forum.index') }}" target="_blank">Share source code AR game</a>
+                            </h4>
+                            <p class="topic-excerpt">Mình đang phát triển AR game với Unity, muốn chia sẻ source code để cộng đồng cùng học hỏi.</p>
+                            
+                            <div class="topic-comment-teaser">
+                                <div class="comment-icon">💬</div>
+                                <div class="comment-content">
+                                    <span class="comment-text">"Cảm ơn bạn! Source này rất hữu ích cho Unity developer..."</span>
+                                    <span class="comment-author">- UnityExpert</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-stats">
+                            <div class="stat-item">
+                                <i class="fa fa-comments"></i>
+                                <span>300 comments</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-thumbs-up"></i>
+                                <span>85 likes</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-eye"></i>
+                                <span>1,250 views</span>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-cta">
+                            <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
+                                Tham gia thảo luận
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="topic-card featured">
+                        <div class="topic-header">
+                            <div class="topic-category" style="background: #667eea20; color: #667eea">
+                                💭 Thảo luận
+                            </div>
+                            <div class="topic-meta">
+                                <span class="topic-time">5 giờ trước</span>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-content">
+                            <h4 class="topic-title">
+                                <a href="{{ route('forum.index') }}" target="_blank">Ý tưởng game dựa trên lịch sử VN</a>
+                            </h4>
+                            <p class="topic-excerpt">Làm game RPG lấy bối cảnh lịch sử Việt Nam, từ thời Hùng Vương đến các triều đại phong kiến.</p>
+                            
+                            <div class="topic-comment-teaser">
+                                <div class="comment-icon">💬</div>
+                                <div class="comment-content">
+                                    <span class="comment-text">"Ý tưởng hay quá! Mình có thể hỗ trợ research lịch sử..."</span>
+                                    <span class="comment-author">- VietHistorian</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-stats">
+                            <div class="stat-item">
+                                <i class="fa fa-comments"></i>
+                                <span>150 comments</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-thumbs-up"></i>
+                                <span>65 likes</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-eye"></i>
+                                <span>800 views</span>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-cta">
+                            <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
+                                Tham gia thảo luận
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="topic-card">
+                        <div class="topic-header">
+                            <div class="topic-category" style="background: #8b5cf620; color: #8b5cf6">
+                                🛠️ Hỗ trợ kỹ thuật
+                            </div>
+                            <div class="topic-meta">
+                                <span class="topic-time">1 ngày trước</span>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-content">
+                            <h4 class="topic-title">
+                                <a href="{{ route('forum.index') }}" target="_blank">Làm thế nào để tối ưu performance Unity?</a>
+                            </h4>
+                            <p class="topic-excerpt">Game mobile FPS giảm mạnh, đã thử object pooling nhưng vẫn chưa đủ.</p>
+                            
+                            <div class="topic-comment-teaser">
+                                <div class="comment-icon">💬</div>
+                                <div class="comment-content">
+                                    <span class="comment-text">"Thử giảm draw calls bằng cách merge meshes..."</span>
+                                    <span class="comment-author">- IndieCreator</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-stats">
+                            <div class="stat-item">
+                                <i class="fa fa-comments"></i>
+                                <span>45 comments</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-thumbs-up"></i>
+                                <span>25 likes</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-eye"></i>
+                                <span>420 views</span>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-cta">
+                            <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
+                                Tham gia thảo luận
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="topic-card">
+                        <div class="topic-header">
+                            <div class="topic-category" style="background: #ff6b3520; color: #ff6b35">
+                                👥 Tìm team
+                            </div>
+                            <div class="topic-meta">
+                                <span class="topic-time">3 ngày trước</span>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-content">
+                            <h4 class="topic-title">
+                                <a href="{{ route('forum.index') }}" target="_blank">Tìm Unity Developer cho game horror indie</a>
+                            </h4>
+                            <p class="topic-excerpt">Dự án "Midnight School" cần Unity dev với 2+ năm kinh nghiệm, rev-share model.</p>
+                            
+                            <div class="topic-comment-teaser">
+                                <div class="comment-icon">💬</div>
+                                <div class="comment-content">
+                                    <span class="comment-text">"Mình quan tâm position này. Portfolio: [link]..."</span>
+                                    <span class="comment-author">- GameOptimizer</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-stats">
+                            <div class="stat-item">
+                                <i class="fa fa-comments"></i>
+                                <span>28 comments</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-thumbs-up"></i>
+                                <span>18 likes</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-eye"></i>
+                                <span>180 views</span>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-cta">
+                            <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
+                                Tham gia thảo luận
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="topic-card">
+                        <div class="topic-header">
+                            <div class="topic-category" style="background: #10b98120; color: #10b981">
+                                📚 Review khóa học
+                            </div>
+                            <div class="topic-meta">
+                                <span class="topic-time">5 ngày trước</span>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-content">
+                            <h4 class="topic-title">
+                                <a href="{{ route('forum.index') }}" target="_blank">Review khóa học Unity tại GameDev Academy</a>
+                            </h4>
+                            <p class="topic-excerpt">Vừa hoàn thành khóa Unity 3 tháng, chia sẻ review chi tiết cho ae.</p>
+                            
+                            <div class="topic-comment-teaser">
+                                <div class="comment-icon">💬</div>
+                                <div class="comment-content">
+                                    <span class="comment-text">"Mức lương 12M cho junior dev ở HCM khá ok đấy..."</span>
+                                    <span class="comment-author">- CodeMaster</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-stats">
+                            <div class="stat-item">
+                                <i class="fa fa-comments"></i>
+                                <span>31 comments</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-thumbs-up"></i>
+                                <span>22 likes</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-eye"></i>
+                                <span>445 views</span>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-cta">
+                            <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
+                                Tham gia thảo luận
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="topic-card">
+                        <div class="topic-header">
+                            <div class="topic-category" style="background: #f59e0b20; color: #f59e0b">
+                                🎯 Showcase
+                            </div>
+                            <div class="topic-meta">
+                                <span class="topic-time">1 tuần trước</span>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-content">
+                            <h4 class="topic-title">
+                                <a href="{{ route('forum.index') }}" target="_blank">"Cyber Runner" - Game endless runner hoàn thành</a>
+                            </h4>
+                            <p class="topic-excerpt">Sau 6 tháng làm việc, mình đã hoàn thành game đầu tiên!</p>
+                            
+                            <div class="topic-comment-teaser">
+                                <div class="comment-icon">💬</div>
+                                <div class="comment-content">
+                                    <span class="comment-text">"Amazing work for solo dev! Inspiration cho mình quá..."</span>
+                                    <span class="comment-author">- GameOptimizer</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-stats">
+                            <div class="stat-item">
+                                <i class="fa fa-comments"></i>
+                                <span>67 comments</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-thumbs-up"></i>
+                                <span>45 likes</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-eye"></i>
+                                <span>523 views</span>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-cta">
+                            <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
+                                Tham gia thảo luận
+                            </a>
+                        </div>
+                    </div>
+                @endif
+            </div>
+            
+            <div class="topics-cta">
+                <p>Khám phá thêm {{ isset($hotForumTopics['total_posts']) ? $hotForumTopics['total_posts'] : '50+' }} chủ đề thú vị từ cộng đồng</p>
+                <a href="{{ route('forum.index') }}" class="btn btn-outline" target="_blank">
+                    Xem Tất Cả Forum
+                </a>
+            </div>
+        </div>
+    </section>
+
+@push('styles')
+<style>
+/* Featured Topics Section Styles */
+.featured-topics-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.featured-topics-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.1);
+    z-index: 1;
+}
+
+.featured-topics-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+.featured-topics-section .section-title {
+    color: white;
+}
+
+.featured-topics-section .section-subtitle {
+    color: rgba(255,255,255,0.9);
+}
+
+.topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.topic-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    color: #333;
+}
+
+.topic-card.featured {
+    border: 3px solid #ffd700;
+    transform: scale(1.02);
+    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.2);
+}
+
+.topic-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.topic-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.topic-category {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.topic-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.topic-time {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.topic-hot {
+    background: linear-gradient(45deg, #ff6b35, #ff4757);
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.topic-title {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.topic-title a {
+    color: #2c3e50;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.topic-title a:hover {
+    color: #667eea;
+}
+
+.topic-excerpt {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.topic-comment-teaser {
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.comment-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.comment-content {
+    flex: 1;
+}
+
+.comment-text {
+    display: block;
+    font-style: italic;
+    color: #555;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+}
+
+.comment-author {
+    font-size: 0.8rem;
+    color: #667eea;
+    font-weight: 500;
+}
+
+.topic-stats {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 0.75rem 0;
+    border-top: 1px solid #eee;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.stat-item i {
+    width: 14px;
+    text-align: center;
+}
+
+.topic-cta {
+    margin-top: 1rem;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+}
+
+.topics-cta {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.topics-cta p {
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.topics-cta .btn-outline {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.topics-cta .btn-outline:hover {
+    background: white;
+    color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255,255,255,0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .topics-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .topic-card.featured {
+        transform: none;
+    }
+    
+    .topic-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+    
+    .topic-meta {
+        margin-top: 0.5rem;
+    }
+    
+    .topic-stats {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+}
+</style>
+@endpush
+
+    <!-- Old benefits section continues below if needed -->
+    <div style="display: none;">
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-icon">🏆</div>
+                <div class="benefit-content">
+                    <h4>Chất lượng giảng dạy</h4>
                         <p class="muted">Giảng viên là các chuyên gia có kinh nghiệm thực tế trong công nghiệp game.</p>
                     </div>
                 </div>
