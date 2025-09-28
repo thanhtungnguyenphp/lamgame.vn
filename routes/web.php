@@ -1,10 +1,16 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LamGamePageController;
 use App\Http\Controllers\ForumController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
+
+// Homepage route - Must be first to override any default routes
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/test-home', [HomeController::class, 'index'])->name('test-home');
+Route::get('/debug-homepage', [HomeController::class, 'index'])->name('debug-homepage');
 
 // Source Game routes
 Route::get('source-game', [LamGamePageController::class, 'sourceGame'])->name('lamgame.source-game');
