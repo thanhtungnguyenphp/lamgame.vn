@@ -3,6 +3,14 @@ import laravel from 'laravel-vite-plugin'
 import { resolve } from 'path'
 
 export default defineConfig({
+  build: {
+    target: 'es2015',
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      }
+    }
+  },
   plugins: [
     // App assets gốc của dự án (giữ nguyên)
     laravel({

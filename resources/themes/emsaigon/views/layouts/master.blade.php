@@ -100,7 +100,7 @@
 
     <!-- Scripts -->
     @stack('scripts')
-    <script src="{{ asset('themes/shop/emsaigon/assets/js/hero-banner-v2.js') }}"></script>
+    
     @vite(['resources/themes/emsaigon/assets/js/app.js'], 'themes/shop/emsaigon/build')
     
     <script>
