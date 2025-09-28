@@ -88,11 +88,11 @@ class CustomerAuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Đăng nhập thành công!',
-                'redirect_url' => route('shop.home.index')
+                'redirect_url' => route('home')
             ]);
         }
 
-        return redirect()->intended(route('shop.home.index'))
+        return redirect()->intended(route('home'))
                         ->with('success', 'Chào mừng bạn quay trở lại!');
     }
 
@@ -158,11 +158,11 @@ class CustomerAuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Đăng ký thành công! Chào mừng bạn đến với LAMGAME.',
-                'redirect_url' => route('shop.home.index')
+                'redirect_url' => route('home')
             ]);
         }
 
-        return redirect(route('shop.home.index'))
+        return redirect(route('home'))
                         ->with('success', 'Đăng ký thành công! Chào mừng bạn đến với LAMGAME.');
     }
 
@@ -224,11 +224,11 @@ class CustomerAuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Đã đăng xuất thành công.',
-                'redirect_url' => route('shop.home.index')
+                'redirect_url' => route('home')
             ]);
         }
 
-        return redirect(route('shop.home.index'))
+        return redirect(route('home'))
                         ->with('success', 'Đã đăng xuất thành công.');
     }
 
