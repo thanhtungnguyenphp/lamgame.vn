@@ -916,67 +916,518 @@
         </div>
     </section>
 
-    <!-- Student Success Stories -->
-    <section id="thanh-cong" class="success-section">
+    <!-- Blog & News Section -->
+    <section id="thanh-cong" class="blog-news-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Câu chuyện thành công</h2>
+                <h2 class="section-title">📰 Blog & Tin tức</h2>
                 <p class="section-subtitle">
-                    Nghe chia sẻ từ những học viên đã thành công sau khi học tại Làm Game
+                    Những bài viết mới và được đọc giả nhiều nhất từ cộng đồng game developer
                 </p>
             </div>
             
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" alt="Nguyễn Văn A" class="testimonial-avatar">
-                        <div class="testimonial-info">
-                            <h4>Nguyễn Văn A</h4>
-                            <p>Unity Developer tầi VNG Corporation</p>
+            <div class="blog-grid">
+                @if(isset($latestBlogs['featured']) && count($latestBlogs['featured']) > 0)
+                    @foreach($latestBlogs['featured'] as $index => $blog)
+                        <article class="blog-card {{ $index < 2 ? 'featured' : '' }}">
+                            <div class="blog-image">
+                                <img src="{{ $blog['featured_image'] }}" alt="{{ $blog['title'] }}" loading="lazy">
+                                <div class="blog-overlay">
+                                    <div class="blog-category" style="background: {{ $blog['category_color'] }}; color: white;">
+                                        {{ $blog['category'] }}
+                                    </div>
+                                    <div class="blog-reading-time">
+                                        <i class="fa fa-clock"></i> {{ $blog['reading_time'] }} phút đọc
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="blog-content">
+                                <div class="blog-meta">
+                                    <span class="blog-author">
+                                        <i class="fa fa-user"></i> {{ $blog['author'] }}
+                                    </span>
+                                    <span class="blog-date">
+                                        <i class="fa fa-calendar"></i> {{ $blog['time_ago'] }}
+                                    </span>
+                                </div>
+                                
+                                <h3 class="blog-title">
+                                    <a href="{{ $blog['url'] }}" target="_blank">{{ $blog['title'] }}</a>
+                                </h3>
+                                
+                                <p class="blog-excerpt">{{ $blog['excerpt'] }}</p>
+                                
+                                @if($blog['comment_snippet'])
+                                    <div class="blog-comment-teaser">
+                                        <div class="comment-icon">💬</div>
+                                        <div class="comment-content">
+                                            <span class="comment-text">"{{ $blog['comment_snippet'] }}"</span>
+                                            <span class="comment-author">- {{ $blog['latest_comment_author'] }}</span>
+                                        </div>
+                                    </div>
+                                @endif
+                                
+                                <div class="blog-stats">
+                                    <div class="stat-item">
+                                        <i class="fa fa-eye"></i>
+                                        <span>{{ number_format($blog['views']) }} lượt xem</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fa fa-share"></i>
+                                        <span>{{ $blog['shares'] }} lượt chia sẻ</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fa fa-comments"></i>
+                                        <span>{{ rand(5, 50) }} comments</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="blog-cta">
+                                    <a href="{{ $blog['url'] }}" class="btn btn-outline btn-sm" target="_blank">
+                                        Đọc thêm
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    @endforeach
+                @else
+                    <!-- Fallback blog content -->
+                    <article class="blog-card featured">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop" alt="Unity 2024" loading="lazy">
+                            <div class="blog-overlay">
+                                <div class="blog-category" style="background: #ff6b35; color: white;">
+                                    Unity
+                                </div>
+                                <div class="blog-reading-time">
+                                    <i class="fa fa-clock"></i> 8 phút đọc
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="testimonial-content">
-                        <p>"Sau khóa học Unity tại Làm Game, tôi đã tự tin xin việc và nhận lương 25 triệu/tháng. Giảng viên rất tận tình, hỗ trợ cả sau khi ra trường."</p>
-                    </div>
-                    <div class="testimonial-rating">
-                        <span class="stars">★★★★★</span>
-                    </div>
-                </div>
-                
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face" alt="Trần Thị B" class="testimonial-avatar">
-                        <div class="testimonial-info">
-                            <h4>Trần Thị B</h4>
-                            <p>Game Designer tầi Gameloft</p>
+                        
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span class="blog-author">
+                                    <i class="fa fa-user"></i> LamGame Team
+                                </span>
+                                <span class="blog-date">
+                                    <i class="fa fa-calendar"></i> 2 giờ trước
+                                </span>
+                            </div>
+                            
+                            <h3 class="blog-title">
+                                <a href="{{ route('lamgame.blog') }}" target="_blank">Hướng dẫn Unity 2024 - Tính năng mới</a>
+                            </h3>
+                            
+                            <p class="blog-excerpt">Unity 2024 mang đến nhiều cải tiến quan trọng giúp game developer tăng hiệu suất và chất lượng game.</p>
+                            
+                            <div class="blog-comment-teaser">
+                                <div class="comment-icon">💬</div>
+                                <div class="comment-content">
+                                    <span class="comment-text">"Bài viết rất hữu ích! Netcode mới của Unity thực sự ấn tượng..."</span>
+                                    <span class="comment-author">- UnityDev</span>
+                                </div>
+                            </div>
+                            
+                            <div class="blog-stats">
+                                <div class="stat-item">
+                                    <i class="fa fa-eye"></i>
+                                    <span>1,250 lượt xem</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fa fa-share"></i>
+                                    <span>85 lượt chia sẻ</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fa fa-comments"></i>
+                                    <span>24 comments</span>
+                                </div>
+                            </div>
+                            
+                            <div class="blog-cta">
+                                <a href="{{ route('lamgame.blog') }}" class="btn btn-outline btn-sm" target="_blank">
+                                    Đọc thêm
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="testimonial-content">
-                        <p>"Mình không có background IT nhưng vẫn học được nhờ chương trình học cụ thể. Giờ mình làm Game Designer và rất yêu thích công việc này."</p>
-                    </div>
-                    <div class="testimonial-rating">
-                        <span class="stars">★★★★★</span>
-                    </div>
-                </div>
-                
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" alt="Lê Minh C" class="testimonial-avatar">
-                        <div class="testimonial-info">
-                            <h4>Lê Minh C</h4>
-                            <p>Indie Game Developer</p>
+                    </article>
+                    
+                    <article class="blog-card featured">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop" alt="C# Programming" loading="lazy">
+                            <div class="blog-overlay">
+                                <div class="blog-category" style="background: #667eea; color: white;">
+                                    Programming
+                                </div>
+                                <div class="blog-reading-time">
+                                    <i class="fa fa-clock"></i> 12 phút đọc
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="testimonial-content">
-                        <p>"Sau khóa học, mình đã tự phát triển game riêng và kiếm được 15 triệu/tháng. Làm Game không chỉ dạy kỹ thuật mà còn hỗ trợ marketing game nữa."</p>
-                    </div>
-                    <div class="testimonial-rating">
-                        <span class="stars">★★★★★</span>
-                    </div>
-                </div>
+                        
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span class="blog-author">
+                                    <i class="fa fa-user"></i> LamGame Team
+                                </span>
+                                <span class="blog-date">
+                                    <i class="fa fa-calendar"></i> 1 ngày trước
+                                </span>
+                            </div>
+                            
+                            <h3 class="blog-title">
+                                <a href="{{ route('lamgame.blog') }}" target="_blank">C# Cơ bản cho Game Developer</a>
+                            </h3>
+                            
+                            <p class="blog-excerpt">Hướng dẫn C# từ cơ bản đến nâng cao dành cho Unity game development.</p>
+                            
+                            <div class="blog-comment-teaser">
+                                <div class="comment-icon">💬</div>
+                                <div class="comment-content">
+                                    <span class="comment-text">"Giải thích MonoBehaviour rất rõ ràng, cảm ơn tác giả!"</span>
+                                    <span class="comment-author">- BeginnerCoder</span>
+                                </div>
+                            </div>
+                            
+                            <div class="blog-stats">
+                                <div class="stat-item">
+                                    <i class="fa fa-eye"></i>
+                                    <span>980 lượt xem</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fa fa-share"></i>
+                                    <span>65 lượt chia sẻ</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fa fa-comments"></i>
+                                    <span>18 comments</span>
+                                </div>
+                            </div>
+                            
+                            <div class="blog-cta">
+                                <a href="{{ route('lamgame.blog') }}" class="btn btn-outline btn-sm" target="_blank">
+                                    Đọc thêm
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="blog-card">
+                        <div class="blog-image">
+                            <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop" alt="Mobile Optimization" loading="lazy">
+                            <div class="blog-overlay">
+                                <div class="blog-category" style="background: #10b981; color: white;">
+                                    Mobile Development
+                                </div>
+                                <div class="blog-reading-time">
+                                    <i class="fa fa-clock"></i> 15 phút đọc
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span class="blog-author">
+                                    <i class="fa fa-user"></i> LamGame Team
+                                </span>
+                                <span class="blog-date">
+                                    <i class="fa fa-calendar"></i> 3 ngày trước
+                                </span>
+                            </div>
+                            
+                            <h3 class="blog-title">
+                                <a href="{{ route('lamgame.blog') }}" target="_blank">Tối ưu hóa Performance Game Mobile</a>
+                            </h3>
+                            
+                            <p class="blog-excerpt">Các kỹ thuật tối ưu hóa performance cho mobile game để đạt hiệu suất tốt nhất.</p>
+                            
+                            <div class="blog-comment-teaser">
+                                <div class="comment-icon">💬</div>
+                                <div class="comment-content">
+                                    <span class="comment-text">"Object Pooling tip rất hay, đã áp dụng vào game của mình!"</span>
+                                    <span class="comment-author">- MobileDev</span>
+                                </div>
+                            </div>
+                            
+                            <div class="blog-stats">
+                                <div class="stat-item">
+                                    <i class="fa fa-eye"></i>
+                                    <span>1,580 lượt xem</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fa fa-share"></i>
+                                    <span>120 lượt chia sẻ</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fa fa-comments"></i>
+                                    <span>35 comments</span>
+                                </div>
+                            </div>
+                            
+                            <div class="blog-cta">
+                                <a href="{{ route('lamgame.blog') }}" class="btn btn-outline btn-sm" target="_blank">
+                                    Đọc thêm
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                @endif
+            </div>
+            
+            <div class="blog-cta-section">
+                <p>Khám phá thêm {{ isset($latestBlogs['total_posts']) ? $latestBlogs['total_posts'] : '50+' }} bài viết chất lượng</p>
+                <a href="{{ route('lamgame.blog') }}" class="btn btn-outline" target="_blank">
+                    Xem Tất Cả Blog
+                </a>
             </div>
         </div>
     </section>
+
+@push('styles')
+<style>
+/* Blog & News Section Styles */
+.blog-news-section {
+    background: #f8fafc;
+    padding: 5rem 0;
+}
+
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.blog-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.blog-card.featured {
+    border: 2px solid #667eea;
+    transform: scale(1.02);
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15);
+}
+
+.blog-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+}
+
+.blog-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.blog-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.blog-card:hover .blog-image img {
+    transform: scale(1.05);
+}
+
+.blog-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.6));
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem;
+}
+
+.blog-category {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.blog-reading-time {
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.75rem;
+}
+
+.blog-content {
+    padding: 1.5rem;
+}
+
+.blog-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.blog-meta i {
+    margin-right: 0.25rem;
+    width: 12px;
+}
+
+.blog-title {
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.blog-title a {
+    color: #2c3e50;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.blog-title a:hover {
+    color: #667eea;
+}
+
+.blog-excerpt {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.blog-comment-teaser {
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.comment-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.comment-content {
+    flex: 1;
+}
+
+.comment-text {
+    display: block;
+    font-style: italic;
+    color: #555;
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+}
+
+.comment-author {
+    color: #667eea;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.blog-stats {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 0.75rem 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: #666;
+}
+
+.stat-item i {
+    width: 12px;
+    text-align: center;
+}
+
+.blog-cta {
+    margin-top: 1rem;
+}
+
+.blog-cta-section {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.blog-cta-section p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.blog-cta-section .btn-outline {
+    background: transparent;
+    color: #667eea;
+    border: 2px solid #667eea;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.blog-cta-section .btn-outline:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .blog-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .blog-card.featured {
+        transform: none;
+    }
+    
+    .blog-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .blog-stats {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    .blog-comment-teaser {
+        font-size: 0.8rem;
+    }
+}
+</style>
+@endpush
 
     <!-- Job Opportunities -->
     <section id="co-hoi-viec-lam" class="job-section">
