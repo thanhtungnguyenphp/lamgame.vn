@@ -1683,7 +1683,7 @@
     <section id="co-hoi-viec-lam" class="youtube-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">🎥 Video hướng dẫn</h2>
+                <h2 class="section-title">🎥 Channel - Lamgame</h2>
                 <p class="section-subtitle">
                     Học game development từ các video tutorial chất lượng trên kênh YouTube Làm Game
                 </p>
