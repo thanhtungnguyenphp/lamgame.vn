@@ -588,7 +588,7 @@ class HomeController extends Controller
                     'id' => 'mnsTBAfeVdQ',
                     'title' => 'Gameplay Showcase | LamGame.vn',
                     'description' => 'Video gameplay và hướng dẫn chi tiết từ đội ngũ LamGame.vn. Khám phá các kỹ thuật chơi game và tips hữu ích cho game thủ.',
-                    'thumbnail' => 'https://img.youtube.com/vi/mnsTBAfeVdQ/maxresdefault.jpg',
+                    'thumbnail' => 'https://img.youtube.com/vi/mnsTBAfeVdQ/hqdefault.jpg',
                     'duration' => '16:24',
                     'views' => '9.8K',
                     'published_at' => '4 ngày trước',

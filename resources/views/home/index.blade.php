@@ -1469,6 +1469,28 @@
     height: 200px;
     object-fit: cover;
     transition: transform 0.3s ease;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.video-thumbnail img[src=""],
+.video-thumbnail img:not([src]),
+.video-thumbnail img[src*="404"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+}
+
+.video-thumbnail img[src=""]:after,
+.video-thumbnail img:not([src]):after,
+.video-thumbnail img[src*="404"]:after {
+    content: "\f04b";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: white;
+    font-size: 3rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .youtube-video-card:hover .video-thumbnail img {
@@ -1694,7 +1716,8 @@
                 <div class="youtube-video-card">
                     <div class="video-thumbnail">
                         <a href="{{ $video['url'] }}" target="_blank" class="thumbnail-link">
-                            <img src="{{ $video['thumbnail'] }}" alt="{{ $video['title'] }}" loading="lazy">
+                            <img src="{{ $video['thumbnail'] }}" alt="{{ $video['title'] }}" loading="lazy" 
+                                 onerror="this.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.innerHTML='<i class=\"fa fa-play\" style=\"color:white;font-size:3rem;\"></i>'; this.src=''">
                             <div class="play-overlay">
                                 <div class="play-button">
                                     <i class="fa fa-play"></i>
