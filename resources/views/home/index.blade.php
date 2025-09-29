@@ -1426,52 +1426,327 @@
         font-size: 0.8rem;
     }
 }
+
+/* YouTube Videos Section */
+.youtube-section {
+    background: #f8f9fa;
+    padding: 4rem 0;
+}
+
+.youtube-videos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.youtube-video-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.youtube-video-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.video-thumbnail {
+    position: relative;
+    overflow: hidden;
+}
+
+.thumbnail-link {
+    display: block;
+    position: relative;
+}
+
+.video-thumbnail img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.youtube-video-card:hover .video-thumbnail img {
+    transform: scale(1.05);
+}
+
+.play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.youtube-video-card:hover .play-overlay {
+    opacity: 1;
+}
+
+.play-button {
+    width: 60px;
+    height: 60px;
+    background: #ff0000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+}
+
+.youtube-video-card:hover .play-button {
+    transform: scale(1);
+}
+
+.video-duration {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.video-info {
+    padding: 1.5rem;
+}
+
+.video-category {
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+}
+
+.video-title {
+    margin: 0.75rem 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.video-title a {
+    color: #1f2937;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.video-title a:hover {
+    color: #667eea;
+}
+
+.video-description {
+    color: #6b7280;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.video-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+.video-stats span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.youtube-cta-section {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-top: 3rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.channel-info {
+    margin-bottom: 2rem;
+}
+
+.channel-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-bottom: 1.5rem;
+}
+
+.channel-stats .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.channel-info p {
+    font-size: 1.1rem;
+    color: #4b5563;
+    margin: 0;
+}
+
+.youtube-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-youtube {
+    background: linear-gradient(135deg, #ff0000, #cc0000);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.btn-youtube:hover {
+    background: linear-gradient(135deg, #cc0000, #990000);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 0, 0, 0.3);
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .youtube-videos-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .channel-stats {
+        gap: 2rem;
+    }
+    
+    .youtube-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .youtube-actions .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .youtube-cta-section {
+        padding: 2rem 1.5rem;
+    }
+}
 </style>
 @endpush
-
-    <!-- Job Opportunities -->
-    <section id="co-hoi-viec-lam" class="job-section">
+    <!-- YouTube Videos Section -->
+    <section id="co-hoi-viec-lam" class="youtube-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Cơ hội việc làm</h2>
+                <h2 class="section-title">🎥 Video hướng dẫn</h2>
                 <p class="section-subtitle">
-                    Nghiềp game development đang rất hot và có mức lương cao tại Việt Nam
+                    Học game development từ các video tutorial chất lượng trên kênh YouTube Làm Game
                 </p>
             </div>
             
-            <div class="job-stats-grid">
-                <div class="job-stat-card">
-                    <div class="stat-icon">💰</div>
-                    <h3>15-40 triệu VNĐ</h3>
-                    <p>Mức lương Unity Developer</p>
+            <div class="youtube-videos-grid">
+                @foreach($youtubeVideos['featured'] as $video)
+                <div class="youtube-video-card">
+                    <div class="video-thumbnail">
+                        <a href="{{ $video['url'] }}" target="_blank" class="thumbnail-link">
+                            <img src="{{ $video['thumbnail'] }}" alt="{{ $video['title'] }}" loading="lazy">
+                            <div class="play-overlay">
+                                <div class="play-button">
+                                    <i class="fa fa-play"></i>
+                                </div>
+                            </div>
+                            <div class="video-duration">{{ $video['duration'] }}</div>
+                        </a>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-category">{{ $video['category'] }}</div>
+                        <h3 class="video-title">
+                            <a href="{{ $video['url'] }}" target="_blank">
+                                {{ $video['title'] }}
+                            </a>
+                        </h3>
+                        <p class="video-description">
+                            {{ \Illuminate\Support\Str::limit($video['description'], 100) }}
+                        </p>
+                        <div class="video-stats">
+                            <span class="video-views">
+                                <i class="fa fa-eye"></i> {{ $video['views'] }} lượt xem
+                            </span>
+                            <span class="video-date">
+                                <i class="fa fa-clock"></i> {{ $video['published_at'] }}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div class="job-stat-card">
-                    <div class="stat-icon">📈</div>
-                    <h3>45% tăng trưởng</h3>
-                    <p>Nhu cầu tuyển dụng hàng năm</p>
-                </div>
-                <div class="job-stat-card">
-                    <div class="stat-icon">🎯</div>
-                    <h3>95% thành công</h3>
-                    <p>Tỷ lệ có việc sau khóa học</p>
-                </div>
-                <div class="job-stat-card">
-                    <div class="stat-icon">🏢</div>
-                    <h3>50+ doanh nghiệp</h3>
-                    <p>Đối tác tuyển dụng</p>
-                </div>
+                @endforeach
             </div>
             
-            <div class="cta-section">
-                <h3>Sẵn sàng bắt đầu sự nghiệp game development?</h3>
-                <p>Liên hệ ngay để nhận tư vấn miễn phí và lộ trình học phù hợp</p>
-                <div class="cta-buttons">
-                    <button class="btn btn-primary btn-large" onclick="scrollToSection('#lien-he')">
-                        <i class="fa fa-phone"></i> Tư vấn miễn phí
-                    </button>
-                    <a href="{{ route('lamgame.viec-lam-game') }}" class="btn btn-outline btn-large">
-                        <i class="fa fa-briefcase"></i> Xem việc làm
+            <div class="youtube-cta-section">
+                <div class="channel-info">
+                    <div class="channel-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">{{ $youtubeVideos['channel_info']['subscribers'] }}</span>
+                            <span class="stat-label">subscribers</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ $youtubeVideos['channel_info']['total_views'] }}</span>
+                            <span class="stat-label">total views</span>
+                        </div>
+                    </div>
+                    <p>Theo dõi kênh {{ $youtubeVideos['channel_info']['handle'] }} để nhận thêm video tutorial mới nhất!</p>
+                </div>
+                <div class="youtube-actions">
+                    <a href="{{ $youtubeVideos['channel_info']['channel_url'] }}" target="_blank" class="btn btn-youtube btn-large">
+                        <i class="fab fa-youtube"></i> Xem thêm video
                     </a>
+                    <button class="btn btn-outline btn-large" onclick="scrollToSection('#lien-he')">
+                        <i class="fa fa-graduation-cap"></i> Đăng ký khóa học
+                    </button>
                 </div>
             </div>
         </div>

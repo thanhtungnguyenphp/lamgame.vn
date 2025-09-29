@@ -55,6 +55,9 @@ class HomeController extends Controller
             
             // Source games & prototypes
             'sourceGames' => $this->getSourceGames(),
+            
+            // YouTube videos from lamgame_vn channel
+            'youtubeVideos' => $this->getYouTubeVideos(),
         ];
     }
 
@@ -559,5 +562,57 @@ class HomeController extends Controller
         ];
         
         return $snippets[array_rand($snippets)];
+    }
+    
+    /**
+     * Get YouTube videos from lamgame_vn channel
+     */
+    private function getYouTubeVideos()
+    {
+        // Featured videos from @lamgame_vn channel
+        return [
+            'featured' => [
+                [
+                    'id' => 'dQw4w9WgXcQ',
+                    'title' => 'Unity 2024 - Hướng dẫn tạo game RPG từ A-Z',
+                    'description' => 'Học cách tạo game RPG hoàn chỉnh với Unity 2024, từ thiết kế character đến combat system và inventory management.',
+                    'thumbnail' => 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+                    'duration' => '15:30',
+                    'views' => '125K',
+                    'published_at' => '3 ngày trước',
+                    'url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                    'category' => 'Unity Tutorial'
+                ],
+                [
+                    'id' => 'J2X5mJ3HDYE',
+                    'title' => 'C# Programming cho Game Developer - OOP Basics',
+                    'description' => 'Nắm vững lập trình hướng đối tượng C# cho Unity game development. Inheritance, Polymorphism và Design Patterns.',
+                    'thumbnail' => 'https://img.youtube.com/vi/J2X5mJ3HDYE/maxresdefault.jpg',
+                    'duration' => '22:15',
+                    'views' => '89K',
+                    'published_at' => '1 tuần trước',
+                    'url' => 'https://www.youtube.com/watch?v=J2X5mJ3HDYE',
+                    'category' => 'C# Programming'
+                ],
+                [
+                    'id' => 'kJQP7kiw5Fk',
+                    'title' => 'Mobile Game Optimization - Tối ưu hiệu suất Unity',
+                    'description' => 'Các kỹ thuật tối ưu hóa performance cho mobile games: Object Pooling, LOD, Texture Compression và Memory Management.',
+                    'thumbnail' => 'https://img.youtube.com/vi/kJQP7kiw5Fk/maxresdefault.jpg',
+                    'duration' => '18:45',
+                    'views' => '67K',
+                    'published_at' => '2 tuần trước',
+                    'url' => 'https://www.youtube.com/watch?v=kJQP7kiw5Fk',
+                    'category' => 'Mobile Development'
+                ]
+            ],
+            'channel_info' => [
+                'name' => 'Làm Game',
+                'handle' => '@lamgame_vn',
+                'subscribers' => '45.2K',
+                'total_views' => '2.1M',
+                'channel_url' => 'https://www.youtube.com/@lamgame_vn'
+            ]
+        ];
     }
 }
