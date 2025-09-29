@@ -574,37 +574,37 @@ class HomeController extends Controller
         return [
             'featured' => [
                 [
-                    'id' => 'uGaXgHTvzAw',
-                    'title' => 'Unity Tutorial - Tạo game RPG cơ bản',
-                    'description' => 'Hướng dẫn chi tiết cách tạo game RPG hoàn chỉnh với Unity. Bao gồm character controller, combat system, inventory management và quest system.',
-                    'thumbnail' => 'https://img.youtube.com/vi/uGaXgHTvzAw/maxresdefault.jpg',
-                    'duration' => '45:32',
-                    'views' => '128K',
-                    'published_at' => '2 ngày trước',
-                    'url' => 'https://www.youtube.com/watch?v=uGaXgHTvzAw',
-                    'category' => 'Unity Tutorial'
+                    'id' => 'sOdX4Kss5sg',
+                    'title' => 'Bàn phím cơ Gaming Rapoo V500 phiên bản hợp kim Alloy hiện đại | LamGame.vn',
+                    'description' => 'Đánh giá chi tiết bàn phím cơ gaming Rapoo V500 với thiết kế hợp kim Alloy cao cấp. Phù hợp cho game thủ chuyên nghiệp và lập trình viên.',
+                    'thumbnail' => 'https://img.youtube.com/vi/sOdX4Kss5sg/maxresdefault.jpg',
+                    'duration' => '12:45',
+                    'views' => '8.5K',
+                    'published_at' => '3 ngày trước',
+                    'url' => 'https://www.youtube.com/watch?v=sOdX4Kss5sg',
+                    'category' => 'Gaming Gear Review'
                 ],
                 [
                     'id' => 'uGaXgHTvzAw',
-                    'title' => 'Unity Tutorial - Tạo game RPG cơ bản',
-                    'description' => 'Phần 2: Thiết kế combat system và skill tree cho RPG game. Học cách tạo animations, damage calculation và level progression.',
+                    'title' => 'Tank Storm [beta] | LamGame.vn',
+                    'description' => 'Gameplay và review game Tank Storm phiên bản beta. Game tank combat hấp dẫn với graphics 3D và phương thức chiến đấu độc đáo.',
                     'thumbnail' => 'https://img.youtube.com/vi/uGaXgHTvzAw/maxresdefault.jpg',
-                    'duration' => '38:45',
-                    'views' => '95K',
+                    'duration' => '18:32',
+                    'views' => '15.2K',
                     'published_at' => '1 tuần trước',
                     'url' => 'https://www.youtube.com/watch?v=uGaXgHTvzAw',
-                    'category' => 'Unity Tutorial'
+                    'category' => 'Game Review'
                 ],
                 [
-                    'id' => 'uGaXgHTvzAw',
-                    'title' => 'Unity Tutorial - Tạo game RPG cơ bản',
-                    'description' => 'Phần cuối: Hoàn thiện RPG game với save/load system, dialogue system và final boss battle. Export và optimize game cho mobile.',
-                    'thumbnail' => 'https://img.youtube.com/vi/uGaXgHTvzAw/maxresdefault.jpg',
-                    'duration' => '52:18',
-                    'views' => '87K',
-                    'published_at' => '2 tuần trước',
-                    'url' => 'https://www.youtube.com/watch?v=uGaXgHTvzAw',
-                    'category' => 'Unity Tutorial'
+                    'id' => 'mQdNkT0SQFM',
+                    'title' => 'Islet Online - Tựa game có lối chơi giống Minecraft | LamGame.vn',
+                    'description' => 'Khám phá Islet Online, tựa game sandbox multiplayer với lối chơi tương tự Minecraft nhưng có những điểm khác biệt thú vị.',
+                    'thumbnail' => 'https://img.youtube.com/vi/mQdNkT0SQFM/maxresdefault.jpg',
+                    'duration' => '22:18',
+                    'views' => '12.7K',
+                    'published_at' => '5 ngày trước',
+                    'url' => 'https://www.youtube.com/watch?v=mQdNkT0SQFM',
+                    'category' => 'Game Review'
                 ]
             ],
             'channel_info' => [
