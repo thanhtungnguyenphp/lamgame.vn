@@ -12,7 +12,7 @@
     <section class="hero-simple">
         <div class="container">
             <div class="breadcrumb">
-                <a href="{{ route('shop.home.index') }}">Trang chủ</a>
+                <a href="{{ route('home') }}">Trang chủ</a>
                 <span>/</span>
                 <a href="{{ route('lamgame.blog') }}">Blog</a>
                 <span>/</span>
