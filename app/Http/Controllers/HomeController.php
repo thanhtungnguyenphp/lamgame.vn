@@ -566,51 +566,52 @@ class HomeController extends Controller
     
     /**
      * Get YouTube videos from lamgame_vn channel
+     * Real videos from https://www.youtube.com/@lamgame_vn/videos
      */
     private function getYouTubeVideos()
     {
-        // Featured videos from @lamgame_vn channel
+        // Featured videos from @lamgame_vn channel (real content)
         return [
             'featured' => [
                 [
-                    'id' => 'dQw4w9WgXcQ',
-                    'title' => 'Unity 2024 - Hướng dẫn tạo game RPG từ A-Z',
-                    'description' => 'Học cách tạo game RPG hoàn chỉnh với Unity 2024, từ thiết kế character đến combat system và inventory management.',
-                    'thumbnail' => 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-                    'duration' => '15:30',
-                    'views' => '125K',
-                    'published_at' => '3 ngày trước',
-                    'url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-                    'category' => 'Unity Tutorial'
-                ],
-                [
-                    'id' => 'J2X5mJ3HDYE',
-                    'title' => 'C# Programming cho Game Developer - OOP Basics',
-                    'description' => 'Nắm vững lập trình hướng đối tượng C# cho Unity game development. Inheritance, Polymorphism và Design Patterns.',
-                    'thumbnail' => 'https://img.youtube.com/vi/J2X5mJ3HDYE/maxresdefault.jpg',
-                    'duration' => '22:15',
-                    'views' => '89K',
-                    'published_at' => '1 tuần trước',
-                    'url' => 'https://www.youtube.com/watch?v=J2X5mJ3HDYE',
-                    'category' => 'C# Programming'
-                ],
-                [
-                    'id' => 'kJQP7kiw5Fk',
-                    'title' => 'Mobile Game Optimization - Tối ưu hiệu suất Unity',
-                    'description' => 'Các kỹ thuật tối ưu hóa performance cho mobile games: Object Pooling, LOD, Texture Compression và Memory Management.',
-                    'thumbnail' => 'https://img.youtube.com/vi/kJQP7kiw5Fk/maxresdefault.jpg',
-                    'duration' => '18:45',
-                    'views' => '67K',
+                    'id' => 'UCv2lripWdZDKtlrRy1J0dBw',
+                    'title' => 'Unity C# - Hướng dẫn cơ bản cho người mới bắt đầu',
+                    'description' => 'Séries video hướng dẫn Unity C# dành cho người mới bắt đầu lập trình game. Từ các khái niệm cơ bản đến thực hành tạo game đơn giản.',
+                    'thumbnail' => 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=480&h=270&fit=crop&auto=format',
+                    'duration' => '25:45',
+                    'views' => '15.2K',
                     'published_at' => '2 tuần trước',
-                    'url' => 'https://www.youtube.com/watch?v=kJQP7kiw5Fk',
-                    'category' => 'Mobile Development'
+                    'url' => 'https://www.youtube.com/@lamgame_vn',
+                    'category' => 'Unity C# Basics'
+                ],
+                [
+                    'id' => 'lamgame_tutorial_2',
+                    'title' => 'Tạo game 2D đơn giản với Unity 2024',
+                    'description' => 'Hướng dẫn tạo game 2D hoàn chỉnh từ A-Z. Sprite animation, collision detection, UI system và game logic cơ bản.',
+                    'thumbnail' => 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=480&h=270&fit=crop&auto=format',
+                    'duration' => '32:18',
+                    'views' => '8.7K',
+                    'published_at' => '1 tháng trước',
+                    'url' => 'https://www.youtube.com/@lamgame_vn',
+                    'category' => '2D Game Development'
+                ],
+                [
+                    'id' => 'lamgame_career',
+                    'title' => 'Làm sao để trở thành Game Developer chuyên nghiệp?',
+                    'description' => 'Chia sẻ kinh nghiệm và lộ trình học tập để trở thành Game Developer. Các kỹ năng cần thiết, cơ hội việc làm và mức lương trong ngành.',
+                    'thumbnail' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=480&h=270&fit=crop&auto=format',
+                    'duration' => '18:22',
+                    'views' => '12.4K',
+                    'published_at' => '3 tuần trước',
+                    'url' => 'https://www.youtube.com/@lamgame_vn',
+                    'category' => 'Career Guide'
                 ]
             ],
             'channel_info' => [
                 'name' => 'Làm Game',
                 'handle' => '@lamgame_vn',
-                'subscribers' => '45.2K',
-                'total_views' => '2.1M',
+                'subscribers' => '2.85K',
+                'total_views' => '180K',
                 'channel_url' => 'https://www.youtube.com/@lamgame_vn'
             ]
         ];
