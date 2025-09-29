@@ -585,15 +585,15 @@ class HomeController extends Controller
                     'category' => 'Gaming Gear Review'
                 ],
                 [
-                    'id' => 'uGaXgHTvzAw',
-                    'title' => 'Tank Storm [beta] | LamGame.vn',
-                    'description' => 'Gameplay và review game Tank Storm phiên bản beta. Game tank combat hấp dẫn với graphics 3D và phương thức chiến đấu độc đáo.',
-                    'thumbnail' => 'https://img.youtube.com/vi/uGaXgHTvzAw/maxresdefault.jpg',
-                    'duration' => '18:32',
-                    'views' => '15.2K',
-                    'published_at' => '1 tuần trước',
-                    'url' => 'https://www.youtube.com/watch?v=uGaXgHTvzAw',
-                    'category' => 'Game Review'
+                    'id' => 'mnsTBAfeVdQ',
+                    'title' => 'Gameplay Showcase | LamGame.vn',
+                    'description' => 'Video gameplay và hướng dẫn chi tiết từ đội ngũ LamGame.vn. Khám phá các kỹ thuật chơi game và tips hữu ích cho game thủ.',
+                    'thumbnail' => 'https://img.youtube.com/vi/mnsTBAfeVdQ/maxresdefault.jpg',
+                    'duration' => '16:24',
+                    'views' => '9.8K',
+                    'published_at' => '4 ngày trước',
+                    'url' => 'https://www.youtube.com/watch?v=mnsTBAfeVdQ',
+                    'category' => 'Gameplay'
                 ],
                 [
                     'id' => 'mQdNkT0SQFM',
