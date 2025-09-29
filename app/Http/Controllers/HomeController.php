@@ -574,37 +574,37 @@ class HomeController extends Controller
         return [
             'featured' => [
                 [
-                    'id' => 'UCv2lripWdZDKtlrRy1J0dBw',
-                    'title' => 'Unity C# - Hướng dẫn cơ bản cho người mới bắt đầu',
-                    'description' => 'Séries video hướng dẫn Unity C# dành cho người mới bắt đầu lập trình game. Từ các khái niệm cơ bản đến thực hành tạo game đơn giản.',
-                    'thumbnail' => 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=480&h=270&fit=crop&auto=format',
-                    'duration' => '25:45',
-                    'views' => '15.2K',
+                    'id' => 'uGaXgHTvzAw',
+                    'title' => 'Unity Tutorial - Tạo game RPG cơ bản',
+                    'description' => 'Hướng dẫn tạo game RPG cơ bản với Unity. Từ thiết kế character, combat system đến inventory và quest system.',
+                    'thumbnail' => 'https://img.youtube.com/vi/uGaXgHTvzAw/maxresdefault.jpg',
+                    'duration' => '28:15',
+                    'views' => '23.5K',
+                    'published_at' => '1 tuần trước',
+                    'url' => 'https://www.youtube.com/watch?v=uGaXgHTvzAw',
+                    'category' => 'Unity RPG Tutorial'
+                ],
+                [
+                    'id' => 'mQdNkT0SQFM',
+                    'title' => 'C# Programming cho Game Development',
+                    'description' => 'Nắm vững lập trình C# cho Unity game development. OOP concepts, data structures và design patterns áp dụng trong game.',
+                    'thumbnail' => 'https://img.youtube.com/vi/mQdNkT0SQFM/maxresdefault.jpg',
+                    'duration' => '35:42',
+                    'views' => '18.9K',
                     'published_at' => '2 tuần trước',
-                    'url' => 'https://www.youtube.com/@lamgame_vn',
-                    'category' => 'Unity C# Basics'
+                    'url' => 'https://www.youtube.com/watch?v=mQdNkT0SQFM',
+                    'category' => 'C# Programming'
                 ],
                 [
-                    'id' => 'lamgame_tutorial_2',
-                    'title' => 'Tạo game 2D đơn giản với Unity 2024',
-                    'description' => 'Hướng dẫn tạo game 2D hoàn chỉnh từ A-Z. Sprite animation, collision detection, UI system và game logic cơ bản.',
-                    'thumbnail' => 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=480&h=270&fit=crop&auto=format',
-                    'duration' => '32:18',
-                    'views' => '8.7K',
-                    'published_at' => '1 tháng trước',
-                    'url' => 'https://www.youtube.com/@lamgame_vn',
-                    'category' => '2D Game Development'
-                ],
-                [
-                    'id' => 'lamgame_career',
-                    'title' => 'Làm sao để trở thành Game Developer chuyên nghiệp?',
-                    'description' => 'Chia sẻ kinh nghiệm và lộ trình học tập để trở thành Game Developer. Các kỹ năng cần thiết, cơ hội việc làm và mức lương trong ngành.',
-                    'thumbnail' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=480&h=270&fit=crop&auto=format',
-                    'duration' => '18:22',
-                    'views' => '12.4K',
+                    'id' => 'sOdX4Kss5sg',
+                    'title' => 'Game Design Fundamentals - Tư duy thiết kế game',
+                    'description' => 'Khám phá các nguyên lý cơ bản của game design. Game mechanics, level design, player experience và balancing.',
+                    'thumbnail' => 'https://img.youtube.com/vi/sOdX4Kss5sg/maxresdefault.jpg',
+                    'duration' => '24:38',
+                    'views' => '31.2K',
                     'published_at' => '3 tuần trước',
-                    'url' => 'https://www.youtube.com/@lamgame_vn',
-                    'category' => 'Career Guide'
+                    'url' => 'https://www.youtube.com/watch?v=sOdX4Kss5sg',
+                    'category' => 'Game Design'
                 ]
             ],
             'channel_info' => [
