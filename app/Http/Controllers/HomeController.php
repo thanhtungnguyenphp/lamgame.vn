@@ -576,35 +576,35 @@ class HomeController extends Controller
                 [
                     'id' => 'uGaXgHTvzAw',
                     'title' => 'Unity Tutorial - Tạo game RPG cơ bản',
-                    'description' => 'Hướng dẫn tạo game RPG cơ bản với Unity. Từ thiết kế character, combat system đến inventory và quest system.',
+                    'description' => 'Hướng dẫn chi tiết cách tạo game RPG hoàn chỉnh với Unity. Bao gồm character controller, combat system, inventory management và quest system.',
                     'thumbnail' => 'https://img.youtube.com/vi/uGaXgHTvzAw/maxresdefault.jpg',
-                    'duration' => '28:15',
-                    'views' => '23.5K',
+                    'duration' => '45:32',
+                    'views' => '128K',
+                    'published_at' => '2 ngày trước',
+                    'url' => 'https://www.youtube.com/watch?v=uGaXgHTvzAw',
+                    'category' => 'Unity Tutorial'
+                ],
+                [
+                    'id' => 'uGaXgHTvzAw',
+                    'title' => 'Unity Tutorial - Tạo game RPG cơ bản',
+                    'description' => 'Phần 2: Thiết kế combat system và skill tree cho RPG game. Học cách tạo animations, damage calculation và level progression.',
+                    'thumbnail' => 'https://img.youtube.com/vi/uGaXgHTvzAw/maxresdefault.jpg',
+                    'duration' => '38:45',
+                    'views' => '95K',
                     'published_at' => '1 tuần trước',
                     'url' => 'https://www.youtube.com/watch?v=uGaXgHTvzAw',
-                    'category' => 'Unity RPG Tutorial'
+                    'category' => 'Unity Tutorial'
                 ],
                 [
-                    'id' => 'mQdNkT0SQFM',
-                    'title' => 'C# Programming cho Game Development',
-                    'description' => 'Nắm vững lập trình C# cho Unity game development. OOP concepts, data structures và design patterns áp dụng trong game.',
-                    'thumbnail' => 'https://img.youtube.com/vi/mQdNkT0SQFM/maxresdefault.jpg',
-                    'duration' => '35:42',
-                    'views' => '18.9K',
+                    'id' => 'uGaXgHTvzAw',
+                    'title' => 'Unity Tutorial - Tạo game RPG cơ bản',
+                    'description' => 'Phần cuối: Hoàn thiện RPG game với save/load system, dialogue system và final boss battle. Export và optimize game cho mobile.',
+                    'thumbnail' => 'https://img.youtube.com/vi/uGaXgHTvzAw/maxresdefault.jpg',
+                    'duration' => '52:18',
+                    'views' => '87K',
                     'published_at' => '2 tuần trước',
-                    'url' => 'https://www.youtube.com/watch?v=mQdNkT0SQFM',
-                    'category' => 'C# Programming'
-                ],
-                [
-                    'id' => 'sOdX4Kss5sg',
-                    'title' => 'Game Design Fundamentals - Tư duy thiết kế game',
-                    'description' => 'Khám phá các nguyên lý cơ bản của game design. Game mechanics, level design, player experience và balancing.',
-                    'thumbnail' => 'https://img.youtube.com/vi/sOdX4Kss5sg/maxresdefault.jpg',
-                    'duration' => '24:38',
-                    'views' => '31.2K',
-                    'published_at' => '3 tuần trước',
-                    'url' => 'https://www.youtube.com/watch?v=sOdX4Kss5sg',
-                    'category' => 'Game Design'
+                    'url' => 'https://www.youtube.com/watch?v=uGaXgHTvzAw',
+                    'category' => 'Unity Tutorial'
                 ]
             ],
             'channel_info' => [
