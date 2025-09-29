@@ -44,7 +44,7 @@
     <!-- Header -->
     <header class="header" id="header">
         <div class="wrap row">
-            <a href="{{ route('shop.home.index') }}" class="brand" aria-label="Trang chủ Làm Game">
+            <a href="{{ route('home') }}" class="brand" aria-label="Trang chủ Làm Game">
                 <img src="{{ asset('logo/lamgame-horizontal.svg') }}" alt="Làm Game Logo" onerror="this.src='{{ asset('logo/lamgame-logo.png') }}'" style="height: 48px; width: auto;" />
                 <span class="title">Làm Game</span>
             </a>
