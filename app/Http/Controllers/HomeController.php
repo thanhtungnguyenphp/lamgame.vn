@@ -114,12 +114,12 @@ class HomeController extends Controller
     }
 
     /**
-     * Get hot forum topics (40% community) - Top 6 "Chủ Đề Nổi Bật"
+     * Get hot forum topics (40% community) - Top 3 "Chủ Đề Nổi Bật"
      */
     private function getHotForumTopics()
     {
         try {
-            // Lấy top 6 topic nổi bật dựa trên comments và likes
+            // Lấy top 3 topic nổi bật dựa trên comments và likes
             $hotTopics = ForumPost::published()
                 ->with(['category', 'comments' => function($query) {
                     $query->published()
@@ -134,11 +134,11 @@ class HomeController extends Controller
                 })
                 // Tính toán hot score: comments * 2 + likes + views/10
                 ->orderByRaw('(comments_count * 2 + likes_count + views_count/10) DESC')
-                ->limit(6)
+                ->limit(3)
                 ->get();
 
-            // Nếu không đủ 6 posts, lấy thêm posts mới nhất
-            if ($hotTopics->count() < 6) {
+            // Nếu không đủ 3 posts, lấy thêm posts mới nhất
+            if ($hotTopics->count() < 3) {
                 $excludeIds = $hotTopics->pluck('id')->toArray();
                 $additionalTopics = ForumPost::published()
                     ->with(['category', 'comments' => function($query) {
@@ -146,7 +146,7 @@ class HomeController extends Controller
                     }])
                     ->whereNotIn('id', $excludeIds)
                     ->orderBy('created_at', 'desc')
-                    ->limit(6 - $hotTopics->count())
+                    ->limit(3 - $hotTopics->count())
                     ->get();
                 
                 $hotTopics = $hotTopics->merge($additionalTopics);
@@ -220,6 +220,23 @@ class HomeController extends Controller
                         'excerpt' => 'Làm game RPG lấy bối cảnh lịch sử Việt Nam, từ thời Hùng Vương đến các triều đại phong kiến.',
                         'comment_snippet' => 'Ý tưởng hay quá! Mình có thể hỗ trợ research lịch sử...',
                         'latest_comment_author' => 'VietHistorian',
+                        'url' => '#',
+                        'forum_url' => route('forum.index'),
+                    ],
+                    [
+                        'id' => 3,
+                        'title' => 'Học Unity từ Zero đến Hero - Roadmap 2024',
+                        'author' => 'UnityMaster',
+                        'category' => 'Hướng dẫn',
+                        'category_icon' => '🎓',
+                        'category_color' => '#10b981',
+                        'replies' => 89,
+                        'views' => 650,
+                        'likes' => 45,
+                        'time_ago' => '1 ngày trước',
+                        'excerpt' => 'Lộ trình học Unity hoàn chỉnh từ người mới bắt đầu. Bao gồm kiến thức cơ bản, thực hành và dự án thực tế.',
+                        'comment_snippet' => 'Roadmap rất chi tiết! Mình sẽ theo hình đường này...',
+                        'latest_comment_author' => 'BeginnerDev',
                         'url' => '#',
                         'forum_url' => route('forum.index'),
                     ],
