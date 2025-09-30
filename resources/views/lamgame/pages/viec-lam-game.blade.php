@@ -170,10 +170,7 @@
                                             <img src="https://via.placeholder.com/60x60?text={{ strtoupper(substr($companyName, 0, 3)) }}" alt="{{ $companyName }}">
                                         </div>
                                         <div class="job-info">
-                                            @php
-                                                $jobSlug = \Str::slug($jobTitle);
-                                            @endphp
-                                            <h3><a href="{{ route('lamgame.job-detail', [$job->id, $jobSlug]) }}" class="job-title" title="{{ $jobTitle }}">{{ $jobTitle }}</a></h3>
+                                            <h3><a href="{{ route('lamgame.job.detail', $job->url_key) }}" class="job-title" title="{{ $jobTitle }}">{{ $jobTitle }}</a></h3>
                                             <div class="company-name">{{ $companyName }}</div>
                                             <div class="job-meta">
                                                 <span class="location"><i class="fa fa-map-marker"></i> Việt Nam</span>
@@ -199,7 +196,7 @@
                                         <span class="tag">Game Development</span>
                                     </div>
                                     <div class="job-actions">
-                                        <a href="{{ route('lamgame.job-detail', [$job->id, $jobSlug]) }}" class="btn btn-detail">
+                                        <a href="{{ route('lamgame.job.detail', $job->url_key) }}" class="btn btn-detail">
                                             <i class="fa fa-eye"></i> Xem chi tiết
                                         </a>
                                         @if($job->contact_email)

@@ -84,6 +84,7 @@ class HomeController extends Controller
                 'pf.name',
                 'pf.short_description',
                 'pf.price',
+                'pf.url_key',
                 'ct.name as company',
                 'p.created_at'
             )
@@ -102,7 +103,7 @@ class HomeController extends Controller
                 'salary' => number_format($job->price / 1000000, 1) . ' triệu VND',
                 'location' => $this->extractLocation($job->short_description),
                 'posted_ago' => \Carbon\Carbon::parse($job->created_at)->diffForHumans(),
-                'url' => route('lamgame.job.detail', $job->id),
+                'url' => route('lamgame.job.detail', $job->url_key),
             ];
         }
 
