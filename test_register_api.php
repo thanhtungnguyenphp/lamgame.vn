@@ -21,7 +21,6 @@ $testCases = [
             'email' => 'test' . time() . '@example.com',
             'password' => 'Password123!',
             'password_confirmation' => 'Password123!',
-            'phone' => '0909123456',
             'device_name' => 'iPhone Test',
             'terms_accepted' => 1
         ]
@@ -136,9 +135,10 @@ foreach ($testCases as $index => $testCase) {
         
         if ($response['status'] === 'success' && isset($response['data'])) {
             echo "✅ Registration successful!\n";
-            echo "User ID: " . $response['data']['user']['id'] . "\n";
-            echo "User Name: " . $response['data']['user']['name'] . "\n";
+            echo "Admin ID: " . $response['data']['user']['id'] . "\n";
+            echo "Admin Name: " . $response['data']['user']['name'] . "\n";
             echo "Email: " . $response['data']['user']['email'] . "\n";
+            echo "Role ID: " . $response['data']['user']['role_id'] . "\n";
             echo "Token Type: " . $response['data']['token_type'] . "\n";
             echo "Profile Completed: " . ($response['data']['user']['profile_completed'] ? 'Yes' : 'No') . "\n";
         } elseif ($response['status'] === 'error' && isset($response['errors'])) {

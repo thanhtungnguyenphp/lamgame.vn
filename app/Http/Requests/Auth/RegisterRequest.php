@@ -27,20 +27,13 @@ class RegisterRequest extends FormRequest
                 'string', 
                 'email:rfc', 
                 'max:255', 
-                'unique:users,email'
+                'unique:admins,email'
             ],
             'password' => [
                 'required', 
                 'string', 
                 'min:8',
                 'confirmed'
-            ],
-            'phone' => [
-                'nullable', 
-                'string', 
-                'regex:/^([0-9\s\-\+\(\)]*)$/',
-                'min:10',
-                'max:15'
             ],
             'device_name' => ['nullable', 'string', 'max:255'],
             'terms_accepted' => ['required', 'accepted'],
@@ -66,9 +59,6 @@ class RegisterRequest extends FormRequest
             'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự.',
             'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
             
-            'phone.regex' => 'Số điện thoại không đúng định dạng.',
-            'phone.min' => 'Số điện thoại phải có ít nhất 10 ký tự.',
-            'phone.max' => 'Số điện thoại không được quá 15 ký tự.',
             
             'terms_accepted.required' => 'Bạn phải đồng ý với điều khoản sử dụng.',
             'terms_accepted.accepted' => 'Bạn phải đồng ý với điều khoản sử dụng.',
@@ -82,17 +72,7 @@ class RegisterRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        // Chuẩn hóa số điện thoại
-        if ($this->has('phone') && !empty($this->phone)) {
-            $phone = preg_replace('/[^0-9]/', '', $this->phone);
-            
-            // Chuyển đổi +84 thành 0
-            if (str_starts_with($phone, '84') && strlen($phone) >= 10) {
-                $phone = '0' . substr($phone, 2);
-            }
-            
-            $this->merge(['phone' => $phone]);
-        }
+        // Admin model doesn't have phone field - skip phone processing
         
         // Chuẩn hóa email
         if ($this->has('email')) {

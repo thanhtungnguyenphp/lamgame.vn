@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\AdminResource;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\UpdateProfileRequest;
-use App\Models\User;
+use Webkul\User\Models\Admin;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,7 +32,7 @@ class AuthController extends Controller
                 'device_name' => 'nullable|string'
             ]);
 
-            $user = User::where('email', $request->email)->first();
+            $user = Admin::where('email', $request->email)->first();
 
             if (! $user) {
                 return response()->json([
@@ -73,7 +73,7 @@ class AuthController extends Controller
                 'data' => [
                     'access_token' => $token,
                     'token_type' => 'Bearer',
-                    'user' => new UserResource($user),
+                    'user' => new AdminResource($user),
                 ]
             ], 200);
 
@@ -102,12 +102,12 @@ class AuthController extends Controller
         try {
             $validated = $request->validated();
 
-            $user = User::create([
+            $user = Admin::create([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
-                'phone' => $validated['phone'] ?? null,
                 'status' => true, // Account is active by default
+                'role_id' => 1, // Default role - adjust as needed
             ]);
 
             $deviceName = $validated['device_name'] ?? $request->userAgent() ?? 'Unknown Device';
@@ -127,7 +127,7 @@ class AuthController extends Controller
                 'data' => [
                     'access_token' => $token,
                     'token_type' => 'Bearer',
-                    'user' => new UserResource($user),
+                    'user' => new AdminResource($user),
                 ]
             ], 201);
 
@@ -161,7 +161,7 @@ class AuthController extends Controller
     public function user(Request $request): JsonResponse
     {
         return response()->json([
-            'user' => new UserResource($request->user()),
+            'user' => new AdminResource($request->user()),
         ]);
     }
 
@@ -175,37 +175,31 @@ class AuthController extends Controller
     {
         try {
             $user = $request->user();
-            $data = $request->safe()->only(['name', 'email', 'phone', 'bio']);
+            $data = $request->safe()->only(['name', 'email']);
 
-            // Xử lý upload avatar nếu có
-            if ($request->hasFile('avatar')) {
-                // Xóa avatar cũ nếu có
-                if ($user->avatar) {
-                    Storage::disk('public')->delete($user->avatar);
+            // Xử lý upload image nếu có
+            if ($request->hasFile('image')) {
+                // Xóa image cũ nếu có
+                if ($user->image) {
+                    Storage::disk('public')->delete($user->image);
                 }
 
-                // Upload và resize avatar mới
-                $avatar = $request->file('avatar');
-                $filename = Str::random(40) . '.' . $avatar->getClientOriginalExtension();
-                $path = $avatar->storeAs('avatars', $filename, 'public');
+                // Upload và resize image mới
+                $image = $request->file('image');
+                $filename = Str::random(40) . '.' . $image->getClientOriginalExtension();
+                $path = $image->storeAs('admin', $filename, 'public');
 
-                // Resize avatar
+                // Resize image
                 $img = Image::make(storage_path('app/public/' . $path));
                 $img->fit(300, 300, function ($constraint) {
                     $constraint->upsize();
                 });
                 $img->save();
 
-                $data['avatar'] = $path;
+                $data['image'] = $path;
             }
 
-            // Format số điện thoại nếu có
-            if (isset($data['phone'])) {
-                $data['phone'] = preg_replace('/[^0-9]/', '', $data['phone']);
-                if (str_starts_with($data['phone'], '84')) {
-                    $data['phone'] = '0' . substr($data['phone'], 2);
-                }
-            }
+            // Admin model doesn't have phone field - skip phone processing
 
             // Cập nhật thông tin user
             $user->update($data);
@@ -223,7 +217,7 @@ class AuthController extends Controller
                 'status' => 'success',
                 'message' => 'Cập nhật hồ sơ thành công.',
                 'data' => [
-                    'user' => new UserResource($user)
+                    'user' => new AdminResource($user)
                 ]
             ]);
 
