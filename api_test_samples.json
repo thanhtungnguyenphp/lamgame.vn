@@ -1,0 +1,167 @@
+{
+  "sample_job_data": {
+    "title": "Senior Unity Developer - VNG Corporation",
+    "company_name": "VNG Corporation", 
+    "description": "<h2>🎮 VNG Corporation - Senior Unity Developer</h2><p><strong>VNG Corporation</strong> là một trong những công ty game hàng đầu Việt Nam đang tìm kiếm Senior Unity Developer tài năng để tham gia phát triển các dự án game mobile AAA.</p><h3>📋 Mô tả công việc:</h3><ul><li>🎯 Phát triển và maintain mobile games sử dụng Unity Engine</li><li>💻 Architect và implement game systems phức tạp</li><li>🚀 Optimize game performance cho các thiết bị mobile</li><li>👥 Mentor junior developers và review code</li></ul>",
+    "short_description": "VNG tuyển Senior Unity Developer 5+ năm kinh nghiệm. Lương 50-80 triệu + equity, làm việc với team quốc tế.",
+    "job_type": "full-time",
+    "experience_level": "senior", 
+    "salary_range": "50m-80m",
+    "job_location": "Hồ Chí Minh",
+    "company_size": "Tập đoàn (1000+ người)",
+    "required_skills": ["Unity", "C#", "Git"],
+    "education_level": "Đại học",
+    "english_level": "Thành thạo",
+    "job_benefits": ["Bảo hiểm sức khỏe", "Thưởng hiệu suất", "Đào tạo & phát triển"],
+    "application_deadline": "2025-12-31",
+    "contact_email": "careers@vng.com.vn",
+    "contact_phone": "028-3835-1234", 
+    "company_website": "https://www.vng.com.vn",
+    "application_method": "online",
+    "is_urgent": false,
+    "is_featured": true,
+    "categories": [102],
+    "meta_title": "Senior Unity Developer - VNG Corporation | LamGame Jobs",
+    "meta_description": "VNG tuyển Senior Unity Developer 5+ năm kinh nghiệm. Lương 50-80 triệu + equity, làm việc với team quốc tế.",
+    "meta_keywords": "game jobs, tuyển dụng game, việc làm game"
+  },
+  
+  "api_endpoints": {
+    "base_url": "http://localhost:8000/api/jobs",
+    "endpoints": [
+      {
+        "method": "GET", 
+        "url": "/api/jobs",
+        "description": "Lấy danh sách job postings",
+        "params": {
+          "search": "Unity",
+          "job_type": "full-time", 
+          "location": "Hồ Chí Minh",
+          "is_featured": true,
+          "per_page": 10,
+          "order_by": "created_at",
+          "order_direction": "desc"
+        }
+      },
+      {
+        "method": "POST",
+        "url": "/api/jobs", 
+        "description": "Tạo job posting mới",
+        "body": "Use sample_job_data above"
+      },
+      {
+        "method": "GET",
+        "url": "/api/jobs/{id}",
+        "description": "Lấy chi tiết job posting"
+      },
+      {
+        "method": "PUT", 
+        "url": "/api/jobs/{id}",
+        "description": "Cập nhật job posting",
+        "body": {
+          "title": "Updated Job Title",
+          "salary_range": "60m-90m",
+          "is_urgent": true
+        }
+      },
+      {
+        "method": "DELETE",
+        "url": "/api/jobs/{id}",
+        "description": "Xóa job posting"
+      },
+      {
+        "method": "GET",
+        "url": "/api/jobs/categories", 
+        "description": "Lấy danh sách job categories"
+      },
+      {
+        "method": "GET",
+        "url": "/api/jobs/attributes",
+        "description": "Lấy danh sách job attributes và options"
+      },
+      {
+        "method": "POST",
+        "url": "/api/jobs/bulk",
+        "description": "Tạo nhiều jobs cùng lúc",
+        "body": {
+          "jobs": [
+            "job_data_1",
+            "job_data_2", 
+            "job_data_3"
+          ]
+        }
+      },
+      {
+        "method": "POST",
+        "url": "/api/jobs/{id}/publish",
+        "description": "Publish job posting"
+      },
+      {
+        "method": "POST", 
+        "url": "/api/jobs/{id}/unpublish",
+        "description": "Unpublish job posting"
+      }
+    ]
+  },
+
+  "test_commands": [
+    {
+      "description": "Test lấy danh sách jobs",
+      "curl": "curl -X GET \"http://localhost:8000/api/jobs?per_page=5&is_featured=1\" -H \"Accept: application/json\""
+    },
+    {
+      "description": "Test tạo job mới", 
+      "curl": "curl -X POST \"http://localhost:8000/api/jobs\" -H \"Accept: application/json\" -H \"Content-Type: application/json\" -d @sample_job.json"
+    },
+    {
+      "description": "Test lấy categories",
+      "curl": "curl -X GET \"http://localhost:8000/api/jobs/categories\" -H \"Accept: application/json\""
+    },
+    {
+      "description": "Test lấy attributes",
+      "curl": "curl -X GET \"http://localhost:8000/api/jobs/attributes\" -H \"Accept: application/json\""
+    },
+    {
+      "description": "Test search jobs",
+      "curl": "curl -X GET \"http://localhost:8000/api/jobs?search=Unity&job_type=full-time&location=Hồ Chí Minh\" -H \"Accept: application/json\""
+    }
+  ],
+
+  "validation_examples": {
+    "valid_create_request": {
+      "title": "Unity Developer - ABC Studio",
+      "company_name": "ABC Studio",
+      "description": "Mô tả công việc chi tiết...",
+      "short_description": "Tóm tắt ngắn gọn",
+      "job_type": "full-time",
+      "experience_level": "junior",
+      "salary_range": "20m-30m",
+      "job_location": "Hà Nội", 
+      "company_size": "Nhỏ (10-50 người)",
+      "required_skills": ["Unity", "C#"],
+      "contact_email": "hr@abcstudio.com",
+      "application_method": "email",
+      "categories": [102]
+    },
+    
+    "invalid_create_request": {
+      "title": "",
+      "company_name": "",
+      "job_type": "invalid-type",
+      "salary_range": "invalid-range", 
+      "contact_email": "invalid-email",
+      "required_skills": [],
+      "categories": []
+    },
+
+    "expected_validation_errors": [
+      "title.required",
+      "company_name.required", 
+      "job_type.in",
+      "salary_range custom validation",
+      "contact_email.email",
+      "required_skills.min",
+      "categories.min"
+    ]
+  }
+}
