@@ -248,12 +248,12 @@ class HomeController extends Controller
     }
 
     /**
-     * Get latest blogs from developers (30% community) - Load top 6 blogs with high engagement
+     * Get latest blogs from developers (30% community) - Load top 3 blogs with high engagement
      */
     private function getLatestBlogs()
     {
         try {
-            // Lấy top 6 blogs dựa trên views và shares
+            // Lấy top 3 blogs dựa trên views và shares
             $blogs = Blog::published()
                 ->with(['category'])
                 ->where(function($query) {
@@ -262,17 +262,17 @@ class HomeController extends Controller
                           ->orWhere('shares', '>', 10);
                 })
                 ->orderByRaw('(COALESCE(views, 0) + COALESCE(shares, 0) * 5) DESC')
-                ->limit(6)
+                ->limit(3)
                 ->get();
 
-            // Nếu không đủ 6 blogs, lấy thêm blogs mới nhất
-            if ($blogs->count() < 6) {
+            // Nếu không đủ 3 blogs, lấy thêm blogs mới nhất
+            if ($blogs->count() < 3) {
                 $excludeIds = $blogs->pluck('id')->toArray();
                 $additionalBlogs = Blog::published()
                     ->with(['category'])
                     ->whereNotIn('id', $excludeIds)
                     ->orderBy('published_at', 'desc')
-                    ->limit(6 - $blogs->count())
+                    ->limit(3 - $blogs->count())
                     ->get();
                 
                 $blogs = $blogs->merge($additionalBlogs);
