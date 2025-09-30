@@ -212,6 +212,14 @@ class LamGamePageController extends Controller
     }
 
     /**
+     * Show Jobs page (alias for viecLamGame)
+     */
+    public function jobs(Request $request)
+    {
+        return $this->viecLamGame($request);
+    }
+    
+    /**
      * Show Viec lam Game page
      */
     public function viecLamGame(Request $request)

@@ -20,6 +20,10 @@ Route::get('source-game/{slug}', [LamGamePageController::class, 'sourceGameDetai
 Route::get('blog', [LamGamePageController::class, 'blog'])->name('lamgame.blog');
 Route::get('blog/{slug}', [LamGamePageController::class, 'blogShow'])->name('blog.show');
 
+// Job routes
+Route::get('viec-lam-game', [LamGamePageController::class, 'jobs'])->name('lamgame.viec-lam-game');
+Route::get('viec-lam-game/{id}', [LamGamePageController::class, 'jobDetail'])->name('lamgame.job.detail');
+
 // Forum routes
 Route::prefix('forum')->name('forum.')->group(function () {
     // Main forum pages (public)

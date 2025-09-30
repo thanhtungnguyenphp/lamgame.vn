@@ -102,7 +102,7 @@ class HomeController extends Controller
                 'salary' => number_format($job->price / 1000000, 1) . ' triệu VND',
                 'location' => $this->extractLocation($job->short_description),
                 'posted_ago' => \Carbon\Carbon::parse($job->created_at)->diffForHumans(),
-                'url' => route('lamgame.viec-lam-game') . '/' . $job->id,
+                'url' => route('lamgame.job.detail', $job->id),
             ];
         }
 
