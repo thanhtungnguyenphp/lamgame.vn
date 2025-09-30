@@ -117,7 +117,9 @@
                                 </div>
                             </div>
                             <div class="course-content">
-                                <h3 class="course-title">{{ $job['title'] }}</h3>
+                                <h3 class="course-title">
+                                    <a href="{{ $job['url'] }}">{{ $job['title'] }}</a>
+                                </h3>
                                 <p class="course-description">
                                     Cơ hội việc làm tại {{ $job['company'] }} - một trong những studio game hàng đầu tại {{ $job['location'] }}. 
                                     Mức lương hấp dẫn và môi trường làm việc chuyên nghiệp.
@@ -154,7 +156,9 @@
                             </div>
                         </div>
                         <div class="course-content">
-                            <h3 class="course-title">Unity Developer</h3>
+                            <h3 class="course-title">
+                                <a href="{{ route('lamgame.viec-lam-game') }}">Unity Developer</a>
+                            </h3>
                             <p class="course-description">
                                 Cơ hội việc làm tại VNG Corporation - studio game hàng đầu Việt Nam. 
                                 Tham gia phát triển game mobile với hàng triệu người chơi.
@@ -188,7 +192,9 @@
                             </div>
                         </div>
                         <div class="course-content">
-                            <h3 class="course-title">3D Artist</h3>
+                            <h3 class="course-title">
+                                <a href="{{ route('lamgame.viec-lam-game') }}">3D Artist</a>
+                            </h3>
                             <p class="course-description">
                                 Gameloft Vietnam tuyển 3D Artist tài năng để tạo ra những tài sản 3D chất lượng cao 
                                 cho game mobile AAA với hàng chục triệu downloads.
@@ -222,7 +228,9 @@
                             </div>
                         </div>
                         <div class="course-content">
-                            <h3 class="course-title">Backend Developer</h3>
+                            <h3 class="course-title">
+                                <a href="{{ route('lamgame.viec-lam-game') }}">Backend Developer</a>
+                            </h3>
                             <p class="course-description">
                                 Appota tuyển Backend Developer để phát triển hệ thống server cho game online. 
                                 Cơ hội làm việc với công nghệ mới nhất và team quốc tế.
@@ -863,6 +871,26 @@
         flex-wrap: wrap;
         gap: 0.75rem;
     }
+}
+
+/* Course Title Link Styling */
+.course-title a {
+    color: #2c3e50;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: block;
+    font-weight: 600;
+}
+
+.course-title a:hover {
+    color: #667eea;
+    text-decoration: none;
+}
+
+.course-title a:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+    border-radius: 4px;
 }
 </style>
 @endpush
