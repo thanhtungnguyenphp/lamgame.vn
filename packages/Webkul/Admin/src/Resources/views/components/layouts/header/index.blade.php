@@ -53,7 +53,7 @@
         </v-dark>
 
         <a 
-            href="{{ route('shop.home.index') }}" 
+            href="{{ route('home') }}" 
             target="_blank"
             class="flex"
         >

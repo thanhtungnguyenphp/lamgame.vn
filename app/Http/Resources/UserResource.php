@@ -19,10 +19,23 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'avatar' => $this->avatar,
-            'email_verified_at' => $this->email_verified_at,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'avatar' => $this->avatar ? url('storage/' . $this->avatar) : null,
+            'bio' => $this->bio,
+            'status' => (bool) ($this->status ?? true),
+            'email_verified_at' => $this->email_verified_at?->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
+            'profile_completed' => $this->isProfileCompleted(),
         ];
+    }
+
+    /**
+     * Check if user profile is completed
+     */
+    private function isProfileCompleted(): bool
+    {
+        return !empty($this->name) && 
+               !empty($this->email) && 
+               !empty($this->phone);
     }
 }
