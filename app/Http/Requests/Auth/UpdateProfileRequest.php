@@ -31,17 +31,9 @@ class UpdateProfileRequest extends FormRequest
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('users')->ignore($this->user()->id)
+                Rule::unique('admins')->ignore($this->user()->id)
             ],
-            'phone' => [
-                'nullable',
-                'string',
-                'regex:/^([0-9\s\-\+\(\)]*)$/',
-                'min:10',
-                'max:11'
-            ],
-            'bio' => ['nullable', 'string', 'max:500'],
-            'avatar' => [
+            'image' => [
                 'nullable',
                 'image',
                 'mimes:jpeg,jpg,png,gif',
@@ -73,15 +65,9 @@ class UpdateProfileRequest extends FormRequest
             'email.email' => 'Email không đúng định dạng.',
             'email.unique' => 'Email này đã được sử dụng.',
             
-            'phone.regex' => 'Số điện thoại không đúng định dạng.',
-            'phone.min' => 'Số điện thoại phải có ít nhất :min số.',
-            'phone.max' => 'Số điện thoại không được vượt quá :max số.',
-            
-            'bio.max' => 'Giới thiệu không được vượt quá :max ký tự.',
-            
-            'avatar.image' => 'File phải là ảnh.',
-            'avatar.mimes' => 'Ảnh phải có định dạng: jpeg, jpg, png, gif.',
-            'avatar.max' => 'Kích thước ảnh không được vượt quá 2MB.',
+            'image.image' => 'File phải là ảnh.',
+            'image.mimes' => 'Ảnh phải có định dạng: jpeg, jpg, png, gif.',
+            'image.max' => 'Kích thước ảnh không được vượt quá 2MB.',
             
             'current_password.required' => 'Vui lòng nhập mật khẩu hiện tại để thay đổi email.',
             'current_password.current_password' => 'Mật khẩu hiện tại không chính xác.',

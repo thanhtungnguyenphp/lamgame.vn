@@ -6,7 +6,7 @@ POST /api/auth/register
 ```
 
 ## Description
-API để đăng ký tài khoản người dùng mới. Sau khi đăng ký thành công, API sẽ trả về access token để người dùng có thể sử dụng ngay mà không cần đăng nhập lại.
+API để đăng ký admin user mới trong hệ thống Bagisto. Sau khi đăng ký thành công, API sẽ trả về access token để admin có thể sử dụng ngay mà không cần đăng nhập lại.
 
 ## Request Headers
 ```
@@ -21,7 +21,6 @@ Accept: application/json
   "email": "nguyenvana@example.com",
   "password": "Password123!",
   "password_confirmation": "Password123!",
-  "phone": "0909123456",
   "device_name": "iPhone 15 Pro",
   "terms_accepted": 1
 }
@@ -39,7 +38,6 @@ Accept: application/json
 ### Optional Fields
 | Field | Type | Description |
 |-------|------|-------------|
-| `phone` | string | Số điện thoại (10-15 ký tự) |
 | `device_name` | string | Tên thiết bị cho token |
 
 ## Validation Rules
