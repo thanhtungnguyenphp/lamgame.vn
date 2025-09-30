@@ -198,7 +198,7 @@
                                 @endphp
                                 <div class="similar-job">
                                     <h4 class="similar-job-title">
-                                        <a href="{{ route('lamgame.job-detail', [$similarJob->id, $similarSlug]) }}">
+                                        <a href="{{ route('lamgame.job.detail', $similarJob->url_key) }}">
                                             {{ $similarTitle }}
                                         </a>
                                     </h4>

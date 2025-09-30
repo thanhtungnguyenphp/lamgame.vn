@@ -299,9 +299,15 @@ class LamGamePageController extends Controller
         // Get paginated results
         $jobs = $jobsQuery->paginate($perPage);
         
-        // Get additional job attributes for each job
+        // Get additional job attributes for each job and ensure url_key exists
         foreach ($jobs as $job) {
             $job->attributes = $this->getJobAttributes($job->id);
+            
+            // Ensure url_key exists, if not create one from job title and id
+            if (empty($job->url_key)) {
+                $jobTitle = explode(' - ', $job->name)[0] ?? $job->name;
+                $job->url_key = \Str::slug($jobTitle . '-' . $job->id);
+            }
         }
 
         // Get job statistics for sidebar
@@ -382,9 +388,9 @@ class LamGamePageController extends Controller
     /**
      * Show Job detail page
      */
-    public function jobDetail($id, $slug = null)
+    public function jobDetail($slug)
     {
-        // Get job product from database
+        // Get job product from database by url_key (slug)
         $job = \DB::table('products as p')
             ->leftJoin('product_flat as pf', function($join) {
                 $join->on('p.id', '=', 'pf.product_id')
@@ -405,7 +411,7 @@ class LamGamePageController extends Controller
                      ->leftJoin('attributes as a_email', 'pav_email.attribute_id', '=', 'a_email.id')
                      ->where('a_email.code', '=', 'contact_email');
             })
-            ->where('p.id', $id)
+            ->where('pf.url_key', $slug)
             ->where('p.sku', 'LIKE', 'JOB_%')
             ->where('pf.status', 1)
             ->where('pf.visible_individually', 1)
@@ -445,13 +451,21 @@ class LamGamePageController extends Controller
                      ->where('pf.locale', '=', 'vi');
             })
             ->where('p.sku', 'LIKE', 'JOB_%')
-            ->where('p.id', '!=', $id)
+            ->where('pf.url_key', '!=', $slug)
             ->where('pf.status', 1)
             ->where('pf.visible_individually', 1)
-            ->select('p.id', 'p.sku', 'pf.name', 'pf.price', 'p.created_at')
+            ->select('p.id', 'p.sku', 'pf.name', 'pf.price', 'pf.url_key', 'p.created_at')
             ->orderBy('p.created_at', 'desc')
             ->limit(3)
             ->get();
+            
+        // Ensure url_key exists for similar jobs
+        foreach ($similarJobs as $similarJob) {
+            if (empty($similarJob->url_key)) {
+                $jobTitle = explode(' - ', $similarJob->name)[0] ?? $similarJob->name;
+                $similarJob->url_key = \Str::slug($jobTitle . '-' . $similarJob->id);
+            }
+        }
 
         return view('lamgame.pages.job-detail', [
             'job' => $job,
