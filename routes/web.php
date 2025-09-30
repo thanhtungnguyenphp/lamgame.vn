@@ -22,7 +22,7 @@ Route::get('blog/{slug}', [LamGamePageController::class, 'blogShow'])->name('blo
 
 // Job routes
 Route::get('viec-lam-game', [LamGamePageController::class, 'jobs'])->name('lamgame.viec-lam-game');
-Route::get('viec-lam-game/{id}', [LamGamePageController::class, 'jobDetail'])->name('lamgame.job.detail');
+Route::get('viec-lam/{slug}', [LamGamePageController::class, 'jobDetail'])->name('lamgame.job.detail');
 
 // Forum routes
 Route::prefix('forum')->name('forum.')->group(function () {
