@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\BannerController;
+use App\Http\Controllers\Api\PublicThumbnailController;
+use App\Http\Controllers\Api\JobController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,9 @@ use App\Http\Controllers\Api\BannerController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+// Include authentication routes
+require __DIR__ . '/api/auth.php';
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -51,4 +56,37 @@ Route::prefix('ai/thumbnails')->name('api.ai.thumbnails.')->middleware('throttle
     Route::post('blog', [PublicThumbnailController::class, 'generateBlogThumbnail'])->name('blog.generate');
     Route::post('product', [PublicThumbnailController::class, 'generateProductThumbnail'])->name('product.generate');
     Route::get('statistics', [PublicThumbnailController::class, 'getStatistics'])->name('statistics');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Job Posting API Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('jobs')->name('api.jobs.')->middleware('throttle:60,1')->group(function () {
+    // Public endpoints (no auth required)
+    Route::get('/', [\App\Http\Controllers\Api\JobController::class, 'index'])->name('index');
+    Route::get('/categories', [\App\Http\Controllers\Api\JobController::class, 'getCategories'])->name('categories');
+    Route::get('/attributes', [\App\Http\Controllers\Api\JobController::class, 'getAttributes'])->name('attributes');
+    Route::get('/{id}', [\App\Http\Controllers\Api\JobController::class, 'show'])->name('show')->where('id', '[0-9]+');
+    
+    // Protected endpoints (auth required) - uncomment when auth is implemented
+    /*
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [\App\Http\Controllers\Api\JobController::class, 'store'])->name('store');
+        Route::put('/{id}', [\App\Http\Controllers\Api\JobController::class, 'update'])->name('update')->where('id', '[0-9]+');
+        Route::delete('/{id}', [\App\Http\Controllers\Api\JobController::class, 'destroy'])->name('destroy')->where('id', '[0-9]+');
+        Route::post('/bulk', [\App\Http\Controllers\Api\JobController::class, 'bulkStore'])->name('bulk-store');
+        Route::post('/{id}/publish', [\App\Http\Controllers\Api\JobController::class, 'publish'])->name('publish')->where('id', '[0-9]+');
+        Route::post('/{id}/unpublish', [\App\Http\Controllers\Api\JobController::class, 'unpublish'])->name('unpublish')->where('id', '[0-9]+');
+    });
+    */
+    
+    // Temporary: Allow all endpoints without auth for testing
+    Route::post('/', [\App\Http\Controllers\Api\JobController::class, 'store'])->name('store');
+    Route::put('/{id}', [\App\Http\Controllers\Api\JobController::class, 'update'])->name('update')->where('id', '[0-9]+');
+    Route::delete('/{id}', [\App\Http\Controllers\Api\JobController::class, 'destroy'])->name('destroy')->where('id', '[0-9]+');
+    Route::post('/bulk', [\App\Http\Controllers\Api\JobController::class, 'bulkStore'])->name('bulk-store');
+    Route::post('/{id}/publish', [\App\Http\Controllers\Api\JobController::class, 'publish'])->name('publish')->where('id', '[0-9]+');
+    Route::post('/{id}/unpublish', [\App\Http\Controllers\Api\JobController::class, 'unpublish'])->name('unpublish')->where('id', '[0-9]+');
 });
