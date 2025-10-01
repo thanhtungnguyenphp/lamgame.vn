@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\PublicThumbnailController;
 use App\Http\Controllers\Api\JobController;
+use App\Http\Controllers\Api\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,4 +90,24 @@ Route::prefix('jobs')->name('api.jobs.')->middleware('throttle:60,1')->group(fun
     Route::post('/bulk', [\App\Http\Controllers\Api\JobController::class, 'bulkStore'])->name('bulk-store');
     Route::post('/{id}/publish', [\App\Http\Controllers\Api\JobController::class, 'publish'])->name('publish')->where('id', '[0-9]+');
     Route::post('/{id}/unpublish', [\App\Http\Controllers\Api\JobController::class, 'unpublish'])->name('unpublish')->where('id', '[0-9]+');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard API Routes (Protected)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('dashboard')->name('api.dashboard.')->middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
+    // Main dashboard endpoint - returns 5 newest jobs and 5 recent applications
+    Route::get('/', [DashboardController::class, 'index'])->name('index');
+    
+    // Get applications for a specific job
+    Route::get('/jobs/{jobId}/applications', [DashboardController::class, 'jobApplications'])
+        ->name('job.applications')
+        ->where('jobId', '[0-9]+');
+    
+    // Update application status (accept, reject, etc.)
+    Route::put('/applications/{applicationId}/status', [DashboardController::class, 'updateApplicationStatus'])
+        ->name('application.update-status')
+        ->where('applicationId', '[0-9]+');
 });
