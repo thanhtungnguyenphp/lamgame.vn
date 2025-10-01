@@ -12,13 +12,11 @@
         <a
             href="{{ route('shop.home.index') }}"
             aria-label="@lang('shop::app.components.layouts.header.bagisto')"
+            class="flex items-center"
         >
-            <img
-                src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
-                width="131"
-                height="29"
-                alt="{{ config('app.name') }}"
-            >
+            <img src="{{ asset('assets/logos/png/logo-horizontal-200.png') }}" 
+                 alt="LamGame.vn" 
+                 class="h-[58px] w-auto object-contain">
         </a>
 
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.after') !!}

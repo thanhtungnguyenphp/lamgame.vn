@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <style>
+      .logo-text { font-family: 'Arial', 'Helvetica', sans-serif; font-weight: bold; }
+      .logo-red { fill: #FF4444; }
+      .logo-orange { fill: #FF6B35; }
+      .logo-gold { fill: #FFD700; }
+      .logo-black { fill: #1A1A1A; }
+      .logo-white { fill: #FFFFFF; }
+    </style>
+  </defs>
+  
+  <!-- Outer Circle -->
+  <circle cx="256" cy="256" r="250" class="logo-white" stroke="#1A1A1A" stroke-width="6"/>
+  
+  <!-- Outer Text Ring - Top Arc "GAME NEWS" -->
+  <path id="topArc" d="M 100 256 A 156 156 0 0 1 412 256" fill="none" stroke="none"/>
+  <text class="logo-text logo-red" font-size="36">
+    <textPath href="#topArc" startOffset="50%" text-anchor="middle">
+      GAME NEWS
+    </textPath>
+  </text>
+  
+  <!-- Outer Text Ring - Bottom Arc "GAME FOR LIFE" -->
+  <path id="bottomArc" d="M 412 256 A 156 156 0 0 1 100 256" fill="none" stroke="none"/>
+  <text class="logo-text logo-red" font-size="28">
+    <textPath href="#bottomArc" startOffset="50%" text-anchor="middle">
+      GAME FOR LIFE
+    </textPath>
+  </text>
+  
+  <!-- Side Dots -->
+  <circle cx="85" cy="256" r="8" class="logo-black"/>
+  <circle cx="427" cy="256" r="8" class="logo-black"/>
+  
+  <!-- Inner Circle -->
+  <circle cx="256" cy="256" r="120" class="logo-white" stroke="#1A1A1A" stroke-width="4"/>
+  
+  <!-- Controller Body -->
+  <ellipse cx="256" cy="280" rx="75" ry="35" class="logo-orange" stroke="#1A1A1A" stroke-width="3"/>
+  
+  <!-- Controller Buttons -->
+  <circle cx="290" cy="270" r="6" class="logo-black"/>
+  <circle cx="305" cy="280" r="6" class="logo-black"/>
+  <circle cx="290" cy="290" r="6" class="logo-black"/>
+  <circle cx="275" cy="280" r="6" class="logo-black"/>
+  
+  <!-- Crown -->
+  <polygon points="256,190 246,210 266,210" class="logo-gold" stroke="#1A1A1A" stroke-width="2"/>
+  <polygon points="240,210 272,210 268,220 244,220" class="logo-gold" stroke="#1A1A1A" stroke-width="2"/>
+  
+  <!-- Crown Jewels -->
+  <circle cx="250" cy="205" r="2" class="logo-gold"/>
+  <circle cx="256" cy="200" r="2" class="logo-gold"/>
+  <circle cx="262" cy="205" r="2" class="logo-gold"/>
+  
+  <!-- Character Face -->
+  <ellipse cx="245" cy="250" rx="12" ry="8" class="logo-black"/>
+  <polygon points="245,255 250,265 240,265" class="logo-black"/>
+  
+  <!-- LAMGAME.VN Text -->
+  <text x="256" y="330" class="logo-text logo-red" font-size="20" text-anchor="middle">LAMGAME.VN</text>
+</svg>

@@ -9,13 +9,14 @@
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="@yield('page_title', 'LAMGAME • Làm Game - Học Lập Trình Game và Phát Triển Ứng Dụng')">
     <meta property="og:description" content="@yield('page_description', 'Làm Game - Nền tảng học lập trình game, phát triển ứng dụng và các khóa học lập trình chuyên sâu. Bắt đầu hành trình của bạn ngay hôm nay!')">
-    <meta property="og:image" content="{{ asset('logo/lamgame-logo.svg') }}">
+    <meta property="og:image" content="{{ asset('assets/logos/png/logo-400.png') }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <link rel="icon" type="image/png" href="{{ asset('logo/lamgame-logo.png') }}"
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/logos/favicon/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logos/favicon/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/logos/favicon/favicon-16x16.png') }}">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -212,7 +213,10 @@
         <div class="container">
             <div class="header-content">
                 <div class="brand">
-                    <img src="{{ asset('logo/lamgame-horizontal.svg') }}" alt="LAMGAME Logo" class="logo" style="width: auto; height: 50px; border-radius: 0;">
+                    <img src="{{ asset('assets/logos/png/logo-horizontal-200.png') }}" 
+                         alt="LamGame.vn" 
+                         class="logo" 
+                         style="width: auto; height: 50px; border-radius: 0; object-fit: contain;">
                 </div>
                 
                 {{-- Navigation Menu --}}

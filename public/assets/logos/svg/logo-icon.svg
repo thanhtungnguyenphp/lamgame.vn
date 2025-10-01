@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <defs>
+    <style>
+      .logo-text { font-family: 'Arial', 'Helvetica', sans-serif; font-weight: bold; }
+      .logo-red { fill: #FF4444; }
+      .logo-orange { fill: #FF6B35; }
+      .logo-gold { fill: #FFD700; }
+      .logo-black { fill: #1A1A1A; }
+      .logo-white { fill: #FFFFFF; }
+    </style>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="120" cy="120" r="115" class="logo-white" stroke="#1A1A1A" stroke-width="4"/>
+  
+  <!-- Controller Body -->
+  <ellipse cx="120" cy="135" rx="65" ry="30" class="logo-orange" stroke="#1A1A1A" stroke-width="3"/>
+  
+  <!-- Controller Buttons -->
+  <circle cx="145" cy="128" r="5" class="logo-black"/>
+  <circle cx="155" cy="135" r="5" class="logo-black"/>
+  <circle cx="145" cy="142" r="5" class="logo-black"/>
+  <circle cx="135" cy="135" r="5" class="logo-black"/>
+  
+  <!-- Crown -->
+  <polygon points="120,70 112,85 128,85" class="logo-gold" stroke="#1A1A1A" stroke-width="2"/>
+  <polygon points="108,85 132,85 129,92 111,92" class="logo-gold" stroke="#1A1A1A" stroke-width="2"/>
+  
+  <!-- Crown Jewels -->
+  <circle cx="116" cy="82" r="2" class="logo-gold"/>
+  <circle cx="120" cy="78" r="2" class="logo-gold"/>
+  <circle cx="124" cy="82" r="2" class="logo-gold"/>
+  
+  <!-- Character Face -->
+  <ellipse cx="110" cy="115" rx="10" ry="7" class="logo-black"/>
+  <polygon points="110,118 114,125 106,125" class="logo-black"/>
+  
+  <!-- LAMGAME.VN Text -->
+  <text x="120" y="175" class="logo-text logo-red" font-size="16" text-anchor="middle">LAMGAME.VN</text>
+</svg>
