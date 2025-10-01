@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct Logo Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .test-item { margin: 20px 0; padding: 20px; background: white; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .error { background: #ffebee; border: 1px solid #f44336; }
+        .success { background: #e8f5e8; border: 1px solid #4caf50; }
+        img { border: 2px dashed #ccc; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Direct Logo Test - LAMGAME.VN</h1>
+    
+    <div class="test-item">
+        <h3>Test 1: Direct Image Path</h3>
+        <img src="/assets/logos/png/logo-horizontal-200.png" alt="Logo Direct" style="height: 58px;" onerror="this.parentNode.classList.add('error'); this.parentNode.innerHTML += '<p style=color:red>❌ FAILED: Image not found at /assets/logos/png/logo-horizontal-200.png</p>'" onload="this.parentNode.classList.add('success')">
+    </div>
+    
+    <div class="test-item">
+        <h3>Test 2: Laravel Asset Helper</h3>
+        <img src="<?php echo asset('assets/logos/png/logo-horizontal-200.png'); ?>" alt="Logo Asset" style="height: 58px;" onerror="this.parentNode.classList.add('error'); this.parentNode.innerHTML += '<p style=color:red>❌ FAILED: Asset helper failed</p>'" onload="this.parentNode.classList.add('success')">
+    </div>
+    
+    <div class="test-item">
+        <h3>Test 3: Different Sizes</h3>
+        <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+            <div>
+                <p>100px:</p>
+                <img src="/assets/logos/png/logo-horizontal-100.png" alt="Logo 100" style="height: 30px;" onerror="this.style.border='2px solid red'" onload="this.style.border='2px solid green'">
+            </div>
+            <div>
+                <p>150px:</p>
+                <img src="/assets/logos/png/logo-horizontal-150.png" alt="Logo 150" style="height: 40px;" onerror="this.style.border='2px solid red'" onload="this.style.border='2px solid green'">
+            </div>
+            <div>
+                <p>200px:</p>
+                <img src="/assets/logos/png/logo-horizontal-200.png" alt="Logo 200" style="height: 50px;" onerror="this.style.border='2px solid red'" onload="this.style.border='2px solid green'">
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-item">
+        <h3>Test 4: File Existence Check</h3>
+        <div id="fileCheck">Checking files...</div>
+    </div>
+    
+    <div class="test-item">
+        <h3>Test 5: Current URL & Path</h3>
+        <p><strong>Current URL:</strong> <span id="currentUrl"></span></p>
+        <p><strong>Base URL:</strong> <span id="baseUrl"></span></p>
+        <p><strong>Full Asset Path:</strong> <span id="fullPath"></span></p>
+    </div>
+    
+    <script>
+        // Display current URL info
+        document.getElementById('currentUrl').textContent = window.location.href;
+        document.getElementById('baseUrl').textContent = window.location.origin;
+        document.getElementById('fullPath').textContent = window.location.origin + '/assets/logos/png/logo-horizontal-200.png';
+        
+        // Check file existence
+        async function checkFiles() {
+            const files = [
+                '/assets/logos/png/logo-horizontal-100.png',
+                '/assets/logos/png/logo-horizontal-150.png', 
+                '/assets/logos/png/logo-horizontal-200.png',
+                '/assets/logos/png/logo-horizontal-300.png',
+                '/assets/logos/png/logo-horizontal-400.png'
+            ];
+            
+            let results = '<ul>';
+            
+            for (let file of files) {
+                try {
+                    const response = await fetch(file, { method: 'HEAD' });
+                    if (response.ok) {
+                        results += `<li style="color: green;">✅ ${file} (${response.status})</li>`;
+                    } else {
+                        results += `<li style="color: red;">❌ ${file} (${response.status})</li>`;
+                    }
+                } catch (error) {
+                    results += `<li style="color: red;">❌ ${file} (Error: ${error.message})</li>`;
+                }
+            }
+            
+            results += '</ul>';
+            document.getElementById('fileCheck').innerHTML = results;
+        }
+        
+        checkFiles();
+        
+        // Log console info
+        console.log('Logo test page loaded');
+        console.log('Current URL:', window.location.href);
+        console.log('Testing logo files...');
+    </script>
+</body>
+</html>

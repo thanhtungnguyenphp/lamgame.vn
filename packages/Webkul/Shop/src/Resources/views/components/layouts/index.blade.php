@@ -44,8 +44,20 @@
 
         <link
             rel="icon"
+            type="image/x-icon"
+            href="{{ core()->getCurrentChannel()->favicon_url ?? asset('assets/logos/favicon/favicon.ico') }}"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="{{ asset('assets/logos/favicon/favicon-32x32.png') }}"
+        />
+        <link
+            rel="icon"
+            type="image/png"
             sizes="16x16"
-            href="{{ core()->getCurrentChannel()->favicon_url ?? bagisto_asset('images/favicon.ico') }}"
+            href="{{ asset('assets/logos/favicon/favicon-16x16.png') }}"
         />
 
         @bagistoVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'])
