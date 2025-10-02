@@ -9,7 +9,7 @@
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="@yield('page_title', 'LAMGAME • Làm Game - Học Lập Trình Game và Phát Triển Ứng Dụng')">
     <meta property="og:description" content="@yield('page_description', 'Làm Game - Nền tảng học lập trình game, phát triển ứng dụng và các khóa học lập trình chuyên sâu. Bắt đầu hành trình của bạn ngay hôm nay!')">
-    <meta property="og:image" content="{{ asset('assets/logos/png/logo-400.png') }}">
+    <meta property="og:image" content="{{ asset('assets/logos/png/logo-square-512.png') }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">
     
@@ -36,8 +36,32 @@
         /* Header */
         .header { background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
         .header-content { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
-        .brand { display: flex; align-items: center; gap: 10px; }
+        .brand { display: flex; align-items: center; gap: 12px; }
         .logo { width: 50px; height: 50px; border-radius: 50%; }
+        
+        /* Brand Logo Mobile-First Optimization */
+        .brand-logo-optimized {
+            height: 30px; /* Mobile base */
+            width: auto;
+            object-fit: contain;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+        }
+        
+        @media (min-width: 481px) {
+            .brand-logo-optimized { height: 40px; }
+        }
+        
+        @media (min-width: 769px) {
+            .brand-logo-optimized { height: 50px; }
+        }
+        
+        @media (min-width: 1025px) {
+            .brand-logo-optimized { 
+                height: 60px;
+                max-height: 60px; 
+            }
+        }
         .nav { display: flex; gap: 2rem; align-items: center; }
         .nav a { text-decoration: none; color: #333; font-weight: 500; transition: all 0.3s ease; position: relative; }
         .nav a:hover, .nav a.cta { color: #6a4c93; }
@@ -213,10 +237,15 @@
         <div class="container">
             <div class="header-content">
                 <div class="brand">
-                    <img src="{{ asset('assets/logos/png/logo-horizontal-200.png') }}" 
-                         alt="LamGame.vn" 
-                         class="logo" 
-                         style="width: auto; height: 50px; border-radius: 0; object-fit: contain;">
+                    <x-logo 
+                        size="medium" 
+                        variant="horizontal" 
+                        alt="LamGame.vn - Game Development Platform" 
+                        class="brand-logo-optimized" 
+                        :priority="true" 
+                        :lazy="false" 
+                        :interactive="true" 
+                    />
                 </div>
                 
                 {{-- Navigation Menu --}}
