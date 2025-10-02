@@ -11,13 +11,14 @@
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="@yield('og_title', 'Làm Game - Trung tâm đào tạo lập trình game')" />
     <meta property="og:description" content="@yield('og_description', 'Học Unity, Unreal Engine, C#, Game Design từ cơ bản đến nâng cao. Cam kết việc làm sau khóa học.')" />
-    <meta property="og:image" content="@yield('og_image', asset('logo/lamgame-horizontal.svg'))" />
+    <meta property="og:image" content="@yield('og_image', asset('assets/logos/png/logo-square-512.png'))" />
     <meta property="og:url" content="{{ url()->current() }}" />
     <meta property="og:type" content="website" />
     
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
-    <link rel="icon" type="image/png" href="{{ asset('logo/lamgame-logo.png') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/logos/favicon/favicon.ico') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logos/favicon/favicon-32x32.png') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/logos/favicon/favicon-16x16.png') }}" />
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,6 +35,7 @@
     
     <!-- LamGame Branding CSS -->
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-branding.css') }}">
+    <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/brand-logo-optimization.css') }}">
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-homepage.css') }}">
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/hero-banner-v2.css') }}">
     
@@ -44,8 +46,16 @@
     <!-- Header -->
     <header class="header" id="header">
         <div class="wrap row">
-            <a href="{{ route('home') }}" class="brand" aria-label="Trang chủ Làm Game">
-                <img src="{{ asset('logo/lamgame-horizontal.svg') }}" alt="Làm Game Logo" onerror="this.src='{{ asset('logo/lamgame-logo.png') }}'" style="height: 48px; width: auto;" />
+            <a href="{{ route('home') }}" class="brand brand-container" aria-label="Trang chủ Làm Game">
+                <x-logo 
+                    size="60" 
+                    variant="horizontal" 
+                    alt="LamGame.vn - Làm Game Logo" 
+                    class="brand-logo-optimized brand-logo-60" 
+                    :priority="true" 
+                    :lazy="false" 
+                    :interactive="true" 
+                />
                 <span class="title">Làm Game</span>
             </a>
             <nav aria-label="Điều hướng chính">

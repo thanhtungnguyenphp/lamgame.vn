@@ -2,7 +2,13 @@
 <div class="mobile-menu" id="mobile-menu" role="navigation">
     <div class="mobile-menu-header">
         <div class="mobile-menu-brand">
-            <img src="{{ asset('logo/lamgame-horizontal.svg') }}" alt="LAMGAME Logo" class="mobile-logo">
+            <x-logo 
+                size="xs" 
+                variant="horizontal" 
+                alt="LAMGAME Logo" 
+                class="mobile-logo" 
+                :lazy="false" 
+            />
             <span>LAMGAME</span>
         </div>
         <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">
@@ -67,9 +73,9 @@
 }
 
 .mobile-logo {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
+    height: 24px;
+    width: auto;
+    object-fit: contain;
 }
 
 .mobile-menu-close {
