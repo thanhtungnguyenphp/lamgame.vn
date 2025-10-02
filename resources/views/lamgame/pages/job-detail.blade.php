@@ -3,6 +3,22 @@
 @section('page_title', $page_title ?? 'Chi tiết việc làm - Làm Game')
 @section('page_description', $page_description ?? 'Thông tin chi tiết về cơ hội việc làm trong ngành game development')
 
+@push('meta')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Customer data for auto-fill -->
+    @if($isLoggedIn)
+    <script>
+        window.customerData = @json($customer);
+        window.isLoggedIn = true;
+    </script>
+    @else
+    <script>
+        window.customerData = null;
+        window.isLoggedIn = false;
+    </script>
+    @endif
+@endpush
+
 @section('content')
 <div class="job-detail-page">
     <!-- Breadcrumb -->
@@ -245,30 +261,66 @@
         
         <div class="modal-body">
             <form id="applyForm" class="apply-form" enctype="multipart/form-data">
+                <!-- Auth info section -->
+                @if($isLoggedIn)
+                <div class="auth-info-section">
+                    <div class="auth-indicator">
+                        <i class="fa fa-check-circle" style="color: #10b981;"></i>
+                        <span>Đã đăng nhập: {{ $customer['full_name'] }}</span>
+                        <small style="display: block; color: #6b7280; margin-top: 2px;">Thông tin sẽ được tự động điền</small>
+                    </div>
+                </div>
+@else
+                <div class="auth-info-section">
+                    <div class="guest-info">
+                        <div class="guest-message">
+                            <i class="fa fa-info-circle" style="color: #667eea;"></i>
+                            <div>
+                                <span>Đang ứng tuyển với tư cách khách</span>
+                                <small style="display: block; color: #6b7280; margin-top: 2px;">
+                                    Đăng nhập để tự động điền thông tin và quản lý hồ sơ ứng tuyển
+                                </small>
+                            </div>
+                        </div>
+                        <div class="guest-actions">
+                            <a href="{{ route('auth.login') }}" class="btn-quick-login" target="_blank">
+                                <i class="fa fa-sign-in"></i>
+                                Đăng nhập
+                            </a>
+                            <a href="{{ route('auth.register') }}" class="btn-quick-register" target="_blank">
+                                <i class="fa fa-user-plus"></i>
+                                Đăng ký
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="applicant_name">Họ và tên <span class="required">*</span></label>
-                        <input type="text" id="applicant_name" name="applicant_name" required placeholder="Nhập họ và tên của bạn">
+                        <label for="fullName">Họ và tên <span class="required">*</span></label>
+                        <input type="text" id="fullName" name="full_name" required placeholder="Nhập họ và tên của bạn">
                     </div>
                     <div class="form-group">
-                        <label for="applicant_email">Email <span class="required">*</span></label>
-                        <input type="email" id="applicant_email" name="applicant_email" required placeholder="email@example.com">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required placeholder="email@example.com">
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="applicant_phone">Số điện thoại <span class="required">*</span></label>
-                    <input type="tel" id="applicant_phone" name="applicant_phone" required placeholder="0123456789">
+                    <label for="phone">Số điện thoại <span class="required">*</span></label>
+                    <input type="tel" id="phone" name="phone" required placeholder="0123456789">
                 </div>
                 
                 <div class="form-group">
-                    <label for="applicant_cv">Upload CV <span class="required">*</span></label>
+                    <label for="cv">Upload CV <span class="required">*</span></label>
                     <div class="file-upload-area">
-                        <input type="file" id="applicant_cv" name="applicant_cv" accept=".pdf,.doc,.docx" required>
+                        <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required>
                         <div class="file-upload-text">
                             <i class="fa fa-upload"></i>
                             <span>Chọn file CV (PDF, DOC, DOCX)</span>
                         </div>
+                        <div id="fileName" style="display: none; margin-top: 8px;"></div>
                     </div>
                     <small class="form-help">Kích thước tối đa: 5MB</small>
                 </div>
@@ -1318,6 +1370,107 @@
             gap: 1.5rem;
         }
 
+        /* Auth Info Section */
+        .auth-info-section {
+            background: #f8f9ff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .auth-indicator {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .guest-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .guest-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .guest-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .btn-quick-login,
+        .btn-quick-register {
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            border: 1px solid;
+            white-space: nowrap;
+        }
+
+        .btn-quick-login {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .btn-quick-login:hover {
+            background: #5a67d8;
+            border-color: #5a67d8;
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-quick-register {
+            background: white;
+            color: #667eea;
+            border-color: #667eea;
+        }
+
+        .btn-quick-register:hover {
+            background: #f8f9ff;
+            color: #5a67d8;
+            border-color: #5a67d8;
+            text-decoration: none;
+        }
+
+        .auth-indicator i,
+        .guest-message i {
+            margin-top: 2px;
+        }
+
+        /* Responsive adjustments for guest actions */
+        @media (max-width: 768px) {
+            .guest-info {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+            
+            .guest-actions {
+                justify-content: center;
+            }
+            
+            .btn-quick-login,
+            .btn-quick-register {
+                flex: 1;
+                justify-content: center;
+                padding: 0.5rem 1rem;
+            }
+        }
+
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1349,6 +1502,7 @@
             font-size: 1rem;
             transition: border-color 0.2s ease;
             background: white;
+            color: #374151;
         }
 
         .form-group input:focus,
@@ -1357,6 +1511,22 @@
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #9ca3af;
+            opacity: 1;
+        }
+        
+        .form-group input:-ms-input-placeholder,
+        .form-group textarea:-ms-input-placeholder {
+            color: #9ca3af;
+        }
+        
+        .form-group input::-webkit-input-placeholder,
+        .form-group textarea::-webkit-input-placeholder {
+            color: #9ca3af;
         }
 
         .form-group textarea {
@@ -1375,10 +1545,56 @@
             background: #fafafa;
         }
 
-        .file-upload-area:hover {
-            border-color: #667eea;
-            background: #f8f9ff;
-        }
+            .file-upload-area:hover {
+                background-color: #f8f9ff;
+                border-color: #3b82f6;
+            }
+            
+            .file-upload-area.drag-over {
+                background-color: #f0f9ff;
+                border-color: #3b82f6;
+                border-style: solid;
+                transform: scale(1.02);
+            }
+            
+            .file-upload-area {
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+            
+            /* Error states */
+            input.error, 
+            textarea.error, 
+            select.error {
+                border-color: #dc2626 !important;
+                background-color: #fef2f2;
+                color: #374151;
+            }
+            
+            /* Readonly states */
+            input[readonly], 
+            textarea[readonly], 
+            select[readonly] {
+                background-color: #f8f9fa !important;
+                border-color: #e2e8f0 !important;
+                color: #6b7280 !important;
+                cursor: not-allowed;
+            }
+            
+            input[readonly]:focus, 
+            textarea[readonly]:focus, 
+            select[readonly]:focus {
+                box-shadow: none !important;
+                border-color: #e2e8f0 !important;
+            }
+            
+            .field-error {
+                color: #dc2626;
+                font-size: 12px;
+                margin-top: 4px;
+                display: block;
+                font-weight: 500;
+            }
 
         .file-upload-area input[type="file"] {
             position: absolute;
@@ -1396,6 +1612,7 @@
             align-items: center;
             gap: 0.5rem;
             color: #6b7280;
+            font-weight: 500;
         }
 
         .file-upload-text i {
@@ -1408,17 +1625,32 @@
             font-size: 0.8rem;
             margin-top: 0.5rem;
         }
+        
+        /* File upload success state */
+        #fileName {
+            padding: 0.5rem;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            margin-top: 0.5rem;
+        }
+        
+        #fileName div {
+            font-weight: 600;
+            color: #059669 !important;
+        }
 
         /* Modal Buttons */
         .btn-cancel {
             background: #f8f9fa;
-            color: #6b7280;
+            color: #6b7280 !important;
             border: 2px solid #e5e7eb;
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
+            font-size: 1rem;
         }
 
         .btn-cancel:hover {
@@ -1429,7 +1661,7 @@
 
         .btn-submit {
             background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            color: white !important;
             border: none;
             padding: 0.75rem 2rem;
             border-radius: 8px;
@@ -1439,6 +1671,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 1rem;
         }
 
         .btn-submit:hover {
@@ -1470,264 +1703,371 @@
                 grid-template-columns: 1fr;
                 gap: 1rem;
             }
+            
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
 
             .modal-footer {
                 flex-direction: column;
+                gap: 0.75rem;
             }
 
             .btn-cancel,
             .btn-submit {
                 width: 100%;
                 justify-content: center;
+                padding: 1rem 2rem;
+            }
+            
+            .file-upload-area {
+                padding: 1.5rem 1rem;
             }
         }
     </style>
     @endpush
 
     @push('scripts')
+    <!-- Job Detail Modal JavaScript -->
     <script>
-        // Toggle save job functionality
-        function toggleSaveJob(button) {
+        // Modal Functions
+        window.openApplyModal = function() {
+            const modal = document.getElementById('applyModal');
+            if (!modal) {
+                console.error('Modal element not found');
+                return;
+            }
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Auto-fill form if user is logged in
+            setTimeout(() => {
+                if (typeof autoFillFormData === 'function') {
+                    autoFillFormData();
+                }
+            }, 100);
+        };
+        
+        window.closeApplyModal = function() {
+            const modal = document.getElementById('applyModal');
+            if (!modal) return;
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        };
+        
+        window.toggleSaveJob = function(button) {
             const icon = button.querySelector('i');
             const text = button.querySelector('span');
             
             if (icon.classList.contains('fa-heart-o')) {
-                // Save job
                 icon.classList.remove('fa-heart-o');
                 icon.classList.add('fa-heart');
                 button.classList.add('saved');
                 if (text) text.textContent = 'Đã lưu';
-                
-                // Show success message
-                showMessage('Đã lưu việc làm vào danh sách yêu thích!', 'success');
+                showToastMessage('Đã lưu việc làm vào danh sách yêu thích!', 'success');
             } else {
-                // Unsave job
                 icon.classList.remove('fa-heart');
                 icon.classList.add('fa-heart-o');
                 button.classList.remove('saved');
                 if (text) text.textContent = 'Lưu việc làm';
-                
-                showMessage('Đã xóa khỏi danh sách yêu thích!', 'info');
+                showToastMessage('Đã xóa khỏi danh sách yêu thích!', 'info');
             }
+        };
+        
+        // Form validation functions
+        window.validateFormBeforeSubmit = function() {
+            let isValid = true;
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const cv = document.getElementById('cv').files[0];
+            
+            if (!fullName) {
+                showFieldError('fullName', 'Vui lòng nhập họ và tên');
+                isValid = false;
+            }
+            if (!email || !isValidEmail(email)) {
+                showFieldError('email', 'Vui lòng nhập email hợp lệ');
+                isValid = false;
+            }
+            if (!phone || !isValidVietnamesePhone(phone)) {
+                showFieldError('phone', 'Vui lòng nhập số điện thoại hợp lệ');
+                isValid = false;
+            }
+            if (!cv) {
+                showFieldError('cv', 'Vui lòng chọn file CV');
+                isValid = false;
+            }
+            return isValid;
+        };
+        
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         }
         
-        // Show message function
-        function showMessage(message, type = 'info') {
-            // Create message element
-            const messageEl = document.createElement('div');
-            messageEl.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${type === 'success' ? '#10b981' : '#667eea'};
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 1000;
-                font-weight: 500;
-                animation: slideIn 0.3s ease;
-            `;
-            messageEl.textContent = message;
-            
-            // Add animation styles
-            if (!document.querySelector('#messageStyles')) {
-                const style = document.createElement('style');
-                style.id = 'messageStyles';
-                style.textContent = `
-                    @keyframes slideIn {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
-                    @keyframes slideOut {
-                        from { transform: translateX(0); opacity: 1; }
-                        to { transform: translateX(100%); opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
+        function isValidVietnamesePhone(phone) {
+            phone = phone.replace(/[\s\-\.\(\)]/g, '');
+            if (phone.startsWith('+84')) {
+                phone = '0' + phone.substring(3);
+            } else if (phone.startsWith('84') && phone.length >= 10) {
+                phone = '0' + phone.substring(2);
             }
-            
-            document.body.appendChild(messageEl);
-            
-            // Auto remove after 3 seconds
-            setTimeout(() => {
-                messageEl.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => {
-                    if (messageEl.parentNode) {
-                        messageEl.parentNode.removeChild(messageEl);
-                    }
-                }, 300);
-            }, 3000);
+            return /^0(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/.test(phone);
         }
         
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add smooth scrolling for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-            
-            // Add click handler for apply buttons to open modal
-            document.querySelectorAll('.btn-apply, .btn-apply-bottom').forEach(button => {
-                if (button.tagName.toLowerCase() === 'button') {
-                    button.addEventListener('click', openApplyModal);
+        window.showFieldError = function(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.classList.add('error');
+                let errorEl = field.parentNode.querySelector('.field-error');
+                if (!errorEl) {
+                    errorEl = document.createElement('div');
+                    errorEl.className = 'field-error';
+                    field.parentNode.appendChild(errorEl);
+                }
+                errorEl.textContent = message;
+                errorEl.style.cssText = 'color: #dc2626; font-size: 12px; margin-top: 4px;';
+            }
+        };
+        
+        window.clearFieldError = function(fieldId) {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.classList.remove('error');
+                const errorEl = field.parentNode.querySelector('.field-error');
+                if (errorEl) errorEl.textContent = '';
+            }
+        };
+        
+        window.clearAllFormErrors = function() {
+            document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+            document.querySelectorAll('input, textarea, select').forEach(el => el.classList.remove('error'));
+        };
+        
+        window.displayValidationErrors = function(errors) {
+            Object.keys(errors).forEach(field => {
+                const messages = Array.isArray(errors[field]) ? errors[field] : [errors[field]];
+                if (messages.length > 0) {
+                    showFieldError(field.replace('_', ''), messages[0]);
                 }
             });
-        });
-
-        // Modal functions
-        function openApplyModal() {
-            const modal = document.getElementById('applyModal');
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeApplyModal() {
-            const modal = document.getElementById('applyModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        // Close modal when clicking outside
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('applyModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeApplyModal();
-                }
-            });
-
-            // File upload preview
-            document.getElementById('cv').addEventListener('change', function(e) {
-                const fileName = document.getElementById('fileName');
-                if (e.target.files.length > 0) {
-                    const file = e.target.files[0];
-                    fileName.textContent = `✓ Đã chọn: ${file.name}`;
-                    fileName.style.display = 'block';
-                } else {
-                    fileName.style.display = 'none';
-                }
-            });
-
-            // Form submission
-            document.getElementById('applyForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const submitBtn = document.querySelector('.btn-submit');
-                const originalText = submitBtn.innerHTML;
-                
-                // Show loading state
+        };
+        
+        window.setFormLoadingState = function(loading) {
+            const submitBtn = document.querySelector('.btn-submit');
+            const form = document.getElementById('applyForm');
+            if (loading) {
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+                form.style.opacity = '0.7';
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi hồ sơ ứng tuyển';
+                form.style.opacity = '1';
+            }
+        };
+        
+        window.showSuccessMessage = function(result) {
+            const message = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">✅</div>
+                    <h4 style="color: #059669; margin: 0 0 10px 0;">Hồ sơ đã được gửi thành công!</h4>
+                    <p style="color: #6b7280; margin: 0;">${result.message || 'Chúng tôi sẽ liên hệ với bạn sớm nhất.'}</p>
+                </div>
+            `;
+            const modalBody = document.querySelector('.modal-body');
+            if (modalBody) modalBody.innerHTML = message;
+        };
+        
+        window.showErrorMessage = function(message) {
+            showToastMessage(message, 'error');
+        };
+        
+        window.resetForm = function() {
+            const form = document.getElementById('applyForm');
+            const fileName = document.getElementById('fileName');
+            if (form) form.reset();
+            if (fileName) fileName.style.display = 'none';
+            clearAllFormErrors();
+        };
+        
+        window.showToastMessage = function(message, type = 'info') {
+            const colors = {
+                error: '#dc2626',
+                success: '#10b981',
+                info: '#667eea'
+            };
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 1001;
+                background: ${colors[type]}; color: white;
+                padding: 12px 20px; border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                max-width: 300px; font-size: 14px;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        };
+        
+        window.autoFillFormData = function() {
+            if (window.isLoggedIn && window.customerData) {
+                const customer = window.customerData;
+                const fullNameField = document.getElementById('fullName');
+                const emailField = document.getElementById('email');
+                const phoneField = document.getElementById('phone');
                 
-                // Here you can add AJAX submission or regular form submission
-                // For now, we'll simulate a delay
-                setTimeout(() => {
-                    alert('Cảm ơn bạn đã ứng tuyển! Chúng tôi sẽ liên hệ với bạn sớm nhất.');
-                    closeApplyModal();
-                    
-                    // Reset form
-                    this.reset();
-                    document.getElementById('fileName').style.display = 'none';
-                    
-                    // Reset button
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalText;
-                }, 2000);
-            });
-
-            // Close modal with Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeApplyModal();
+                if (fullNameField && customer.full_name) {
+                    fullNameField.value = customer.full_name;
+                    fullNameField.style.backgroundColor = '#f8f9fa';
+                    fullNameField.readOnly = true;
                 }
+                if (emailField && customer.email) {
+                    emailField.value = customer.email;
+                    emailField.style.backgroundColor = '#f8f9fa';
+                    emailField.readOnly = true;
+                }
+                if (phoneField && customer.phone) {
+                    phoneField.value = customer.phone;
+                }
+            }
+        };
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Modal click outside to close
+            const modal = document.getElementById('applyModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) closeApplyModal();
+                });
+            }
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeApplyModal();
             });
+            
+            // File upload handling
+            const cvInput = document.getElementById('cv');
+            if (cvInput) {
+                cvInput.addEventListener('change', function(e) {
+                    const fileName = document.getElementById('fileName');
+                    if (e.target.files.length > 0) {
+                        const file = e.target.files[0];
+                        fileName.innerHTML = `<div style="color: #059669;">✓ Đã chọn: ${file.name}</div>`;
+                        fileName.style.display = 'block';
+                    } else {
+                        fileName.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+        // Simplified inline script - only form submission logic
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Job detail inline script initialized');
+            
+            // Form submission with API integration
+            const applyForm = document.getElementById('applyForm');
+            if (applyForm) {
+                applyForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    // Clear previous errors
+                    clearAllFormErrors();
+                    
+                    // Validate form before submission
+                    if (!validateFormBeforeSubmit()) {
+                        return;
+                    }
+                    
+                    // Show loading state
+                    setFormLoadingState(true);
+                    
+                    try {
+                        // Prepare FormData with file
+                        const formData = new FormData(this);
+                        
+                        // Get CSRF token
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                                        document.querySelector('input[name="_token"]')?.value;
+                        
+                        // Make API call
+                        const response = await fetch(`/api/jobs/{{ $job->id }}/apply`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: formData
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok && result.success) {
+                            // Success - show success message
+                            showSuccessMessage(result);
+                            
+                            // Close modal after short delay
+                            setTimeout(() => {
+                                closeApplyModal();
+                                resetForm();
+                            }, 2000);
+                            
+                            // Track success event
+                            if (typeof gtag !== 'undefined') {
+                                gtag('event', 'job_application_success', {
+                                    'job_id': {{ $job->id }},
+                                    'job_title': '{{ $jobTitle }}',
+                                    'company': '{{ $companyName }}'
+                                });
+                            }
+                            
+                        } else {
+                            // Handle validation errors or other errors
+                            if (result.errors) {
+                                displayValidationErrors(result.errors);
+                            } else {
+                                showErrorMessage(result.message || 'Có lỗi xảy ra khi gửi hồ sơ');
+                            }
+                            
+                            // Track error event
+                            if (typeof gtag !== 'undefined') {
+                                gtag('event', 'job_application_error', {
+                                    'job_id': {{ $job->id }},
+                                    'error': result.error || 'unknown'
+                                });
+                            }
+                        }
+                        
+                    } catch (error) {
+                        console.error('Application submission error:', error);
+                        
+                        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                            showErrorMessage('Không thể kết nối đến server. Vui lòng kiểm tra kết nối internet và thử lại.');
+                        } else {
+                            showErrorMessage('Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.');
+                        }
+                        
+                        // Track network error
+                        if (typeof gtag !== 'undefined') {
+                            gtag('event', 'job_application_network_error', {
+                                'job_id': {{ $job->id }},
+                                'error': error.message
+                            });
+                        }
+                    } finally {
+                        setFormLoadingState(false);
+                    }
+                });
+            }
         });
     </script>
     @endpush
 
-    <!-- Apply Modal -->
-    <div id="applyModal" class="modal-overlay">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3>Ứng tuyển vị trí: {{ $jobTitle }}</h3>
-                <button type="button" class="modal-close" onclick="closeApplyModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <div class="modal-body">
-                <form class="apply-form" id="applyForm" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" name="job_id" value="{{ $job->id }}">
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="fullName">Họ và tên <span class="required">*</span></label>
-                            <input type="text" id="fullName" name="full_name" required placeholder="Nhập họ và tên">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email <span class="required">*</span></label>
-                            <input type="email" id="email" name="email" required placeholder="Nhập email của bạn">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="phone">Số điện thoại <span class="required">*</span></label>
-                            <input type="tel" id="phone" name="phone" required placeholder="Nhập số điện thoại">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="experience">Kinh nghiệm</label>
-                            <select id="experience" name="experience">
-                                <option value="">Chọn kinh nghiệm</option>
-                                <option value="fresher">Fresher (0-1 năm)</option>
-                                <option value="junior">Junior (1-3 năm)</option>
-                                <option value="middle">Middle (3-5 năm)</option>
-                                <option value="senior">Senior (5+ năm)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cv">Tải CV <span class="required">*</span></label>
-                        <div class="file-upload-area">
-                            <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required>
-                            <div class="file-upload-text">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                                <div>
-                                    <strong>Kéo thả CV vào đây hoặc click để chọn</strong>
-                                    <div class="form-help">Hỗ trợ: PDF, DOC, DOCX (tối đa 5MB)</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="fileName" class="form-help" style="display: none; color: #059669; margin-top: 0.5rem;"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="coverLetter">Thư giới thiệu (tùy chọn)</label>
-                        <textarea id="coverLetter" name="cover_letter" placeholder="Viết vài dòng giới thiệu về bản thân và lý do bạn phù hợp với vị trí này..."></textarea>
-                    </div>
-                </form>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeApplyModal()">Hủy</button>
-                <button type="submit" form="applyForm" class="btn-submit">
-                    <i class="fas fa-paper-plane"></i>
-                    Gửi hồ sơ ứng tuyển
-                </button>
-            </div>
-        </div>
-    </div>
 @endsection

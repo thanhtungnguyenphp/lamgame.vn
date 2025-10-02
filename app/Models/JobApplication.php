@@ -25,6 +25,7 @@ class JobApplication extends Model
         'status',
         'employer_notes',
         'applied_at',
+        'application_code',
     ];
     
     protected $casts = [
