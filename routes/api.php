@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\PublicThumbnailController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\UserJobController;
 
 /*
 |--------------------------------------------------------------------------
@@ -110,4 +111,37 @@ Route::prefix('dashboard')->name('api.dashboard.')->middleware(['auth:sanctum', 
     Route::put('/applications/{applicationId}/status', [DashboardController::class, 'updateApplicationStatus'])
         ->name('application.update-status')
         ->where('applicationId', '[0-9]+');
+});
+
+/*
+|--------------------------------------------------------------------------
+| User Job Management API Routes (Protected)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('user/jobs')->name('api.user.jobs.')->middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
+    // Get user's own jobs
+    Route::get('/', [UserJobController::class, 'index'])->name('index');
+    
+    // Create new job posting
+    Route::post('/', [UserJobController::class, 'store'])->name('store');
+    
+    // Get specific job owned by user
+    Route::get('/{id}', [UserJobController::class, 'show'])
+        ->name('show')
+        ->where('id', '[0-9]+');
+    
+    // Update job owned by user
+    Route::put('/{id}', [UserJobController::class, 'update'])
+        ->name('update')
+        ->where('id', '[0-9]+');
+    
+    // Delete job owned by user
+    Route::delete('/{id}', [UserJobController::class, 'destroy'])
+        ->name('destroy')
+        ->where('id', '[0-9]+');
+    
+    // Toggle job status (activate/deactivate)
+    Route::patch('/{id}/toggle-status', [UserJobController::class, 'toggleStatus'])
+        ->name('toggle-status')
+        ->where('id', '[0-9]+');
 });
