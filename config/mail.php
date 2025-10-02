@@ -147,4 +147,14 @@ return [
         'name'    => env('CONTACT_MAIL_NAME', 'Contact'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Default HR Email Address
+    |--------------------------------------------------------------------------
+    |
+    | Default HR email for job application notifications
+    |
+    */
+    'default_hr_email' => env('HR_MAIL_ADDRESS', env('CONTACT_MAIL_ADDRESS', env('MAIL_FROM_ADDRESS'))),
+
 ];
