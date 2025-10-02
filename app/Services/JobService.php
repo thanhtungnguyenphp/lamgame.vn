@@ -9,6 +9,7 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeOption;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
+use Webkul\Product\Helpers\Indexers\Flat;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -18,9 +19,11 @@ class JobService
     protected $defaultChannel;
     protected $defaultLocale;
     protected $jobCategoryId;
+    protected $flatIndexer;
 
-    public function __construct()
+    public function __construct(Flat $flatIndexer)
     {
+        $this->flatIndexer = $flatIndexer;
         $this->defaultChannel = Channel::first();
         $this->defaultLocale = Locale::where('code', 'vi')->first();
         
@@ -47,10 +50,17 @@ class JobService
             // 3. Gán categories
             $this->assignCategories($product->id, $data['categories'] ?? [$this->jobCategoryId]);
             
-            // 4. Tạo inventory record
+            // 4. Gán default channel
+            $this->assignDefaultChannel($product->id);
+            
+            // 5. Tạo inventory record
             $this->createInventory($product->id);
             
-            return $product->fresh()->load('attribute_values', 'categories');
+            // 6. Đồng bộ vào product_flat
+            $productWithRelations = $product->fresh()->load('attribute_values', 'categories', 'attribute_family', 'channels');
+            $this->flatIndexer->refresh($productWithRelations);
+            
+            return $productWithRelations;
         });
     }
 
@@ -71,7 +81,11 @@ class JobService
                 $this->updateCategories($product->id, $data['categories']);
             }
             
-            return $product->fresh()->load('attribute_values', 'categories');
+            // 4. Đồng bộ vào product_flat
+            $productWithRelations = $product->fresh()->load('attribute_values', 'categories', 'attribute_family', 'channels');
+            $this->flatIndexer->refresh($productWithRelations);
+            
+            return $productWithRelations;
         });
     }
 
@@ -464,5 +478,16 @@ class JobService
         // Simple extraction logic - có thể cải thiện
         $parts = explode(' - ', $title);
         return count($parts) > 1 ? trim($parts[1]) : 'Company';
+    }
+    
+    /**
+     * Gán default channel cho product
+     */
+    protected function assignDefaultChannel(int $productId): void
+    {
+        DB::table('product_channels')->insert([
+            'product_id' => $productId,
+            'channel_id' => $this->defaultChannel->id,
+        ]);
     }
 }

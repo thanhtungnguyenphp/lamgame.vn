@@ -4,13 +4,25 @@
 
 - [Login API](LOGIN_API.md) - Tài liệu chi tiết về API đăng nhập
 - [Update Profile API](UPDATE_PROFILE_API.md) - Tài liệu chi tiết về API cập nhật hồ sơ người dùng
+- [Authentication Guide](auth.md) - Hướng dẫn xác thực tổng quan
+
+## Job Management APIs
+
+- [User Job Management API](user-job-management.md) - API quản lý job cho admin/user đã đăng nhập
+- [Public Job API](public-job-api.md) - API public để xem danh sách việc làm
+- [Job API Testing Guide](job-api-testing.md) - Hướng dẫn test các Job API
 
 ## File Structure
 ```
 docs/api/
-├── README.md              # Overview and index
-├── LOGIN_API.md          # Login API documentation
-└── COMMON_RESPONSES.md   # Common API response formats
+├── README.md                    # Overview and index
+├── LOGIN_API.md                # Login API documentation  
+├── UPDATE_PROFILE_API.md       # Update Profile API
+├── auth.md                     # Authentication guide
+├── user-job-management.md      # User Job Management API
+├── public-job-api.md           # Public Job API
+├── job-api-testing.md          # Job API testing guide
+└── COMMON_RESPONSES.md         # Common API response formats
 ```
 
 ## Common Headers
