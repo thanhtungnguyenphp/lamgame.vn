@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Job Application Authentication Integration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+        }
+        
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .test-button:hover {
+            background: #5a67d8;
+        }
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        /* Modal styles similar to job detail page */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-container {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 2rem 1rem;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .modal-header h3 {
+            color: #1a1a1a;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
+            flex: 1;
+            padding-right: 1rem;
+        }
+
+        .modal-close {
+            background: #f8f9fa;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .modal-close:hover {
+            background: #e9ecef;
+            color: #374151;
+        }
+
+        .modal-body {
+            padding: 1.5rem 2rem;
+        }
+
+        /* Auth Info Section */
+        .auth-info-section {
+            background: #f8f9ff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .auth-indicator {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .guest-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .guest-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .guest-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .btn-quick-login,
+        .btn-quick-register {
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            border: 1px solid;
+            white-space: nowrap;
+        }
+
+        .btn-quick-login {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .btn-quick-login:hover {
+            background: #5a67d8;
+            border-color: #5a67d8;
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-quick-register {
+            background: white;
+            color: #667eea;
+            border-color: #667eea;
+        }
+
+        .btn-quick-register:hover {
+            background: #f8f9ff;
+            color: #5a67d8;
+            border-color: #5a67d8;
+            text-decoration: none;
+        }
+
+        /* Form styles */
+        .apply-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 0.875rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Job Application Authentication Integration Test</h1>
+        
+        <div class="test-section">
+            <h2>Authentication State Tests</h2>
+            <p>Test different authentication scenarios for the job application form:</p>
+            
+            <button class="test-button" onclick="testGuestUser()">Test Guest User</button>
+            <button class="test-button" onclick="testLoggedInUser()">Test Logged-in User</button>
+            <button class="test-button" onclick="testUserWithPartialData()">Test User with Partial Data</button>
+            <button class="test-button" onclick="testAutoFillFeature()">Test Auto-fill Feature</button>
+            
+            <div id="authStatus" class="status info">
+                <strong>Current Status:</strong> Ready for testing
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Modal Tests</h2>
+            <p>Test the job application modal with different authentication states:</p>
+            
+            <button class="test-button" onclick="openTestModal()">Open Application Modal</button>
+            <button class="test-button" onclick="simulateLogin()">Simulate Login</button>
+            <button class="test-button" onclick="simulateLogout()">Simulate Logout</button>
+            
+            <div id="modalStatus" class="status info">
+                <strong>Modal Status:</strong> Closed
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Auto-fill Tests</h2>
+            <p>Test the auto-fill functionality with mock user data:</p>
+            
+            <button class="test-button" onclick="testAutoFillComplete()">Test Complete Auto-fill</button>
+            <button class="test-button" onclick="testAutoFillPartial()">Test Partial Auto-fill</button>
+            <button class="test-button" onclick="clearForm()">Clear Form</button>
+            
+            <div id="autofillStatus" class="status info">
+                <strong>Auto-fill Status:</strong> Ready for testing
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for testing -->
+    <div id="testModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Ứng tuyển vị trí: Game Developer (Test)</h3>
+                <button class="modal-close" onclick="closeTestModal()">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Auth info will be inserted here -->
+                <div id="authInfoSection"></div>
+                
+                <form id="testApplyForm" class="apply-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">Họ và tên <span class="required">*</span></label>
+                            <input type="text" id="fullName" name="full_name" required placeholder="Nhập họ và tên của bạn">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required placeholder="email@example.com">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Số điện thoại <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" required placeholder="0123456789">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="coverLetter">Thư xin việc (tùy chọn)</label>
+                        <textarea id="coverLetter" name="cover_letter" rows="4" placeholder="Giới thiệu ngắn gọn về bản thân và lý do ứng tuyển..."></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock authentication state
+        let isLoggedIn = false;
+        let customerData = null;
+
+        // Mock customer data samples
+        const mockUserComplete = {
+            id: 1,
+            full_name: 'Nguyễn Văn Test',
+            first_name: 'Nguyễn Văn',
+            last_name: 'Test', 
+            email: 'test@example.com',
+            phone: '0123456789',
+            is_verified: true,
+            status: 1
+        };
+
+        const mockUserPartial = {
+            id: 2,
+            full_name: 'Trần Thị Demo',
+            first_name: 'Trần Thị',
+            last_name: 'Demo',
+            email: 'demo@example.com',
+            phone: '',
+            is_verified: false,
+            status: 1
+        };
+
+        // Test functions
+        function testGuestUser() {
+            isLoggedIn = false;
+            customerData = null;
+            updateAuthStatus('Guest user mode activated - no authentication');
+            updateAuthInfoSection();
+        }
+
+        function testLoggedInUser() {
+            isLoggedIn = true;
+            customerData = mockUserComplete;
+            updateAuthStatus('Logged-in user mode activated - full data available', 'success');
+            updateAuthInfoSection();
+        }
+
+        function testUserWithPartialData() {
+            isLoggedIn = true;
+            customerData = mockUserPartial;
+            updateAuthStatus('Logged-in user with partial data - missing phone number', 'info');
+            updateAuthInfoSection();
+        }
+
+        function testAutoFillFeature() {
+            if (!isLoggedIn) {
+                updateAuthStatus('Please activate logged-in user mode first', 'error');
+                return;
+            }
+            
+            autoFillFormData();
+            updateAuthStatus('Auto-fill feature tested successfully', 'success');
+        }
+
+        function openTestModal() {
+            document.getElementById('testModal').classList.add('active');
+            updateModalStatus('Modal opened');
+            updateAuthInfoSection();
+            
+            // Auto-fill if user is logged in
+            if (isLoggedIn && customerData) {
+                setTimeout(() => {
+                    autoFillFormData();
+                    showAutoFillNotification();
+                }, 300);
+            }
+        }
+
+        function closeTestModal() {
+            document.getElementById('testModal').classList.remove('active');
+            updateModalStatus('Modal closed');
+        }
+
+        function simulateLogin() {
+            testLoggedInUser();
+            updateModalStatus('User logged in - data will auto-fill when modal opens');
+        }
+
+        function simulateLogout() {
+            testGuestUser();
+            updateModalStatus('User logged out - manual form entry required');
+        }
+
+        function testAutoFillComplete() {
+            isLoggedIn = true;
+            customerData = mockUserComplete;
+            autoFillFormData();
+            updateAutofillStatus('Complete auto-fill tested with all user data', 'success');
+        }
+
+        function testAutoFillPartial() {
+            isLoggedIn = true;
+            customerData = mockUserPartial;
+            autoFillFormData();
+            updateAutofillStatus('Partial auto-fill tested - phone field left empty', 'info');
+        }
+
+        function clearForm() {
+            document.getElementById('testApplyForm').reset();
+            // Reset field styles
+            ['fullName', 'email', 'phone'].forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.style.backgroundColor = '';
+                    field.style.borderColor = '';
+                    field.title = '';
+                }
+            });
+            updateAutofillStatus('Form cleared successfully');
+        }
+
+        // Auto-fill functionality (same as in job detail page)
+        function autoFillFormData() {
+            if (isLoggedIn && customerData) {
+                const fullNameField = document.getElementById('fullName');
+                const emailField = document.getElementById('email');
+                const phoneField = document.getElementById('phone');
+                
+                if (fullNameField) {
+                    fullNameField.value = customerData.full_name || '';
+                    fullNameField.style.backgroundColor = '#f8f9fa';
+                    fullNameField.style.borderColor = '#e2e8f0';
+                    fullNameField.title = 'Thông tin từ tài khoản đã đăng nhập';
+                }
+                
+                if (emailField) {
+                    emailField.value = customerData.email || '';
+                    emailField.style.backgroundColor = '#f8f9fa';
+                    emailField.style.borderColor = '#e2e8f0';
+                    emailField.title = 'Thông tin từ tài khoản đã đăng nhập';
+                }
+                
+                if (phoneField && customerData.phone) {
+                    phoneField.value = customerData.phone;
+                    phoneField.style.borderColor = '#10b981';
+                    phoneField.title = 'Thông tin từ tài khoản đã đăng nhập (có thể chỉnh sửa)';
+                }
+            }
+        }
+
+        function showAutoFillNotification() {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #10b981;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 1001;
+                font-weight: 500;
+                font-size: 14px;
+            `;
+            notification.innerHTML = '<i class="fa fa-check-circle"></i> Đã tự động điền thông tin từ tài khoản';
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        function updateAuthInfoSection() {
+            const authInfoSection = document.getElementById('authInfoSection');
+            
+            if (isLoggedIn && customerData) {
+                authInfoSection.innerHTML = `
+                    <div class="auth-info-section">
+                        <div class="auth-indicator">
+                            <i class="fa fa-check-circle" style="color: #10b981;"></i>
+                            <div>
+                                <span>Đã đăng nhập: ${customerData.full_name}</span>
+                                <small style="display: block; color: #6b7280; margin-top: 2px;">Thông tin sẽ được tự động điền</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                authInfoSection.innerHTML = `
+                    <div class="auth-info-section">
+                        <div class="guest-info">
+                            <div class="guest-message">
+                                <i class="fa fa-info-circle" style="color: #667eea;"></i>
+                                <div>
+                                    <span>Đang ứng tuyển với tư cách khách</span>
+                                    <small style="display: block; color: #6b7280; margin-top: 2px;">
+                                        Đăng nhập để tự động điền thông tin và quản lý hồ sơ ứng tuyển
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="guest-actions">
+                                <a href="#" class="btn-quick-login" onclick="simulateLogin(); return false;">
+                                    <i class="fa fa-sign-in"></i>
+                                    Đăng nhập
+                                </a>
+                                <a href="#" class="btn-quick-register" onclick="alert('Redirect to register page'); return false;">
+                                    <i class="fa fa-user-plus"></i>
+                                    Đăng ký
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Status update functions
+        function updateAuthStatus(message, type = 'info') {
+            const statusEl = document.getElementById('authStatus');
+            statusEl.className = `status ${type}`;
+            statusEl.innerHTML = `<strong>Current Status:</strong> ${message}`;
+        }
+
+        function updateModalStatus(message, type = 'info') {
+            const statusEl = document.getElementById('modalStatus');
+            statusEl.className = `status ${type}`;
+            statusEl.innerHTML = `<strong>Modal Status:</strong> ${message}`;
+        }
+
+        function updateAutofillStatus(message, type = 'info') {
+            const statusEl = document.getElementById('autofillStatus');
+            statusEl.className = `status ${type}`;
+            statusEl.innerHTML = `<strong>Auto-fill Status:</strong> ${message}`;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAuthInfoSection();
+            
+            // Close modal when clicking outside
+            document.getElementById('testModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeTestModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
