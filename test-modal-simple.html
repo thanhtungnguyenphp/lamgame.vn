@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal Functions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+        }
+        
+        .test-button:hover {
+            background: #5a67d8;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-container {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>Modal Functions Test</h1>
+    
+    <div id="status" class="status">Ready to test</div>
+    
+    <button class="test-button" onclick="testFunctionExistence()">Test Function Existence</button>
+    <button class="test-button" onclick="testModalOpen()">Test Modal Open</button>
+    <button class="test-button" onclick="testModalClose()">Test Modal Close</button>
+    <button class="test-button" onclick="clearConsole()">Clear Console</button>
+    
+    <!-- Simple Modal -->
+    <div id="applyModal" class="modal-overlay">
+        <div class="modal-container">
+            <h2>Test Modal</h2>
+            <p>This is a test modal to verify the functions work correctly.</p>
+            <button class="test-button" onclick="window.closeApplyModal()">Close Modal</button>
+        </div>
+    </div>
+
+    <script>
+        // Define modal functions immediately (same as job detail page)
+        window.openApplyModal = function() {
+            console.log('Opening modal...'); 
+            const modal = document.getElementById('applyModal');
+            
+            if (!modal) {
+                console.error('Modal not found!');
+                updateStatus('Modal not found!', 'error');
+                return;
+            }
+            
+            console.log('Modal found, adding active class');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            updateStatus('Modal opened successfully!', 'success');
+        };
+
+        window.closeApplyModal = function() {
+            console.log('Closing modal...'); 
+            const modal = document.getElementById('applyModal');
+            
+            if (!modal) {
+                console.error('Modal not found!');
+                updateStatus('Modal not found!', 'error');
+                return;
+            }
+            
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            updateStatus('Modal closed successfully!', 'success');
+        };
+
+        window.toggleSaveJob = function(button) {
+            console.log('toggleSaveJob called');
+            updateStatus('toggleSaveJob function works!', 'success');
+        };
+
+        // Test functions
+        function testFunctionExistence() {
+            const functions = ['openApplyModal', 'closeApplyModal', 'toggleSaveJob'];
+            const results = [];
+            
+            functions.forEach(funcName => {
+                const exists = typeof window[funcName] === 'function';
+                results.push(`${funcName}: ${exists ? '✅ EXISTS' : '❌ MISSING'}`);
+                console.log(`${funcName}:`, exists ? 'EXISTS' : 'MISSING');
+            });
+            
+            updateStatus(results.join('<br>'), results.every(r => r.includes('✅')) ? 'success' : 'error');
+        }
+        
+        function testModalOpen() {
+            try {
+                window.openApplyModal();
+            } catch (error) {
+                console.error('Error opening modal:', error);
+                updateStatus('Error opening modal: ' + error.message, 'error');
+            }
+        }
+        
+        function testModalClose() {
+            try {
+                window.closeApplyModal();
+            } catch (error) {
+                console.error('Error closing modal:', error);
+                updateStatus('Error closing modal: ' + error.message, 'error');
+            }
+        }
+        
+        function clearConsole() {
+            console.clear();
+            updateStatus('Console cleared', 'success');
+        }
+        
+        function updateStatus(message, type = 'success') {
+            const status = document.getElementById('status');
+            status.innerHTML = message;
+            status.className = `status ${type}`;
+        }
+
+        // Test on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Test page loaded');
+            testFunctionExistence();
+        });
+    </script>
+</body>
+</html>

@@ -72,6 +72,9 @@ Route::prefix('jobs')->name('api.jobs.')->middleware('throttle:60,1')->group(fun
     Route::get('/attributes', [\App\Http\Controllers\Api\JobController::class, 'getAttributes'])->name('attributes');
     Route::get('/{id}', [\App\Http\Controllers\Api\JobController::class, 'show'])->name('show')->where('id', '[0-9]+');
     
+    // Job Application endpoints
+    Route::post('/{jobId}/apply', [\App\Http\Controllers\Api\JobApplicationController::class, 'apply'])->name('apply')->where('jobId', '[0-9]+');
+    
     // Protected endpoints (auth required) - uncomment when auth is implemented
     /*
     Route::middleware('auth:sanctum')->group(function () {
@@ -144,4 +147,19 @@ Route::prefix('user/jobs')->name('api.user.jobs.')->middleware(['auth:sanctum', 
     Route::patch('/{id}/toggle-status', [UserJobController::class, 'toggleStatus'])
         ->name('toggle-status')
         ->where('id', '[0-9]+');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Job Application API Routes (Protected)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('applications')->name('api.applications.')->middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
+    // Get user's applications
+    Route::get('/', [\App\Http\Controllers\Api\JobApplicationController::class, 'getUserApplications'])->name('user.index');
+    
+    // Get specific application status (requires email for guest users)
+    Route::get('/{applicationId}/status', [\App\Http\Controllers\Api\JobApplicationController::class, 'getApplicationStatus'])
+        ->name('status')
+        ->where('applicationId', '[0-9]+');
 });
