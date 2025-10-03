@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Blog;
 use App\Models\BlogCategory;
 use App\Models\BlogTag;
@@ -467,6 +468,23 @@ class LamGamePageController extends Controller
             }
         }
 
+        // Get authenticated customer data for auto-fill
+        $customer = Auth::guard('customer')->user();
+        $customerData = null;
+        
+        if ($customer) {
+            $customerData = [
+                'id' => $customer->id,
+                'full_name' => trim($customer->first_name . ' ' . $customer->last_name),
+                'first_name' => $customer->first_name,
+                'last_name' => $customer->last_name,
+                'email' => $customer->email,
+                'phone' => $customer->phone ?? '',
+                'is_verified' => $customer->is_verified ?? false,
+                'status' => $customer->status ?? 1
+            ];
+        }
+
         return view('lamgame.pages.job-detail', [
             'job' => $job,
             'jobTitle' => $jobTitle,
@@ -474,6 +492,8 @@ class LamGamePageController extends Controller
             'salaryFormatted' => $salaryFormatted,
             'postedAgo' => $postedAgo,
             'similarJobs' => $similarJobs,
+            'customer' => $customerData,
+            'isLoggedIn' => !is_null($customer),
             'page_title' => $jobTitle . ' - ' . $companyName . ' - Làm Game',
             'page_description' => \Str::limit($job->short_description, 160),
         ]);
