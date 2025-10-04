@@ -158,7 +158,6 @@
 
         // Tracking functions for LamGame analytics
         function trackCTA(action) {
-            console.log('LamGame CTA clicked:', action);
             // Integration with Google Analytics, Facebook Pixel, etc.
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'click', {
@@ -170,7 +169,6 @@
         }
 
         function trackRegistration() {
-            console.log('Course registration attempted');
             // Track course registration events
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'begin_checkout', {
