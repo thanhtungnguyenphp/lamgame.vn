@@ -633,7 +633,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Get job ID from the current page context
             const jobId = getJobIdFromPage();
+            
+            // TEMP DEBUG: Show job ID result to user
+            alert(`DEBUG: Job ID extraction result: ${jobId}\nURL: ${window.location.pathname}`);
+            
             if (!jobId) {
+                alert('ERROR: Job ID not found! Check console for details.');
                 throw new Error('Job ID not found');
             }
             
