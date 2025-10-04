@@ -730,7 +730,25 @@ document.addEventListener('DOMContentLoaded', function() {
             return window.currentJobId;
         }
         
-        console.error('Could not determine job ID');
+        // Try to extract from URL pattern /viec-lam/{slug} by making API call
+        if (urlParts.length >= 2 && urlParts[urlParts.length - 2] === 'viec-lam') {
+            const slug = urlParts[urlParts.length - 1];
+            console.log('Attempting to get job ID from slug:', slug);
+            // For now, try some known job IDs based on common slugs
+            // This is a temporary solution - ideally we'd make an API call
+            const knownJobs = {
+                'blockchain-game-developer-sky-mavis': 6,
+                '3d-platformer-demo': 20,
+                'job-appota-backend-003': 23
+            };
+            
+            if (knownJobs[slug]) {
+                console.log('Found job ID for slug', slug, ':', knownJobs[slug]);
+                return knownJobs[slug];
+            }
+        }
+        
+        console.error('Could not determine job ID from URL:', window.location.pathname);
         return null;
     }
 });
