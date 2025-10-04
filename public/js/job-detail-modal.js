@@ -469,6 +469,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // Form submission handler
+    const applyForm = document.getElementById('applyForm');
+    if (applyForm) {
+        applyForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // Prevent any other handlers
+            
+            // Prevent multiple submissions
+            if (window.formSubmitting) {
+                console.log('Form already submitting, ignoring duplicate request');
+                return;
+            }
+            window.formSubmitting = true;
+            
+            try {
+                await handleFormSubmission(this);
+            } finally {
+                window.formSubmitting = false;
+            }
+        });
+    }
+    
     // Modal click outside to close
     const modal = document.getElementById('applyModal');
     if (modal) {
@@ -545,5 +567,132 @@ document.addEventListener('DOMContentLoaded', function() {
         fileUploadArea.addEventListener('click', function() {
             fileInput.click();
         });
+    }
+    
+    // Main form submission handler function
+    async function handleFormSubmission(form) {
+        console.log('Starting form submission');
+        
+        // Clear previous errors
+        clearAllFormErrors();
+        
+        // Validate form before submission
+        if (!validateFormBeforeSubmit()) {
+            console.log('Form validation failed');
+            return;
+        }
+        
+        // Show loading state
+        setFormLoadingState(true);
+        
+        try {
+            // Prepare FormData with file
+            const formData = new FormData(form);
+            
+            // Get CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                            document.querySelector('input[name="_token"]')?.value;
+            
+            // Get job ID from the current page context
+            const jobId = getJobIdFromPage();
+            if (!jobId) {
+                throw new Error('Job ID not found');
+            }
+            
+            console.log(`Submitting application for job ${jobId}`);
+            
+            // Make API call
+            const response = await fetch(`/api/jobs/${jobId}/apply`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            });
+            
+            const result = await response.json();
+            console.log('API Response:', result);
+            
+            if (response.ok && result.success) {
+                // Success - show success message
+                showSuccessMessage(result);
+                
+                // Close modal after short delay
+                setTimeout(() => {
+                    closeApplyModal();
+                    resetForm();
+                }, 2000);
+                
+                // Track success event
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'job_application_success', {
+                        'job_id': jobId,
+                        'response': result
+                    });
+                }
+                
+            } else {
+                // Handle validation errors or other errors
+                if (result.errors) {
+                    displayValidationErrors(result.errors);
+                } else {
+                    showErrorMessage(result.message || 'Có lỗi xảy ra khi gửi hồ sơ');
+                }
+                
+                // Track error event
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'job_application_error', {
+                        'job_id': jobId,
+                        'error': result.error || 'unknown'
+                    });
+                }
+            }
+            
+        } catch (error) {
+            console.error('Application submission error:', error);
+            
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                showErrorMessage('Không thể kết nối đến server. Vui lòng kiểm tra kết nối internet và thử lại.');
+            } else {
+                showErrorMessage('Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.');
+            }
+            
+            // Track network error
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'job_application_network_error', {
+                    'error': error.message
+                });
+            }
+        } finally {
+            setFormLoadingState(false);
+        }
+    }
+    
+    // Helper function to get job ID from current page
+    function getJobIdFromPage() {
+        // Try multiple ways to get job ID
+        const urlParts = window.location.pathname.split('/');
+        const jobIdFromUrl = urlParts[urlParts.length - 1];
+        
+        // Check if it's a number
+        if (!isNaN(jobIdFromUrl) && jobIdFromUrl !== '') {
+            return parseInt(jobIdFromUrl);
+        }
+        
+        // Try to get from meta tag or data attribute
+        const jobIdMeta = document.querySelector('meta[name="job-id"]')?.getAttribute('content');
+        if (jobIdMeta && !isNaN(jobIdMeta)) {
+            return parseInt(jobIdMeta);
+        }
+        
+        // Try to get from global variable
+        if (typeof window.currentJobId !== 'undefined') {
+            return window.currentJobId;
+        }
+        
+        console.error('Could not determine job ID');
+        return null;
     }
 });

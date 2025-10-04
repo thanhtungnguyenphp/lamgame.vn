@@ -5,6 +5,7 @@
 
 @push('meta')
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="job-id" content="{{ $job->id }}">
     <!-- Customer data for auto-fill -->
     @if($isLoggedIn)
     <script>
@@ -1967,105 +1968,10 @@
         });
     </script>
     <script>
-        // Simplified inline script - only form submission logic
+        // REMOVED DUPLICATE SCRIPT - Form submission is handled by job-detail-modal.js
+        // This fixes the duplicate submission issue
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Job detail inline script initialized');
-            
-            // Form submission with API integration
-            const applyForm = document.getElementById('applyForm');
-            if (applyForm) {
-                applyForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    
-                    // Clear previous errors
-                    clearAllFormErrors();
-                    
-                    // Validate form before submission
-                    if (!validateFormBeforeSubmit()) {
-                        return;
-                    }
-                    
-                    // Show loading state
-                    setFormLoadingState(true);
-                    
-                    try {
-                        // Prepare FormData with file
-                        const formData = new FormData(this);
-                        
-                        // Get CSRF token
-                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
-                                        document.querySelector('input[name="_token"]')?.value;
-                        
-                        // Make API call
-                        const response = await fetch(`/api/jobs/{{ $job->id }}/apply`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': csrfToken,
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: formData
-                        });
-                        
-                        const result = await response.json();
-                        
-                        if (response.ok && result.success) {
-                            // Success - show success message
-                            showSuccessMessage(result);
-                            
-                            // Close modal after short delay
-                            setTimeout(() => {
-                                closeApplyModal();
-                                resetForm();
-                            }, 2000);
-                            
-                            // Track success event
-                            if (typeof gtag !== 'undefined') {
-                                gtag('event', 'job_application_success', {
-                                    'job_id': {{ $job->id }},
-                                    'job_title': '{{ $jobTitle }}',
-                                    'company': '{{ $companyName }}'
-                                });
-                            }
-                            
-                        } else {
-                            // Handle validation errors or other errors
-                            if (result.errors) {
-                                displayValidationErrors(result.errors);
-                            } else {
-                                showErrorMessage(result.message || 'Có lỗi xảy ra khi gửi hồ sơ');
-                            }
-                            
-                            // Track error event
-                            if (typeof gtag !== 'undefined') {
-                                gtag('event', 'job_application_error', {
-                                    'job_id': {{ $job->id }},
-                                    'error': result.error || 'unknown'
-                                });
-                            }
-                        }
-                        
-                    } catch (error) {
-                        console.error('Application submission error:', error);
-                        
-                        if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                            showErrorMessage('Không thể kết nối đến server. Vui lòng kiểm tra kết nối internet và thử lại.');
-                        } else {
-                            showErrorMessage('Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.');
-                        }
-                        
-                        // Track network error
-                        if (typeof gtag !== 'undefined') {
-                            gtag('event', 'job_application_network_error', {
-                                'job_id': {{ $job->id }},
-                                'error': error.message
-                            });
-                        }
-                    } finally {
-                        setFormLoadingState(false);
-                    }
-                });
-            }
+            console.log('Job detail page initialized - using external modal script');
         });
     </script>
     @endpush
