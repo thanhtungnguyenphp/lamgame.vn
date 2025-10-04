@@ -1,7 +1,12 @@
 # API Documentation
 
+## 🚀 **Mobile App APIs**
+
+- [**📱 Mobile App Quick Reference**](MOBILE_APP_API_REFERENCE.md) - **Hướng dẫn nhanh cho mobile dev team**
+
 ## Authentication APIs
 
+- [**Admin Profile API**](ADMIN_PROFILE_API.md) - **📱 API chính cho mobile app quản lý profile admin**
 - [Login API](LOGIN_API.md) - Tài liệu chi tiết về API đăng nhập
 - [Update Profile API](UPDATE_PROFILE_API.md) - Tài liệu chi tiết về API cập nhật hồ sơ người dùng
 - [Authentication Guide](auth.md) - Hướng dẫn xác thực tổng quan
@@ -16,6 +21,7 @@
 ```
 docs/api/
 ├── README.md                    # Overview and index
+├── ADMIN_PROFILE_API.md        # 📱 Admin Profile API (Mobile App)
 ├── LOGIN_API.md                # Login API documentation  
 ├── UPDATE_PROFILE_API.md       # Update Profile API
 ├── auth.md                     # Authentication guide
