@@ -710,45 +710,69 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Helper function to get job ID from current page
     function getJobIdFromPage() {
+        console.log('=== DEBUG getJobIdFromPage ===');
+        console.log('Current URL:', window.location.href);
+        console.log('Pathname:', window.location.pathname);
+        
         // Try multiple ways to get job ID
         const urlParts = window.location.pathname.split('/');
+        console.log('URL Parts:', urlParts);
         const jobIdFromUrl = urlParts[urlParts.length - 1];
+        console.log('Last URL part (potential job ID):', jobIdFromUrl);
         
         // Check if it's a number
         if (!isNaN(jobIdFromUrl) && jobIdFromUrl !== '') {
+            console.log('Found numeric job ID in URL:', jobIdFromUrl);
             return parseInt(jobIdFromUrl);
         }
         
         // Try to get from meta tag or data attribute
         const jobIdMeta = document.querySelector('meta[name="job-id"]')?.getAttribute('content');
+        console.log('Meta tag job-id:', jobIdMeta);
         if (jobIdMeta && !isNaN(jobIdMeta)) {
+            console.log('Found job ID in meta tag:', jobIdMeta);
             return parseInt(jobIdMeta);
         }
         
         // Try to get from global variable
+        console.log('window.currentJobId:', typeof window.currentJobId !== 'undefined' ? window.currentJobId : 'undefined');
         if (typeof window.currentJobId !== 'undefined') {
+            console.log('Found job ID in global variable:', window.currentJobId);
             return window.currentJobId;
         }
         
-        // Try to extract from URL pattern /viec-lam/{slug} by making API call
+        // Try to extract from URL pattern /viec-lam/{slug}
+        console.log('Checking URL pattern - urlParts.length:', urlParts.length);
+        if (urlParts.length >= 2) {
+            console.log('Second to last URL part:', urlParts[urlParts.length - 2]);
+        }
+        
         if (urlParts.length >= 2 && urlParts[urlParts.length - 2] === 'viec-lam') {
             const slug = urlParts[urlParts.length - 1];
             console.log('Attempting to get job ID from slug:', slug);
-            // For now, try some known job IDs based on common slugs
-            // This is a temporary solution - ideally we'd make an API call
+            
             const knownJobs = {
                 'blockchain-game-developer-sky-mavis': 6,
                 '3d-platformer-demo': 20,
                 'job-appota-backend-003': 23
             };
             
+            console.log('Available slugs:', Object.keys(knownJobs));
+            console.log('Looking for slug:', slug);
+            console.log('Slug match result:', knownJobs[slug]);
+            
             if (knownJobs[slug]) {
-                console.log('Found job ID for slug', slug, ':', knownJobs[slug]);
+                console.log('✅ Found job ID for slug', slug, ':', knownJobs[slug]);
                 return knownJobs[slug];
+            } else {
+                console.log('❌ No mapping found for slug:', slug);
             }
+        } else {
+            console.log('❌ URL does not match /viec-lam/{slug} pattern');
         }
         
-        console.error('Could not determine job ID from URL:', window.location.pathname);
+        console.error('❌ Could not determine job ID from URL:', window.location.pathname);
+        console.log('=== END DEBUG ===');
         return null;
     }
 });
