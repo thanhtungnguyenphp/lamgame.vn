@@ -634,11 +634,27 @@ document.addEventListener('DOMContentLoaded', function() {
             // Get job ID from the current page context
             const jobId = getJobIdFromPage();
             
-            // TEMP DEBUG: Show job ID result to user
-            alert(`DEBUG: Job ID extraction result: ${jobId}\nURL: ${window.location.pathname}`);
+            // TEMP DEBUG: Show detailed URL analysis to user
+            const pathname = window.location.pathname;
+            const urlParts = pathname.split('/');
+            const lastPart = urlParts[urlParts.length - 1];
+            const secondToLastPart = urlParts[urlParts.length - 2];
+            
+            const debugInfo = [
+                `Job ID Result: ${jobId}`,
+                `Full URL: ${window.location.href}`,
+                `Pathname: ${pathname}`,
+                `URL Parts: [${urlParts.join(', ')}]`,
+                `Last part: '${lastPart}'`,
+                `Second to last: '${secondToLastPart}'`,
+                `Pattern match: ${secondToLastPart === 'viec-lam' ? 'YES' : 'NO'}`,
+                `Available slugs: blockchain-game-developer-sky-mavis, 3d-platformer-demo, job-appota-backend-003`
+            ];
+            
+            alert('DEBUG URL ANALYSIS:\n\n' + debugInfo.join('\n'));
             
             if (!jobId) {
-                alert('ERROR: Job ID not found! Check console for details.');
+                alert('ERROR: Job ID extraction failed! Check the debug info above.');
                 throw new Error('Job ID not found');
             }
             
