@@ -611,8 +611,6 @@ function bindModalEvents(modal) {
             const data = Object.fromEntries(formData);
             
             // Here you would typically send data to your backend
-            console.log('Registration data:', data);
-            
             // Show success message
             alert('Cảm ơn bạn đã đăng ký! Chúng tôi sẽ liên hệ với bạn sớm.');
             

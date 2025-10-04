@@ -12,7 +12,7 @@
     <meta property="og:image" content="{{ asset('assets/logos/png/logo-square-512.png') }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">
-
+    @stack('meta')
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/logos/favicon/favicon.ico') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logos/favicon/favicon-32x32.png') }}">

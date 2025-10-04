@@ -155,15 +155,23 @@ class ApplicationReceivedMail extends Mailable
      */
     public function build()
     {
+        // Debug logging
+        \Log::info('Building ApplicationReceivedMail', [
+            'application_id' => $this->application->id,
+            'applicant_name' => $this->application->applicant_name,
+            'job_title' => $this->jobData['title'],
+            'application_code' => $this->application->application_code,
+        ]);
+        
         return $this->subject("✅ Đã nhận hồ sơ ứng tuyển - {$this->jobData['title']}")
-                    ->html('emails.job-application.applicant-received')
+                    ->view('emails.job-application.applicant-received')
                     ->text('emails.job-application.applicant-received-text')
                     ->with([
                         'application' => $this->application,
                         'job' => $this->job,
                         'jobData' => $this->jobData,
                         'applicantName' => $this->application->applicant_name,
-                        'companyName' => $this->jobData['company'],
+                        'companyName' => $this->jobData['company'] ?: 'Làm Game',
                         'jobTitle' => $this->jobData['title'],
                         'applicationCode' => $this->application->application_code,
                         'appliedAt' => $this->application->applied_at,

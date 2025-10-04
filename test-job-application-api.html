@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Job Application API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .test-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background: #5a67d8;
+        }
+        
+        .result {
+            background: #e8f5e8;
+            border: 1px solid #d4edda;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            white-space: pre-wrap;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Job Application API</h1>
+    
+    <div class="test-form">
+        <h2>Submit Job Application</h2>
+        <form id="testForm">
+            <div class="form-group">
+                <label for="jobId">Job ID:</label>
+                <input type="number" id="jobId" name="jobId" value="35" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="fullName">Full Name:</label>
+                <input type="text" id="fullName" name="full_name" value="Nguyễn Test User" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="test@example.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone" value="0901234567" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="coverLetter">Cover Letter:</label>
+                <textarea id="coverLetter" name="cover_letter" rows="4">Tôi là một developer có kinh nghiệm với Unity và C#. Mong muốn được làm việc tại công ty.</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="cv">CV File:</label>
+                <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required>
+            </div>
+            
+            <button type="submit">Submit Application</button>
+        </form>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const jobId = formData.get('jobId');
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                // Get CSRF token from meta tag (if available) or from cookie
+                let csrfToken = '';
+                const metaToken = document.querySelector('meta[name="csrf-token"]');
+                if (metaToken) {
+                    csrfToken = metaToken.getAttribute('content');
+                }
+                
+                resultDiv.innerHTML = 'Submitting application...';
+                
+                const response = await fetch(`http://lamgame.vn/api/jobs/${jobId}/apply`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        ...(csrfToken && { 'X-CSRF-TOKEN': csrfToken })
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                resultDiv.className = 'result';
+                if (!response.ok) {
+                    resultDiv.classList.add('error');
+                }
+                
+                resultDiv.innerHTML = `
+Status: ${response.status} ${response.statusText}
+Response: ${JSON.stringify(result, null, 2)}
+                `.trim();
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
