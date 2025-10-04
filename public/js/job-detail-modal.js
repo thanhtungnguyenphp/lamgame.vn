@@ -1,5 +1,11 @@
 // Job Detail Modal Functions - Standalone JavaScript File
 
+// Initialize Vue.js if available (fallback for when not loaded via CDN)
+window.initializeVueApp = function() {
+    // Vue app initialization - optional since we're not using complex Vue components
+    console.log('Vue app initialization called but not required for job modal');
+};
+
 // Define modal functions immediately - available for onclick
 window.openApplyModal = function() {
     const modal = document.getElementById('applyModal');
@@ -194,7 +200,7 @@ window.validateFormBeforeSubmit = function() {
     } else if (fullName.length < 2) {
         showFieldError('full_name', 'Họ và tên phải có ít nhất 2 ký tự');
         isValid = false;
-    } else if (!/^[\p{L}\s\-\.\']+$/u.test(fullName)) {
+    } else if (!/^[a-zA-ZÀ-ỹ\s\-\.\']+$/.test(fullName)) {
         showFieldError('full_name', 'Họ và tên chỉ được chứa chữ cái, khoảng trắng, dấu gạch ngang và dấu chấm');
         isValid = false;
     }
@@ -452,12 +458,6 @@ window.showToastMessage = function(message, type = 'info') {
             }
         }, 300);
     }, 4000);
-};
-
-// Initialize Vue.js if available (fallback for when not loaded via CDN)
-window.initializeVueApp = function() {
-    // Vue app initialization - optional since we're not using complex Vue components
-    console.log('Vue app initialization called but not required for job modal');
 };
 
 // Initialize when DOM is ready
