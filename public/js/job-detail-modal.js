@@ -775,4 +775,12 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('=== END DEBUG ===');
         return null;
     }
+    
+    // Test function - can be called from browser console
+    window.testJobIdExtraction = function() {
+        console.log('Testing job ID extraction...');
+        const jobId = getJobIdFromPage();
+        console.log('Result:', jobId);
+        return jobId;
+    };
 });
