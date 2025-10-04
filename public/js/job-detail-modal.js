@@ -460,15 +460,15 @@ window.showToastMessage = function(message, type = 'info') {
     }, 4000);
 };
 
-// Prevent multiple initializations
-if (window.jobModalInitialized) {
-    console.log('Job modal already initialized, skipping duplicate initialization');
-    return;
-}
-window.jobModalInitialized = true;
-
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
+    // Prevent multiple DOM initializations
+    if (window.jobModalDOMInitialized) {
+        console.log('Job modal DOM already initialized, skipping duplicate DOM setup');
+        return;
+    }
+    console.log('Initializing job modal DOM handlers');
+    window.jobModalDOMInitialized = true;
     // Add click handler for apply buttons
     const applyButtons = document.querySelectorAll('.btn-apply, .btn-apply-bottom');
     
