@@ -517,14 +517,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // File upload preview with enhanced functionality
     const cvInput = document.getElementById('cv');
     if (cvInput) {
+        console.log('CV input found, setting up change handler');
+        
         cvInput.addEventListener('change', function(e) {
+            console.log('File input change event triggered', e.target.files);
+            
             if (e.target.files.length > 0) {
+                console.log('File selected:', e.target.files[0].name);
                 handleFileSelection(e.target.files[0]);
             } else {
+                console.log('No file selected, hiding fileName display');
                 const fileName = document.getElementById('fileName');
-                fileName.style.display = 'none';
+                if (fileName) {
+                    fileName.style.display = 'none';
+                }
             }
         });
+        
+        // Add click event for debugging
+        cvInput.addEventListener('click', function(e) {
+            console.log('File input clicked directly');
+        });
+    } else {
+        console.error('CV input element not found!');
     }
     
     // Add drag and drop functionality for file upload
@@ -532,6 +547,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('cv');
     
     if (fileUploadArea && fileInput) {
+        console.log('Setting up drag and drop for file upload area');
+        
+        // Don't override existing CSS styles - they're already set in the stylesheet
+        // Just ensure the area is interactive
+        
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             fileUploadArea.addEventListener(eventName, preventDefaults, false);
         });
@@ -569,9 +589,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Click to upload
-        fileUploadArea.addEventListener('click', function() {
-            fileInput.click();
+        // Add click handler that works with the file input overlay
+        fileUploadArea.addEventListener('click', function(e) {
+            console.log('Upload area clicked');
+            // Only trigger if we didn't click directly on the file input
+            if (e.target !== fileInput) {
+                console.log('Triggering file input click');
+                fileInput.click();
+            }
         });
     }
     
