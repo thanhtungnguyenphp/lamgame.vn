@@ -460,6 +460,13 @@ window.showToastMessage = function(message, type = 'info') {
     }, 4000);
 };
 
+// Prevent multiple initializations
+if (window.jobModalInitialized) {
+    console.log('Job modal already initialized, skipping duplicate initialization');
+    return;
+}
+window.jobModalInitialized = true;
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     // Add click handler for apply buttons
