@@ -5,6 +5,7 @@
 
 @push('meta')
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="job-id" content="{{ $job->id }}">
     <!-- Customer data for auto-fill -->
     @if($isLoggedIn)
     <script>
@@ -69,7 +70,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Action Buttons -->
                     <div class="action-buttons">
                         <button class="btn-apply" onclick="openApplyModal()">
@@ -258,7 +259,7 @@
                 <i class="fa fa-times"></i>
             </button>
         </div>
-        
+
         <div class="modal-body">
             <form id="applyForm" class="apply-form" enctype="multipart/form-data">
                 <!-- Auth info section -->
@@ -298,20 +299,20 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="fullName">Họ và tên <span class="required">*</span></label>
-                        <input type="text" id="fullName" name="full_name" required placeholder="Nhập họ và tên của bạn">
+                        <label for="full_name">Họ và tên <span class="required">*</span></label>
+                        <input type="text" id="full_name" name="full_name" required placeholder="Nhập họ và tên của bạn">
                     </div>
                     <div class="form-group">
                         <label for="email">Email <span class="required">*</span></label>
                         <input type="email" id="email" name="email" required placeholder="email@example.com">
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="phone">Số điện thoại <span class="required">*</span></label>
                     <input type="tel" id="phone" name="phone" required placeholder="0123456789">
                 </div>
-                
+
                 <div class="form-group">
                     <label for="cv">Upload CV <span class="required">*</span></label>
                     <div class="file-upload-area">
@@ -324,14 +325,14 @@
                     </div>
                     <small class="form-help">Kích thước tối đa: 5MB</small>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="cover_letter">Thư xin việc (tùy chọn)</label>
                     <textarea id="cover_letter" name="cover_letter" rows="4" placeholder="Giới thiệu ngắn gọn về bản thân và lý do ứng tuyển..."></textarea>
                 </div>
             </form>
         </div>
-        
+
         <div class="modal-footer">
             <button type="button" class="btn-cancel" onclick="closeApplyModal()">
                 Hủy
@@ -363,7 +364,7 @@
             margin: 0 auto;
             padding: 0 1rem;
         }
-        
+
         /* Breadcrumb */
         .breadcrumb-section {
             background: #f8f9fa;
@@ -1458,11 +1459,11 @@
                 align-items: stretch;
                 gap: 0.75rem;
             }
-            
+
             .guest-actions {
                 justify-content: center;
             }
-            
+
             .btn-quick-login,
             .btn-quick-register {
                 flex: 1;
@@ -1512,18 +1513,18 @@
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-        
+
         .form-group input::placeholder,
         .form-group textarea::placeholder {
             color: #9ca3af;
             opacity: 1;
         }
-        
+
         .form-group input:-ms-input-placeholder,
         .form-group textarea:-ms-input-placeholder {
             color: #9ca3af;
         }
-        
+
         .form-group input::-webkit-input-placeholder,
         .form-group textarea::-webkit-input-placeholder {
             color: #9ca3af;
@@ -1549,45 +1550,45 @@
                 background-color: #f8f9ff;
                 border-color: #3b82f6;
             }
-            
+
             .file-upload-area.drag-over {
                 background-color: #f0f9ff;
                 border-color: #3b82f6;
                 border-style: solid;
                 transform: scale(1.02);
             }
-            
+
             .file-upload-area {
                 transition: all 0.3s ease;
                 cursor: pointer;
             }
-            
+
             /* Error states */
-            input.error, 
-            textarea.error, 
+            input.error,
+            textarea.error,
             select.error {
                 border-color: #dc2626 !important;
                 background-color: #fef2f2;
                 color: #374151;
             }
-            
+
             /* Readonly states */
-            input[readonly], 
-            textarea[readonly], 
+            input[readonly],
+            textarea[readonly],
             select[readonly] {
                 background-color: #f8f9fa !important;
                 border-color: #e2e8f0 !important;
                 color: #6b7280 !important;
                 cursor: not-allowed;
             }
-            
-            input[readonly]:focus, 
-            textarea[readonly]:focus, 
+
+            input[readonly]:focus,
+            textarea[readonly]:focus,
             select[readonly]:focus {
                 box-shadow: none !important;
                 border-color: #e2e8f0 !important;
             }
-            
+
             .field-error {
                 color: #dc2626;
                 font-size: 12px;
@@ -1625,7 +1626,7 @@
             font-size: 0.8rem;
             margin-top: 0.5rem;
         }
-        
+
         /* File upload success state */
         #fileName {
             padding: 0.5rem;
@@ -1634,7 +1635,7 @@
             border-radius: 6px;
             margin-top: 0.5rem;
         }
-        
+
         #fileName div {
             font-weight: 600;
             color: #059669 !important;
@@ -1703,7 +1704,7 @@
                 grid-template-columns: 1fr;
                 gap: 1rem;
             }
-            
+
             .form-group input,
             .form-group textarea,
             .form-group select {
@@ -1721,7 +1722,7 @@
                 justify-content: center;
                 padding: 1rem 2rem;
             }
-            
+
             .file-upload-area {
                 padding: 1.5rem 1rem;
             }
@@ -1730,344 +1731,15 @@
     @endpush
 
     @push('scripts')
-    <!-- Job Detail Modal JavaScript -->
     <script>
-        // Modal Functions
-        window.openApplyModal = function() {
-            const modal = document.getElementById('applyModal');
-            if (!modal) {
-                console.error('Modal element not found');
-                return;
-            }
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
-            // Auto-fill form if user is logged in
-            setTimeout(() => {
-                if (typeof autoFillFormData === 'function') {
-                    autoFillFormData();
-                }
-            }, 100);
-        };
-        
-        window.closeApplyModal = function() {
-            const modal = document.getElementById('applyModal');
-            if (!modal) return;
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        };
-        
-        window.toggleSaveJob = function(button) {
-            const icon = button.querySelector('i');
-            const text = button.querySelector('span');
-            
-            if (icon.classList.contains('fa-heart-o')) {
-                icon.classList.remove('fa-heart-o');
-                icon.classList.add('fa-heart');
-                button.classList.add('saved');
-                if (text) text.textContent = 'Đã lưu';
-                showToastMessage('Đã lưu việc làm vào danh sách yêu thích!', 'success');
-            } else {
-                icon.classList.remove('fa-heart');
-                icon.classList.add('fa-heart-o');
-                button.classList.remove('saved');
-                if (text) text.textContent = 'Lưu việc làm';
-                showToastMessage('Đã xóa khỏi danh sách yêu thích!', 'info');
-            }
-        };
-        
-        // Form validation functions
-        window.validateFormBeforeSubmit = function() {
-            let isValid = true;
-            const fullName = document.getElementById('fullName').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const cv = document.getElementById('cv').files[0];
-            
-            if (!fullName) {
-                showFieldError('fullName', 'Vui lòng nhập họ và tên');
-                isValid = false;
-            }
-            if (!email || !isValidEmail(email)) {
-                showFieldError('email', 'Vui lòng nhập email hợp lệ');
-                isValid = false;
-            }
-            if (!phone || !isValidVietnamesePhone(phone)) {
-                showFieldError('phone', 'Vui lòng nhập số điện thoại hợp lệ');
-                isValid = false;
-            }
-            if (!cv) {
-                showFieldError('cv', 'Vui lòng chọn file CV');
-                isValid = false;
-            }
-            return isValid;
-        };
-        
-        function isValidEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
-        
-        function isValidVietnamesePhone(phone) {
-            phone = phone.replace(/[\s\-\.\(\)]/g, '');
-            if (phone.startsWith('+84')) {
-                phone = '0' + phone.substring(3);
-            } else if (phone.startsWith('84') && phone.length >= 10) {
-                phone = '0' + phone.substring(2);
-            }
-            return /^0(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/.test(phone);
-        }
-        
-        window.showFieldError = function(fieldId, message) {
-            const field = document.getElementById(fieldId);
-            if (field) {
-                field.classList.add('error');
-                let errorEl = field.parentNode.querySelector('.field-error');
-                if (!errorEl) {
-                    errorEl = document.createElement('div');
-                    errorEl.className = 'field-error';
-                    field.parentNode.appendChild(errorEl);
-                }
-                errorEl.textContent = message;
-                errorEl.style.cssText = 'color: #dc2626; font-size: 12px; margin-top: 4px;';
-            }
-        };
-        
-        window.clearFieldError = function(fieldId) {
-            const field = document.getElementById(fieldId);
-            if (field) {
-                field.classList.remove('error');
-                const errorEl = field.parentNode.querySelector('.field-error');
-                if (errorEl) errorEl.textContent = '';
-            }
-        };
-        
-        window.clearAllFormErrors = function() {
-            document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
-            document.querySelectorAll('input, textarea, select').forEach(el => el.classList.remove('error'));
-        };
-        
-        window.displayValidationErrors = function(errors) {
-            Object.keys(errors).forEach(field => {
-                const messages = Array.isArray(errors[field]) ? errors[field] : [errors[field]];
-                if (messages.length > 0) {
-                    showFieldError(field.replace('_', ''), messages[0]);
-                }
-            });
-        };
-        
-        window.setFormLoadingState = function(loading) {
-            const submitBtn = document.querySelector('.btn-submit');
-            const form = document.getElementById('applyForm');
-            if (loading) {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
-                form.style.opacity = '0.7';
-            } else {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi hồ sơ ứng tuyển';
-                form.style.opacity = '1';
-            }
-        };
-        
-        window.showSuccessMessage = function(result) {
-            const message = `
-                <div style="text-align: center; padding: 20px;">
-                    <div style="font-size: 48px; margin-bottom: 15px;">✅</div>
-                    <h4 style="color: #059669; margin: 0 0 10px 0;">Hồ sơ đã được gửi thành công!</h4>
-                    <p style="color: #6b7280; margin: 0;">${result.message || 'Chúng tôi sẽ liên hệ với bạn sớm nhất.'}</p>
-                </div>
-            `;
-            const modalBody = document.querySelector('.modal-body');
-            if (modalBody) modalBody.innerHTML = message;
-        };
-        
-        window.showErrorMessage = function(message) {
-            showToastMessage(message, 'error');
-        };
-        
-        window.resetForm = function() {
-            const form = document.getElementById('applyForm');
-            const fileName = document.getElementById('fileName');
-            if (form) form.reset();
-            if (fileName) fileName.style.display = 'none';
-            clearAllFormErrors();
-        };
-        
-        window.showToastMessage = function(message, type = 'info') {
-            const colors = {
-                error: '#dc2626',
-                success: '#10b981',
-                info: '#667eea'
-            };
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed; top: 20px; right: 20px; z-index: 1001;
-                background: ${colors[type]}; color: white;
-                padding: 12px 20px; border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                max-width: 300px; font-size: 14px;
-            `;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
-        };
-        
-        window.autoFillFormData = function() {
-            if (window.isLoggedIn && window.customerData) {
-                const customer = window.customerData;
-                const fullNameField = document.getElementById('fullName');
-                const emailField = document.getElementById('email');
-                const phoneField = document.getElementById('phone');
-                
-                if (fullNameField && customer.full_name) {
-                    fullNameField.value = customer.full_name;
-                    fullNameField.style.backgroundColor = '#f8f9fa';
-                    fullNameField.readOnly = true;
-                }
-                if (emailField && customer.email) {
-                    emailField.value = customer.email;
-                    emailField.style.backgroundColor = '#f8f9fa';
-                    emailField.readOnly = true;
-                }
-                if (phoneField && customer.phone) {
-                    phoneField.value = customer.phone;
-                }
-            }
-        };
-        
-        // Initialize when DOM is ready
+        // REMOVED DUPLICATE SCRIPT - Form submission is handled by job-detail-modal.js
+        // This fixes the duplicate submission issue
         document.addEventListener('DOMContentLoaded', function() {
-            // Modal click outside to close
-            const modal = document.getElementById('applyModal');
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) closeApplyModal();
-                });
-            }
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') closeApplyModal();
-            });
-            
-            // File upload handling
-            const cvInput = document.getElementById('cv');
-            if (cvInput) {
-                cvInput.addEventListener('change', function(e) {
-                    const fileName = document.getElementById('fileName');
-                    if (e.target.files.length > 0) {
-                        const file = e.target.files[0];
-                        fileName.innerHTML = `<div style="color: #059669;">✓ Đã chọn: ${file.name}</div>`;
-                        fileName.style.display = 'block';
-                    } else {
-                        fileName.style.display = 'none';
-                    }
-                });
-            }
+            console.log('Job detail page initialized - using external modal script');
         });
     </script>
-    <script>
-        // Simplified inline script - only form submission logic
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Job detail inline script initialized');
-            
-            // Form submission with API integration
-            const applyForm = document.getElementById('applyForm');
-            if (applyForm) {
-                applyForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    
-                    // Clear previous errors
-                    clearAllFormErrors();
-                    
-                    // Validate form before submission
-                    if (!validateFormBeforeSubmit()) {
-                        return;
-                    }
-                    
-                    // Show loading state
-                    setFormLoadingState(true);
-                    
-                    try {
-                        // Prepare FormData with file
-                        const formData = new FormData(this);
-                        
-                        // Get CSRF token
-                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
-                                        document.querySelector('input[name="_token"]')?.value;
-                        
-                        // Make API call
-                        const response = await fetch(`/api/jobs/{{ $job->id }}/apply`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': csrfToken,
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: formData
-                        });
-                        
-                        const result = await response.json();
-                        
-                        if (response.ok && result.success) {
-                            // Success - show success message
-                            showSuccessMessage(result);
-                            
-                            // Close modal after short delay
-                            setTimeout(() => {
-                                closeApplyModal();
-                                resetForm();
-                            }, 2000);
-                            
-                            // Track success event
-                            if (typeof gtag !== 'undefined') {
-                                gtag('event', 'job_application_success', {
-                                    'job_id': {{ $job->id }},
-                                    'job_title': '{{ $jobTitle }}',
-                                    'company': '{{ $companyName }}'
-                                });
-                            }
-                            
-                        } else {
-                            // Handle validation errors or other errors
-                            if (result.errors) {
-                                displayValidationErrors(result.errors);
-                            } else {
-                                showErrorMessage(result.message || 'Có lỗi xảy ra khi gửi hồ sơ');
-                            }
-                            
-                            // Track error event
-                            if (typeof gtag !== 'undefined') {
-                                gtag('event', 'job_application_error', {
-                                    'job_id': {{ $job->id }},
-                                    'error': result.error || 'unknown'
-                                });
-                            }
-                        }
-                        
-                    } catch (error) {
-                        console.error('Application submission error:', error);
-                        
-                        if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                            showErrorMessage('Không thể kết nối đến server. Vui lòng kiểm tra kết nối internet và thử lại.');
-                        } else {
-                            showErrorMessage('Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.');
-                        }
-                        
-                        // Track network error
-                        if (typeof gtag !== 'undefined') {
-                            gtag('event', 'job_application_network_error', {
-                                'job_id': {{ $job->id }},
-                                'error': error.message
-                            });
-                        }
-                    } finally {
-                        setFormLoadingState(false);
-                    }
-                });
-            }
-        });
-    </script>
+    <!-- Load job modal script -->
+    <script src="{{ asset('js/job-detail-modal.js') }}"></script>
     @endpush
 
 @endsection

@@ -1,11 +1,15 @@
 // Job Detail Modal Functions - Standalone JavaScript File
 
+// Initialize Vue.js if available (fallback for when not loaded via CDN)
+window.initializeVueApp = function() {
+    // Vue app initialization - optional since we're not using complex Vue components
+};
+
 // Define modal functions immediately - available for onclick
 window.openApplyModal = function() {
     const modal = document.getElementById('applyModal');
     
     if (!modal) {
-        console.error('Modal element not found');
         return;
     }
     
@@ -110,7 +114,7 @@ window.autoFillFormData = function() {
         const customer = window.customerData;
         
         // Fill form fields
-        const fullNameField = document.getElementById('fullName');
+        const fullNameField = document.getElementById('full_name');
         const emailField = document.getElementById('email');
         const phoneField = document.getElementById('phone');
         
@@ -138,7 +142,7 @@ window.autoFillFormData = function() {
         
         // Clear any previous validation errors since we have valid data
         if (typeof clearFieldError === 'function') {
-            clearFieldError('fullName');
+            clearFieldError('full_name');
             clearFieldError('email');
             if (customer.phone) {
                 clearFieldError('phone');
@@ -181,21 +185,21 @@ function showAutoFillNotification() {
 window.validateFormBeforeSubmit = function() {
     let isValid = true;
     
-    // Get form values
-    const fullName = document.getElementById('fullName').value.trim();
+    // Get form values  
+    const fullName = document.getElementById('full_name').value.trim();
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const cv = document.getElementById('cv').files[0];
     
     // Validate full name
     if (!fullName) {
-        showFieldError('fullName', 'Vui lòng nhập họ và tên');
+        showFieldError('full_name', 'Vui lòng nhập họ và tên');
         isValid = false;
     } else if (fullName.length < 2) {
-        showFieldError('fullName', 'Họ và tên phải có ít nhất 2 ký tự');
+        showFieldError('full_name', 'Họ và tên phải có ít nhất 2 ký tự');
         isValid = false;
-    } else if (!/^[\p{L}\s\-\.\']+$/u.test(fullName)) {
-        showFieldError('fullName', 'Họ và tên chỉ được chứa chữ cái, khoảng trắng, dấu gạch ngang và dấu chấm');
+    } else if (!/^[a-zA-ZÀ-ỹ\s\-\.\']+$/.test(fullName)) {
+        showFieldError('full_name', 'Họ và tên chỉ được chứa chữ cái, khoảng trắng, dấu gạch ngang và dấu chấm');
         isValid = false;
     }
     
@@ -355,7 +359,7 @@ window.displayValidationErrors = function(errors) {
     Object.keys(errors).forEach(field => {
         const messages = Array.isArray(errors[field]) ? errors[field] : [errors[field]];
         if (messages.length > 0) {
-            showFieldError(field.replace('_', ''), messages[0]);
+            showFieldError(field, messages[0]);
         }
     });
 };
@@ -456,6 +460,11 @@ window.showToastMessage = function(message, type = 'info') {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
+    // Prevent multiple DOM initializations
+    if (window.jobModalDOMInitialized) {
+        return;
+    }
+    window.jobModalDOMInitialized = true;
     // Add click handler for apply buttons
     const applyButtons = document.querySelectorAll('.btn-apply, .btn-apply-bottom');
     
@@ -468,6 +477,27 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+    
+    // Form submission handler
+    const applyForm = document.getElementById('applyForm');
+    if (applyForm) {
+        applyForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // Prevent any other handlers
+            
+            // Prevent multiple submissions
+            if (window.formSubmitting) {
+                return;
+            }
+            window.formSubmitting = true;
+            
+            try {
+                await handleFormSubmission(this);
+            } finally {
+                window.formSubmitting = false;
+            }
+        });
+    }
     
     // Modal click outside to close
     const modal = document.getElementById('applyModal');
@@ -494,7 +524,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 handleFileSelection(e.target.files[0]);
             } else {
                 const fileName = document.getElementById('fileName');
-                fileName.style.display = 'none';
+                if (fileName) {
+                    fileName.style.display = 'none';
+                }
             }
         });
     }
@@ -504,6 +536,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('cv');
     
     if (fileUploadArea && fileInput) {
+        
+        // Don't override existing CSS styles - they're already set in the stylesheet
+        // Just ensure the area is interactive
+        
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             fileUploadArea.addEventListener(eventName, preventDefaults, false);
         });
@@ -541,9 +577,153 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Click to upload
-        fileUploadArea.addEventListener('click', function() {
-            fileInput.click();
+        // Add click handler that works with the file input overlay
+        fileUploadArea.addEventListener('click', function(e) {
+            // Only trigger if we didn't click directly on the file input
+            if (e.target !== fileInput) {
+                fileInput.click();
+            }
         });
     }
+    
+    // Main form submission handler function
+    async function handleFormSubmission(form) {
+        // Clear previous errors
+        clearAllFormErrors();
+        
+        // Validate form before submission
+        if (!validateFormBeforeSubmit()) {
+            return;
+        }
+        
+        // Show loading state
+        setFormLoadingState(true);
+        
+        try {
+            // Prepare FormData with file
+            const formData = new FormData(form);
+            
+            // Get CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                            document.querySelector('input[name="_token"]')?.value;
+            
+            // Get job ID from the current page context
+            const jobId = getJobIdFromPage();
+            
+            if (!jobId) {
+                throw new Error('Job ID not found');
+            }
+            
+            // Make API call
+            const response = await fetch(`/api/jobs/${jobId}/apply`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok && result.success) {
+                // Success - show success message
+                showSuccessMessage(result);
+                
+                // Close modal after short delay
+                setTimeout(() => {
+                    closeApplyModal();
+                    resetForm();
+                }, 2000);
+                
+                // Track success event
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'job_application_success', {
+                        'job_id': jobId,
+                        'response': result
+                    });
+                }
+                
+            } else {
+                // Handle validation errors or other errors
+                if (result.errors) {
+                    displayValidationErrors(result.errors);
+                } else {
+                    showErrorMessage(result.message || 'Có lỗi xảy ra khi gửi hồ sơ');
+                }
+                
+                // Track error event
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'job_application_error', {
+                        'job_id': jobId,
+                        'error': result.error || 'unknown'
+                    });
+                }
+            }
+            
+        } catch (error) {
+            
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                showErrorMessage('Không thể kết nối đến server. Vui lòng kiểm tra kết nối internet và thử lại.');
+            } else {
+                showErrorMessage('Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.');
+            }
+            
+            // Track network error
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'job_application_network_error', {
+                    'error': error.message
+                });
+            }
+        } finally {
+            setFormLoadingState(false);
+        }
+    }
+    
+    // Helper function to get job ID from current page
+    function getJobIdFromPage() {
+        // Try multiple ways to get job ID
+        const urlParts = window.location.pathname.split('/');
+        const jobIdFromUrl = urlParts[urlParts.length - 1];
+        
+        // Check if it's a number
+        if (!isNaN(jobIdFromUrl) && jobIdFromUrl !== '') {
+            return parseInt(jobIdFromUrl);
+        }
+        
+        // Try to get from meta tag or data attribute
+        const jobIdMeta = document.querySelector('meta[name="job-id"]')?.getAttribute('content');
+        if (jobIdMeta && !isNaN(jobIdMeta)) {
+            return parseInt(jobIdMeta);
+        }
+        
+        // Try to get from global variable
+        if (typeof window.currentJobId !== 'undefined') {
+            return window.currentJobId;
+        }
+        
+        // Try to extract from URL pattern /viec-lam/{slug}
+        if (urlParts.length >= 2 && urlParts[urlParts.length - 2] === 'viec-lam') {
+            const slug = urlParts[urlParts.length - 1];
+            
+            const knownJobs = {
+                'blockchain-game-developer-sky-mavis': 6,
+                '3d-platformer-demo': 20,
+                'job-appota-backend-003': 23
+            };
+            
+            if (knownJobs[slug]) {
+                return knownJobs[slug];
+            }
+        }
+        
+        return null;
+    }
+    
+    // Test function - can be called from browser console
+    window.testJobIdExtraction = function() {
+        const jobId = getJobIdFromPage();
+        return jobId;
+    };
 });

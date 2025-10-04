@@ -108,25 +108,36 @@ class JobApplicationService
      */
     private function sendApplicantNotification(JobApplication $application, Product $job): void
     {
-        // Queue the email to avoid blocking the response
-        Queue::push(function () use ($application, $job) {
-            try {
-                Mail::to($application->applicant_email)
-                    ->send(new ApplicationReceivedMail($application, $job));
+        try {
+            // Send email immediately for testing - can be queued later
+            Log::info('Sending applicant notification', [
+                'application_id' => $application->id,
+                'applicant_name' => $application->applicant_name,
+                'applicant_email' => $application->applicant_email,
+                'job_id' => $job->id,
+                'job_name' => $job->name,
+            ]);
+            
+            $mail = new ApplicationReceivedMail($application, $job);
+            
+            Mail::to($application->applicant_email)
+                ->send($mail);
 
-                Log::info('Applicant notification sent', [
-                    'application_id' => $application->id,
-                    'email' => $application->applicant_email,
-                ]);
+            Log::info('Applicant notification sent successfully', [
+                'application_id' => $application->id,
+                'email' => $application->applicant_email,
+            ]);
 
-            } catch (\Exception $e) {
-                Log::error('Failed to send applicant notification', [
-                    'application_id' => $application->id,
-                    'email' => $application->applicant_email,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-        });
+        } catch (\Exception $e) {
+            Log::error('Failed to send applicant notification', [
+                'application_id' => $application->id,
+                'email' => $application->applicant_email,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            // Re-throw to let the caller know there was an issue
+            throw $e;
+        }
     }
 
     /**
@@ -145,27 +156,34 @@ class JobApplicationService
             return;
         }
 
-        // Queue the email
-        Queue::push(function () use ($application, $job, $employerEmail) {
-            try {
-                Mail::to($employerEmail)
-                    ->send(new NewApplicationMail($application, $job));
+        try {
+            Log::info('Sending employer notification', [
+                'application_id' => $application->id,
+                'job_id' => $job->id,
+                'employer_email' => $employerEmail,
+            ]);
+            
+            $mail = new NewApplicationMail($application, $job);
+            
+            Mail::to($employerEmail)
+                ->send($mail);
 
-                Log::info('Employer notification sent', [
-                    'application_id' => $application->id,
-                    'job_id' => $job->id,
-                    'employer_email' => $employerEmail,
-                ]);
+            Log::info('Employer notification sent successfully', [
+                'application_id' => $application->id,
+                'job_id' => $job->id,
+                'employer_email' => $employerEmail,
+            ]);
 
-            } catch (\Exception $e) {
-                Log::error('Failed to send employer notification', [
-                    'application_id' => $application->id,
-                    'job_id' => $job->id,
-                    'employer_email' => $employerEmail,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-        });
+        } catch (\Exception $e) {
+            Log::error('Failed to send employer notification', [
+                'application_id' => $application->id,
+                'job_id' => $job->id,
+                'employer_email' => $employerEmail,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            // Don't re-throw for employer email - it's not critical
+        }
     }
 
     /**
