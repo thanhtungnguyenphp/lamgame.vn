@@ -299,8 +299,8 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="fullName">Họ và tên <span class="required">*</span></label>
-                        <input type="text" id="fullName" name="full_name" required placeholder="Nhập họ và tên của bạn">
+                        <label for="full_name">Họ và tên <span class="required">*</span></label>
+                        <input type="text" id="full_name" name="full_name" required placeholder="Nhập họ và tên của bạn">
                     </div>
                     <div class="form-group">
                         <label for="email">Email <span class="required">*</span></label>
@@ -1974,6 +1974,8 @@
             console.log('Job detail page initialized - using external modal script');
         });
     </script>
+    <!-- Load job modal script -->
+    <script src="{{ asset('js/job-detail-modal.js') }}"></script>
     @endpush
 
 @endsection

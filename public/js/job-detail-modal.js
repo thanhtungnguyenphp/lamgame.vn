@@ -110,7 +110,7 @@ window.autoFillFormData = function() {
         const customer = window.customerData;
         
         // Fill form fields
-        const fullNameField = document.getElementById('fullName');
+        const fullNameField = document.getElementById('full_name');
         const emailField = document.getElementById('email');
         const phoneField = document.getElementById('phone');
         
@@ -138,7 +138,7 @@ window.autoFillFormData = function() {
         
         // Clear any previous validation errors since we have valid data
         if (typeof clearFieldError === 'function') {
-            clearFieldError('fullName');
+            clearFieldError('full_name');
             clearFieldError('email');
             if (customer.phone) {
                 clearFieldError('phone');
@@ -181,21 +181,21 @@ function showAutoFillNotification() {
 window.validateFormBeforeSubmit = function() {
     let isValid = true;
     
-    // Get form values
-    const fullName = document.getElementById('fullName').value.trim();
+    // Get form values  
+    const fullName = document.getElementById('full_name').value.trim();
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const cv = document.getElementById('cv').files[0];
     
     // Validate full name
     if (!fullName) {
-        showFieldError('fullName', 'Vui lòng nhập họ và tên');
+        showFieldError('full_name', 'Vui lòng nhập họ và tên');
         isValid = false;
     } else if (fullName.length < 2) {
-        showFieldError('fullName', 'Họ và tên phải có ít nhất 2 ký tự');
+        showFieldError('full_name', 'Họ và tên phải có ít nhất 2 ký tự');
         isValid = false;
     } else if (!/^[\p{L}\s\-\.\']+$/u.test(fullName)) {
-        showFieldError('fullName', 'Họ và tên chỉ được chứa chữ cái, khoảng trắng, dấu gạch ngang và dấu chấm');
+        showFieldError('full_name', 'Họ và tên chỉ được chứa chữ cái, khoảng trắng, dấu gạch ngang và dấu chấm');
         isValid = false;
     }
     
@@ -355,7 +355,7 @@ window.displayValidationErrors = function(errors) {
     Object.keys(errors).forEach(field => {
         const messages = Array.isArray(errors[field]) ? errors[field] : [errors[field]];
         if (messages.length > 0) {
-            showFieldError(field.replace('_', ''), messages[0]);
+            showFieldError(field, messages[0]);
         }
     });
 };
@@ -452,6 +452,12 @@ window.showToastMessage = function(message, type = 'info') {
             }
         }, 300);
     }, 4000);
+};
+
+// Initialize Vue.js if available (fallback for when not loaded via CDN)
+window.initializeVueApp = function() {
+    // Vue app initialization - optional since we're not using complex Vue components
+    console.log('Vue app initialization called but not required for job modal');
 };
 
 // Initialize when DOM is ready
