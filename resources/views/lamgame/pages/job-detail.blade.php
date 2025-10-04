@@ -70,7 +70,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Action Buttons -->
                     <div class="action-buttons">
                         <button class="btn-apply" onclick="openApplyModal()">
@@ -259,7 +259,7 @@
                 <i class="fa fa-times"></i>
             </button>
         </div>
-        
+
         <div class="modal-body">
             <form id="applyForm" class="apply-form" enctype="multipart/form-data">
                 <!-- Auth info section -->
@@ -307,12 +307,12 @@
                         <input type="email" id="email" name="email" required placeholder="email@example.com">
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="phone">Số điện thoại <span class="required">*</span></label>
                     <input type="tel" id="phone" name="phone" required placeholder="0123456789">
                 </div>
-                
+
                 <div class="form-group">
                     <label for="cv">Upload CV <span class="required">*</span></label>
                     <div class="file-upload-area">
@@ -325,14 +325,14 @@
                     </div>
                     <small class="form-help">Kích thước tối đa: 5MB</small>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="cover_letter">Thư xin việc (tùy chọn)</label>
                     <textarea id="cover_letter" name="cover_letter" rows="4" placeholder="Giới thiệu ngắn gọn về bản thân và lý do ứng tuyển..."></textarea>
                 </div>
             </form>
         </div>
-        
+
         <div class="modal-footer">
             <button type="button" class="btn-cancel" onclick="closeApplyModal()">
                 Hủy
@@ -364,7 +364,7 @@
             margin: 0 auto;
             padding: 0 1rem;
         }
-        
+
         /* Breadcrumb */
         .breadcrumb-section {
             background: #f8f9fa;
@@ -1459,11 +1459,11 @@
                 align-items: stretch;
                 gap: 0.75rem;
             }
-            
+
             .guest-actions {
                 justify-content: center;
             }
-            
+
             .btn-quick-login,
             .btn-quick-register {
                 flex: 1;
@@ -1513,18 +1513,18 @@
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-        
+
         .form-group input::placeholder,
         .form-group textarea::placeholder {
             color: #9ca3af;
             opacity: 1;
         }
-        
+
         .form-group input:-ms-input-placeholder,
         .form-group textarea:-ms-input-placeholder {
             color: #9ca3af;
         }
-        
+
         .form-group input::-webkit-input-placeholder,
         .form-group textarea::-webkit-input-placeholder {
             color: #9ca3af;
@@ -1550,45 +1550,45 @@
                 background-color: #f8f9ff;
                 border-color: #3b82f6;
             }
-            
+
             .file-upload-area.drag-over {
                 background-color: #f0f9ff;
                 border-color: #3b82f6;
                 border-style: solid;
                 transform: scale(1.02);
             }
-            
+
             .file-upload-area {
                 transition: all 0.3s ease;
                 cursor: pointer;
             }
-            
+
             /* Error states */
-            input.error, 
-            textarea.error, 
+            input.error,
+            textarea.error,
             select.error {
                 border-color: #dc2626 !important;
                 background-color: #fef2f2;
                 color: #374151;
             }
-            
+
             /* Readonly states */
-            input[readonly], 
-            textarea[readonly], 
+            input[readonly],
+            textarea[readonly],
             select[readonly] {
                 background-color: #f8f9fa !important;
                 border-color: #e2e8f0 !important;
                 color: #6b7280 !important;
                 cursor: not-allowed;
             }
-            
-            input[readonly]:focus, 
-            textarea[readonly]:focus, 
+
+            input[readonly]:focus,
+            textarea[readonly]:focus,
             select[readonly]:focus {
                 box-shadow: none !important;
                 border-color: #e2e8f0 !important;
             }
-            
+
             .field-error {
                 color: #dc2626;
                 font-size: 12px;
@@ -1626,7 +1626,7 @@
             font-size: 0.8rem;
             margin-top: 0.5rem;
         }
-        
+
         /* File upload success state */
         #fileName {
             padding: 0.5rem;
@@ -1635,7 +1635,7 @@
             border-radius: 6px;
             margin-top: 0.5rem;
         }
-        
+
         #fileName div {
             font-weight: 600;
             color: #059669 !important;
@@ -1704,7 +1704,7 @@
                 grid-template-columns: 1fr;
                 gap: 1rem;
             }
-            
+
             .form-group input,
             .form-group textarea,
             .form-group select {
@@ -1722,7 +1722,7 @@
                 justify-content: center;
                 padding: 1rem 2rem;
             }
-            
+
             .file-upload-area {
                 padding: 1.5rem 1rem;
             }

@@ -219,7 +219,7 @@ class LamGamePageController extends Controller
     {
         return $this->viecLamGame($request);
     }
-    
+
     /**
      * Show Viec lam Game page
      */
@@ -258,7 +258,7 @@ class LamGamePageController extends Controller
             ->where('pf.visible_individually', 1)
             ->select(
                 'p.id',
-                'p.sku', 
+                'p.sku',
                 'pf.name',
                 'pf.short_description',
                 'pf.description',
@@ -299,11 +299,11 @@ class LamGamePageController extends Controller
 
         // Get paginated results
         $jobs = $jobsQuery->paginate($perPage);
-        
+
         // Get additional job attributes for each job and ensure url_key exists
         foreach ($jobs as $job) {
             $job->attributes = $this->getJobAttributes($job->id);
-            
+
             // Ensure url_key exists, if not create one from job title and id
             if (empty($job->url_key)) {
                 $jobTitle = explode(' - ', $job->name)[0] ?? $job->name;
@@ -371,7 +371,7 @@ class LamGamePageController extends Controller
             ->select(
                 'a.code',
                 'pav.text_value',
-                'pav.integer_value', 
+                'pav.integer_value',
                 'pav.date_value',
                 'aot.label as option_label'
             )
@@ -418,7 +418,7 @@ class LamGamePageController extends Controller
             ->where('pf.visible_individually', 1)
             ->select(
                 'p.id',
-                'p.sku', 
+                'p.sku',
                 'pf.name',
                 'pf.short_description',
                 'pf.description',
@@ -444,7 +444,7 @@ class LamGamePageController extends Controller
         $jobTitle = explode(' - ', $job->name)[0] ?? $job->name;
         $salaryFormatted = number_format($job->price / 1000000, 1) . ' triệu VND';
         $postedAgo = \Carbon\Carbon::parse($job->created_at)->diffForHumans();
-        
+
         // Get similar jobs
         $similarJobs = \DB::table('products as p')
             ->leftJoin('product_flat as pf', function($join) {
@@ -459,7 +459,7 @@ class LamGamePageController extends Controller
             ->orderBy('p.created_at', 'desc')
             ->limit(3)
             ->get();
-            
+
         // Ensure url_key exists for similar jobs
         foreach ($similarJobs as $similarJob) {
             if (empty($similarJob->url_key)) {
@@ -471,7 +471,7 @@ class LamGamePageController extends Controller
         // Get authenticated customer data for auto-fill
         $customer = Auth::guard('customer')->user();
         $customerData = null;
-        
+
         if ($customer) {
             $customerData = [
                 'id' => $customer->id,
@@ -595,7 +595,7 @@ class LamGamePageController extends Controller
         if (! empty($baseCategoryIds)) {
             // Include base categories and all their descendants using nested set model (_lft, _rgt)
             $allCategoryIds = collect($baseCategoryIds);
-            
+
             foreach ($baseCategoryIds as $cid) {
                 // Find all descendants of this category using nested set model
                 $category = \DB::table('categories')->where('id', $cid)->first();
@@ -607,7 +607,7 @@ class LamGamePageController extends Controller
                     $allCategoryIds = $allCategoryIds->merge($descendants);
                 }
             }
-            
+
             $allCategoryIds = $allCategoryIds->unique()->values()->all();
         }
 
@@ -932,7 +932,7 @@ class LamGamePageController extends Controller
                 $relatedSources[] = [
                     'title' => $relatedFlat->name ?? $relatedProduct->sku,
                     'url' => route('lamgame.source-game.detail', $relatedFlat->url_key ?? $relatedProduct->id),
-                    'image' => $relatedProduct->images && $relatedProduct->images->isNotEmpty() 
+                    'image' => $relatedProduct->images && $relatedProduct->images->isNotEmpty()
                              ? asset('storage/' . $relatedProduct->images->first()->path)
                              : 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&h=200&fit=crop',
                     'price' => (float) ($relatedFlat->price ?? 0),
@@ -978,7 +978,7 @@ class LamGamePageController extends Controller
         ];
 
         $gameData = $sampleGames[$slug] ?? $sampleGames['space-shooter-2d'];
-        
+
         $sourceGameDetail = array_merge($gameData, [
             'id' => 'sample-' . $slug,
             'slug' => $slug,
@@ -1006,7 +1006,7 @@ class LamGamePageController extends Controller
             'features' => [
                 'Đầy đủ source code và comments chi tiết',
                 'Hệ thống AI cho enemies',
-                'Nhiều loại vũ khí và power-ups', 
+                'Nhiều loại vũ khí và power-ups',
                 'Hệ thống điểm số và leaderboard',
                 'Sound effects và background music',
                 'Mobile-ready controls',

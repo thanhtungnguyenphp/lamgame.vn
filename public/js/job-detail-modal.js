@@ -3,7 +3,6 @@
 // Initialize Vue.js if available (fallback for when not loaded via CDN)
 window.initializeVueApp = function() {
     // Vue app initialization - optional since we're not using complex Vue components
-    console.log('Vue app initialization called but not required for job modal');
 };
 
 // Define modal functions immediately - available for onclick
@@ -11,7 +10,6 @@ window.openApplyModal = function() {
     const modal = document.getElementById('applyModal');
     
     if (!modal) {
-        console.error('Modal element not found');
         return;
     }
     
@@ -464,10 +462,8 @@ window.showToastMessage = function(message, type = 'info') {
 document.addEventListener('DOMContentLoaded', function() {
     // Prevent multiple DOM initializations
     if (window.jobModalDOMInitialized) {
-        console.log('Job modal DOM already initialized, skipping duplicate DOM setup');
         return;
     }
-    console.log('Initializing job modal DOM handlers');
     window.jobModalDOMInitialized = true;
     // Add click handler for apply buttons
     const applyButtons = document.querySelectorAll('.btn-apply, .btn-apply-bottom');
@@ -491,7 +487,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Prevent multiple submissions
             if (window.formSubmitting) {
-                console.log('Form already submitting, ignoring duplicate request');
                 return;
             }
             window.formSubmitting = true;
@@ -524,29 +519,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // File upload preview with enhanced functionality
     const cvInput = document.getElementById('cv');
     if (cvInput) {
-        console.log('CV input found, setting up change handler');
-        
         cvInput.addEventListener('change', function(e) {
-            console.log('File input change event triggered', e.target.files);
-            
             if (e.target.files.length > 0) {
-                console.log('File selected:', e.target.files[0].name);
                 handleFileSelection(e.target.files[0]);
             } else {
-                console.log('No file selected, hiding fileName display');
                 const fileName = document.getElementById('fileName');
                 if (fileName) {
                     fileName.style.display = 'none';
                 }
             }
         });
-        
-        // Add click event for debugging
-        cvInput.addEventListener('click', function(e) {
-            console.log('File input clicked directly');
-        });
-    } else {
-        console.error('CV input element not found!');
     }
     
     // Add drag and drop functionality for file upload
@@ -554,7 +536,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('cv');
     
     if (fileUploadArea && fileInput) {
-        console.log('Setting up drag and drop for file upload area');
         
         // Don't override existing CSS styles - they're already set in the stylesheet
         // Just ensure the area is interactive
@@ -598,10 +579,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Add click handler that works with the file input overlay
         fileUploadArea.addEventListener('click', function(e) {
-            console.log('Upload area clicked');
             // Only trigger if we didn't click directly on the file input
             if (e.target !== fileInput) {
-                console.log('Triggering file input click');
                 fileInput.click();
             }
         });
@@ -609,14 +588,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Main form submission handler function
     async function handleFormSubmission(form) {
-        console.log('Starting form submission');
-        
         // Clear previous errors
         clearAllFormErrors();
         
         // Validate form before submission
         if (!validateFormBeforeSubmit()) {
-            console.log('Form validation failed');
             return;
         }
         
@@ -634,31 +610,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Get job ID from the current page context
             const jobId = getJobIdFromPage();
             
-            // TEMP DEBUG: Show detailed URL analysis to user
-            const pathname = window.location.pathname;
-            const urlParts = pathname.split('/');
-            const lastPart = urlParts[urlParts.length - 1];
-            const secondToLastPart = urlParts[urlParts.length - 2];
-            
-            const debugInfo = [
-                `Job ID Result: ${jobId}`,
-                `Full URL: ${window.location.href}`,
-                `Pathname: ${pathname}`,
-                `URL Parts: [${urlParts.join(', ')}]`,
-                `Last part: '${lastPart}'`,
-                `Second to last: '${secondToLastPart}'`,
-                `Pattern match: ${secondToLastPart === 'viec-lam' ? 'YES' : 'NO'}`,
-                `Available slugs: blockchain-game-developer-sky-mavis, 3d-platformer-demo, job-appota-backend-003`
-            ];
-            
-            alert('DEBUG URL ANALYSIS:\n\n' + debugInfo.join('\n'));
-            
             if (!jobId) {
-                alert('ERROR: Job ID extraction failed! Check the debug info above.');
                 throw new Error('Job ID not found');
             }
-            
-            console.log(`Submitting application for job ${jobId}`);
             
             // Make API call
             const response = await fetch(`/api/jobs/${jobId}/apply`, {
@@ -672,7 +626,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             const result = await response.json();
-            console.log('API Response:', result);
             
             if (response.ok && result.success) {
                 // Success - show success message
@@ -710,7 +663,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
         } catch (error) {
-            console.error('Application submission error:', error);
             
             if (error.name === 'TypeError' && error.message.includes('fetch')) {
                 showErrorMessage('Không thể kết nối đến server. Vui lòng kiểm tra kết nối internet và thử lại.');
@@ -731,46 +683,29 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Helper function to get job ID from current page
     function getJobIdFromPage() {
-        console.log('=== DEBUG getJobIdFromPage ===');
-        console.log('Current URL:', window.location.href);
-        console.log('Pathname:', window.location.pathname);
-        
         // Try multiple ways to get job ID
         const urlParts = window.location.pathname.split('/');
-        console.log('URL Parts:', urlParts);
         const jobIdFromUrl = urlParts[urlParts.length - 1];
-        console.log('Last URL part (potential job ID):', jobIdFromUrl);
         
         // Check if it's a number
         if (!isNaN(jobIdFromUrl) && jobIdFromUrl !== '') {
-            console.log('Found numeric job ID in URL:', jobIdFromUrl);
             return parseInt(jobIdFromUrl);
         }
         
         // Try to get from meta tag or data attribute
         const jobIdMeta = document.querySelector('meta[name="job-id"]')?.getAttribute('content');
-        console.log('Meta tag job-id:', jobIdMeta);
         if (jobIdMeta && !isNaN(jobIdMeta)) {
-            console.log('Found job ID in meta tag:', jobIdMeta);
             return parseInt(jobIdMeta);
         }
         
         // Try to get from global variable
-        console.log('window.currentJobId:', typeof window.currentJobId !== 'undefined' ? window.currentJobId : 'undefined');
         if (typeof window.currentJobId !== 'undefined') {
-            console.log('Found job ID in global variable:', window.currentJobId);
             return window.currentJobId;
         }
         
         // Try to extract from URL pattern /viec-lam/{slug}
-        console.log('Checking URL pattern - urlParts.length:', urlParts.length);
-        if (urlParts.length >= 2) {
-            console.log('Second to last URL part:', urlParts[urlParts.length - 2]);
-        }
-        
         if (urlParts.length >= 2 && urlParts[urlParts.length - 2] === 'viec-lam') {
             const slug = urlParts[urlParts.length - 1];
-            console.log('Attempting to get job ID from slug:', slug);
             
             const knownJobs = {
                 'blockchain-game-developer-sky-mavis': 6,
@@ -778,30 +713,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 'job-appota-backend-003': 23
             };
             
-            console.log('Available slugs:', Object.keys(knownJobs));
-            console.log('Looking for slug:', slug);
-            console.log('Slug match result:', knownJobs[slug]);
-            
             if (knownJobs[slug]) {
-                console.log('✅ Found job ID for slug', slug, ':', knownJobs[slug]);
                 return knownJobs[slug];
-            } else {
-                console.log('❌ No mapping found for slug:', slug);
             }
-        } else {
-            console.log('❌ URL does not match /viec-lam/{slug} pattern');
         }
         
-        console.error('❌ Could not determine job ID from URL:', window.location.pathname);
-        console.log('=== END DEBUG ===');
         return null;
     }
     
     // Test function - can be called from browser console
     window.testJobIdExtraction = function() {
-        console.log('Testing job ID extraction...');
         const jobId = getJobIdFromPage();
-        console.log('Result:', jobId);
         return jobId;
     };
 });

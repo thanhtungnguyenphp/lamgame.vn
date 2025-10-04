@@ -215,16 +215,3 @@ Route::get('/test-auth', function() {
 
 Route::get('/test-controller', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'test']);
 
-// Debug route for blog testing
-Route::get('debug-blog-test', function() {
-    \Log::info('TEST: Debug route accessed', [
-        'timestamp' => now(),
-        'user_agent' => request()->userAgent()
-    ]);
-
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Debug logging is working',
-        'timestamp' => now()
-    ]);
-});
