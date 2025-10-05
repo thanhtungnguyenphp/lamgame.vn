@@ -9,20 +9,20 @@
 ])
 
 @php
-// Optimized size mapping with actual available sizes
+// Optimized size mapping with actual available sizes - Mobile First
 $sizeMap = [
     'xs' => 50,
-    'small' => 80,
-    'medium' => 60,
-    'large' => 400,
-    'xl' => 400, // Same as large for horizontal logos
+    'small' => 60,      // Optimized for mobile headers
+    'medium' => 80,     // Better for tablet displays
+    'large' => 200,     // Desktop headers 
+    'xl' => 400,        // Large displays and hero sections
 ];
 
-// Support both named sizes and numeric sizes
+// Support both named sizes and numeric sizes with mobile optimization
 if (is_numeric($size)) {
     $logoSize = (int)$size;
-    // Map to nearest available size
-    $availableSizes = [50, 60, 80, 100, 200, 400];
+    // Map to nearest available size - expanded mobile range
+    $availableSizes = [50, 60, 80, 100, 150, 200, 300, 400];
     $logoSize = collect($availableSizes)->reduce(function ($carry, $item) use ($logoSize) {
         return abs($item - $logoSize) < abs($carry - $logoSize) ? $item : $carry;
     }, $availableSizes[0]);
@@ -88,20 +88,22 @@ $hasRetinaWebP = file_exists(public_path("assets/logos/webp/logo-horizontal-{$re
 @once
 @push('styles')
 <style>
-/* LamGame Logo Styles - Mobile First Approach with Trimmed Logo */
+/* LamGame Logo Styles - Mobile First Approach with Enhanced Performance */
 .lamgame-logo {
     object-fit: contain;
     max-width: 100%;
-    /* Override any inline height styles with responsive sizing */
-    height: 30px !important;
-    max-height: 30px;
+    /* Optimized mobile-first sizing with clamp() for smooth scaling */
+    height: clamp(25px, 6vw, 60px) !important;
+    max-height: 60px;
     width: auto;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
-    /* Performance optimizations */
-    will-change: transform, filter;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+    /* Enhanced performance optimizations */
+    will-change: transform;
     backface-visibility: hidden;
     transform: translateZ(0);
+    /* CSS containment for better performance */
+    contain: layout style;
 }
 
 /* Picture element container */
@@ -132,25 +134,39 @@ $hasRetinaWebP = file_exists(public_path("assets/logos/webp/logo-horizontal-{$re
     filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.15));
 }
 
-/* Progressive Enhancement - Mobile First for Trimmed Logo */
+/* Progressive Enhancement - Mobile First with Optimized Breakpoints */
 
-/* Small mobile (375px+) */
+/* Very small mobile (320px - base) */
+.lamgame-logo {
+    /* Base: 25px for very small screens */
+    min-height: 25px;
+}
+
+/* Small mobile (375px+) - iPhone SE and similar */
 @media (min-width: 375px) {
     .lamgame-logo {
-        height: 40px !important;
+        height: clamp(30px, 7vw, 40px) !important;
         max-height: 40px;
+    }
+}
+
+/* Medium mobile (414px+) - iPhone 11 Pro and similar */
+@media (min-width: 414px) {
+    .lamgame-logo {
+        height: clamp(35px, 8vw, 45px) !important;
+        max-height: 45px;
     }
 }
 
 /* Large mobile / Small tablet (481px+) */
 @media (min-width: 481px) {
     .lamgame-logo {
-        height: 50px !important;
+        height: clamp(40px, 9vw, 50px) !important;
         max-height: 50px;
     }
     
     .lamgame-logo.brand-logo {
-        height: 60px !important;
+        height: clamp(50px, 10vw, 60px) !important;
         max-height: 60px;
     }
 }
@@ -158,8 +174,8 @@ $hasRetinaWebP = file_exists(public_path("assets/logos/webp/logo-horizontal-{$re
 /* Tablet (769px+) */
 @media (min-width: 769px) {
     .lamgame-logo {
-        height: 60px !important;
-        max-height: 60px;
+        height: clamp(45px, 7vw, 55px) !important;
+        max-height: 55px;
     }
     
     .lamgame-logo.brand-logo {
@@ -168,8 +184,8 @@ $hasRetinaWebP = file_exists(public_path("assets/logos/webp/logo-horizontal-{$re
     }
     
     .interactive-logo:hover {
-        transform: scale(1.03);
-        filter: drop-shadow(0 2px 8px rgba(102, 126, 234, 0.15));
+        transform: scale(1.02);
+        filter: drop-shadow(0 2px 6px rgba(102, 126, 234, 0.15));
     }
 }
 
@@ -186,8 +202,8 @@ $hasRetinaWebP = file_exists(public_path("assets/logos/webp/logo-horizontal-{$re
     }
     
     .interactive-logo:hover {
-        transform: scale(1.05);
-        filter: drop-shadow(0 4px 12px rgba(102, 126, 234, 0.2));
+        transform: scale(1.04);
+        filter: drop-shadow(0 3px 10px rgba(102, 126, 234, 0.2));
     }
 }
 
