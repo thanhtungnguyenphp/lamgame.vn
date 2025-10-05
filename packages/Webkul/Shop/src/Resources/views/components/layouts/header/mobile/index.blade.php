@@ -24,10 +24,10 @@
 
                 <x-slot:header>
                     <div class="flex items-center justify-between">
-                        <a href="{{ route('shop.home.index') }}" class="flex items-center">
-                            <img src="{{ asset('assets/logos/png/logo-horizontal-150.png') }}" 
-                                 alt="LamGame.vn" 
-                                 class="h-[29px] w-auto object-contain">
+                        <a href="{{ route('shop.home.index') }}" class="flex items-center min-h-[44px] min-w-[44px] justify-center">
+                            <x-logo size="60" variant="horizontal" 
+                                   class="h-[35px] max-h-[35px] w-auto" 
+                                   priority="true" />
                         </a>
                     </div>
                 </x-slot>
@@ -82,12 +82,12 @@
 
             <a
                 href="{{ route('shop.home.index') }}"
-                class="flex items-center max-h-[30px]"
+                class="flex items-center min-h-[44px] min-w-[44px] justify-center p-1"
                 aria-label="@lang('shop::app.components.layouts.header.bagisto')"
             >
-                <img src="{{ asset('assets/logos/png/logo-horizontal-100.png') }}" 
-                     alt="LamGame.vn" 
-                     class="h-[29px] w-auto object-contain">
+                <x-logo size="50" variant="horizontal" 
+                       class="h-[30px] max-h-[30px] w-auto" 
+                       priority="true" />
             </a>
             
             {!! view_render_event('bagisto.shop.components.layouts.header.mobile.logo.after') !!}
