@@ -7,7 +7,14 @@
 <div class="mobile-menu" id="mobile-menu" role="navigation">
     <div class="mobile-menu-header">
         <div class="mobile-menu-brand">
-            <img src="{{ asset('themes/shop/emsaigon/images/LOGO-EMSAIGON.jpg') }}" alt="EMSAIGON Logo" class="mobile-logo">
+            <x-logo 
+                size="50" 
+                variant="horizontal" 
+                alt="LamGame.vn" 
+                class="mobile-logo" 
+                :lazy="false" 
+                :priority="true"
+            />
         </div>
         <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">
             <span>&times;</span>
@@ -187,9 +194,12 @@
 }
 
 .mobile-logo {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+    /* Ensure mobile-first responsive scaling */
+    max-height: 32px;
+    /* Remove border-radius for horizontal logo */
 }
 
 

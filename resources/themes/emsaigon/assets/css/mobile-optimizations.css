@@ -40,6 +40,27 @@
     padding: 2px;
 }
 
+/* Mobile Menu Brand Logo Optimization */
+.mobile-menu-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    /* Ensure proper touch target for brand */
+    min-height: 44px;
+}
+
+.mobile-menu-brand .mobile-logo {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+    max-height: 32px;
+    /* Performance optimizations */
+    contain: layout style;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
 /* Enhanced mobile logo sizing with better breakpoints */
 @media (max-width: 320px) {
     /* Very small devices - Galaxy Fold, etc. */

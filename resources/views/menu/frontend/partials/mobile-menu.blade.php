@@ -3,13 +3,13 @@
     <div class="mobile-menu-header">
         <div class="mobile-menu-brand">
             <x-logo 
-                size="xs" 
+                size="50" 
                 variant="horizontal" 
-                alt="LAMGAME Logo" 
+                alt="LamGame.vn" 
                 class="mobile-logo" 
                 :lazy="false" 
+                :priority="true"
             />
-            <span>LAMGAME</span>
         </div>
         <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">
             &times;
@@ -73,9 +73,11 @@
 }
 
 .mobile-logo {
-    height: 24px;
+    height: 32px;
     width: auto;
     object-fit: contain;
+    /* Ensure mobile-first responsive scaling */
+    max-height: 32px;
 }
 
 .mobile-menu-close {
