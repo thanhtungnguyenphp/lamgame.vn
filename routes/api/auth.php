@@ -17,5 +17,9 @@ Route::prefix('auth')->group(function () {
         Route::put('profile', [AuthController::class, 'updateProfile']);
         Route::put('password', [AuthController::class, 'changePassword']);
         Route::post('avatar', [AuthController::class, 'uploadAvatar']);
+        
+        // Extended Profile Routes
+        Route::get('profile/extended', [AuthController::class, 'getExtendedProfile']);
+        Route::put('profile/extended', [AuthController::class, 'updateExtendedProfile']);
     });
 });

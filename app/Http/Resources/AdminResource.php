@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\AdminUserInfoResource;
 
 class AdminResource extends JsonResource
 {
@@ -33,6 +34,34 @@ class AdminResource extends JsonResource
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
             'profile_completed' => $this->isProfileCompleted(),
+            
+            // Extended Profile Information (if available)
+            'extended_profile' => $this->when(
+                $this->relationLoaded('userInfo') && $this->userInfo,
+                function () {
+                    return new AdminUserInfoResource($this->userInfo);
+                }
+            ),
+            
+            // Quick access to commonly used extended fields
+            'phone' => $this->when(
+                $this->relationLoaded('userInfo') && $this->userInfo,
+                $this->userInfo?->formatted_phone
+            ),
+            'location' => $this->when(
+                $this->relationLoaded('userInfo') && $this->userInfo,
+                $this->userInfo?->city && $this->userInfo?->country 
+                    ? $this->userInfo->city . ', ' . $this->userInfo->country
+                    : ($this->userInfo?->city ?? $this->userInfo?->country)
+            ),
+            'job_title' => $this->when(
+                $this->relationLoaded('userInfo') && $this->userInfo,
+                $this->userInfo?->job_title
+            ),
+            'bio' => $this->when(
+                $this->relationLoaded('userInfo') && $this->userInfo,
+                $this->userInfo?->bio
+            ),
         ];
     }
 
