@@ -20,6 +20,7 @@ class AdminResource extends JsonResource
             'email' => $this->email,
             'image' => $this->image ? url('storage/' . $this->image) : null,
             'image_url' => $this->image_url,
+            'avatar_url' => $this->image ? url('storage/' . $this->image) : null,
             'status' => (bool) ($this->status ?? true),
             'role_id' => $this->role_id,
             'role' => $this->whenLoaded('role', function () {
