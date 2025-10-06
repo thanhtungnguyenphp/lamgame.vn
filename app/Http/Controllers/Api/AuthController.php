@@ -7,6 +7,9 @@ use App\Http\Resources\AdminResource;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\UpdateProfileRequest;
 use App\Http\Requests\Auth\AvatarUploadRequest;
+use App\Http\Requests\ExtendedProfileRequest;
+use App\Http\Resources\AdminUserInfoResource;
+use App\Models\Admin as CustomAdmin;
 use Webkul\User\Models\Admin;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
@@ -161,8 +164,10 @@ class AuthController extends Controller
      */
     public function user(Request $request): JsonResponse
     {
+        $user = $request->user()->load(['role', 'userInfo']);
+        
         return response()->json([
-            'user' => new AdminResource($request->user()),
+            'user' => new AdminResource($user),
         ]);
     }
 
@@ -377,6 +382,117 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Có lỗi xảy ra khi tải lên ảnh đại diện.',
+                'errors' => [
+                    'system' => ['Vui lòng thử lại sau hoặc liên hệ admin.']
+                ]
+            ], 500);
+        }
+    }
+
+    /**
+     * Get extended profile information
+     */
+    public function getExtendedProfile(Request $request): JsonResponse
+    {
+        try {
+            $user = $request->user()->load('userInfo');
+            
+            if (!$user->userInfo) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Hồ sơ mở rộng chưa được tạo.',
+                    'data' => [
+                        'extended_profile' => null,
+                        'completion_percentage' => 0,
+                        'suggestions' => [
+                            'Cập nhật thông tin cá nhân để hoàn thiện hồ sơ',
+                            'Thêm số điện thoại và địa chỉ liên hệ',
+                            'Bổ sung thông tin nghề nghiệp'
+                        ]
+                    ]
+                ], 200);
+            }
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Lấy thông tin hồ sơ mở rộng thành công.',
+                'data' => [
+                    'extended_profile' => new AdminUserInfoResource($user->userInfo),
+                    'completion_percentage' => $user->userInfo->completion_percentage,
+                ]
+            ], 200);
+            
+        } catch (\Exception $e) {
+            \Log::error('Get extended profile failed', [
+                'user_id' => $request->user()->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip' => $request->ip()
+            ]);
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Có lỗi xảy ra khi lấy thông tin hồ sơ.',
+                'errors' => [
+                    'system' => ['Vui lòng thử lại sau hoặc liên hệ admin.']
+                ]
+            ], 500);
+        }
+    }
+
+    /**
+     * Update extended profile information
+     */
+    public function updateExtendedProfile(ExtendedProfileRequest $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            $data = $request->validated();
+            
+            // Update or create extended profile
+            $extendedProfile = $user->userInfo();
+            if ($extendedProfile->exists()) {
+                $extendedProfile->update($data);
+                $userInfo = $extendedProfile->first();
+            } else {
+                $data['admin_id'] = $user->id;
+                $userInfo = $user->userInfo()->create($data);
+            }
+            
+            // Mark as completed if all required fields are filled
+            if ($userInfo->is_complete && !$userInfo->profile_completed_at) {
+                $userInfo->markAsCompleted();
+            }
+            
+            // Log successful update
+            \Log::info('Extended profile updated successfully', [
+                'user_id' => $user->id,
+                'completion_percentage' => $userInfo->completion_percentage,
+                'ip' => $request->ip()
+            ]);
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Cập nhật hồ sơ mở rộng thành công.',
+                'data' => [
+                    'extended_profile' => new AdminUserInfoResource($userInfo->fresh()),
+                    'completion_percentage' => $userInfo->completion_percentage,
+                    'is_complete' => $userInfo->is_complete,
+                    'user' => new AdminResource($user->load(['role', 'userInfo'])),
+                ]
+            ], 200);
+            
+        } catch (\Exception $e) {
+            \Log::error('Extended profile update failed', [
+                'user_id' => $request->user()->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip' => $request->ip()
+            ]);
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Có lỗi xảy ra khi cập nhật hồ sơ.',
                 'errors' => [
                     'system' => ['Vui lòng thử lại sau hoặc liên hệ admin.']
                 ]

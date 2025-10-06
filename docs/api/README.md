@@ -6,6 +6,7 @@
 
 ## Authentication APIs
 
+- [**📋 Get Profile API**](get-profile-api.md) - **📱 API chính lấy thông tin profile đầy đủ cho mobile app**
 - [**Admin Profile API**](ADMIN_PROFILE_API.md) - **📱 API chính cho mobile app quản lý profile admin**
 - [Login API](LOGIN_API.md) - Tài liệu chi tiết về API đăng nhập
 - [Update Profile API](UPDATE_PROFILE_API.md) - Tài liệu chi tiết về API cập nhật hồ sơ người dùng
@@ -21,6 +22,7 @@
 ```
 docs/api/
 ├── README.md                    # Overview and index
+├── get-profile-api.md          # 📋 Get Profile API (Mobile App)
 ├── ADMIN_PROFILE_API.md        # 📱 Admin Profile API (Mobile App)
 ├── LOGIN_API.md                # Login API documentation  
 ├── UPDATE_PROFILE_API.md       # Update Profile API
