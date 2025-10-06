@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\AdminResource;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\UpdateProfileRequest;
+use App\Http\Requests\Auth\AvatarUploadRequest;
 use Webkul\User\Models\Admin;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
@@ -315,6 +316,72 @@ class AuthController extends Controller
         throw ValidationException::withMessages([
             'email' => [trans($status)],
         ]);
+    }
+
+    /**
+     * Upload avatar for authenticated user
+     */
+    public function uploadAvatar(AvatarUploadRequest $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            $avatar = $request->file('avatar');
+            
+            // Delete old avatar if exists
+            if ($user->image) {
+                Storage::disk('public')->delete($user->image);
+            }
+
+            // Generate unique filename
+            $filename = 'avatar_' . $user->id . '_' . time() . '.' . $avatar->getClientOriginalExtension();
+            
+            // Store the file
+            $path = $avatar->storeAs('admin', $filename, 'public');
+            
+            // Resize image using Intervention Image
+            $fullPath = storage_path('app/public/' . $path);
+            $img = Image::make($fullPath);
+            $img->fit(300, 300, function ($constraint) {
+                $constraint->upsize();
+            });
+            $img->save();
+            
+            // Update user's image field
+            $user->update(['image' => $path]);
+            
+            // Log successful upload
+            \Log::info('Avatar uploaded successfully', [
+                'user_id' => $user->id,
+                'filename' => $filename,
+                'size' => $avatar->getSize(),
+                'ip' => $request->ip()
+            ]);
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Tải lên ảnh đại diện thành công.',
+                'data' => [
+                    'avatar_url' => url('storage/' . $path),
+                    'user' => new AdminResource($user->fresh())
+                ]
+            ], 200);
+            
+        } catch (\Exception $e) {
+            \Log::error('Avatar upload failed', [
+                'user_id' => $request->user()->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip' => $request->ip()
+            ]);
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Có lỗi xảy ra khi tải lên ảnh đại diện.',
+                'errors' => [
+                    'system' => ['Vui lòng thử lại sau hoặc liên hệ admin.']
+                ]
+            ], 500);
+        }
     }
 
     /**
