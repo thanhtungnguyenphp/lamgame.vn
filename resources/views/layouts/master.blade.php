@@ -2,7 +2,16 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#6a4c93">
+    <meta name="color-scheme" content="light dark">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="LamGame">
+    <meta name="msapplication-TileColor" content="#6a4c93">
+    <meta name="msapplication-config" content="/browserconfig.xml">
     <title>@yield('page_title', 'LAMGAME • Làm Game - Học Lập Trình Game và Phát Triển Ứng Dụng')</title>
     <meta name="description" content="@yield('page_description', 'Làm Game - Nền tảng học lập trình game, phát triển ứng dụng và các khóa học lập trình chuyên sâu. Bắt đầu hành trình của bạn ngay hôm nay!')">
 
@@ -147,6 +156,41 @@
         .mobile-submenu-item.active:hover {
             background-color: #5a3c83 !important;
         }
+        
+        /* Mobile Performance Optimizations */
+        @media (max-width: 768px) {
+            /* Optimize touch targets */
+            .btn, button, a {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            /* Reduce motion for better performance on mobile */
+            * {
+                transition-duration: 0.2s !important;
+            }
+            
+            /* Optimize scrolling */
+            body {
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+            }
+            
+            /* Safe area for notched devices */
+            .container {
+                padding-left: max(20px, env(safe-area-inset-left));
+                padding-right: max(20px, env(safe-area-inset-right));
+            }
+        }
+        
+        /* Reduce animations for users who prefer reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
 
         /* User Menu Dropdown */
         .user-menu {
@@ -245,6 +289,8 @@
                         :priority="true"
                         :lazy="false"
                         :interactive="true"
+                        href="{{ route('home') }}"
+                        title="Về trang chủ LamGame.vn - Cộng đồng Game Developer Việt Nam"
                     />
                 </div>
 

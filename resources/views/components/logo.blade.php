@@ -5,7 +5,10 @@
     'lazy' => false,
     'interactive' => false,
     'alt' => 'LamGame.vn - Game Development Platform',
-    'priority' => false
+    'priority' => false,
+    'href' => null,
+    'target' => '_self',
+    'title' => null
 ])
 
 @php
@@ -36,7 +39,11 @@ $logoWidth = (int)($logoSize * $aspectRatio);
 
 $loading = $lazy ? 'lazy' : ($priority ? 'eager' : 'lazy');
 $interactiveClass = $interactive ? 'interactive-logo' : '';
-$combinedClass = trim("lamgame-logo {$interactiveClass} {$class}");
+$clickableClass = $href ? 'clickable-logo' : '';
+$combinedClass = trim("lamgame-logo {$interactiveClass} {$clickableClass} {$class}");
+
+// Default title for accessibility
+$linkTitle = $title ?? ($href ? 'Về trang chủ LamGame.vn' : null);
 
 // Retina size (2x) - cap at 400px
 $retinaSize = min(400, $logoSize * 2);
@@ -49,6 +56,14 @@ $hasRetinaWebP = file_exists(public_path("assets/logos/webp/logo-horizontal-{$re
 @endphp
 
 {{-- Modern logo with WebP support and responsive loading --}}
+@if($href)
+<a href="{{ $href }}" 
+   @if($title) title="{{ $title }}" @endif
+   @if($target !== '_self') target="{{ $target }}" @endif
+   class="logo-link"
+   aria-label="{{ $linkTitle }}">
+@endif
+
 <picture class="logo-picture">
     @if($hasWebP)
     {{-- WebP source with retina support --}}
@@ -84,6 +99,10 @@ $hasRetinaWebP = file_exists(public_path("assets/logos/webp/logo-horizontal-{$re
          style="width: auto; max-width: 100%; object-fit: contain;"
     >
 </picture>
+
+@if($href)
+</a>
+@endif
 
 @once
 @push('styles')
@@ -132,6 +151,31 @@ $hasRetinaWebP = file_exists(public_path("assets/logos/webp/logo-horizontal-{$re
     transform: scale(1.02);
     opacity: 0.95;
     filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.15));
+}
+
+/* Clickable logo link styles */
+.logo-link {
+    display: inline-block;
+    text-decoration: none;
+    outline: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    line-height: 0;
+}
+
+.logo-link:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+.logo-link:hover .clickable-logo {
+    transform: scale(1.05);
+    filter: drop-shadow(0 4px 12px rgba(102, 126, 234, 0.2));
+}
+
+.clickable-logo {
+    transition: transform 0.2s ease, filter 0.2s ease;
+    cursor: pointer;
 }
 
 /* Progressive Enhancement - Mobile First with Optimized Breakpoints */

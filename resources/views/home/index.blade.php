@@ -5,6 +5,77 @@
 
 @section('page_description', 'Cộng đồng Game Developer Việt Nam hàng đầu. Tìm việc làm game dev, thảo luận Unity/Unreal Engine, chia sẻ source code và ý tưởng game sáng tạo. 50+ jobs mới mỗi tuần từ VNG, Gameloft.')
 
+@push('meta')
+    {{-- Additional SEO Meta Tags --}}
+    <meta name="keywords" content="game developer việt nam, unity developer, unreal engine, việc làm game, lập trình game, forum game dev, source code game, tuyển dụng game">
+    <meta name="author" content="LamGame.vn Team">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ url()->current() }}">
+    
+    {{-- Language and Locale --}}
+    <meta name="language" content="Vietnamese">
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:site_name" content="LamGame.vn">
+    
+    {{-- Twitter Cards --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('page_title')">
+    <meta name="twitter:description" content="@yield('page_description')">
+    <meta name="twitter:image" content="{{ asset('assets/logos/png/logo-square-512.png') }}">
+    
+    {{-- Mobile App Meta --}}
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="LamGame">
+    
+    {{-- Structured Data for Organization --}}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "LamGame.vn",
+        "alternateName": "Làm Game Vietnam",
+        "description": "Cộng đồng Game Developer Việt Nam hàng đầu",
+        "url": "{{ url('/') }}",
+        "logo": "{{ asset('assets/logos/png/logo-square-512.png') }}",
+        "image": "{{ asset('assets/logos/png/logo-square-512.png') }}",
+        "telephone": "+84-911-118-300",
+        "email": "salegamevui@gmail.com",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Tòa nhà E.Town Central, 11 Đoàn Văn Bơ, Phường 13",
+            "addressLocality": "Quận 4",
+            "addressRegion": "TP. Hồ Chí Minh",
+            "addressCountry": "VN"
+        },
+        "sameAs": [
+            "https://www.youtube.com/channel/UCv2lripWdZDKtlrRy1J0dBw",
+            "https://lamgame.vn"
+        ]
+    }
+    </script>
+    
+    {{-- Structured Data for Website --}}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "LamGame.vn",
+        "description": "Cộng đồng Game Developer Việt Nam hàng đầu",
+        "url": "{{ url('/') }}",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "{{ url('/') }}/search?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+@endpush
+
 @push('styles')
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-optimized-banner.css') }}">
 @endpush
@@ -19,58 +90,66 @@
         <div class="track" id="banner-track">
             <!-- Slide 1: Việc làm Game Dev -->
             <div class="slide">
-                <div class="bg jobs"></div>
-                <div class="overlay"></div>
-                <div class="content">
-                    <h1>Khám Phá Việc Làm Game Dev Hot Nhất!</h1>
-                    <p>Hàng trăm vị trí từ VNG, Gameloft: Unity Developer lương 20-40tr VNĐ. <span class="dynamic-content" id="job-stats">50+ jobs tuần này</span>, apply ngay để kết nối với công ty hàng đầu!</p>
-                    <div class="btns">
-                        <a class="btn primary" href="#viec-lam">Xem Jobs Mới</a>
-                        <a class="btn secondary" href="#forum">Hỏi kinh nghiệm phỏng vấn</a>
+                <a href="{{ route('lamgame.viec-lam-game') }}" class="slide-link" title="Khám phá việc làm Game Developer">
+                    <div class="bg jobs"></div>
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <h1>Khám Phá Việc Làm Game Dev Hot Nhất!</h1>
+                        <p>Hàng trăm vị trí từ VNG, Gameloft: Unity Developer lương 20-40tr VNĐ. <span class="dynamic-content" id="job-stats">50+ jobs tuần này</span>, apply ngay để kết nối với công ty hàng đầu!</p>
+                        <div class="btns">
+                            <span class="btn primary">Xem Jobs Mới</span>
+                            <a class="btn secondary" href="{{ route('forum.index') }}" onclick="event.stopPropagation()">Hỏi kinh nghiệm phỏng vấn</a>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
             
             <!-- Slide 2: Topic Forum Hot -->
             <div class="slide">
-                <div class="bg forum"></div>
-                <div class="overlay"></div>
-                <div class="content">
-                    <h1>Thảo Luận Sôi Động: Topic Forum Nóng Hổi!</h1>
-                    <p>Topic hot: <span class="dynamic-content" id="hot-topic">'Unity vs Unreal cho game mobile?'</span> – <span class="dynamic-content" id="topic-stats">150 comments, 500 views, 80 likes</span> trong 24h. Tham gia ngay để chia sẻ kinh nghiệm với cộng đồng dev!</p>
-                    <div class="btns">
-                        <a class="btn primary" href="#forum">Tham Gia Thảo Luận</a>
-                        <a class="btn secondary" href="#forum">Xem tất cả Topics</a>
+                <a href="{{ route('forum.index') }}" class="slide-link" title="Tham gia thảo luận trên Forum">
+                    <div class="bg forum"></div>
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <h1>Thảo Luận Sôi Động: Topic Forum Nóng Hổi!</h1>
+                        <p>Topic hot: <span class="dynamic-content" id="hot-topic">'Unity vs Unreal cho game mobile?'</span> – <span class="dynamic-content" id="topic-stats">150 comments, 500 views, 80 likes</span> trong 24h. Tham gia ngay để chia sẻ kinh nghiệm với cộng đồng dev!</p>
+                        <div class="btns">
+                            <span class="btn primary">Tham Gia Thảo Luận</span>
+                            <span class="btn secondary">Xem tất cả Topics</span>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
             
             <!-- Slide 3: Bài viết mới -->
             <div class="slide">
-                <div class="bg blog"></div>
-                <div class="overlay"></div>
-                <div class="content">
-                    <h1>Bài Viết Mới Nhất Từ Developer!</h1>
-                    <p>Bài mới: <span class="dynamic-content" id="new-blog">'Tối ưu hóa performance Unity cho game 3D'</span> – Đăng bởi dev @UserX, <span class="dynamic-content" id="blog-stats">200 views, 50 shares</span>. Đọc để cập nhật kiến thức hot nhất!</p>
-                    <div class="btns">
-                        <a class="btn primary" href="#blog">Đọc Bài Viết</a>
-                        <a class="btn secondary" href="#blog">Xem tất cả Blog</a>
+                <a href="{{ route('lamgame.blog') }}" class="slide-link" title="Đọc bài viết từ cộng đồng Developer">
+                    <div class="bg blog"></div>
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <h1>Bài Viết Mới Nhất Từ Developer!</h1>
+                        <p>Bài mới: <span class="dynamic-content" id="new-blog">'Tối ưu hóa performance Unity cho game 3D'</span> – Đăng bởi dev @UserX, <span class="dynamic-content" id="blog-stats">200 views, 50 shares</span>. Đọc để cập nhật kiến thức hot nhất!</p>
+                        <div class="btns">
+                            <span class="btn primary">Đọc Bài Viết</span>
+                            <span class="btn secondary">Xem tất cả Blog</span>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
             
             <!-- Slide 4: Game & Source mới -->
             <div class="slide">
-                <div class="bg creative"></div>
-                <div class="overlay"></div>
-                <div class="content">
-                    <h1>Khám Phá Game Mới & Ý Tưởng Sáng Tạo!</h1>
-                    <p>Source mới: <span class="dynamic-content" id="new-source">'Roguelike Unity kit'</span> trên GitHub. Ý tưởng: <span class="dynamic-content" id="new-idea">'VR adventure Việt Nam folklore'</span>. Game demo từ dev cộng đồng – Download & phát triển ngay!</p>
-                    <div class="btns">
-                        <a class="btn primary" href="#source-game">Khám Phá & Chia Sẻ</a>
-                        <a class="btn secondary" href="#source-game">Xem Source Code</a>
+                <a href="{{ route('lamgame.source-game') }}" class="slide-link" title="Khám phá Source Game và ý tưởng sáng tạo">
+                    <div class="bg creative"></div>
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <h1>Khám Phá Game Mới & Ý Tưởng Sáng Tạo!</h1>
+                        <p>Source mới: <span class="dynamic-content" id="new-source">'Roguelike Unity kit'</span> trên GitHub. Ý tưởng: <span class="dynamic-content" id="new-idea">'VR adventure Việt Nam folklore'</span>. Game demo từ dev cộng đồng – Download & phát triển ngay!</p>
+                        <div class="btns">
+                            <span class="btn primary">Khám Phá & Chia Sẻ</span>
+                            <span class="btn secondary">Xem Source Code</span>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
         
