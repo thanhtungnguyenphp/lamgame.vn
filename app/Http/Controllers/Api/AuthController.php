@@ -165,24 +165,28 @@ class AuthController extends Controller
     {
         $user = $request->user();
         
-        // Load role relationship (required)
-        $user->load('role');
-        
-        // Load userInfo relationship if it exists
-        if (method_exists($user, 'userInfo')) {
-            try {
-                $user->load('userInfo');
-            } catch (\Exception $e) {
-                // Log the error but continue without userInfo
-                \Log::warning('Failed to load userInfo relationship', [
-                    'user_id' => $user->id,
-                    'error' => $e->getMessage()
-                ]);
-            }
+        // Load required relationships
+        try {
+            // Load role (required for all users)
+            $user->load('role');
+            
+            // Always try to load userInfo for extended profile data
+            $user->load('userInfo');
+            
+        } catch (\Exception $e) {
+            // Log the error but continue - user might not have userInfo yet
+            \Log::info('Failed to load some relationships for user profile', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
         }
         
         return response()->json([
-            'user' => new AdminResource($user),
+            'status' => 'success',
+            'message' => 'Lấy thông tin hồ sơ thành công.',
+            'data' => [
+                'user' => new AdminResource($user),
+            ]
         ]);
     }
 
