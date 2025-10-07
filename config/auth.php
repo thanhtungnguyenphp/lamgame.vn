@@ -45,6 +45,11 @@ return [
             'driver'   => 'session',
             'provider' => 'admins',
         ],
+
+        'sanctum' => [
+            'driver' => 'sanctum',
+            'provider' => 'admins',
+        ],
     ],
 
     /*
@@ -72,7 +77,7 @@ return [
 
         'admins' => [
             'driver' => 'eloquent',
-            'model'  => Webkul\User\Models\Admin::class,
+            'model'  => App\Models\Admin::class,
         ],
     ],
 
