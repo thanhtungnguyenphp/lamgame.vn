@@ -9,8 +9,7 @@ use App\Http\Requests\Auth\UpdateProfileRequest;
 use App\Http\Requests\Auth\AvatarUploadRequest;
 use App\Http\Requests\ExtendedProfileRequest;
 use App\Http\Resources\AdminUserInfoResource;
-use App\Models\Admin as CustomAdmin;
-use Webkul\User\Models\Admin;
+use App\Models\Admin;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -164,7 +163,23 @@ class AuthController extends Controller
      */
     public function user(Request $request): JsonResponse
     {
-        $user = $request->user()->load(['role', 'userInfo']);
+        $user = $request->user();
+        
+        // Load role relationship (required)
+        $user->load('role');
+        
+        // Load userInfo relationship if it exists
+        if (method_exists($user, 'userInfo')) {
+            try {
+                $user->load('userInfo');
+            } catch (\Exception $e) {
+                // Log the error but continue without userInfo
+                \Log::warning('Failed to load userInfo relationship', [
+                    'user_id' => $user->id,
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
         
         return response()->json([
             'user' => new AdminResource($user),
