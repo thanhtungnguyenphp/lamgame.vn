@@ -13,6 +13,7 @@ use Webkul\Product\Helpers\Indexers\Flat;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 class JobService
 {
@@ -456,6 +457,410 @@ class JobService
         } else {
             $query->orderBy($orderBy, $orderDirection);
         }
+    }
+
+    // =====================================================
+    // BULK OPERATIONS
+    // =====================================================
+
+    /**
+     * Create multiple jobs at once
+     * 
+     * @param array $jobsData Array of job data
+     * @param int $userId User ID creating the jobs
+     * @return array Results with created jobs and errors
+     */
+    public function bulkCreateJobs(array $jobsData, int $userId): array
+    {
+        $results = ['created' => [], 'errors' => []];
+        
+        DB::transaction(function () use ($jobsData, $userId, &$results) {
+            foreach ($jobsData as $index => $jobData) {
+                try {
+                    $jobData['created_by_admin_id'] = $userId;
+                    $job = $this->createJobPosting($jobData);
+                    
+                    // Update created_by_admin_id after creation
+                    Product::where('id', $job->id)->update(['created_by_admin_id' => $userId]);
+                    
+                    $results['created'][] = $job->fresh()->load('attribute_values', 'categories');
+                } catch (\Exception $e) {
+                    $results['errors'][$index] = [
+                        'data' => $jobData,
+                        'error' => $e->getMessage()
+                    ];
+                }
+            }
+        });
+        
+        return $results;
+    }
+
+    /**
+     * Update multiple jobs at once
+     * 
+     * @param array $updates Array with job IDs and update data
+     * @param int $userId User ID performing updates
+     * @return array Results with updated jobs and errors
+     */
+    public function bulkUpdateJobs(array $updates, int $userId): array
+    {
+        $results = ['updated' => [], 'errors' => []];
+        
+        DB::transaction(function () use ($updates, $userId, &$results) {
+            foreach ($updates as $index => $update) {
+                try {
+                    $jobId = $update['id'];
+                    $updateData = $update['data'];
+                    
+                    $job = Product::where('id', $jobId)
+                        ->where('created_by_admin_id', $userId)
+                        ->whereHas('categories', function ($query) {
+                            $query->where('category_id', $this->jobCategoryId);
+                        })
+                        ->firstOrFail();
+                    
+                    $updatedJob = $this->updateJobPosting($job, $updateData);
+                    $results['updated'][] = $updatedJob;
+                } catch (\Exception $e) {
+                    $results['errors'][$index] = [
+                        'job_id' => $update['id'] ?? null,
+                        'error' => $e->getMessage()
+                    ];
+                }
+            }
+        });
+        
+        return $results;
+    }
+
+    /**
+     * Delete multiple jobs at once
+     * 
+     * @param array $jobIds Array of job IDs to delete
+     * @param int $userId User ID performing deletion
+     * @return array Results with deleted job IDs and errors
+     */
+    public function bulkDeleteJobs(array $jobIds, int $userId): array
+    {
+        $results = ['deleted' => [], 'errors' => []];
+        
+        DB::transaction(function () use ($jobIds, $userId, &$results) {
+            foreach ($jobIds as $index => $jobId) {
+                try {
+                    $job = Product::where('id', $jobId)
+                        ->where('created_by_admin_id', $userId)
+                        ->whereHas('categories', function ($query) {
+                            $query->where('category_id', $this->jobCategoryId);
+                        })
+                        ->firstOrFail();
+                    
+                    $job->delete();
+                    $results['deleted'][] = $jobId;
+                } catch (\Exception $e) {
+                    $results['errors'][$index] = [
+                        'job_id' => $jobId,
+                        'error' => $e->getMessage()
+                    ];
+                }
+            }
+        });
+        
+        return $results;
+    }
+
+    /**
+     * Toggle status of multiple jobs
+     * 
+     * @param array $jobIds Array of job IDs
+     * @param bool $status New status (true = active, false = inactive)
+     * @param int $userId User ID performing the operation
+     * @return array Results with updated jobs and errors
+     */
+    public function bulkToggleStatus(array $jobIds, bool $status, int $userId): array
+    {
+        $results = ['updated' => [], 'errors' => []];
+        
+        DB::transaction(function () use ($jobIds, $status, $userId, &$results) {
+            foreach ($jobIds as $index => $jobId) {
+                try {
+                    $job = Product::where('id', $jobId)
+                        ->where('created_by_admin_id', $userId)
+                        ->whereHas('categories', function ($query) {
+                            $query->where('category_id', $this->jobCategoryId);
+                        })
+                        ->firstOrFail();
+                    
+                    $updatedJob = $this->updateJobPosting($job, ['status' => $status]);
+                    $results['updated'][] = [
+                        'id' => $jobId,
+                        'status' => $status ? 'active' : 'inactive',
+                        'job' => $updatedJob
+                    ];
+                } catch (\Exception $e) {
+                    $results['errors'][$index] = [
+                        'job_id' => $jobId,
+                        'error' => $e->getMessage()
+                    ];
+                }
+            }
+        });
+        
+        return $results;
+    }
+
+    // =====================================================
+    // ADVANCED JOB OPERATIONS
+    // =====================================================
+
+    /**
+     * Duplicate a job with optional modifications
+     * 
+     * @param Product $originalJob
+     * @param array $modifications Data to override in the clone
+     * @param int $userId User ID creating the duplicate
+     * @return Product
+     */
+    public function duplicateJob(Product $originalJob, array $modifications = [], int $userId): Product
+    {
+        return DB::transaction(function () use ($originalJob, $modifications, $userId) {
+            // Get original job data
+            $originalData = $this->extractJobData($originalJob);
+            
+            // Merge with modifications
+            $newJobData = array_merge($originalData, $modifications);
+            
+            // Ensure unique title and SKU
+            $newJobData['title'] = $modifications['title'] ?? $originalData['title'] . ' (Copy)';
+            $newJobData['created_by_admin_id'] = $userId;
+            
+            // Create new job
+            $duplicatedJob = $this->createJobPosting($newJobData);
+            
+            // Update created_by_admin_id
+            Product::where('id', $duplicatedJob->id)->update(['created_by_admin_id' => $userId]);
+            
+            return $duplicatedJob->fresh()->load('attribute_values', 'categories');
+        });
+    }
+
+    /**
+     * Get job statistics for a user
+     * 
+     * @param int $userId
+     * @param array $filters Optional filters (date range, job type, etc.)
+     * @return array
+     */
+    public function getJobStatistics(int $userId, array $filters = []): array
+    {
+        $query = Product::where('created_by_admin_id', $userId)
+            ->whereHas('categories', function ($q) {
+                $q->where('category_id', $this->jobCategoryId);
+            });
+
+        // Apply date filters
+        if (isset($filters['date_from'])) {
+            $query->where('created_at', '>=', Carbon::parse($filters['date_from']));
+        }
+        if (isset($filters['date_to'])) {
+            $query->where('created_at', '<=', Carbon::parse($filters['date_to']));
+        }
+
+        $totalJobs = $query->count();
+        
+        // Active jobs
+        $activeJobs = (clone $query)->whereHas('attribute_values', function ($q) {
+            $q->join('attributes', 'product_attribute_values.attribute_id', '=', 'attributes.id')
+              ->where('attributes.code', 'status')
+              ->where('integer_value', 1);
+        })->count();
+        
+        // Featured jobs
+        $featuredJobs = (clone $query)->whereHas('attribute_values', function ($q) {
+            $q->join('attributes', 'product_attribute_values.attribute_id', '=', 'attributes.id')
+              ->where('attributes.code', 'is_featured')
+              ->where('integer_value', 1);
+        })->count();
+        
+        // Urgent jobs
+        $urgentJobs = (clone $query)->whereHas('attribute_values', function ($q) {
+            $q->join('attributes', 'product_attribute_values.attribute_id', '=', 'attributes.id')
+              ->where('attributes.code', 'is_urgent')
+              ->where('integer_value', 1);
+        })->count();
+        
+        // Jobs by status
+        $jobsByType = (clone $query)->with(['attribute_values' => function ($q) {
+            $q->join('attributes', 'product_attribute_values.attribute_id', '=', 'attributes.id')
+              ->where('attributes.code', 'job_type');
+        }])->get()->groupBy(function ($job) {
+            $typeValue = $job->attribute_values->where('attribute.code', 'job_type')->first();
+            if (!$typeValue) return 'unknown';
+            
+            $attribute = Attribute::where('code', 'job_type')->first();
+            if (!$attribute) return 'unknown';
+            
+            $option = AttributeOption::find($typeValue->integer_value);
+            if (!$option) return 'unknown';
+            
+            $translation = $option->translations()->where('locale', 'vi')->first();
+            return $translation?->label ?? $option->admin_name;
+        })->map->count();
+        
+        return [
+            'total_jobs' => $totalJobs,
+            'active_jobs' => $activeJobs,
+            'inactive_jobs' => $totalJobs - $activeJobs,
+            'featured_jobs' => $featuredJobs,
+            'urgent_jobs' => $urgentJobs,
+            'jobs_by_type' => $jobsByType,
+            'recent_jobs' => (clone $query)->orderBy('created_at', 'desc')->take(5)->get(),
+            'expiring_soon' => $this->getExpiringSoonJobs($userId),
+        ];
+    }
+
+    /**
+     * Archive expired jobs
+     * 
+     * @param int|null $userId Specific user ID or null for all users
+     * @return array
+     */
+    public function archiveExpiredJobs(?int $userId = null): array
+    {
+        $query = Product::whereHas('categories', function ($q) {
+            $q->where('category_id', $this->jobCategoryId);
+        })->whereHas('attribute_values', function ($q) {
+            $q->join('attributes', 'product_attribute_values.attribute_id', '=', 'attributes.id')
+              ->where('attributes.code', 'application_deadline')
+              ->where('date_value', '<', Carbon::today());
+        });
+        
+        if ($userId) {
+            $query->where('created_by_admin_id', $userId);
+        }
+        
+        $expiredJobs = $query->get();
+        $archivedCount = 0;
+        $errors = [];
+        
+        foreach ($expiredJobs as $job) {
+            try {
+                $this->updateJobPosting($job, ['status' => false]);
+                $archivedCount++;
+            } catch (\Exception $e) {
+                $errors[] = [
+                    'job_id' => $job->id,
+                    'error' => $e->getMessage()
+                ];
+            }
+        }
+        
+        return [
+            'archived_count' => $archivedCount,
+            'errors' => $errors,
+            'total_expired' => $expiredJobs->count()
+        ];
+    }
+
+    // =====================================================
+    // HELPER METHODS
+    // =====================================================
+
+    /**
+     * Extract job data from a Product model
+     * 
+     * @param Product $job
+     * @return array
+     */
+    protected function extractJobData(Product $job): array
+    {
+        $attributeMap = $this->getJobAttributeMap();
+        $data = [];
+        
+        foreach ($attributeMap as $field => $attributeCode) {
+            $attributeValue = $job->attribute_values
+                ->where('attribute.code', $attributeCode)
+                ->first();
+                
+            if ($attributeValue) {
+                $attribute = $attributeValue->attribute;
+                
+                switch ($attribute->type) {
+                    case 'select':
+                        if ($attributeValue->integer_value) {
+                            $option = AttributeOption::find($attributeValue->integer_value);
+                            if ($option) {
+                                $translation = $option->translations()->where('locale', 'vi')->first();
+                                $data[$field] = $translation?->label ?? $option->admin_name;
+                            }
+                        }
+                        break;
+                        
+                    case 'multiselect':
+                        if ($attributeValue->text_value) {
+                            $optionIds = explode(',', $attributeValue->text_value);
+                            $labels = [];
+                            foreach ($optionIds as $optionId) {
+                                if (is_numeric($optionId)) {
+                                    $option = AttributeOption::find($optionId);
+                                    if ($option) {
+                                        $translation = $option->translations()->where('locale', 'vi')->first();
+                                        $labels[] = $translation?->label ?? $option->admin_name;
+                                    }
+                                }
+                            }
+                            $data[$field] = $labels;
+                        }
+                        break;
+                        
+                    case 'boolean':
+                        $data[$field] = (bool) $attributeValue->integer_value;
+                        break;
+                        
+                    case 'date':
+                        $data[$field] = $attributeValue->date_value;
+                        break;
+                        
+                    case 'price':
+                        $data[$field] = $attributeValue->float_value;
+                        break;
+                        
+                    default:
+                        $data[$field] = $attributeValue->text_value;
+                        break;
+                }
+            }
+        }
+        
+        // Get categories
+        $data['categories'] = $job->categories->pluck('id')->toArray();
+        
+        return $data;
+    }
+
+    /**
+     * Get jobs expiring soon for a user
+     * 
+     * @param int $userId
+     * @param int $days Number of days to look ahead (default: 7)
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    protected function getExpiringSoonJobs(int $userId, int $days = 7)
+    {
+        return Product::where('created_by_admin_id', $userId)
+            ->whereHas('categories', function ($q) {
+                $q->where('category_id', $this->jobCategoryId);
+            })
+            ->whereHas('attribute_values', function ($q) use ($days) {
+                $q->join('attributes', 'product_attribute_values.attribute_id', '=', 'attributes.id')
+                  ->where('attributes.code', 'application_deadline')
+                  ->whereBetween('date_value', [
+                      Carbon::today(),
+                      Carbon::today()->addDays($days)
+                  ]);
+            })
+            ->with(['attribute_values.attribute'])
+            ->get();
     }
 
     /**
