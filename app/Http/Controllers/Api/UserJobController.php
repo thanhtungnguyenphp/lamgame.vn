@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\CreateUserJobRequest;
 use App\Http\Resources\JobResource;
 use App\Services\JobService;
+use App\Services\JobSearchService;
 use Webkul\Product\Models\Product;
 use Webkul\Category\Models\Category;
 use Illuminate\Http\Request;
@@ -18,11 +19,13 @@ use Illuminate\Support\Str;
 class UserJobController extends Controller
 {
     protected JobService $jobService;
+    protected JobSearchService $jobSearchService;
     protected int $jobCategoryId;
 
-    public function __construct(JobService $jobService)
+    public function __construct(JobService $jobService, JobSearchService $jobSearchService)
     {
         $this->jobService = $jobService;
+        $this->jobSearchService = $jobSearchService;
         
         // Get job category ID
         $jobCategory = Category::whereHas('translations', function ($query) {
@@ -33,7 +36,7 @@ class UserJobController extends Controller
     }
 
     /**
-     * Get authenticated user's jobs
+     * Get authenticated user's jobs with advanced search and filtering
      * 
      * @param Request $request
      * @return JsonResponse
@@ -42,38 +45,11 @@ class UserJobController extends Controller
     {
         try {
             $user = Auth::user();
-            
-            $query = Product::where('created_by_admin_id', $user->id)
-                ->whereHas('categories', function ($q) {
-                    $q->where('category_id', $this->jobCategoryId);
-                })
-                ->with(['attribute_values.attribute', 'categories.translations']);
-
-            // Apply filters
-            if ($search = $request->get('search')) {
-                $query->whereHas('attribute_values', function ($q) use ($search) {
-                    $q->join('attributes', 'product_attribute_values.attribute_id', '=', 'attributes.id')
-                      ->whereIn('attributes.code', ['name', 'description'])
-                      ->where('text_value', 'LIKE', '%' . $search . '%');
-                });
-            }
-
-            if ($status = $request->get('status')) {
-                $query->whereHas('attribute_values', function ($q) use ($status) {
-                    $q->join('attributes', 'product_attribute_values.attribute_id', '=', 'attributes.id')
-                      ->where('attributes.code', 'status')
-                      ->where('integer_value', $status === 'active' ? 1 : 0);
-                });
-            }
-
-            // Sorting
-            $orderBy = $request->get('sort', 'created_at');
-            $orderDirection = $request->get('direction', 'desc');
-            $query->orderBy($orderBy, $orderDirection);
-
-            // Pagination
+            $filters = $this->parseFilters($request);
             $perPage = min($request->get('per_page', 15), 50);
-            $jobs = $query->paginate($perPage);
+            
+            // Use advanced search service
+            $jobs = $this->jobSearchService->searchJobs($filters, $perPage, $user->id);
 
             return response()->json([
                 'success' => true,
@@ -87,6 +63,7 @@ class UserJobController extends Controller
                     'from' => $jobs->firstItem(),
                     'to' => $jobs->lastItem(),
                 ],
+                'filters_applied' => array_filter($filters),
             ], Response::HTTP_OK);
 
         } catch (\Exception $e) {
@@ -379,6 +356,281 @@ class UserJobController extends Controller
         });
     }
 
+    /**
+     * Get job statistics for authenticated user
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function statistics(Request $request): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+            $filters = [];
+            
+            // Apply date range filters if provided
+            if ($request->has('date_from')) {
+                $filters['date_from'] = $request->get('date_from');
+            }
+            if ($request->has('date_to')) {
+                $filters['date_to'] = $request->get('date_to');
+            }
+            
+            $statistics = $this->jobService->getJobStatistics($user->id, $filters);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Job statistics retrieved successfully',
+                'data' => $statistics,
+            ], Response::HTTP_OK);
+            
+        } catch (\Exception $e) {
+            \Log::error('Failed to retrieve job statistics', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve statistics',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Duplicate a job with optional modifications
+     * 
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function duplicate(Request $request, int $id): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+            
+            $originalJob = Product::where('id', $id)
+                ->where('created_by_admin_id', $user->id)
+                ->whereHas('categories', function ($query) {
+                    $query->where('category_id', $this->jobCategoryId);
+                })
+                ->with(['attribute_values.attribute', 'categories'])
+                ->firstOrFail();
+            
+            // Get modifications from request
+            $modifications = $request->only([
+                'title', 'description', 'short_description', 'job_type',
+                'experience_level', 'salary_range', 'job_location',
+                'company_name', 'application_deadline'
+            ]);
+            
+            $duplicatedJob = $this->jobService->duplicateJob($originalJob, $modifications, $user->id);
+            
+            \Log::info('User duplicated job successfully', [
+                'user_id' => $user->id,
+                'original_job_id' => $id,
+                'new_job_id' => $duplicatedJob->id
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Job duplicated successfully',
+                'data' => new JobResource($duplicatedJob),
+            ], Response::HTTP_CREATED);
+            
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Original job not found or access denied',
+                'error' => 'The job does not exist or you do not have permission to duplicate it',
+            ], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            \Log::error('Job duplication failed', [
+                'user_id' => Auth::id(),
+                'original_job_id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to duplicate job',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Get available filter options for the UI
+     * 
+     * @return JsonResponse
+     */
+    public function getFilterOptions(): JsonResponse
+    {
+        try {
+            $options = $this->jobSearchService->getFilterOptions();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Filter options retrieved successfully',
+                'data' => $options,
+            ], Response::HTTP_OK);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve filter options',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Save current search filters as a template
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function saveFilterTemplate(Request $request): JsonResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'filters' => 'required|array',
+        ]);
+        
+        try {
+            $user = Auth::user();
+            
+            $success = $this->jobSearchService->saveFilterTemplate(
+                $request->get('filters'),
+                $request->get('name'),
+                $user->id
+            );
+            
+            if ($success) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Filter template saved successfully',
+                ], Response::HTTP_CREATED);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to save filter template',
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save filter template',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Get saved filter templates for user
+     * 
+     * @return JsonResponse
+     */
+    public function getFilterTemplates(): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+            $templates = $this->jobSearchService->getFilterTemplates($user->id);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Filter templates retrieved successfully',
+                'data' => $templates,
+            ], Response::HTTP_OK);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve filter templates',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Parse request filters into the format expected by JobSearchService
+     * 
+     * @param Request $request
+     * @return array
+     */
+    protected function parseFilters(Request $request): array
+    {
+        $filters = [];
+        
+        // Basic search
+        if ($request->has('search')) {
+            $filters['search'] = $request->get('search');
+        }
+        
+        // Date filters
+        if ($request->has('created_from') || $request->has('created_to') ||
+            $request->has('updated_from') || $request->has('updated_to') ||
+            $request->has('deadline_from') || $request->has('deadline_to')) {
+            
+            $filters['dates'] = array_filter([
+                'created_from' => $request->get('created_from'),
+                'created_to' => $request->get('created_to'),
+                'updated_from' => $request->get('updated_from'),
+                'updated_to' => $request->get('updated_to'),
+                'deadline_from' => $request->get('deadline_from'),
+                'deadline_to' => $request->get('deadline_to'),
+            ]);
+        }
+        
+        // Salary filters
+        if ($request->has('salary_min') || $request->has('salary_max')) {
+            $filters['salary'] = array_filter([
+                'min' => $request->get('salary_min'),
+                'max' => $request->get('salary_max'),
+            ]);
+        }
+        
+        // Skills filters
+        if ($request->has('skills')) {
+            $filters['skills'] = [
+                'skills' => is_array($request->get('skills')) 
+                    ? $request->get('skills') 
+                    : explode(',', $request->get('skills')),
+                'logic' => $request->get('skills_logic', 'OR'), // OR | AND
+            ];
+        }
+        
+        // Location filters
+        if ($request->has('location')) {
+            $filters['location'] = [
+                'location' => $request->get('location'),
+                'radius' => $request->get('location_radius'),
+            ];
+        }
+        
+        // Boolean filters
+        foreach (['is_urgent', 'is_featured', 'status'] as $boolFilter) {
+            if ($request->has($boolFilter)) {
+                $filters[$boolFilter] = $request->boolean($boolFilter);
+            }
+        }
+        
+        // Attribute filters
+        foreach (['job_type', 'experience_level', 'company_size', 'education_level', 'english_level'] as $attrFilter) {
+            if ($request->has($attrFilter)) {
+                $filters[$attrFilter] = $request->get($attrFilter);
+            }
+        }
+        
+        // Sorting
+        $filters['sort_by'] = $request->get('sort_by', 'created_at');
+        $filters['sort_direction'] = $request->get('sort_direction', 'desc');
+        
+        return $filters;
+    }
+    
     /**
      * Generate unique SKU for user job
      * 
