@@ -199,7 +199,7 @@ class JobImportExportService
                 'short_description' => 'Short Description',
                 'requirements' => 'Job Requirements',
                 'benefits' => 'Benefits',
-                'employment_type' => 'Employment Type (full-time, part-time, contract)',
+                'job_type' => 'Employment Type (full-time, part-time, contract)',
                 'experience_level' => 'Experience Level (entry, mid, senior)',
                 'skills' => 'Required Skills (comma separated)',
                 'application_deadline' => 'Application Deadline (YYYY-MM-DD)',
@@ -473,7 +473,7 @@ class JobImportExportService
             ];
 
             if ($includeStatistics) {
-                $stats = $this->jobService->getJobStatistics($job);
+                $stats = $this->jobService->getJobAnalytics($job);
                 $jobData = array_merge($jobData, [
                     'views' => $stats['views'] ?? 0,
                     'applications' => $stats['applications'] ?? 0,
@@ -571,7 +571,7 @@ class JobImportExportService
             'location',
             'salary_min',
             'salary_max',
-            'employment_type',
+            'job_type',
             'experience_level',
             'skills',
             'requirements',
@@ -598,7 +598,7 @@ class JobImportExportService
                 'location' => 'Ho Chi Minh City',
                 'salary_min' => '2000',
                 'salary_max' => '3000',
-                'employment_type' => 'full-time',
+                'job_type' => 'full-time',
                 'experience_level' => 'senior',
                 'skills' => 'PHP, Laravel, MySQL, JavaScript',
                 'requirements' => '3+ years PHP experience, Laravel framework knowledge',
