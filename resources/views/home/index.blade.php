@@ -5,6 +5,77 @@
 
 @section('page_description', 'Cộng đồng Game Developer Việt Nam hàng đầu. Tìm việc làm game dev, thảo luận Unity/Unreal Engine, chia sẻ source code và ý tưởng game sáng tạo. 50+ jobs mới mỗi tuần từ VNG, Gameloft.')
 
+@push('meta')
+    {{-- Additional SEO Meta Tags --}}
+    <meta name="keywords" content="game developer việt nam, unity developer, unreal engine, việc làm game, lập trình game, forum game dev, source code game, tuyển dụng game">
+    <meta name="author" content="LamGame.vn Team">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ url()->current() }}">
+    
+    {{-- Language and Locale --}}
+    <meta name="language" content="Vietnamese">
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:site_name" content="LamGame.vn">
+    
+    {{-- Twitter Cards --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('page_title')">
+    <meta name="twitter:description" content="@yield('page_description')">
+    <meta name="twitter:image" content="{{ asset('assets/logos/png/logo-square-512.png') }}">
+    
+    {{-- Mobile App Meta --}}
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="LamGame">
+    
+    {{-- Structured Data for Organization --}}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "LamGame.vn",
+        "alternateName": "Làm Game Vietnam",
+        "description": "Cộng đồng Game Developer Việt Nam hàng đầu",
+        "url": "{{ url('/') }}",
+        "logo": "{{ asset('assets/logos/png/logo-square-512.png') }}",
+        "image": "{{ asset('assets/logos/png/logo-square-512.png') }}",
+        "telephone": "+84-911-118-300",
+        "email": "salegamevui@gmail.com",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Tòa nhà E.Town Central, 11 Đoàn Văn Bơ, Phường 13",
+            "addressLocality": "Quận 4",
+            "addressRegion": "TP. Hồ Chí Minh",
+            "addressCountry": "VN"
+        },
+        "sameAs": [
+            "https://www.youtube.com/channel/UCv2lripWdZDKtlrRy1J0dBw",
+            "https://lamgame.vn"
+        ]
+    }
+    </script>
+    
+    {{-- Structured Data for Website --}}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "LamGame.vn",
+        "description": "Cộng đồng Game Developer Việt Nam hàng đầu",
+        "url": "{{ url('/') }}",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "{{ url('/') }}/search?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+@endpush
+
 @push('styles')
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-optimized-banner.css') }}">
 @endpush
@@ -19,58 +90,66 @@
         <div class="track" id="banner-track">
             <!-- Slide 1: Việc làm Game Dev -->
             <div class="slide">
-                <div class="bg jobs"></div>
-                <div class="overlay"></div>
-                <div class="content">
-                    <h1>Khám Phá Việc Làm Game Dev Hot Nhất!</h1>
-                    <p>Hàng trăm vị trí từ VNG, Gameloft: Unity Developer lương 20-40tr VNĐ. <span class="dynamic-content" id="job-stats">50+ jobs tuần này</span>, apply ngay để kết nối với công ty hàng đầu!</p>
-                    <div class="btns">
-                        <a class="btn primary" href="#viec-lam">Xem Jobs Mới</a>
-                        <a class="btn secondary" href="#forum">Hỏi kinh nghiệm phỏng vấn</a>
+                <a href="{{ route('lamgame.viec-lam-game') }}" class="slide-link" title="Khám phá việc làm Game Developer">
+                    <div class="bg jobs"></div>
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <h1>Khám Phá Việc Làm Game Dev Hot Nhất!</h1>
+                        <p>Hàng trăm vị trí từ VNG, Gameloft: Unity Developer lương 20-40tr VNĐ. <span class="dynamic-content" id="job-stats">50+ jobs tuần này</span>, apply ngay để kết nối với công ty hàng đầu!</p>
+                        <div class="btns">
+                            <span class="btn primary">Xem Jobs Mới</span>
+                            <a class="btn secondary" href="{{ route('forum.index') }}" onclick="event.stopPropagation()">Hỏi kinh nghiệm phỏng vấn</a>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
             
             <!-- Slide 2: Topic Forum Hot -->
             <div class="slide">
-                <div class="bg forum"></div>
-                <div class="overlay"></div>
-                <div class="content">
-                    <h1>Thảo Luận Sôi Động: Topic Forum Nóng Hổi!</h1>
-                    <p>Topic hot: <span class="dynamic-content" id="hot-topic">'Unity vs Unreal cho game mobile?'</span> – <span class="dynamic-content" id="topic-stats">150 comments, 500 views, 80 likes</span> trong 24h. Tham gia ngay để chia sẻ kinh nghiệm với cộng đồng dev!</p>
-                    <div class="btns">
-                        <a class="btn primary" href="#forum">Tham Gia Thảo Luận</a>
-                        <a class="btn secondary" href="#forum">Xem tất cả Topics</a>
+                <a href="{{ route('forum.index') }}" class="slide-link" title="Tham gia thảo luận trên Forum">
+                    <div class="bg forum"></div>
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <h1>Thảo Luận Sôi Động: Topic Forum Nóng Hổi!</h1>
+                        <p>Topic hot: <span class="dynamic-content" id="hot-topic">'Unity vs Unreal cho game mobile?'</span> – <span class="dynamic-content" id="topic-stats">150 comments, 500 views, 80 likes</span> trong 24h. Tham gia ngay để chia sẻ kinh nghiệm với cộng đồng dev!</p>
+                        <div class="btns">
+                            <span class="btn primary">Tham Gia Thảo Luận</span>
+                            <span class="btn secondary">Xem tất cả Topics</span>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
             
             <!-- Slide 3: Bài viết mới -->
             <div class="slide">
-                <div class="bg blog"></div>
-                <div class="overlay"></div>
-                <div class="content">
-                    <h1>Bài Viết Mới Nhất Từ Developer!</h1>
-                    <p>Bài mới: <span class="dynamic-content" id="new-blog">'Tối ưu hóa performance Unity cho game 3D'</span> – Đăng bởi dev @UserX, <span class="dynamic-content" id="blog-stats">200 views, 50 shares</span>. Đọc để cập nhật kiến thức hot nhất!</p>
-                    <div class="btns">
-                        <a class="btn primary" href="#blog">Đọc Bài Viết</a>
-                        <a class="btn secondary" href="#blog">Xem tất cả Blog</a>
+                <a href="{{ route('lamgame.blog') }}" class="slide-link" title="Đọc bài viết từ cộng đồng Developer">
+                    <div class="bg blog"></div>
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <h1>Bài Viết Mới Nhất Từ Developer!</h1>
+                        <p>Bài mới: <span class="dynamic-content" id="new-blog">'Tối ưu hóa performance Unity cho game 3D'</span> – Đăng bởi dev @UserX, <span class="dynamic-content" id="blog-stats">200 views, 50 shares</span>. Đọc để cập nhật kiến thức hot nhất!</p>
+                        <div class="btns">
+                            <span class="btn primary">Đọc Bài Viết</span>
+                            <span class="btn secondary">Xem tất cả Blog</span>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
             
             <!-- Slide 4: Game & Source mới -->
             <div class="slide">
-                <div class="bg creative"></div>
-                <div class="overlay"></div>
-                <div class="content">
-                    <h1>Khám Phá Game Mới & Ý Tưởng Sáng Tạo!</h1>
-                    <p>Source mới: <span class="dynamic-content" id="new-source">'Roguelike Unity kit'</span> trên GitHub. Ý tưởng: <span class="dynamic-content" id="new-idea">'VR adventure Việt Nam folklore'</span>. Game demo từ dev cộng đồng – Download & phát triển ngay!</p>
-                    <div class="btns">
-                        <a class="btn primary" href="#source-game">Khám Phá & Chia Sẻ</a>
-                        <a class="btn secondary" href="#source-game">Xem Source Code</a>
+                <a href="{{ route('lamgame.source-game') }}" class="slide-link" title="Khám phá Source Game và ý tưởng sáng tạo">
+                    <div class="bg creative"></div>
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <h1>Khám Phá Game Mới & Ý Tưởng Sáng Tạo!</h1>
+                        <p>Source mới: <span class="dynamic-content" id="new-source">'Roguelike Unity kit'</span> trên GitHub. Ý tưởng: <span class="dynamic-content" id="new-idea">'VR adventure Việt Nam folklore'</span>. Game demo từ dev cộng đồng – Download & phát triển ngay!</p>
+                        <div class="btns">
+                            <span class="btn primary">Khám Phá & Chia Sẻ</span>
+                            <span class="btn secondary">Xem Source Code</span>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
         
@@ -1627,104 +1706,338 @@
     gap: 0.25rem;
 }
 
+/* Enhanced YouTube Channel Section with Banner Background */
 .youtube-cta-section {
-    background: white;
-    border-radius: 20px;
-    padding: 2.5rem;
+    border-radius: 16px;
     margin-top: 3rem;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    position: relative;
+    background: #f8f9fa; /* Fallback background */
+    width: 100%;
+    /* Ensure full-width display */
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.channel-info {
-    margin-bottom: 2rem;
-}
-
-.channel-stats {
-    display: flex;
-    justify-content: center;
-    gap: 3rem;
-    margin-bottom: 1.5rem;
-}
-
-.channel-stats .stat-item {
+.channel-banner-background {
+    position: relative;
+    /* Full width container for optimal cover display */
+    width: 100%;
+    height: 100%;
+    /* Dynamic height based on screen width to maintain aspect ratio */
+    min-height: calc(100vw / 6);
+    max-height: 400px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* Optimize for crisp, non-blurry display */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    image-rendering: optimizeQuality;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
+    align-items: stretch;
+    padding: 0;
+    transition: all 0.8s ease;
+    animation: fadeInUp 0.6s ease-out;
+    /* Hardware acceleration for sharp rendering */
+    transform: translateZ(0);
+    will-change: background-image;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.channel-banner-background.banner-loaded {
+    animation: bannerFadeIn 1s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bannerFadeIn {
+    from {
+        filter: blur(2px) brightness(0.8);
+        transform: scale(1.02);
+    }
+    to {
+        filter: blur(0) brightness(1);
+        transform: scale(1);
+    }
+}
+
+/* Banner Loading State */
+.banner-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(102, 126, 234, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.banner-loading.loading {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Minimal overlay - only at bottom for stats */
+.banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.8) 0%,
+        rgba(0, 0, 0, 0.4) 15%,
+        rgba(0, 0, 0, 0.1) 30%,
+        transparent 40%
+    );
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Channel Avatar - REMOVED */
+
+/* Channel Content */
+.channel-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Minimal Channel Stats at Bottom */
+.channel-stats-minimal {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.85rem;
+    line-height: 1.2;
+    margin: 0;
+    width: 100%;
+}
+
+.stat-item-minimal {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    white-space: nowrap;
+}
+
+.stat-number-minimal {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.stat-label-minimal {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: lowercase;
+    font-weight: 400;
+}
+
+.stat-divider-minimal {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+    font-weight: 300;
+    margin: 0 0.25rem;
+}
+
+.youtube-action-minimal {
+    display: flex;
     align-items: center;
 }
 
-.stat-number {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 0.25rem;
-}
-
-.stat-label {
-    font-size: 0.9rem;
-    color: #6b7280;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.channel-info p {
-    font-size: 1.1rem;
-    color: #4b5563;
-    margin: 0;
-}
-
-.youtube-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.btn-youtube {
+.btn-youtube-minimal {
     background: linear-gradient(135deg, #ff0000, #cc0000);
     color: white;
     border: none;
-    padding: 1rem 2rem;
-    border-radius: 30px;
-    font-weight: 600;
+    padding: 0.3rem 0.6rem;
+    border-radius: 15px;
+    font-weight: 500;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-    font-size: 1rem;
+    gap: 0.35rem;
+    transition: all 0.2s ease;
+    font-size: 0.75rem;
+    box-shadow: 0 1px 5px rgba(255, 0, 0, 0.3);
+    white-space: nowrap;
+    line-height: 1;
 }
 
-.btn-youtube:hover {
+.btn-youtube-minimal:hover {
     background: linear-gradient(135deg, #cc0000, #990000);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255, 0, 0, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(255, 0, 0, 0.4);
     color: white;
+    text-decoration: none;
 }
 
-/* Responsive */
+.btn-youtube-minimal i {
+    font-size: 0.8rem;
+}
+
+/* Channel description removed - no longer used */
+
+/* Old YouTube Actions removed - now inline in stats */
+
+/* Responsive Design - Mobile First Approach */
+@media (max-width: 480px) {
+    .channel-banner-background {
+        min-height: calc(100vw / 4);
+        max-height: 300px;
+    }
+    
+    .channel-stats-minimal {
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .stat-divider-minimal {
+        display: none;
+    }
+    
+    .stat-number-minimal {
+        font-size: 0.8rem;
+    }
+    
+    .stat-label-minimal {
+        font-size: 0.7rem;
+    }
+    
+    .btn-youtube-minimal {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+        margin-top: 0.25rem;
+    }
+    
+    .btn-youtube-minimal i {
+        font-size: 0.7rem;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .channel-banner-background {
+        min-height: calc(100vw / 5);
+        max-height: 350px;
+    }
+    
+    .channel-stats-minimal {
+        gap: 0.6rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .stat-number-minimal {
+        font-size: 0.85rem;
+    }
+    
+    .btn-youtube-minimal {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .channel-banner-background {
+        min-height: calc(100vw / 6);
+        max-height: 350px;
+    }
+    
+    .channel-stats-minimal {
+        gap: 0.8rem;
+        padding: 0.8rem 1.5rem;
+    }
+}
+
+@media (min-width: 1025px) {
+    .channel-banner-background {
+        min-height: calc(100vw / 6);
+        max-height: 400px;
+    }
+    
+    .channel-stats-minimal {
+        gap: 1rem;
+        padding: 1rem 2rem;
+        font-size: 0.9rem;
+    }
+    
+    .stat-number-minimal {
+        font-size: 1rem;
+    }
+    
+    .stat-label-minimal {
+        font-size: 0.8rem;
+    }
+    
+    .btn-youtube-minimal {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .btn-youtube-minimal i {
+        font-size: 0.85rem;
+    }
+}
+
+/* Legacy responsive fixes */
 @media (max-width: 768px) {
     .youtube-videos-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
-    }
-    
-    .channel-stats {
-        gap: 2rem;
-    }
-    
-    .youtube-actions {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .youtube-actions .btn {
-        width: 100%;
-        max-width: 300px;
-    }
-    
-    .youtube-cta-section {
-        padding: 2rem 1.5rem;
     }
 }
 </style>
@@ -1745,7 +2058,7 @@
                     <div class="video-thumbnail">
                         <a href="{{ $video['url'] }}" target="_blank" class="thumbnail-link">
                             <img src="{{ $video['thumbnail'] }}" alt="{{ $video['title'] }}" loading="lazy" 
-                                 onerror="this.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.innerHTML='<i class=\"fa fa-play\" style=\"color:white;font-size:3rem;\"></i>'; this.src=''">
+                                 onerror="this.onerror=null; this.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.innerHTML='<i class=&quot;fa fa-play&quot; style=&quot;color:white;font-size:3rem;&quot;></i>'; this.removeAttribute('src');">
                             <div class="play-overlay">
                                 <div class="play-button">
                                     <i class="fa fa-play"></i>
@@ -1777,27 +2090,39 @@
                 @endforeach
             </div>
             
-            <div class="youtube-cta-section">
-                <div class="channel-info">
-                    <div class="channel-stats">
-                        <div class="stat-item">
-                            <span class="stat-number">{{ $youtubeVideos['channel_info']['subscribers'] }}</span>
-                            <span class="stat-label">subscribers</span>
+            <div class="youtube-cta-section" id="youtube-channel-section" data-channel-id="{{ $youtubeVideos['channel_info']['channel_id'] }}">
+                <!-- Banner Background Container -->
+                <div class="channel-banner-background" id="channel-banner-bg">
+                    <!-- Overlay for text readability -->
+                    <div class="banner-overlay"></div>
+                    
+                    <!-- Minimal Channel Stats at Bottom -->
+                    <div class="channel-stats-minimal">
+                        <div class="stat-item-minimal">
+                            <span class="stat-number-minimal">{{ $youtubeVideos['channel_info']['subscribers'] }}</span>
+                            <span class="stat-label-minimal">subscribers</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-number">{{ $youtubeVideos['channel_info']['total_views'] }}</span>
-                            <span class="stat-label">total views</span>
+                        <div class="stat-divider-minimal">•</div>
+                        <div class="stat-item-minimal">
+                            <span class="stat-number-minimal">{{ $youtubeVideos['channel_info']['total_views'] }}</span>
+                            <span class="stat-label-minimal">total views</span>
+                        </div>
+                        <div class="stat-divider-minimal">•</div>
+                        <div class="youtube-action-minimal">
+                            <a href="{{ $youtubeVideos['channel_info']['channel_url'] }}" 
+                               target="_blank" 
+                               class="btn-youtube-minimal"
+                               rel="noopener">
+                                <i class="fab fa-youtube"></i> Xem thêm video
+                            </a>
                         </div>
                     </div>
-                    <p>Theo dõi kênh {{ $youtubeVideos['channel_info']['handle'] }} để nhận thêm video tutorial mới nhất!</p>
-                </div>
-                <div class="youtube-actions">
-                    <a href="{{ $youtubeVideos['channel_info']['channel_url'] }}" target="_blank" class="btn btn-youtube btn-large">
-                        <i class="fab fa-youtube"></i> Xem thêm video
-                    </a>
-                    <button class="btn btn-outline btn-large" onclick="scrollToSection('#lien-he')">
-                        <i class="fa fa-graduation-cap"></i> Đăng ký khóa học
-                    </button>
+                    
+                    <!-- Loading State -->
+                    <div class="banner-loading" id="banner-loading">
+                        <div class="loading-spinner"></div>
+                        <p>Đang tải banner...</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1911,6 +2236,451 @@
             console.log('CTA clicked:', action);
             // Add your analytics code here
         }
+        
+        // YouTube Channel Banner Loading
+        // To get a YouTube Data API v3 key:
+        // 1. Go to https://console.developers.google.com/
+        // 2. Create a new project or select existing
+        // 3. Enable YouTube Data API v3
+        // 4. Create credentials (API Key)
+        // 5. Restrict the key to YouTube Data API v3 and your domain
+        // 6. Replace the apiKey below with your valid key
+        class YouTubeChannelBanner {
+            constructor() {
+                // YouTube Data API v3 key - replace with valid key
+                this.apiKey = 'AQ.Ab8RN6IR67DyHGQz1jFL9Oz_hmaD7fZ-GSp4v6CdHdjnBJlc7w';
+                this.channelId = 'UCv2lripWdZDKtlrRy1J0dBw';
+                this.cache = {};
+                this.retryCount = 0;
+                this.maxRetries = 1; // Reduce retries to fail faster to fallback
+                // Local banner image as ultimate fallback
+                this.localFallbackUrl = '/lp/images/banner-em-sai-gon.jpg';
+                // Flag to skip API calls if key is invalid
+                this.apiKeyValid = true;
+            }
+            
+            async fetchChannelBanner(channelId) {
+                // Check cache first
+                if (this.cache[channelId]) {
+                    return this.cache[channelId];
+                }
+                
+                // Try alternative method first - extract from channel page
+                try {
+                    const alternativeBanner = await this.extractBannerFromChannelPage(channelId);
+                    if (alternativeBanner) {
+                        console.log('Banner extracted from channel page:', alternativeBanner);
+                        this.cache[channelId] = alternativeBanner;
+                        return alternativeBanner;
+                    }
+                } catch (error) {
+                    console.warn('Alternative banner extraction failed:', error);
+                }
+                
+                // Skip API call if we know the key is invalid
+                if (!this.apiKeyValid) {
+                    console.log('Skipping YouTube API (invalid key), using local fallback');
+                    return this.localFallbackUrl;
+                }
+                
+                try {
+                    console.log('Fetching YouTube channel banner via API...');
+                    
+                    // YouTube Data API v3 endpoint for channel branding
+                    const apiUrl = `https://www.googleapis.com/youtube/v3/channels`;
+                    const params = new URLSearchParams({
+                        part: 'brandingSettings',
+                        id: channelId,
+                        key: this.apiKey
+                    });
+                    
+                    // Try with OAuth2 token first (if key starts with certain patterns)
+                    const isOAuthToken = this.apiKey.includes('.') || this.apiKey.startsWith('ya29');
+                    
+                    let response;
+                    if (isOAuthToken) {
+                        console.log('Using OAuth2 token for YouTube API...');
+                        response = await fetch(`${apiUrl}?${params.toString().replace('key=', 'access_token=')}`, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Authorization': `Bearer ${this.apiKey}`,
+                                'Referer': window.location.origin
+                            }
+                        });
+                    } else {
+                        console.log('Using API key for YouTube API...');
+                        response = await fetch(`${apiUrl}?${params}`, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Referer': window.location.origin
+                            }
+                        });
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error(`YouTube API error: ${response.status} - ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('YouTube API response:', data);
+                    
+                    if (data.items && data.items.length > 0) {
+                        const branding = data.items[0].brandingSettings;
+                        const bannerUrl = branding?.image?.bannerExternalUrl;
+                        
+                        if (bannerUrl) {
+                            console.log('Found YouTube banner:', bannerUrl);
+                            
+                            // Test if the banner URL is accessible
+                            const testImg = new Image();
+                            const isAccessible = await new Promise((resolve) => {
+                                testImg.onload = () => {
+                                    console.log('YouTube banner is accessible');
+                                    resolve(true);
+                                };
+                                testImg.onerror = () => {
+                                    console.warn('YouTube banner failed to load');
+                                    resolve(false);
+                                };
+                                testImg.src = this.getResponsiveBannerUrl(bannerUrl);
+                                // Timeout after 5 seconds
+                                setTimeout(() => {
+                                    console.warn('YouTube banner load timeout');
+                                    resolve(false);
+                                }, 5000);
+                            });
+                            
+                            if (isAccessible) {
+                                // Cache the successful result
+                                this.cache[channelId] = bannerUrl;
+                                this.retryCount = 0; // Reset retry count on success
+                                return bannerUrl;
+                            }
+                        } else {
+                            console.warn('No banner URL found in API response');
+                        }
+                    } else {
+                        console.warn('No channel data found in API response');
+                    }
+                    
+                } catch (error) {
+                    console.error('YouTube API fetch failed:', error);
+                    
+                    // Check if it's an API key error
+                    if (error.message.includes('API key not valid') || error.message.includes('400')) {
+                        console.warn('Invalid API key detected, marking as invalid');
+                        this.apiKeyValid = false;
+                        // Don't retry for API key errors
+                        console.log('Using local fallback due to invalid API key');
+                        return this.localFallbackUrl;
+                    }
+                    
+                    // Retry logic for other API failures (network, quota, etc.)
+                    if (this.retryCount < this.maxRetries) {
+                        this.retryCount++;
+                        console.log(`Retrying YouTube API... (${this.retryCount}/${this.maxRetries})`);
+                        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+                        return this.fetchChannelBanner(channelId);
+                    }
+                }
+                
+                // Fallback to local image if YouTube API fails
+                console.log('Using local fallback banner');
+                return this.localFallbackUrl;
+            }
+            
+            async extractBannerFromChannelPage(channelId) {
+                // Since we can't easily scrape YouTube due to CORS and dynamic content,
+                // we'll use a known working banner URL for the LamGame channel
+                // This can be manually updated when needed
+                
+                if (channelId === 'UCv2lripWdZDKtlrRy1J0dBw') {
+                    // Known banner URLs for LamGame channel (update manually when needed)
+                    const knownBanners = [
+                        'https://yt3.googleusercontent.com/K8dWs8jRMbCSGnc0iF2eS-M7Hxsqi1CWZ9ZrE0pLr8ikUFu4Ogure4hyFmiYt6CHGZrISDRYxag=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj',
+                        // Fallback URLs if the primary changes
+                        'https://yt3.googleusercontent.com/K8dWs8jRMbCSGnc0iF2eS-M7Hxsqi1CWZ9ZrE0pLr8ikUFu4Ogure4hyFmiYt6CHGZrISDRYxag=w1440-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj',
+                        'https://yt3.googleusercontent.com/K8dWs8jRMbCSGnc0iF2eS-M7Hxsqi1CWZ9ZrE0pLr8ikUFu4Ogure4hyFmiYt6CHGZrISDRYxag=w1024-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj'
+                    ];
+                    
+                    // Test each known banner URL
+                    for (const bannerUrl of knownBanners) {
+                        try {
+                            const isAccessible = await new Promise((resolve) => {
+                                const testImg = new Image();
+                                testImg.onload = () => resolve(true);
+                                testImg.onerror = () => resolve(false);
+                                testImg.src = bannerUrl;
+                                setTimeout(() => resolve(false), 3000); // 3 second timeout
+                            });
+                            
+                            if (isAccessible) {
+                                console.log('Found working banner URL:', bannerUrl);
+                                return bannerUrl;
+                            }
+                        } catch (error) {
+                            console.warn('Failed to test banner URL:', bannerUrl, error);
+                        }
+                    }
+                }
+                
+                // If no known banners work, return null to try other methods
+                return null;
+            }
+            
+            getResponsiveBannerUrl(baseUrl) {
+                if (!baseUrl) return null;
+                
+                // Check if it's a local image
+                if (baseUrl.startsWith('/') || baseUrl.startsWith(window.location.origin)) {
+                    return baseUrl;
+                }
+                
+                // Handle YouTube banner URLs with responsive sizing
+                if (baseUrl.includes('yt3.googleusercontent.com')) {
+                    const screenWidth = window.innerWidth || 1920;
+                    
+                    // Extract base URL without size parameters
+                    let baseImageUrl;
+                    if (baseUrl.includes('=w')) {
+                        // Remove existing size parameters
+                        baseImageUrl = baseUrl.replace(/=w\d+-.*?-rj/g, '');
+                    } else {
+                        baseImageUrl = baseUrl;
+                    }
+                    
+                    // Add appropriate size parameter based on screen width
+                    let sizeParam;
+                    if (screenWidth <= 480) {
+                        sizeParam = '=w640-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj';
+                    } else if (screenWidth <= 768) {
+                        sizeParam = '=w1024-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj';
+                    } else if (screenWidth <= 1024) {
+                        sizeParam = '=w1440-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj';
+                    } else {
+                        sizeParam = '=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj';
+                    }
+                    
+                    // Combine base URL with responsive size parameter
+                    const responsiveUrl = baseImageUrl + sizeParam;
+                    
+                    console.log(`Responsive YouTube banner URL for width ${screenWidth}:`, responsiveUrl);
+                    return responsiveUrl;
+                }
+                
+                // For other external URLs, return as-is
+                return baseUrl;
+            }
+            
+            async applyBannerBackground() {
+                const bannerContainer = document.getElementById('channel-banner-bg');
+                const loadingElement = document.getElementById('banner-loading');
+                
+                if (!bannerContainer) {
+                    console.warn('Banner container not found');
+                    return;
+                }
+                
+                console.log('Starting banner loading process...');
+                const startTime = performance.now();
+                
+                // Show loading state
+                if (loadingElement) {
+                    loadingElement.classList.add('loading');
+                }
+                
+                try {
+                    const baseBannerUrl = await this.fetchChannelBanner(this.channelId);
+                    
+                    if (baseBannerUrl) {
+                        const responsiveBannerUrl = this.getResponsiveBannerUrl(baseBannerUrl);
+                        
+                        // Preload the image
+                        const img = new Image();
+                        img.onload = () => {
+                            const loadTime = performance.now() - startTime;
+                            console.log(`Banner loaded successfully in ${loadTime.toFixed(2)}ms`);
+                            
+                            bannerContainer.style.backgroundImage = `url('${responsiveBannerUrl}')`;
+                            bannerContainer.classList.add('banner-loaded');
+                            
+                            // Hide loading state
+                            if (loadingElement) {
+                                setTimeout(() => {
+                                    loadingElement.classList.remove('loading');
+                                }, 500);
+                            }
+                            
+                            console.log('YouTube banner applied to background');
+                        };
+                        
+                        img.onerror = () => {
+                            console.warn('Failed to load banner image');
+                            this.handleBannerError();
+                        };
+                        
+                        img.src = responsiveBannerUrl;
+                    } else {
+                        this.handleBannerError();
+                    }
+                } catch (error) {
+                    console.error('Error applying banner:', error);
+                    this.handleBannerError();
+                }
+            }
+            
+            handleBannerError() {
+                const bannerContainer = document.getElementById('channel-banner-bg');
+                const loadingElement = document.getElementById('banner-loading');
+                
+                // Try local fallback image first
+                if (bannerContainer && this.localFallbackUrl) {
+                    console.log('Attempting to use local fallback image:', this.localFallbackUrl);
+                    
+                    const testImg = new Image();
+                    testImg.onload = () => {
+                        console.log('Local fallback image loaded successfully');
+                        bannerContainer.style.backgroundImage = `url('${this.localFallbackUrl}')`;
+                        bannerContainer.classList.add('banner-loaded');
+                        
+                        // Hide loading state
+                        if (loadingElement) {
+                            setTimeout(() => {
+                                loadingElement.classList.remove('loading');
+                            }, 300);
+                        }
+                    };
+                    
+                    testImg.onerror = () => {
+                        console.warn('Local fallback image also failed, using gradient');
+                        // Final fallback to gradient
+                        bannerContainer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                        
+                        // Hide loading state
+                        if (loadingElement) {
+                            setTimeout(() => {
+                                loadingElement.classList.remove('loading');
+                            }, 300);
+                        }
+                    };
+                    
+                    testImg.src = this.localFallbackUrl;
+                } else {
+                    // Use gradient if no local fallback
+                    if (bannerContainer) {
+                        bannerContainer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    }
+                    
+                    // Hide loading state
+                    if (loadingElement) {
+                        setTimeout(() => {
+                            loadingElement.classList.remove('loading');
+                        }, 300);
+                    }
+                }
+                
+                console.log('Using fallback banner background');
+            }
+        }
+        
+        // Initialize YouTube banner loader
+        let youtubeBanner;
+        
+        // Debug function to test banner loading and layout
+        window.testYouTubeBanner = async function() {
+            console.log('=== Testing Optimized YouTube Banner ===');
+            const banner = new YouTubeChannelBanner();
+            const channelId = 'UCv2lripWdZDKtlrRy1J0dBw';
+            
+            try {
+                const bannerUrl = await banner.fetchChannelBanner(channelId);
+                console.log('Final banner URL:', bannerUrl);
+                
+                const responsiveUrl = banner.getResponsiveBannerUrl(bannerUrl);
+                console.log('Responsive banner URL:', responsiveUrl);
+                
+                // Test the URL and check aspect ratio
+                const img = new Image();
+                img.onload = () => {
+                    const aspectRatio = (img.width / img.height).toFixed(2);
+                    console.log('✅ Optimized banner test successful!', {
+                        dimensions: `${img.width}x${img.height}`,
+                        aspectRatio: aspectRatio,
+                        isOptimal: aspectRatio >= '5.5' && aspectRatio <= '6.5' ? 'Yes' : 'Check ratio',
+                        url: responsiveUrl
+                    });
+                    
+                    // Test layout elements
+                    const bannerContainer = document.getElementById('channel-banner-bg');
+                    const statsContainer = document.querySelector('.channel-stats-minimal');
+                    const youtubeButton = document.querySelector('.btn-youtube-minimal');
+                    const description = document.querySelector('.channel-description');
+                    
+                    console.log('Minimal Layout Check:', {
+                        bannerContainer: bannerContainer ? '✅ Found' : '❌ Missing',
+                        statsContainerMinimal: statsContainer ? '✅ Found at bottom' : '❌ Missing',
+                        youtubeButtonMinimal: youtubeButton ? '✅ Small inline button' : '❌ Missing',
+                        description: description ? '❌ Still exists (should be removed)' : '✅ Removed',
+                        bannerWidth: bannerContainer ? `${bannerContainer.offsetWidth}px (${(bannerContainer.offsetWidth / window.innerWidth * 100).toFixed(1)}%)` : 'N/A',
+                        bannerHeight: bannerContainer ? `${bannerContainer.offsetHeight}px` : 'N/A',
+                        dynamicHeight: `calc(100vw / 6) = ${window.innerWidth / 6}px`
+                    });
+                };
+                img.onerror = () => {
+                    console.error('❌ Banner test failed');
+                };
+                img.src = responsiveUrl;
+                
+            } catch (error) {
+                console.error('Banner test error:', error);
+            }
+        };
+        
+        // Lazy loading with Intersection Observer
+        function initializeLazyBannerLoading() {
+            const channelSection = document.getElementById('youtube-channel-section');
+            
+            if (!channelSection || !('IntersectionObserver' in window)) {
+                // Fallback for browsers without Intersection Observer
+                if (channelSection) {
+                    youtubeBanner = new YouTubeChannelBanner();
+                    youtubeBanner.applyBannerBackground();
+                }
+                return;
+            }
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.dataset.bannerLoaded) {
+                        entry.target.dataset.bannerLoaded = 'true';
+                        
+                        youtubeBanner = new YouTubeChannelBanner();
+                        youtubeBanner.applyBannerBackground();
+                        
+                        // Stop observing after loading
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                rootMargin: '100px 0px', // Load when 100px before entering viewport
+                threshold: 0.1
+            });
+            
+            observer.observe(channelSection);
+        }
+        
+        // Handle window resize for responsive banner
+        let resizeTimeout;
+        function handleBannerResize() {
+            if (youtubeBanner && window.innerWidth) {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    youtubeBanner.applyBannerBackground();
+                }, 250);
+            }
+        }
 
         // Animate elements on scroll
         const observerOptions = {
@@ -1943,6 +2713,12 @@
                 heroSection.style.opacity = '1';
                 heroSection.style.transform = 'translateY(0)';
             }
+            
+            // Initialize YouTube channel banner lazy loading
+            initializeLazyBannerLoading();
+            
+            // Add resize event listener for responsive banner
+            window.addEventListener('resize', handleBannerResize);
         });
     </script>
     @endpush
