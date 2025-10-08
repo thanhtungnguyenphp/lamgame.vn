@@ -275,6 +275,63 @@
   }
 }
 
+/* Clickable Slide Links */
+.slide-link {
+  position: absolute;
+  inset: 0;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.slide-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.slide-link:hover .overlay {
+  background: rgba(0,0,0,0.3);
+}
+
+.slide-link:hover .content {
+  transform: translateY(-5px);
+}
+
+.slide-link:hover .btn {
+  transform: translateY(2px);
+  filter: brightness(1.1);
+}
+
+.slide-link:focus {
+  outline: 3px solid var(--cta);
+  outline-offset: -3px;
+  z-index: 4;
+}
+
+/* Ensure content remains clickable */
+.slide-link .content {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease;
+  pointer-events: auto;
+}
+
+/* Button styling within clickable slides */
+.slide-link .btn {
+  pointer-events: none;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.slide-link .btn.secondary[onclick] {
+  pointer-events: auto;
+}
+
 /* Loading State */
 .loading .dynamic-content{
   animation:pulse 1.5s ease-in-out infinite;
