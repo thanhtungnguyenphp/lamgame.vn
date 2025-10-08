@@ -71,7 +71,7 @@ class JobsImport implements ToCollection, WithHeadingRow, WithValidation, WithBa
             '*.location' => 'nullable|string|max:255',
             '*.salary_min' => 'nullable|numeric|min:0',
             '*.salary_max' => 'nullable|numeric|min:0|gte:*.salary_min',
-            '*.employment_type' => 'nullable|string|in:full-time,part-time,contract,internship,freelance',
+            '*.job_type' => 'nullable|string|in:full-time,part-time,contract,internship,freelance',
             '*.experience_level' => 'nullable|string|in:entry,mid,senior,lead,executive',
             '*.application_deadline' => 'nullable|date|after:today',
             '*.status' => 'nullable|string',
@@ -96,7 +96,7 @@ class JobsImport implements ToCollection, WithHeadingRow, WithValidation, WithBa
             '*.salary_min.min' => 'Minimum salary cannot be negative',
             '*.salary_max.numeric' => 'Maximum salary must be a number',
             '*.salary_max.gte' => 'Maximum salary must be greater than or equal to minimum salary',
-            '*.employment_type.in' => 'Employment type must be one of: full-time, part-time, contract, internship, freelance',
+            '*.job_type.in' => 'Employment type must be one of: full-time, part-time, contract, internship, freelance',
             '*.experience_level.in' => 'Experience level must be one of: entry, mid, senior, lead, executive',
             '*.application_deadline.date' => 'Application deadline must be a valid date',
             '*.application_deadline.after' => 'Application deadline must be in the future',
@@ -181,7 +181,7 @@ class JobsImport implements ToCollection, WithHeadingRow, WithValidation, WithBa
         // Include unmapped fields that might be standard
         $standardFields = [
             'name', 'description', 'short_description', 'location',
-            'salary_min', 'salary_max', 'employment_type', 'experience_level',
+            'salary_min', 'salary_max', 'job_type', 'experience_level',
             'skills', 'requirements', 'benefits', 'application_deadline',
             'status', 'is_featured', 'category', 'company_name', 'contact_email'
         ];
@@ -235,7 +235,7 @@ class JobsImport implements ToCollection, WithHeadingRow, WithValidation, WithBa
                     $cleanedRow[$key] = $this->cleanNumericValue($cleanedValue);
                     break;
 
-                case 'employment_type':
+                case 'job_type':
                     $cleanedRow[$key] = $this->cleanEmploymentType($cleanedValue);
                     break;
 

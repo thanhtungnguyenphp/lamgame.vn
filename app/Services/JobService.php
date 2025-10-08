@@ -978,12 +978,12 @@ class JobService
     }
 
     /**
-     * Get job statistics for export
+     * Get job analytics for export
      * 
      * @param Product $job
      * @return array
      */
-    public function getJobStatistics(Product $job): array
+    public function getJobAnalytics(Product $job): array
     {
         // This would integrate with your analytics/tracking system
         // For now, return placeholder data
@@ -1011,7 +1011,7 @@ class JobService
             'job_location' => $data['location'] ?? '',
             'salary_min' => $data['salary_min'] ?? null,
             'salary_max' => $data['salary_max'] ?? null,
-            'employment_type' => $data['employment_type'] ?? 'full-time',
+            'job_type' => $data['job_type'] ?? 'full-time',
             'experience_level' => $data['experience_level'] ?? 'mid',
             'skills_required' => $data['skills'] ?? '',
             'job_requirements' => $data['requirements'] ?? '',
