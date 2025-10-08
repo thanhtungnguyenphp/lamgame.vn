@@ -96,7 +96,7 @@ class JobImportRequest extends FormRequest
             if (!empty($mapping)) {
                 $validTargetFields = [
                     'name', 'description', 'short_description', 'location',
-                    'salary_min', 'salary_max', 'employment_type', 'experience_level',
+                    'salary_min', 'salary_max', 'job_type', 'experience_level',
                     'skills', 'requirements', 'benefits', 'application_deadline',
                     'status', 'is_featured', 'category', 'company_name', 'contact_email'
                 ];
