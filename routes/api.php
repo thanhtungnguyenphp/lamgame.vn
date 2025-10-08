@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\UserJobController;
 use App\Http\Controllers\Api\JobAnalyticsController;
 use App\Http\Controllers\Api\JobBulkController;
+use App\Http\Controllers\Api\JobImportExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -246,6 +247,32 @@ Route::prefix('user/jobs/bulk')->name('api.jobs.bulk.')->middleware(['auth:sanct
     Route::get('/status/{operationId}', [JobBulkController::class, 'getBulkOperationStatus'])
         ->name('status')
         ->where('operationId', '[a-zA-Z0-9\-_]+');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Job Import/Export API Routes (Protected)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('user/jobs')->name('api.jobs.import-export.')->middleware(['auth:sanctum', 'throttle:20,1'])->group(function () {
+    // Import jobs from CSV/Excel file
+    Route::post('/import', [JobImportExportController::class, 'import'])->name('import');
+    
+    // Export jobs to CSV/Excel/PDF
+    Route::get('/export', [JobImportExportController::class, 'export'])->name('export');
+    Route::post('/export', [JobImportExportController::class, 'export'])->name('export.post');
+    
+    // Download import template
+    Route::get('/import-template', [JobImportExportController::class, 'downloadTemplate'])->name('import-template');
+    
+    // Preview import data before actual import
+    Route::post('/import-preview', [JobImportExportController::class, 'previewImport'])->name('import-preview');
+    
+    // Get import/export history
+    Route::get('/import-history', [JobImportExportController::class, 'getImportHistory'])->name('import-history');
+    
+    // Get field mapping options for import
+    Route::get('/field-mapping-options', [JobImportExportController::class, 'getFieldMappingOptions'])->name('field-mapping-options');
 });
 
 /*
