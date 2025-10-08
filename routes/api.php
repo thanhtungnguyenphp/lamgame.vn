@@ -122,7 +122,7 @@ Route::prefix('dashboard')->name('api.dashboard.')->middleware(['auth:sanctum', 
 |--------------------------------------------------------------------------
 */
 Route::prefix('user/jobs')->name('api.user.jobs.')->middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
-    // Get user's own jobs
+    // Get user's own jobs (with advanced filtering)
     Route::get('/', [UserJobController::class, 'index'])->name('index');
     
     // Create new job posting
@@ -147,6 +147,25 @@ Route::prefix('user/jobs')->name('api.user.jobs.')->middleware(['auth:sanctum', 
     Route::patch('/{id}/toggle-status', [UserJobController::class, 'toggleStatus'])
         ->name('toggle-status')
         ->where('id', '[0-9]+');
+        
+    // ========== NEW ADVANCED FEATURES ==========
+    
+    // Get job statistics for user
+    Route::get('/statistics', [UserJobController::class, 'statistics'])->name('statistics');
+    
+    // Duplicate job with optional modifications
+    Route::post('/{id}/duplicate', [UserJobController::class, 'duplicate'])
+        ->name('duplicate')
+        ->where('id', '[0-9]+');
+        
+    // Get filter options for UI
+    Route::get('/filter-options', [UserJobController::class, 'getFilterOptions'])->name('filter-options');
+    
+    // Save search filter template
+    Route::post('/filter-templates', [UserJobController::class, 'saveFilterTemplate'])->name('save-filter-template');
+    
+    // Get saved filter templates
+    Route::get('/filter-templates', [UserJobController::class, 'getFilterTemplates'])->name('get-filter-templates');
 });
 
 /*
