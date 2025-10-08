@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\PublicThumbnailController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\UserJobController;
+use App\Http\Controllers\Api\JobAnalyticsController;
+use App\Http\Controllers\Api\JobBulkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -166,6 +168,84 @@ Route::prefix('user/jobs')->name('api.user.jobs.')->middleware(['auth:sanctum', 
     
     // Get saved filter templates
     Route::get('/filter-templates', [UserJobController::class, 'getFilterTemplates'])->name('get-filter-templates');
+    
+    // ========== ADVANCED JOB MANAGEMENT ==========
+    
+    // Extend job application deadline
+    Route::post('/{id}/extend-deadline', [UserJobController::class, 'extendDeadline'])
+        ->name('extend-deadline')
+        ->where('id', '[0-9]+');
+        
+    // Preview job as it appears to applicants
+    Route::get('/{id}/preview', [UserJobController::class, 'preview'])
+        ->name('preview')
+        ->where('id', '[0-9]+');
+        
+    // Boost job (mark as featured/urgent)
+    Route::post('/{id}/boost', [UserJobController::class, 'boost'])
+        ->name('boost')
+        ->where('id', '[0-9]+');
+        
+    // Get job templates
+    Route::get('/templates', [UserJobController::class, 'getJobTemplates'])->name('templates');
+    
+    // Create job from template
+    Route::post('/from-template/{templateId}', [UserJobController::class, 'createFromTemplate'])
+        ->name('from-template');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Job Analytics API Routes (Protected)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('analytics/jobs')->name('api.analytics.jobs.')->middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
+    // Get analytics overview
+    Route::get('/overview', [JobAnalyticsController::class, 'overview'])->name('overview');
+    
+    // Get individual job analytics
+    Route::get('/{id}/analytics', [JobAnalyticsController::class, 'jobAnalytics'])
+        ->name('individual')
+        ->where('id', '[0-9]+');
+    
+    // Get trending metrics
+    Route::get('/trends', [JobAnalyticsController::class, 'trends'])->name('trends');
+    
+    // Compare multiple jobs
+    Route::post('/comparison', [JobAnalyticsController::class, 'comparison'])->name('comparison');
+    
+    // Get performance insights
+    Route::get('/insights', [JobAnalyticsController::class, 'insights'])->name('insights');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Job Bulk Operations API Routes (Protected)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('user/jobs/bulk')->name('api.jobs.bulk.')->middleware(['auth:sanctum', 'throttle:30,1'])->group(function () {
+    // Bulk create jobs
+    Route::post('/create', [JobBulkController::class, 'bulkCreate'])->name('create');
+    
+    // Bulk update jobs
+    Route::put('/update', [JobBulkController::class, 'bulkUpdate'])->name('update');
+    
+    // Bulk delete jobs
+    Route::delete('/delete', [JobBulkController::class, 'bulkDelete'])->name('delete');
+    
+    // Bulk toggle status
+    Route::patch('/toggle-status', [JobBulkController::class, 'bulkToggleStatus'])->name('toggle-status');
+    
+    // Bulk duplicate jobs
+    Route::post('/duplicate', [JobBulkController::class, 'bulkDuplicate'])->name('duplicate');
+    
+    // Bulk archive jobs
+    Route::post('/archive', [JobBulkController::class, 'bulkArchive'])->name('archive');
+    
+    // Get bulk operation status
+    Route::get('/status/{operationId}', [JobBulkController::class, 'getBulkOperationStatus'])
+        ->name('status')
+        ->where('operationId', '[a-zA-Z0-9\-_]+');
 });
 
 /*

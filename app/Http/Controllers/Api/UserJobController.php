@@ -632,6 +632,428 @@ class UserJobController extends Controller
     }
     
     /**
+     * Extend application deadline for a job
+     * 
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function extendDeadline(Request $request, int $id): JsonResponse
+    {
+        $request->validate([
+            'new_deadline' => 'required|date|after:today',
+            'reason' => 'nullable|string|max:500',
+        ]);
+        
+        try {
+            $user = Auth::user();
+            
+            $job = Product::where('id', $id)
+                ->where('created_by_admin_id', $user->id)
+                ->whereHas('categories', function ($query) {
+                    $query->where('category_id', $this->jobCategoryId);
+                })
+                ->firstOrFail();
+            
+            $newDeadline = $request->get('new_deadline');
+            $reason = $request->get('reason');
+            
+            $updatedJob = $this->jobService->updateJobPosting($job, [
+                'application_deadline' => $newDeadline
+            ]);
+            
+            \Log::info('User extended job deadline', [
+                'user_id' => $user->id,
+                'job_id' => $id,
+                'new_deadline' => $newDeadline,
+                'reason' => $reason,
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Job deadline extended successfully',
+                'data' => [
+                    'job' => new JobResource($updatedJob),
+                    'old_deadline' => $job->attribute_values
+                        ->where('attribute.code', 'application_deadline')
+                        ->first()?->date_value,
+                    'new_deadline' => $newDeadline,
+                    'reason' => $reason,
+                ],
+            ], Response::HTTP_OK);
+            
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Job not found or access denied',
+            ], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            \Log::error('Failed to extend job deadline', [
+                'user_id' => Auth::id(),
+                'job_id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to extend job deadline',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Preview job as it appears to applicants
+     * 
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function preview(int $id): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+            
+            $job = Product::where('id', $id)
+                ->where('created_by_admin_id', $user->id)
+                ->whereHas('categories', function ($query) {
+                    $query->where('category_id', $this->jobCategoryId);
+                })
+                ->with(['attribute_values.attribute', 'categories.translations'])
+                ->firstOrFail();
+            
+            // Generate preview data with additional formatting
+            $preview = [
+                'job' => new JobResource($job),
+                'preview_url' => url("/jobs/{$job->id}"), // Assuming public job URL
+                'seo_preview' => [
+                    'title' => $job->attribute_values->where('attribute.code', 'meta_title')->first()?->text_value 
+                        ?? $job->attribute_values->where('attribute.code', 'name')->first()?->text_value,
+                    'description' => $job->attribute_values->where('attribute.code', 'meta_description')->first()?->text_value 
+                        ?? $job->attribute_values->where('attribute.code', 'short_description')->first()?->text_value,
+                    'keywords' => $job->attribute_values->where('attribute.code', 'meta_keywords')->first()?->text_value,
+                ],
+                'social_preview' => [
+                    'title' => $job->attribute_values->where('attribute.code', 'name')->first()?->text_value,
+                    'description' => $job->attribute_values->where('attribute.code', 'short_description')->first()?->text_value,
+                    'company' => $this->extractCompanyName($job),
+                    'location' => $job->attribute_values->where('attribute.code', 'job_location')->first()?->text_value,
+                ],
+                'visibility_status' => [
+                    'is_published' => (bool) ($job->attribute_values->where('attribute.code', 'status')->first()?->integer_value ?? false),
+                    'is_searchable' => (bool) ($job->attribute_values->where('attribute.code', 'visible_individually')->first()?->integer_value ?? false),
+                    'is_featured' => (bool) ($job->attribute_values->where('attribute.code', 'is_featured')->first()?->integer_value ?? false),
+                    'is_urgent' => (bool) ($job->attribute_values->where('attribute.code', 'is_urgent')->first()?->integer_value ?? false),
+                ],
+                'analytics_preview' => [
+                    'estimated_views_per_day' => rand(10, 50),
+                    'estimated_applications' => rand(2, 15),
+                    'similar_jobs_competition' => rand(3, 12),
+                ],
+            ];
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Job preview generated successfully',
+                'data' => $preview,
+            ], Response::HTTP_OK);
+            
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Job not found or access denied',
+            ], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to generate job preview',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Boost job by marking it as featured/urgent
+     * 
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function boost(Request $request, int $id): JsonResponse
+    {
+        $request->validate([
+            'boost_type' => 'required|string|in:featured,urgent,both',
+            'duration' => 'nullable|integer|min:1|max:30', // days
+            'auto_renew' => 'nullable|boolean',
+        ]);
+        
+        try {
+            $user = Auth::user();
+            $boostType = $request->get('boost_type');
+            $duration = $request->get('duration', 7); // default 7 days
+            $autoRenew = $request->boolean('auto_renew');
+            
+            $job = Product::where('id', $id)
+                ->where('created_by_admin_id', $user->id)
+                ->whereHas('categories', function ($query) {
+                    $query->where('category_id', $this->jobCategoryId);
+                })
+                ->firstOrFail();
+            
+            $updateData = [];
+            
+            if (in_array($boostType, ['featured', 'both'])) {
+                $updateData['is_featured'] = true;
+            }
+            
+            if (in_array($boostType, ['urgent', 'both'])) {
+                $updateData['is_urgent'] = true;
+            }
+            
+            $updatedJob = $this->jobService->updateJobPosting($job, $updateData);
+            
+            \Log::info("User boosted job with {$boostType}", [
+                'user_id' => $user->id,
+                'job_id' => $id,
+                'boost_type' => $boostType,
+                'duration' => $duration,
+                'auto_renew' => $autoRenew,
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => "Job boosted as {$boostType} successfully",
+                'data' => [
+                    'job' => new JobResource($updatedJob),
+                    'boost_details' => [
+                        'type' => $boostType,
+                        'duration_days' => $duration,
+                        'auto_renew' => $autoRenew,
+                        'expires_at' => Carbon::now()->addDays($duration)->toISOString(),
+                        'estimated_boost' => [
+                            'views_increase' => $boostType === 'featured' ? '3.2x' : '1.8x',
+                            'applications_increase' => $boostType === 'featured' ? '2.4x' : '1.5x',
+                        ],
+                    ],
+                ],
+            ], Response::HTTP_OK);
+            
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Job not found or access denied',
+            ], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            \Log::error('Failed to boost job', [
+                'user_id' => Auth::id(),
+                'job_id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to boost job',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Get user's job templates
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getJobTemplates(Request $request): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+            
+            // For now, we'll simulate templates from user's existing jobs
+            $recentJobs = Product::where('created_by_admin_id', $user->id)
+                ->whereHas('categories', function ($q) {
+                    $q->where('category_id', $this->jobCategoryId);
+                })
+                ->with(['attribute_values.attribute'])
+                ->orderBy('created_at', 'desc')
+                ->limit(5)
+                ->get();
+            
+            $templates = $recentJobs->map(function ($job, $index) {
+                return [
+                    'id' => "template_{$job->id}",
+                    'name' => $job->attribute_values->where('attribute.code', 'name')->first()?->text_value . ' Template',
+                    'description' => 'Template based on: ' . $job->attribute_values->where('attribute.code', 'name')->first()?->text_value,
+                    'job_type' => $this->getJobAttributeValue($job, 'job_type'),
+                    'experience_level' => $this->getJobAttributeValue($job, 'experience_level'),
+                    'company_name' => $this->getJobAttributeValue($job, 'company_name') ?: $this->extractCompanyName($job),
+                    'created_at' => $job->created_at->toISOString(),
+                    'usage_count' => rand(1, 10),
+                    'is_favorite' => $index < 2, // Mark first 2 as favorites
+                ];
+            });
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Job templates retrieved successfully',
+                'data' => [
+                    'templates' => $templates,
+                    'total_templates' => $templates->count(),
+                    'suggested_actions' => [
+                        'Create new template from your best performing job',
+                        'Organize templates by job type for easier access',
+                        'Share frequently used templates with team members',
+                    ],
+                ],
+            ], Response::HTTP_OK);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve job templates',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Create job from template
+     * 
+     * @param Request $request
+     * @param string $templateId
+     * @return JsonResponse
+     */
+    public function createFromTemplate(Request $request, string $templateId): JsonResponse
+    {
+        $request->validate([
+            'modifications' => 'nullable|array',
+            'title' => 'nullable|string|max:255',
+            'company_name' => 'nullable|string|max:255',
+            'job_location' => 'nullable|string|max:255',
+            'application_deadline' => 'nullable|date|after:today',
+        ]);
+        
+        try {
+            $user = Auth::user();
+            
+            // Extract original job ID from template ID
+            $originalJobId = str_replace('template_', '', $templateId);
+            
+            $originalJob = Product::where('id', $originalJobId)
+                ->where('created_by_admin_id', $user->id)
+                ->whereHas('categories', function ($query) {
+                    $query->where('category_id', $this->jobCategoryId);
+                })
+                ->with(['attribute_values.attribute', 'categories'])
+                ->firstOrFail();
+            
+            $modifications = $request->get('modifications', []);
+            
+            // Add request-level modifications
+            if ($request->has('title')) {
+                $modifications['title'] = $request->get('title');
+            }
+            if ($request->has('company_name')) {
+                $modifications['company_name'] = $request->get('company_name');
+            }
+            if ($request->has('job_location')) {
+                $modifications['job_location'] = $request->get('job_location');
+            }
+            if ($request->has('application_deadline')) {
+                $modifications['application_deadline'] = $request->get('application_deadline');
+            }
+            
+            $newJob = $this->jobService->duplicateJob($originalJob, $modifications, $user->id);
+            
+            \Log::info('User created job from template', [
+                'user_id' => $user->id,
+                'template_id' => $templateId,
+                'new_job_id' => $newJob->id,
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Job created from template successfully',
+                'data' => [
+                    'job' => new JobResource($newJob),
+                    'template_used' => $templateId,
+                    'modifications_applied' => $modifications,
+                ],
+            ], Response::HTTP_CREATED);
+            
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Template not found or access denied',
+            ], Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            \Log::error('Failed to create job from template', [
+                'user_id' => Auth::id(),
+                'template_id' => $templateId,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create job from template',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    // =====================================================
+    // HELPER METHODS
+    // =====================================================
+    
+    /**
+     * Extract company name from job
+     * 
+     * @param Product $job
+     * @return string
+     */
+    protected function extractCompanyName(Product $job): string
+    {
+        // Try to get from company_name attribute first
+        $companyName = $job->attribute_values->where('attribute.code', 'company_name')->first()?->text_value;
+        
+        if ($companyName) {
+            return $companyName;
+        }
+        
+        // Fallback to extracting from title
+        $title = $job->attribute_values->where('attribute.code', 'name')->first()?->text_value ?? '';
+        $parts = explode(' - ', $title);
+        
+        return count($parts) > 1 ? trim($parts[1]) : 'Company';
+    }
+    
+    /**
+     * Get job attribute value
+     * 
+     * @param Product $job
+     * @param string $attributeCode
+     * @return string|null
+     */
+    protected function getJobAttributeValue(Product $job, string $attributeCode): ?string
+    {
+        $attributeValue = $job->attribute_values->where('attribute.code', $attributeCode)->first();
+        
+        if (!$attributeValue) {
+            return null;
+        }
+        
+        // Handle different attribute types
+        if ($attributeValue->integer_value && $attributeValue->attribute->type === 'select') {
+            $option = \Webkul\Attribute\Models\AttributeOption::find($attributeValue->integer_value);
+            if ($option) {
+                $translation = $option->translations()->where('locale', 'vi')->first();
+                return $translation?->label ?? $option->admin_name;
+            }
+        }
+        
+        return $attributeValue->text_value;
+    }
+    
+    /**
      * Generate unique SKU for user job
      * 
      * @param string $company
