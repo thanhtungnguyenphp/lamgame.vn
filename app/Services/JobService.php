@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
+use App\Models\Admin;
 
 class JobService
 {
@@ -894,5 +895,133 @@ class JobService
             'product_id' => $productId,
             'channel_id' => $this->defaultChannel->id,
         ]);
+    }
+
+    // =====================================================
+    // IMPORT/EXPORT METHODS
+    // =====================================================
+
+    /**
+     * Create job from import data
+     * 
+     * @param array $data Job data from import
+     * @param Admin $user User creating the job
+     * @return Product|null
+     */
+    public function create(array $data, Admin $user): ?Product
+    {
+        try {
+            // Map import data to job posting format
+            $mappedData = $this->mapImportDataToJobFormat($data, $user);
+            
+            // Create job posting
+            $job = $this->createJobPosting($mappedData);
+            
+            // Update created_by_admin_id
+            $job->update(['created_by_admin_id' => $user->id]);
+            
+            return $job;
+        } catch (\Exception $e) {
+            \Log::error('Failed to create job from import data', [
+                'data' => $data,
+                'error' => $e->getMessage(),
+                'user_id' => $user->id
+            ]);
+            return null;
+        }
+    }
+
+    /**
+     * Get user jobs by IDs for export
+     * 
+     * @param Admin $user
+     * @param array $jobIds
+     * @return Collection
+     */
+    public function getUserJobsByIds(Admin $user, array $jobIds): Collection
+    {
+        return Product::where('created_by_admin_id', $user->id)
+            ->whereIn('id', $jobIds)
+            ->whereHas('categories', function ($q) {
+                $q->where('category_id', $this->jobCategoryId);
+            })
+            ->with(['attribute_values.attribute', 'categories'])
+            ->get();
+    }
+
+    /**
+     * Get user jobs for export with filters
+     * 
+     * @param Admin $user
+     * @param array $filters
+     * @param string|null $dateFrom
+     * @param string|null $dateTo
+     * @return Collection
+     */
+    public function getUserJobsForExport(Admin $user, array $filters = [], ?string $dateFrom = null, ?string $dateTo = null): Collection
+    {
+        $query = Product::where('created_by_admin_id', $user->id)
+            ->whereHas('categories', function ($q) {
+                $q->where('category_id', $this->jobCategoryId);
+            })
+            ->with(['attribute_values.attribute', 'categories']);
+
+        // Apply date filters
+        if ($dateFrom && $dateTo) {
+            $query->whereBetween('created_at', [$dateFrom, $dateTo]);
+        }
+
+        // Apply other filters
+        $this->applyFilters($query, $filters);
+
+        return $query->get();
+    }
+
+    /**
+     * Get job statistics for export
+     * 
+     * @param Product $job
+     * @return array
+     */
+    public function getJobStatistics(Product $job): array
+    {
+        // This would integrate with your analytics/tracking system
+        // For now, return placeholder data
+        return [
+            'views' => 0, // Would come from job_views table or analytics
+            'applications' => 0, // Would come from job_applications table
+            'conversion_rate' => 0.0 // applications / views * 100
+        ];
+    }
+
+    /**
+     * Map import data to job posting format
+     * 
+     * @param array $data
+     * @param Admin $user
+     * @return array
+     */
+    protected function mapImportDataToJobFormat(array $data, Admin $user): array
+    {
+        return [
+            'title' => $data['name'] ?? '',
+            'description' => $data['description'] ?? '',
+            'short_description' => $data['short_description'] ?? '',
+            'company_name' => $data['company_name'] ?? $user->name ?? 'Company',
+            'job_location' => $data['location'] ?? '',
+            'salary_min' => $data['salary_min'] ?? null,
+            'salary_max' => $data['salary_max'] ?? null,
+            'employment_type' => $data['employment_type'] ?? 'full-time',
+            'experience_level' => $data['experience_level'] ?? 'mid',
+            'skills_required' => $data['skills'] ?? '',
+            'job_requirements' => $data['requirements'] ?? '',
+            'job_benefits' => $data['benefits'] ?? '',
+            'application_deadline' => $data['application_deadline'] ?? null,
+            'contact_email' => $data['contact_email'] ?? $user->email ?? '',
+            'is_urgent' => false,
+            'is_featured' => (bool) ($data['is_featured'] ?? false),
+            'status' => $data['status'] === 'active' ? 1 : 0,
+            'categories' => [$this->jobCategoryId] // Default to job category
+        ];
     }
 }
