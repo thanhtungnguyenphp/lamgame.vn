@@ -630,7 +630,10 @@ class HomeController extends Controller
                 'handle' => '@lamgame_vn',
                 'subscribers' => '2.85K',
                 'total_views' => '180K',
-                'channel_url' => 'https://www.youtube.com/@lamgame_vn'
+                'channel_url' => 'https://www.youtube.com/@lamgame_vn',
+                'channel_id' => 'UCv2lripWdZDKtlrRy1J0dBw',
+                'banner_url' => null, // Will be dynamically loaded via JavaScript
+                'avatar_url' => 'https://yt3.googleusercontent.com/ytc/AIdro_lCL4LgHPQJU8-FMRZNjLgtIoJKwk7zJZ4xJQrYB4d3iw=s240-c-k-c0x00ffffff-no-rj'
             ]
         ];
     }
