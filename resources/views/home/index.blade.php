@@ -944,80 +944,80 @@
             <div class="marketplace-grid">
                 @if(isset($sourceGames['featured']) && count($sourceGames['featured']) > 0)
                     @foreach($sourceGames['featured'] as $index => $source)
-                        <div class="source-card {{ $source['is_featured'] ? 'featured' : '' }}">
-                            @if($source['is_featured'])
+                        <div class="source-card {{ $source['is_featured'] ?? false ? 'featured' : '' }}">
+                            @if($source['is_featured'] ?? false)
                                 <div class="source-badge featured-badge">Nổi bật 🔥</div>
                             @endif
-                            @if($source['is_free'])
+                            @if($source['is_free'] ?? false)
                                 <div class="source-badge free-badge">Miễn phí</div>
-                            @elseif($source['price'] < $source['original_price'])
+                            @elseif($source['price'] ?? 0 < $source['original_price'] ?? 0)
                                 <div class="source-badge sale-badge">Sale</div>
                             @endif
                             
                             <div class="source-image">
-                                <img src="{{ $source['thumbnail'] }}" 
-                                     srcset="{{ $source['thumbnail'] }}&w=320 320w, {{ $source['thumbnail'] }}&w=640 640w, {{ $source['thumbnail'] }}&w=800 800w"
+                                <img src="{{ $source['thumbnail'] ?? '' }}" 
+                                     srcset="{{ $source['thumbnail'] ?? '' }}&w=320 320w, {{ $source['thumbnail'] ?? '' }}&w=640 640w, {{ $source['thumbnail'] ?? '' }}&w=800 800w"
                                      sizes="(max-width: 480px) 320px, (max-width: 768px) 640px, 800px"
-                                     alt="{{ $source['title'] }}" 
+                                     alt="{{ $source['title'] ?? 'No title' }}" 
                                      loading="lazy" />
                                 <div class="source-overlay">
-                                    <div class="source-engine-badge">{{ $source['engine'] }}</div>
+                                    <div class="source-engine-badge">{{ $source['engine'] ?? 'Unknown' }}</div>
                                     <div class="source-rating">
                                         @for($i = 1; $i <= 5; $i++)
-                                            @if($i <= floor($source['rating']))
+                                            @if($i <= floor($source['rating'] ?? 0))
                                                 <i class="fa fa-star"></i>
-                                            @elseif($i - 0.5 <= $source['rating'])
+                                            @elseif($i - 0.5 <= $source['rating'] ?? 0)
                                                 <i class="fa fa-star-half-o"></i>
                                             @else
                                                 <i class="fa fa-star-o"></i>
                                             @endif
                                         @endfor
-                                        <span class="rating-number">{{ number_format($source['rating'], 1) }}</span>
+                                        <span class="rating-number">{{ number_format($source['rating'] ?? 0, 1) }}</span>
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="source-content">
-                                <div class="source-category">{{ $source['category'] }}</div>
+                                <div class="source-category">{{ $source['category'] ?? 'General' }}</div>
                                 <h3 class="source-title">
-                                    <a href="{{ $source['url'] }}">{{ $source['title'] }}</a>
+                                    <a href="{{ $source['url'] ?? '#' }}">{{ $source['title'] ?? 'No title' }}</a>
                                 </h3>
-                                <p class="source-description">{{ $source['short_description'] }}</p>
+                                <p class="source-description">{{ $source['short_description'] ?? 'No description available' }}</p>
                                 
                                 <div class="source-meta">
                                     <div class="meta-item">
                                         <i class="fa fa-download"></i>
-                                        <span>{{ number_format($source['downloads']) }}</span>
+                                        <span>{{ number_format($source['downloads'] ?? 0) }}</span>
                                     </div>
                                     <div class="meta-item">
                                         <i class="fa fa-code"></i>
-                                        <span>{{ $source['language'] }}</span>
+                                        <span>{{ $source['language'] ?? 'N/A' }}</span>
                                     </div>
                                     <div class="meta-item">
                                         <i class="fa fa-clock-o"></i>
-                                        <span>{{ $source['updated_ago'] }}</span>
+                                        <span>{{ $source['updated_ago'] ?? 'Unknown' }}</span>
                                     </div>
                                 </div>
                                 
                                 <div class="source-tags">
-                                    @foreach(array_slice($source['tags'], 0, 3) as $tag)
+                                    @foreach(array_slice($source['tags'] ?? [], 0, 3) as $tag)
                                         <span class="tag">{{ $tag }}</span>
                                     @endforeach
                                 </div>
                                 
                                 <div class="source-price-action">
                                     <div class="source-pricing">
-                                        @if($source['is_free'])
+                                        @if($source['is_free'] ?? false)
                                             <span class="price-current free-price">Miễn phí</span>
                                         @else
-                                            <span class="price-current">{{ number_format($source['price'] / 1000, 0) }}k VND</span>
-                                            @if($source['price'] < $source['original_price'])
-                                                <span class="price-original">{{ number_format($source['original_price'] / 1000, 0) }}k</span>
+                                            <span class="price-current">{{ number_format($source['price'] ?? 0 / 1000, 0) }}k VND</span>
+                                            @if($source['price'] ?? 0 < $source['original_price'] ?? 0)
+                                                <span class="price-original">{{ number_format($source['original_price'] ?? 0 / 1000, 0) }}k</span>
                                             @endif
                                         @endif
                                     </div>
-                                    <a href="{{ $source['url'] }}" class="source-btn">
-                                        {{ $source['is_free'] ? 'Tải miễn phí' : 'Xem chi tiết' }}
+                                    <a href="{{ $source['url'] ?? '#' }}" class="source-btn">
+                                        {{ $source['is_free'] ?? false ? 'Tải miễn phí' : 'Xem chi tiết' }}
                                     </a>
                                 </div>
                             </div>
