@@ -78,87 +78,256 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-optimized-banner.css') }}">
+    <style>
+    /* Dynamic Banner Styles */
+    .bg.custom-image {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    
+    /* Fallback banner styles */
+    .banner-fallback {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .banner-fallback::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 1;
+    }
+    
+    .banner-fallback .content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        padding: 2rem;
+    }
+    
+    .banner-fallback h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .banner-fallback p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    .banner-fallback .btns {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .banner-fallback .btn {
+        padding: 1rem 2rem;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+    
+    .banner-fallback .btn.primary {
+        background: #ff6b35;
+        color: white;
+    }
+    
+    .banner-fallback .btn.primary:hover {
+        background: #e55a2e;
+        transform: translateY(-2px);
+    }
+    
+    .banner-fallback .btn.secondary {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+    }
+    
+    .banner-fallback .btn.secondary:hover {
+        background: white;
+        color: #667eea;
+    }
+    
+    /* Mobile responsive fallback */
+    @media (max-width: 768px) {
+        .banner-fallback {
+            min-height: 300px;
+        }
+        
+        .banner-fallback h1 {
+            font-size: 2rem;
+        }
+        
+        .banner-fallback p {
+            font-size: 1rem;
+        }
+        
+        .banner-fallback .btns {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .banner-fallback .btn {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+    
+    /* Banner tracking debug info (only in development) */
+    @if(config('app.debug'))
+    .banner-debug {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        z-index: 10;
+    }
+    @endif
+    </style>
 @endpush
 
 
 @section('content')
-    <!-- LamGame Optimized 4-Slide Banner -->
+    <!-- LamGame Dynamic Banner Section -->
     <section class="hero-optimized" id="hero-banner" aria-label="Banner chính LamGame.vn">
-        <button class="arrow banner-arrow prev" aria-label="Slide trước" tabindex="0">◄</button>
-        <button class="arrow banner-arrow next" aria-label="Slide sau" tabindex="0">►</button>
-        
-        <div class="track" id="banner-track">
-            <!-- Slide 1: Việc làm Game Dev -->
-            <div class="slide">
-                <a href="{{ route('lamgame.viec-lam-game') }}" class="slide-link" title="Khám phá việc làm Game Developer">
-                    <div class="bg jobs"></div>
-                    <div class="overlay"></div>
-                    <div class="content">
-                        <h1>Khám Phá Việc Làm Game Dev Hot Nhất!</h1>
-                        <p>Hàng trăm vị trí từ VNG, Gameloft: Unity Developer lương 20-40tr VNĐ. <span class="dynamic-content" id="job-stats">50+ jobs tuần này</span>, apply ngay để kết nối với công ty hàng đầu!</p>
-                        <div class="btns">
-                            <span class="btn primary">Xem Jobs Mới</span>
-                            <a class="btn secondary" href="{{ route('forum.index') }}" onclick="event.stopPropagation()">Hỏi kinh nghiệm phỏng vấn</a>
+        @if(!empty($homepageBanners['banners']))
+            <button class="arrow banner-arrow prev" aria-label="Slide trước" tabindex="0">◄</button>
+            <button class="arrow banner-arrow next" aria-label="Slide sau" tabindex="0">►</button>
+            
+            <div class="track" id="banner-track">
+                @foreach($homepageBanners['banners'] as $index => $banner)
+                    @if($banner['is_active'])
+                        <div class="slide" data-banner-id="{{ $banner['id'] }}">
+                            <a href="{{ $banner['link'] }}" class="slide-link" title="{{ $banner['title'] }}" target="{{ $banner['target'] }}" onclick="trackBannerClick({{ $banner['id'] }})">
+                                @if($banner['image'])
+                                    <div class="bg custom-image" style="background-image: url('{{ $banner['image'] }}');"></div>
+                                @else
+                                    <div class="bg {{ $banner['css_classes'] }}"></div>
+                                @endif
+                                <div class="overlay"></div>
+                                <div class="content">
+                                    <h1>{{ $banner['title'] }}</h1>
+                                    <p>{{ $banner['content'] }}</p>
+                                    <div class="btns">
+                                        <span class="btn primary">Khám phá ngay</span>
+                                        @if($index == 0)
+                                            <a class="btn secondary" href="{{ route('forum.index') }}" onclick="event.stopPropagation()">Hỏi kinh nghiệm</a>
+                                        @endif
+                                    </div>
+                                </div>
+                            </a>
                         </div>
-                    </div>
-                </a>
+                    @endif
+                @endforeach
             </div>
             
-            <!-- Slide 2: Topic Forum Hot -->
-            <div class="slide">
-                <a href="{{ route('forum.index') }}" class="slide-link" title="Tham gia thảo luận trên Forum">
-                    <div class="bg forum"></div>
-                    <div class="overlay"></div>
-                    <div class="content">
-                        <h1>Thảo Luận Sôi Động: Topic Forum Nóng Hổi!</h1>
-                        <p>Topic hot: <span class="dynamic-content" id="hot-topic">'Unity vs Unreal cho game mobile?'</span> – <span class="dynamic-content" id="topic-stats">150 comments, 500 views, 80 likes</span> trong 24h. Tham gia ngay để chia sẻ kinh nghiệm với cộng đồng dev!</p>
-                        <div class="btns">
-                            <span class="btn primary">Tham Gia Thảo Luận</span>
-                            <span class="btn secondary">Xem tất cả Topics</span>
-                        </div>
-                    </div>
-                </a>
+            <div class="dots" aria-hidden="true">
+                @foreach($homepageBanners['banners'] as $index => $banner)
+                    @if($banner['is_active'])
+                        <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide {{ $index + 1 }}"></div>
+                    @endif
+                @endforeach
             </div>
             
-            <!-- Slide 3: Bài viết mới -->
-            <div class="slide">
-                <a href="{{ route('lamgame.blog') }}" class="slide-link" title="Đọc bài viết từ cộng đồng Developer">
-                    <div class="bg blog"></div>
-                    <div class="overlay"></div>
-                    <div class="content">
-                        <h1>Bài Viết Mới Nhất Từ Developer!</h1>
-                        <p>Bài mới: <span class="dynamic-content" id="new-blog">'Tối ưu hóa performance Unity cho game 3D'</span> – Đăng bởi dev @UserX, <span class="dynamic-content" id="blog-stats">200 views, 50 shares</span>. Đọc để cập nhật kiến thức hot nhất!</p>
-                        <div class="btns">
-                            <span class="btn primary">Đọc Bài Viết</span>
-                            <span class="btn secondary">Xem tất cả Blog</span>
-                        </div>
+            @if($homepageBanners['has_banners'])
+                <!-- Banner Analytics Tracking -->
+                <script>
+                    // Track banner impressions
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const banners = document.querySelectorAll('[data-banner-id]');
+                        banners.forEach(function(slide) {
+                            const bannerId = slide.getAttribute('data-banner-id');
+                            if (bannerId && bannerId !== 'fallback-1' && bannerId !== 'fallback-2' && bannerId !== 'fallback-3' && bannerId !== 'fallback-4') {
+                                // Track impression after slide is visible for 1 second
+                                setTimeout(function() {
+                                    if (isElementVisible(slide)) {
+                                        trackBannerImpression(bannerId);
+                                    }
+                                }, 1000);
+                            }
+                        });
+                    });
+                    
+                    // Track banner clicks
+                    function trackBannerClick(bannerId) {
+                        if (bannerId && !bannerId.toString().startsWith('fallback-')) {
+                            fetch('/api/banners/' + bannerId + '/track-click', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                },
+                                body: JSON.stringify({
+                                    user_agent: navigator.userAgent,
+                                    referrer: document.referrer
+                                })
+                            }).catch(function(error) {
+                                console.log('Banner click tracking failed:', error);
+                            });
+                        }
+                    }
+                    
+                    // Track banner impressions
+                    function trackBannerImpression(bannerId) {
+                        fetch('/api/banners/' + bannerId + '/track-impression', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({
+                                user_agent: navigator.userAgent,
+                                referrer: document.referrer
+                            })
+                        }).catch(function(error) {
+                            console.log('Banner impression tracking failed:', error);
+                        });
+                    }
+                    
+                    // Helper function to check if element is visible
+                    function isElementVisible(element) {
+                        const rect = element.getBoundingClientRect();
+                        return rect.top >= 0 && rect.left >= 0 && 
+                               rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && 
+                               rect.right <= (window.innerWidth || document.documentElement.clientWidth);
+                    }
+                </script>
+            @endif
+        @else
+            <!-- Fallback static banner if no dynamic banners available -->
+            <div class="banner-fallback">
+                <div class="content">
+                    <h1>LamGame.vn - Cộng đồng Game Developer Việt Nam</h1>
+                    <p>Nơi kết nối các game developer, chia sẻ kiến thức và tìm kiếm cơ hội việc làm trong ngành game.</p>
+                    <div class="btns">
+                        <a href="{{ route('lamgame.viec-lam-game') }}" class="btn primary">Xem việc làm</a>
+                        <a href="{{ route('forum.index') }}" class="btn secondary">Tham gia forum</a>
                     </div>
-                </a>
+                </div>
             </div>
-            
-            <!-- Slide 4: Game & Source mới -->
-            <div class="slide">
-                <a href="{{ route('lamgame.source-game') }}" class="slide-link" title="Khám phá Source Game và ý tưởng sáng tạo">
-                    <div class="bg creative"></div>
-                    <div class="overlay"></div>
-                    <div class="content">
-                        <h1>Khám Phá Game Mới & Ý Tưởng Sáng Tạo!</h1>
-                        <p>Source mới: <span class="dynamic-content" id="new-source">'Roguelike Unity kit'</span> trên GitHub. Ý tưởng: <span class="dynamic-content" id="new-idea">'VR adventure Việt Nam folklore'</span>. Game demo từ dev cộng đồng – Download & phát triển ngay!</p>
-                        <div class="btns">
-                            <span class="btn primary">Khám Phá & Chia Sẻ</span>
-                            <span class="btn secondary">Xem Source Code</span>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        
-        <div class="dots" aria-hidden="true">
-            <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide 1"></div>
-            <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide 2"></div>
-            <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide 3"></div>
-            <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide 4"></div>
-        </div>
+        @endif
     </section>
 
     <!-- Featured Forum Topics -->
@@ -3505,5 +3674,8 @@
             window.addEventListener('resize', handleBannerResize);
         });
     </script>
+    
+    <!-- Banner Slider JavaScript -->
+    <script src="{{ asset('themes/shop/emsaigon/assets/js/lamgame-optimized-banner.js') }}"></script>
     @endpush
 @endsection
