@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('job_import_logs', function (Blueprint $table) {
             $table->id();
             $table->string('import_id')->unique();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedInteger('user_id');
             $table->string('filename');
             $table->integer('total_rows')->default(0);
             $table->integer('imported_rows')->default(0);
