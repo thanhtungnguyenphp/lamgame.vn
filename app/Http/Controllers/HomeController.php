@@ -421,31 +421,175 @@ class HomeController extends Controller
     }
 
     /**
-     * Get source games & prototypes
+     * Get source games & prototypes for marketplace section
+     * Expanded with more realistic data for homepage display
      */
     private function getSourceGames()
     {
-        return [
-            'featured' => [
+        try {
+            // In production, this would fetch from products table with sku LIKE 'SOURCE_%'
+            // For now, using enhanced fallback data
+            $sourceGames = [
                 [
+                    'id' => 1,
                     'title' => 'Roguelike Unity Kit',
-                    'description' => 'Complete roguelike game template with procedural generation',
-                    'category' => '2D Game',
+                    'description' => 'Complete roguelike game template with procedural generation, inventory system, and combat mechanics',
+                    'short_description' => 'Complete roguelike template with procedural generation',
+                    'category' => '2D Game Kit',
                     'engine' => 'Unity',
                     'language' => 'C#',
                     'downloads' => 1250,
                     'rating' => 4.8,
                     'price' => 0,
+                    'original_price' => 99000, // VND
                     'is_free' => true,
+                    'is_featured' => true,
+                    'thumbnail' => 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop&q=80',
                     'updated' => now()->format('Y-m-d'),
-                    'url' => '#',
+                    'updated_ago' => now()->diffForHumans(),
+                    'url' => route('lamgame.source-game'),
+                    'tags' => ['Unity', '2D', 'Roguelike', 'C#']
+                ],
+                [
+                    'id' => 2,
+                    'title' => 'Mobile FPS Controller',
+                    'description' => 'Professional mobile FPS controller with joystick, touch controls and weapon system',
+                    'short_description' => 'Mobile FPS controller with touch controls',
+                    'category' => 'Controller System',
+                    'engine' => 'Unity',
+                    'language' => 'C#',
+                    'downloads' => 890,
+                    'rating' => 4.6,
+                    'price' => 149000, // VND
+                    'original_price' => 199000,
+                    'is_free' => false,
+                    'is_featured' => true,
+                    'thumbnail' => 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop&q=80',
+                    'updated' => now()->subDays(2)->format('Y-m-d'),
+                    'updated_ago' => now()->subDays(2)->diffForHumans(),
+                    'url' => route('lamgame.source-game'),
+                    'tags' => ['Unity', 'Mobile', 'FPS', 'Controller']
+                ],
+                [
+                    'id' => 3,
+                    'title' => 'Inventory System Pro',
+                    'description' => 'Advanced inventory and item management system for RPG games with drag & drop UI',
+                    'short_description' => 'Advanced inventory system for RPG games',
+                    'category' => 'UI System',
+                    'engine' => 'Unity',
+                    'language' => 'C#',
+                    'downloads' => 2100,
+                    'rating' => 4.9,
+                    'price' => 99000, // VND
+                    'original_price' => 149000,
+                    'is_free' => false,
+                    'is_featured' => true,
+                    'thumbnail' => 'https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop&q=80',
+                    'updated' => now()->subDays(1)->format('Y-m-d'),
+                    'updated_ago' => now()->subDays(1)->diffForHumans(),
+                    'url' => route('lamgame.source-game'),
+                    'tags' => ['Unity', 'RPG', 'Inventory', 'UI']
+                ],
+                [
+                    'id' => 4,
+                    'title' => 'VR Interaction Framework',
+                    'description' => 'Complete VR interaction system for Oculus and HTC Vive with hand tracking',
+                    'short_description' => 'VR interaction system with hand tracking',
+                    'category' => 'VR System',
+                    'engine' => 'Unity',
+                    'language' => 'C#',
+                    'downloads' => 675,
+                    'rating' => 4.7,
+                    'price' => 199000, // VND
+                    'original_price' => 299000,
+                    'is_free' => false,
+                    'is_featured' => false,
+                    'thumbnail' => 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop&q=80',
+                    'updated' => now()->subDays(3)->format('Y-m-d'),
+                    'updated_ago' => now()->subDays(3)->diffForHumans(),
+                    'url' => route('lamgame.source-game'),
+                    'tags' => ['Unity', 'VR', 'Interaction', 'Hand Tracking']
+                ],
+                [
+                    'id' => 5,
+                    'title' => 'AI Behavior Tree System',
+                    'description' => 'Visual behavior tree editor for game AI with pathfinding and state management',
+                    'short_description' => 'Visual behavior tree system for game AI',
+                    'category' => 'AI System',
+                    'engine' => 'Unity',
+                    'language' => 'C#',
+                    'downloads' => 1340,
+                    'rating' => 4.5,
+                    'price' => 179000, // VND
+                    'original_price' => 249000,
+                    'is_free' => false,
+                    'is_featured' => false,
+                    'thumbnail' => 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=250&fit=crop&q=80',
+                    'updated' => now()->subDays(4)->format('Y-m-d'),
+                    'updated_ago' => now()->subDays(4)->diffForHumans(),
+                    'url' => route('lamgame.source-game'),
+                    'tags' => ['Unity', 'AI', 'Behavior Tree', 'Pathfinding']
+                ],
+                [
+                    'id' => 6,
+                    'title' => 'Multiplayer Network Kit',
+                    'description' => 'Complete multiplayer networking solution with authoritative server and client prediction',
+                    'short_description' => 'Multiplayer networking with server authority',
+                    'category' => 'Network System',
+                    'engine' => 'Unity',
+                    'language' => 'C#',
+                    'downloads' => 580,
+                    'rating' => 4.4,
+                    'price' => 299000, // VND
+                    'original_price' => 399000,
+                    'is_free' => false,
+                    'is_featured' => true,
+                    'thumbnail' => 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop&q=80',
+                    'updated' => now()->subWeek()->format('Y-m-d'),
+                    'updated_ago' => now()->subWeek()->diffForHumans(),
+                    'url' => route('lamgame.source-game'),
+                    'tags' => ['Unity', 'Multiplayer', 'Networking', 'Server']
                 ]
-            ],
-            'total_sources' => 25,
-            'github_links' => [
-                'Unity Templates' => 'https://github.com/lamgame-vn/unity-templates',
-            ]
-        ];
+            ];
+            
+            // Prioritize featured items first, then by downloads
+            $featuredGames = collect($sourceGames)
+                ->sortByDesc(function($item) {
+                    return ($item['is_featured'] ? 10000 : 0) + $item['downloads'];
+                })
+                ->take(6) // Display 6 items on homepage
+                ->values()
+                ->toArray();
+            
+            return [
+                'featured' => $featuredGames,
+                'total_sources' => count($sourceGames),
+                'free_sources' => collect($sourceGames)->where('is_free', true)->count(),
+                'paid_sources' => collect($sourceGames)->where('is_free', false)->count(),
+                'most_downloaded' => collect($sourceGames)->sortByDesc('downloads')->first(),
+                'newest_source' => collect($sourceGames)->sortBy('updated')->first(),
+                'categories' => collect($sourceGames)->groupBy('category')->keys()->toArray(),
+                'engines' => collect($sourceGames)->groupBy('engine')->keys()->toArray(),
+                'github_links' => [
+                    'Unity Templates' => 'https://github.com/lamgame-vn/unity-templates',
+                    'Open Source Projects' => 'https://github.com/lamgame-vn'
+                ]
+            ];
+            
+        } catch (\Exception $e) {
+            // Fallback data in case of any errors
+            return [
+                'featured' => [],
+                'total_sources' => 0,
+                'free_sources' => 0,
+                'paid_sources' => 0,
+                'most_downloaded' => null,
+                'newest_source' => null,
+                'categories' => [],
+                'engines' => [],
+                'github_links' => []
+            ];
+        }
     }
 
     /**
