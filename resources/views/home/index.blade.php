@@ -1065,15 +1065,6 @@
                                 
                                 <p class="blog-excerpt">{{ $blog['excerpt'] }}</p>
                                 
-                                @if($blog['comment_snippet'])
-                                    <div class="blog-comment-teaser">
-                                        <div class="comment-icon">💬</div>
-                                        <div class="comment-content">
-                                            <span class="comment-text">"{{ $blog['comment_snippet'] }}"</span>
-                                            <span class="comment-author">- {{ $blog['latest_comment_author'] }}</span>
-                                        </div>
-                                    </div>
-                                @endif
                                 
                                 <div class="blog-stats">
                                     <div class="stat-item">
@@ -1129,13 +1120,6 @@
                             
                             <p class="blog-excerpt">Unity 2024 mang đến nhiều cải tiến quan trọng giúp game developer tăng hiệu suất và chất lượng game.</p>
                             
-                            <div class="blog-comment-teaser">
-                                <div class="comment-icon">💬</div>
-                                <div class="comment-content">
-                                    <span class="comment-text">"Bài viết rất hữu ích! Netcode mới của Unity thực sự ấn tượng..."</span>
-                                    <span class="comment-author">- UnityDev</span>
-                                </div>
-                            </div>
                             
                             <div class="blog-stats">
                                 <div class="stat-item">
@@ -1189,13 +1173,6 @@
                             
                             <p class="blog-excerpt">Hướng dẫn C# từ cơ bản đến nâng cao dành cho Unity game development.</p>
                             
-                            <div class="blog-comment-teaser">
-                                <div class="comment-icon">💬</div>
-                                <div class="comment-content">
-                                    <span class="comment-text">"Giải thích MonoBehaviour rất rõ ràng, cảm ơn tác giả!"</span>
-                                    <span class="comment-author">- BeginnerCoder</span>
-                                </div>
-                            </div>
                             
                             <div class="blog-stats">
                                 <div class="stat-item">
@@ -1249,13 +1226,6 @@
                             
                             <p class="blog-excerpt">Các kỹ thuật tối ưu hóa performance cho mobile game để đạt hiệu suất tốt nhất.</p>
                             
-                            <div class="blog-comment-teaser">
-                                <div class="comment-icon">💬</div>
-                                <div class="comment-content">
-                                    <span class="comment-text">"Object Pooling tip rất hay, đã áp dụng vào game của mình!"</span>
-                                    <span class="comment-author">- MobileDev</span>
-                                </div>
-                            </div>
                             
                             <div class="blog-stats">
                                 <div class="stat-item">
@@ -1417,39 +1387,6 @@
     overflow: hidden;
 }
 
-.blog-comment-teaser {
-    background: #f8f9fa;
-    border-left: 4px solid #667eea;
-    padding: 0.75rem;
-    border-radius: 8px;
-    margin: 1rem 0;
-    display: flex;
-    gap: 0.75rem;
-    font-size: 0.85rem;
-}
-
-.comment-icon {
-    font-size: 1.1rem;
-    line-height: 1;
-}
-
-.comment-content {
-    flex: 1;
-}
-
-.comment-text {
-    display: block;
-    font-style: italic;
-    color: #555;
-    line-height: 1.4;
-    margin-bottom: 0.25rem;
-}
-
-.comment-author {
-    color: #667eea;
-    font-weight: 500;
-    font-size: 0.8rem;
-}
 
 .blog-stats {
     display: flex;
@@ -1529,9 +1466,6 @@
         gap: 0.75rem;
     }
     
-    .blog-comment-teaser {
-        font-size: 0.8rem;
-    }
 }
 
 /* YouTube Videos Section */
