@@ -552,6 +552,30 @@ class HomeController extends Controller
                 ]
             ];
             
+            // Ensure all required keys are present
+            $sourceGames = array_map(function($game) {
+                return array_merge([
+                    'id' => 0,
+                    'title' => 'No Title',
+                    'description' => 'No description',
+                    'short_description' => 'No description available',
+                    'category' => 'General',
+                    'engine' => 'Unknown',
+                    'language' => 'N/A',
+                    'downloads' => 0,
+                    'rating' => 0,
+                    'price' => 0,
+                    'original_price' => 0,
+                    'is_free' => false,
+                    'is_featured' => false,
+                    'thumbnail' => '',
+                    'updated' => now()->format('Y-m-d'),
+                    'updated_ago' => 'Unknown',
+                    'url' => '#',
+                    'tags' => []
+                ], $game);
+            }, $sourceGames);
+
             // Prioritize featured items first, then by downloads
             $featuredGames = collect($sourceGames)
                 ->sortByDesc(function($item) {
