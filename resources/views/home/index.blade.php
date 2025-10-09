@@ -161,198 +161,13 @@
         </div>
     </section>
 
-    <!-- Featured Jobs Section -->
-    <section id="viec-lam-noi-bat" class="courses-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">💼 Việc Làm Nổi Bật</h2>
-                <p class="section-subtitle">
-                    Cơ hội việc làm hot nhất từ các studio game hàng đầu Việt Nam
-                </p>
-            </div>
-            
-            <div class="courses-grid">
-                @if(isset($jobs['featured']) && count($jobs['featured']) > 0)
-                    @php
-                        $featuredJobs = array_slice($jobs['featured'], 0, 3); // Lấy 3 việc làm đầu tiên
-                        $jobImages = [
-                            'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop', // Game dev
-                            'https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop', // Unity
-                            'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop'  // Programming
-                        ];
-                        $jobLevels = ['Entry → Mid Level', 'Mid → Senior Level', 'Senior Level'];
-                        $badges = ['Hot 🔥', 'Urgent', 'High Salary'];
-                    @endphp
-                    
-                    @foreach($featuredJobs as $index => $job)
-                        <div class="course-card {{ $index === 0 ? 'featured' : '' }}">
-                            @if($index === 0)
-                                <div class="course-badge">{{ $badges[$index] ?? 'Hot 🔥' }}</div>
-                            @endif
-                            <div class="course-image">
-                                <img src="{{ $jobImages[$index] ?? $jobImages[0] }}" alt="{{ $job['title'] }} at {{ $job['company'] }}" />
-                                <div class="course-overlay">
-                                    <div class="course-level">{{ $jobLevels[$index] ?? 'All Levels' }}</div>
-                                </div>
-                            </div>
-                            <div class="course-content">
-                                <h3 class="course-title">
-                                    <a href="{{ $job['url'] }}">{{ $job['title'] }}</a>
-                                </h3>
-                                <p class="course-description">
-                                    Cơ hội việc làm tại {{ $job['company'] }} - một trong những studio game hàng đầu tại {{ $job['location'] }}. 
-                                    Mức lương hấp dẫn và môi trường làm việc chuyên nghiệp.
-                                </p>
-                                <div class="course-features">
-                                    <div class="feature">
-                                        <i class="fa fa-building"></i>
-                                        <span>{{ $job['company'] }}</span>
-                                    </div>
-                                    <div class="feature">
-                                        <i class="fa fa-map-marker"></i>
-                                        <span>{{ $job['location'] }}</span>
-                                    </div>
-                                    <div class="feature">
-                                        <i class="fa fa-clock-o"></i>
-                                        <span>{{ $job['posted_ago'] }}</span>
-                                    </div>
-                                </div>
-                                <div class="course-price">
-                                    <span class="current-price">{{ $job['salary'] }}</span>
-                                </div>
-                                <a href="{{ $job['url'] }}" class="course-btn">Apply Ngay</a>
-                            </div>
-                        </div>
-                    @endforeach
-                @else
-                    <!-- Sample jobs nếu chưa có data -->
-                    <div class="course-card featured">
-                        <div class="course-badge">Hot 🔥</div>
-                        <div class="course-image">
-                            <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop" alt="Unity Developer at VNG" />
-                            <div class="course-overlay">
-                                <div class="course-level">Mid → Senior Level</div>
-                            </div>
-                        </div>
-                        <div class="course-content">
-                            <h3 class="course-title">
-                                <a href="{{ route('lamgame.viec-lam-game') }}">Unity Developer</a>
-                            </h3>
-                            <p class="course-description">
-                                Cơ hội việc làm tại VNG Corporation - studio game hàng đầu Việt Nam. 
-                                Tham gia phát triển game mobile với hàng triệu người chơi.
-                            </p>
-                            <div class="course-features">
-                                <div class="feature">
-                                    <i class="fa fa-building"></i>
-                                    <span>VNG Corporation</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-map-marker"></i>
-                                    <span>TP.HCM</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-clock-o"></i>
-                                    <span>2 ngày trước</span>
-                                </div>
-                            </div>
-                            <div class="course-price">
-                                <span class="current-price">25-40 triệu VND</span>
-                            </div>
-                            <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn">Apply Ngay</a>
-                        </div>
-                    </div>
-                    
-                    <div class="course-card">
-                        <div class="course-image">
-                            <img src="https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop" alt="3D Artist at Gameloft" />
-                            <div class="course-overlay">
-                                <div class="course-level">Entry → Mid Level</div>
-                            </div>
-                        </div>
-                        <div class="course-content">
-                            <h3 class="course-title">
-                                <a href="{{ route('lamgame.viec-lam-game') }}">3D Artist</a>
-                            </h3>
-                            <p class="course-description">
-                                Gameloft Vietnam tuyển 3D Artist tài năng để tạo ra những tài sản 3D chất lượng cao 
-                                cho game mobile AAA với hàng chục triệu downloads.
-                            </p>
-                            <div class="course-features">
-                                <div class="feature">
-                                    <i class="fa fa-building"></i>
-                                    <span>Gameloft Vietnam</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-map-marker"></i>
-                                    <span>Hà Nội</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-clock-o"></i>
-                                    <span>5 ngày trước</span>
-                                </div>
-                            </div>
-                            <div class="course-price">
-                                <span class="current-price">20-30 triệu VND</span>
-                            </div>
-                            <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn">Apply Ngay</a>
-                        </div>
-                    </div>
-                    
-                    <div class="course-card">
-                        <div class="course-image">
-                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop" alt="Game Backend Developer" />
-                            <div class="course-overlay">
-                                <div class="course-level">Senior Level</div>
-                            </div>
-                        </div>
-                        <div class="course-content">
-                            <h3 class="course-title">
-                                <a href="{{ route('lamgame.viec-lam-game') }}">Backend Developer</a>
-                            </h3>
-                            <p class="course-description">
-                                Appota tuyển Backend Developer để phát triển hệ thống server cho game online. 
-                                Cơ hội làm việc với công nghệ mới nhất và team quốc tế.
-                            </p>
-                            <div class="course-features">
-                                <div class="feature">
-                                    <i class="fa fa-building"></i>
-                                    <span>Appota</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-map-marker"></i>
-                                    <span>Remote/TP.HCM</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-clock-o"></i>
-                                    <span>1 tuần trước</span>
-                                </div>
-                            </div>
-                            <div class="course-price">
-                                <span class="current-price">30-45 triệu VND</span>
-                            </div>
-                            <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn">Apply Ngay</a>
-                        </div>
-                    </div>
-                @endif
-            </div>
-            
-            <div class="courses-cta">
-                <p>Khám phá thêm {{ isset($jobs['total_count']) ? $jobs['total_count'] : '50+' }} việc làm game dev đang hot</p>
-                <button class="btn btn-outline" onclick="window.location.href='{{ route('lamgame.viec-lam-game') }}'">
-                    Xem Tất Cả Việc Làm
-                </button>
-            </div>
-        </div>
-    </section>
-
     <!-- Featured Forum Topics -->
     <section id="loi-ich" class="benefits-section featured-topics-section">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">🔥 Chủ Đề Nổi Bật</h2>
                 <p class="section-subtitle">
-                    Top 6 topic mới/comment nhiều từ cộng đồng game developer Việt Nam
+                    Top 4 topic mới/comment nhiều từ cộng đồng game developer Việt Nam
                 </p>
             </div>
             
@@ -602,99 +417,7 @@
                         </div>
                     </div>
                     
-                    <div class="topic-card">
-                        <div class="topic-header">
-                            <div class="topic-category" style="background: #10b98120; color: #10b981">
-                                📚 Review khóa học
-                            </div>
-                            <div class="topic-meta">
-                                <span class="topic-time">5 ngày trước</span>
-                            </div>
-                        </div>
-                        
-                        <div class="topic-content">
-                            <h4 class="topic-title">
-                                <a href="{{ route('forum.index') }}" target="_blank">Review khóa học Unity tại GameDev Academy</a>
-                            </h4>
-                            <p class="topic-excerpt">Vừa hoàn thành khóa Unity 3 tháng, chia sẻ review chi tiết cho ae.</p>
-                            
-                            <div class="topic-comment-teaser">
-                                <div class="comment-icon">💬</div>
-                                <div class="comment-content">
-                                    <span class="comment-text">"Mức lương 12M cho junior dev ở HCM khá ok đấy..."</span>
-                                    <span class="comment-author">- CodeMaster</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic-stats">
-                            <div class="stat-item">
-                                <i class="fa fa-comments"></i>
-                                <span>31 comments</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fa fa-thumbs-up"></i>
-                                <span>22 likes</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fa fa-eye"></i>
-                                <span>445 views</span>
-                            </div>
-                        </div>
-                        
-                        <div class="topic-cta">
-                            <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
-                                Tham gia thảo luận
-                            </a>
-                        </div>
-                    </div>
                     
-                    <div class="topic-card">
-                        <div class="topic-header">
-                            <div class="topic-category" style="background: #f59e0b20; color: #f59e0b">
-                                🎯 Showcase
-                            </div>
-                            <div class="topic-meta">
-                                <span class="topic-time">1 tuần trước</span>
-                            </div>
-                        </div>
-                        
-                        <div class="topic-content">
-                            <h4 class="topic-title">
-                                <a href="{{ route('forum.index') }}" target="_blank">"Cyber Runner" - Game endless runner hoàn thành</a>
-                            </h4>
-                            <p class="topic-excerpt">Sau 6 tháng làm việc, mình đã hoàn thành game đầu tiên!</p>
-                            
-                            <div class="topic-comment-teaser">
-                                <div class="comment-icon">💬</div>
-                                <div class="comment-content">
-                                    <span class="comment-text">"Amazing work for solo dev! Inspiration cho mình quá..."</span>
-                                    <span class="comment-author">- GameOptimizer</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="topic-stats">
-                            <div class="stat-item">
-                                <i class="fa fa-comments"></i>
-                                <span>67 comments</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fa fa-thumbs-up"></i>
-                                <span>45 likes</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fa fa-eye"></i>
-                                <span>523 views</span>
-                            </div>
-                        </div>
-                        
-                        <div class="topic-cta">
-                            <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
-                                Tham gia thảo luận
-                            </a>
-                        </div>
-                    </div>
                 @endif
             </div>
             
@@ -1196,59 +919,6 @@
                             </div>
                         </div>
                     </article>
-                    
-                    <article class="blog-card">
-                        <div class="blog-image">
-                            <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop" alt="Mobile Optimization" loading="lazy">
-                            <div class="blog-overlay">
-                                <div class="blog-category" style="background: #10b981; color: white;">
-                                    Mobile Development
-                                </div>
-                                <div class="blog-reading-time">
-                                    <i class="fa fa-clock"></i> 15 phút đọc
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="blog-content">
-                            <div class="blog-meta">
-                                <span class="blog-author">
-                                    <i class="fa fa-user"></i> LamGame Team
-                                </span>
-                                <span class="blog-date">
-                                    <i class="fa fa-calendar"></i> 3 ngày trước
-                                </span>
-                            </div>
-                            
-                            <h3 class="blog-title">
-                                <a href="{{ route('lamgame.blog') }}" target="_blank">Tối ưu hóa Performance Game Mobile</a>
-                            </h3>
-                            
-                            <p class="blog-excerpt">Các kỹ thuật tối ưu hóa performance cho mobile game để đạt hiệu suất tốt nhất.</p>
-                            
-                            
-                            <div class="blog-stats">
-                                <div class="stat-item">
-                                    <i class="fa fa-eye"></i>
-                                    <span>1,580 lượt xem</span>
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fa fa-share"></i>
-                                    <span>120 lượt chia sẻ</span>
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fa fa-comments"></i>
-                                    <span>35 comments</span>
-                                </div>
-                            </div>
-                            
-                            <div class="blog-cta">
-                                <a href="{{ route('lamgame.blog') }}" class="btn btn-outline btn-sm" target="_blank">
-                                    Đọc thêm
-                                </a>
-                            </div>
-                        </div>
-                    </article>
                 @endif
             </div>
             
@@ -1261,8 +931,1188 @@
         </div>
     </section>
 
+    <!-- Source Code Marketplace Section -->
+    <section id="source-marketplace" class="source-marketplace-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">🛒 Source Code Marketplace</h2>
+                <p class="section-subtitle">
+                    Khám phá và tải về những source code game chất lượng cao từ cộng đồng developer
+                </p>
+            </div>
+            
+            <div class="marketplace-grid">
+                @if(isset($sourceGames['featured']) && count($sourceGames['featured']) > 0)
+                    @foreach($sourceGames['featured'] as $index => $source)
+                        <div class="source-card {{ $source['is_featured'] ? 'featured' : '' }}">
+                            @if($source['is_featured'])
+                                <div class="source-badge featured-badge">Nổi bật 🔥</div>
+                            @endif
+                            @if($source['is_free'])
+                                <div class="source-badge free-badge">Miễn phí</div>
+                            @elseif($source['price'] < $source['original_price'])
+                                <div class="source-badge sale-badge">Sale</div>
+                            @endif
+                            
+                            <div class="source-image">
+                                <img src="{{ $source['thumbnail'] }}" 
+                                     srcset="{{ $source['thumbnail'] }}&w=320 320w, {{ $source['thumbnail'] }}&w=640 640w, {{ $source['thumbnail'] }}&w=800 800w"
+                                     sizes="(max-width: 480px) 320px, (max-width: 768px) 640px, 800px"
+                                     alt="{{ $source['title'] }}" 
+                                     loading="lazy" />
+                                <div class="source-overlay">
+                                    <div class="source-engine-badge">{{ $source['engine'] }}</div>
+                                    <div class="source-rating">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            @if($i <= floor($source['rating']))
+                                                <i class="fa fa-star"></i>
+                                            @elseif($i - 0.5 <= $source['rating'])
+                                                <i class="fa fa-star-half-o"></i>
+                                            @else
+                                                <i class="fa fa-star-o"></i>
+                                            @endif
+                                        @endfor
+                                        <span class="rating-number">{{ number_format($source['rating'], 1) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="source-content">
+                                <div class="source-category">{{ $source['category'] }}</div>
+                                <h3 class="source-title">
+                                    <a href="{{ $source['url'] }}">{{ $source['title'] }}</a>
+                                </h3>
+                                <p class="source-description">{{ $source['short_description'] }}</p>
+                                
+                                <div class="source-meta">
+                                    <div class="meta-item">
+                                        <i class="fa fa-download"></i>
+                                        <span>{{ number_format($source['downloads']) }}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fa fa-code"></i>
+                                        <span>{{ $source['language'] }}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fa fa-clock-o"></i>
+                                        <span>{{ $source['updated_ago'] }}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="source-tags">
+                                    @foreach(array_slice($source['tags'], 0, 3) as $tag)
+                                        <span class="tag">{{ $tag }}</span>
+                                    @endforeach
+                                </div>
+                                
+                                <div class="source-price-action">
+                                    <div class="source-pricing">
+                                        @if($source['is_free'])
+                                            <span class="price-current free-price">Miễn phí</span>
+                                        @else
+                                            <span class="price-current">{{ number_format($source['price'] / 1000, 0) }}k VND</span>
+                                            @if($source['price'] < $source['original_price'])
+                                                <span class="price-original">{{ number_format($source['original_price'] / 1000, 0) }}k</span>
+                                            @endif
+                                        @endif
+                                    </div>
+                                    <a href="{{ $source['url'] }}" class="source-btn">
+                                        {{ $source['is_free'] ? 'Tải miễn phí' : 'Xem chi tiết' }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <!-- Fallback content if no source games -->
+                    <div class="source-card featured">
+                        <div class="source-badge featured-badge">Nổi bật 🔥</div>
+                        <div class="source-image">
+                            <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop&q=80" alt="Unity Template" loading="lazy" />
+                            <div class="source-overlay">
+                                <div class="source-engine-badge">Unity</div>
+                                <div class="source-rating">
+                                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i>
+                                    <span class="rating-number">4.8</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="source-content">
+                            <div class="source-category">2D Game Kit</div>
+                            <h3 class="source-title">
+                                <a href="{{ route('lamgame.source-game') }}">Roguelike Unity Kit</a>
+                            </h3>
+                            <p class="source-description">Complete roguelike template with procedural generation</p>
+                            <div class="source-meta">
+                                <div class="meta-item"><i class="fa fa-download"></i><span>1.2k</span></div>
+                                <div class="meta-item"><i class="fa fa-code"></i><span>C#</span></div>
+                                <div class="meta-item"><i class="fa fa-clock-o"></i><span>1 ngày trước</span></div>
+                            </div>
+                            <div class="source-tags">
+                                <span class="tag">Unity</span><span class="tag">2D</span><span class="tag">Roguelike</span>
+                            </div>
+                            <div class="source-price-action">
+                                <div class="source-pricing">
+                                    <span class="price-current free-price">Miễn phí</span>
+                                </div>
+                                <a href="{{ route('lamgame.source-game') }}" class="source-btn">Tải miễn phí</a>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+            
+            <div class="marketplace-cta">
+                <div class="marketplace-stats">
+                    <div class="stat">
+                        <span class="stat-number">{{ $sourceGames['total_sources'] ?? '25' }}+</span>
+                        <span class="stat-label">Source codes</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">{{ $sourceGames['free_sources'] ?? '8' }}</span>
+                        <span class="stat-label">Miễn phí</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">Unity</span>
+                        <span class="stat-label">Engine chính</span>
+                    </div>
+                </div>
+                <div class="marketplace-action">
+                    <p>Khám phá toàn bộ kho tàng source code cho game development</p>
+                    <a href="{{ route('lamgame.source-game') }}" class="btn btn-outline" target="_blank">
+                        Xem Tất Cả Source Code
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Jobs Section - Enhanced -->
+    <section id="viec-lam-noi-bat" class="courses-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">💼 Bảng Tin Tuyển Dụng</h2>
+                <p class="section-subtitle">
+                    Cơ hội việc làm hot nhất từ các studio game hàng đầu Việt Nam
+                </p>
+            </div>
+            
+            <div class="courses-grid enhanced-jobs-grid">
+                @if(isset($jobs['featured']) && count($jobs['featured']) > 0)
+                    @php
+                        $featuredJobs = array_slice($jobs['featured'], 0, 5); // Lấy 5 việc làm đầu tiên
+                        $jobImages = [
+                            'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop', // Game dev
+                            'https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop', // Unity
+                            'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop', // Programming
+                            'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop', // Mobile Dev
+                            'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop'  // VR/AR
+                        ];
+                        $jobLevels = ['Entry → Mid Level', 'Mid → Senior Level', 'Senior Level', 'Mid Level', 'All Levels'];
+                        $badges = ['Hot 🔥', 'Urgent', 'High Salary', 'Remote OK', 'New'];
+                    @endphp
+                    
+                    @foreach($featuredJobs as $index => $job)
+                        <div class="course-card job-card {{ $index === 0 ? 'featured' : '' }}">
+                            @if($index < 2)
+                                <div class="course-badge job-badge">{{ $badges[$index] ?? 'Hot 🔥' }}</div>
+                            @endif
+                            <div class="course-image">
+                                <img src="{{ $jobImages[$index] ?? $jobImages[0] }}" alt="{{ $job['title'] }} at {{ $job['company'] }}" loading="lazy" />
+                                <div class="course-overlay">
+                                    <div class="course-level">{{ $jobLevels[$index] ?? 'All Levels' }}</div>
+                                </div>
+                            </div>
+                            <div class="course-content">
+                                <h3 class="course-title job-title">
+                                    <a href="{{ $job['url'] }}">{{ $job['title'] }}</a>
+                                </h3>
+                                <p class="course-description job-description">
+                                    Cơ hội việc làm tại {{ $job['company'] }} - một trong những studio game hàng đầu tại {{ $job['location'] }}.
+                                </p>
+                                <div class="course-features job-features">
+                                    <div class="feature">
+                                        <i class="fa fa-building"></i>
+                                        <span>{{ $job['company'] }}</span>
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fa fa-map-marker"></i>
+                                        <span>{{ $job['location'] }}</span>
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fa fa-clock-o"></i>
+                                        <span>{{ $job['posted_ago'] }}</span>
+                                    </div>
+                                </div>
+                                <div class="course-price job-salary">
+                                    <span class="current-price salary-range">{{ $job['salary'] }}</span>
+                                </div>
+                                <a href="{{ $job['url'] }}" class="course-btn job-apply-btn">Apply Ngay</a>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <!-- Enhanced fallback jobs with 4 positions -->
+                    <div class="course-card job-card featured">
+                        <div class="course-badge job-badge">Hot 🔥</div>
+                        <div class="course-image">
+                            <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop" alt="Unity Developer at VNG" loading="lazy" />
+                            <div class="course-overlay">
+                                <div class="course-level">Mid → Senior Level</div>
+                            </div>
+                        </div>
+                        <div class="course-content">
+                            <h3 class="course-title job-title">
+                                <a href="{{ route('lamgame.viec-lam-game') }}">Unity Developer</a>
+                            </h3>
+                            <p class="course-description job-description">
+                                VNG Corporation tuyển Unity Developer cho dự án game mobile mới.
+                            </p>
+                            <div class="course-features job-features">
+                                <div class="feature">
+                                    <i class="fa fa-building"></i>
+                                    <span>VNG Corporation</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fa fa-map-marker"></i>
+                                    <span>TP.HCM</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fa fa-clock-o"></i>
+                                    <span>2 ngày trước</span>
+                                </div>
+                            </div>
+                            <div class="course-price job-salary">
+                                <span class="current-price salary-range">25-40 triệu VND</span>
+                            </div>
+                            <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn job-apply-btn">Apply Ngay</a>
+                        </div>
+                    </div>
+                    
+                    <div class="course-card job-card">
+                        <div class="course-badge job-badge">Urgent</div>
+                        <div class="course-image">
+                            <img src="https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop" alt="3D Artist at Gameloft" loading="lazy" />
+                            <div class="course-overlay">
+                                <div class="course-level">Entry → Mid Level</div>
+                            </div>
+                        </div>
+                        <div class="course-content">
+                            <h3 class="course-title job-title">
+                                <a href="{{ route('lamgame.viec-lam-game') }}">3D Artist</a>
+                            </h3>
+                            <p class="course-description job-description">
+                                Gameloft Vietnam tuyển 3D Artist cho dự án game mobile AAA.
+                            </p>
+                            <div class="course-features job-features">
+                                <div class="feature">
+                                    <i class="fa fa-building"></i>
+                                    <span>Gameloft Vietnam</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fa fa-map-marker"></i>
+                                    <span>Hà Nội</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fa fa-clock-o"></i>
+                                    <span>5 ngày trước</span>
+                                </div>
+                            </div>
+                            <div class="course-price job-salary">
+                                <span class="current-price salary-range">20-30 triệu VND</span>
+                            </div>
+                            <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn job-apply-btn">Apply Ngay</a>
+                        </div>
+                    </div>
+                    
+                    <div class="course-card job-card">
+                        <div class="course-image">
+                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop" alt="Game Backend Developer" loading="lazy" />
+                            <div class="course-overlay">
+                                <div class="course-level">Senior Level</div>
+                            </div>
+                        </div>
+                        <div class="course-content">
+                            <h3 class="course-title job-title">
+                                <a href="{{ route('lamgame.viec-lam-game') }}">Backend Developer</a>
+                            </h3>
+                            <p class="course-description job-description">
+                                Appota tuyển Backend Developer cho hệ thống server game online.
+                            </p>
+                            <div class="course-features job-features">
+                                <div class="feature">
+                                    <i class="fa fa-building"></i>
+                                    <span>Appota</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fa fa-map-marker"></i>
+                                    <span>Remote/TP.HCM</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fa fa-clock-o"></i>
+                                    <span>1 tuần trước</span>
+                                </div>
+                            </div>
+                            <div class="course-price job-salary">
+                                <span class="current-price salary-range">30-45 triệu VND</span>
+                            </div>
+                            <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn job-apply-btn">Apply Ngay</a>
+                        </div>
+                    </div>
+                    
+                    <div class="course-card job-card">
+                        <div class="course-image">
+                            <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop" alt="Mobile Game Developer" loading="lazy" />
+                            <div class="course-overlay">
+                                <div class="course-level">Mid Level</div>
+                            </div>
+                        </div>
+                        <div class="course-content">
+                            <h3 class="course-title job-title">
+                                <a href="{{ route('lamgame.viec-lam-game') }}">Mobile Game Dev</a>
+                            </h3>
+                            <p class="course-description job-description">
+                                Studio indie tuyển Mobile Game Developer cho dự án puzzle game.
+                            </p>
+                            <div class="course-features job-features">
+                                <div class="feature">
+                                    <i class="fa fa-building"></i>
+                                    <span>IndieStudio VN</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fa fa-map-marker"></i>
+                                    <span>Remote</span>
+                                </div>
+                                <div class="feature">
+                                    <i class="fa fa-clock-o"></i>
+                                    <span>3 ngày trước</span>
+                                </div>
+                            </div>
+                            <div class="course-price job-salary">
+                                <span class="current-price salary-range">15-25 triệu VND</span>
+                            </div>
+                            <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn job-apply-btn">Apply Ngay</a>
+                        </div>
+                    </div>
+                @endif
+            </div>
+            
+            <div class="courses-cta jobs-cta">
+                <div class="jobs-stats">
+                    <div class="stat">
+                        <span class="stat-number">{{ isset($jobs['total_count']) ? $jobs['total_count'] : '50' }}+</span>
+                        <span class="stat-label">Việc làm</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">{{ isset($jobs['weekly_new']) ? $jobs['weekly_new'] : '12' }}</span>
+                        <span class="stat-label">Mới tuần này</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">VNG, Gameloft</span>
+                        <span class="stat-label">Công ty đối tác</span>
+                    </div>
+                </div>
+                <div class="jobs-action">
+                    <p>Khám phá thêm những cơ hội việc làm game development hấp dẫn</p>
+                    <button class="btn btn-outline" onclick="window.location.href='{{ route('lamgame.viec-lam-game') }}'">
+                        Xem Tất Cả Việc Làm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
 @push('styles')
 <style>
+/* Source Code Marketplace Section - Mobile First */
+.source-marketplace-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 3rem 0;
+    position: relative;
+}
+
+.source-marketplace-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23e2e8f0" stroke-width="0.5" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') repeat;
+    opacity: 0.6;
+    z-index: 1;
+}
+
+.source-marketplace-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* Mobile-first marketplace grid */
+.marketplace-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+/* Tablet breakpoint */
+@media (min-width: 481px) {
+    .marketplace-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+}
+
+/* Desktop breakpoint */
+@media (min-width: 769px) {
+    .marketplace-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+    
+    .source-marketplace-section {
+        padding: 4rem 0;
+    }
+}
+
+/* Large desktop */
+@media (min-width: 1200px) {
+    .marketplace-grid {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 1200px;
+        margin: 3rem auto;
+    }
+}
+
+/* Source card styling */
+.source-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    border: 2px solid transparent;
+}
+
+.source-card.featured {
+    border-color: #ffd700;
+    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.2);
+}
+
+.source-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Source badges */
+.source-badge {
+    position: absolute;
+    top: 0.75rem;
+    z-index: 3;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.featured-badge {
+    background: linear-gradient(45deg, #ff6b35, #ff4757);
+    left: 0.75rem;
+}
+
+.free-badge {
+    background: linear-gradient(45deg, #10b981, #059669);
+    right: 0.75rem;
+}
+
+.sale-badge {
+    background: linear-gradient(45deg, #f59e0b, #d97706);
+    right: 0.75rem;
+}
+
+/* Source image */
+.source-image {
+    position: relative;
+    height: 160px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+@media (min-width: 769px) {
+    .source-image {
+        height: 180px;
+    }
+}
+
+.source-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.source-card:hover .source-image img {
+    transform: scale(1.05);
+}
+
+.source-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.6) 100%);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.source-card:hover .source-overlay {
+    opacity: 1;
+}
+
+.source-engine-badge {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.source-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #ffd700;
+    font-size: 0.8rem;
+}
+
+.rating-number {
+    color: white;
+    font-weight: 600;
+    font-size: 0.75rem;
+    margin-left: 0.25rem;
+}
+
+/* Source content */
+.source-content {
+    padding: 1.25rem;
+}
+
+.source-category {
+    color: #667eea;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.source-title {
+    margin: 0 0 0.75rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+@media (min-width: 769px) {
+    .source-title {
+        font-size: 1.1rem;
+    }
+}
+
+.source-title a {
+    color: #2c3e50;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.source-title a:hover {
+    color: #667eea;
+}
+
+.source-description {
+    color: #666;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Source meta information */
+.source-meta {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.75rem;
+    color: #666;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.meta-item i {
+    width: 12px;
+    text-align: center;
+    color: #667eea;
+}
+
+/* Source tags */
+.source-tags {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.tag {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    border: 1px solid #e2e8f0;
+}
+
+/* Price and action area */
+.source-price-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+@media (max-width: 480px) {
+    .source-price-action {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: stretch;
+    }
+}
+
+.source-pricing {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.price-current {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.price-current.free-price {
+    color: #10b981;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.price-original {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    text-decoration: line-through;
+}
+
+/* Source button - mobile-first sizing */
+.source-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    text-decoration: none;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+    white-space: nowrap;
+    min-height: 44px; /* Touch-friendly on mobile */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+}
+
+.source-btn:hover {
+    background: linear-gradient(45deg, #5a67d8, #6b46c1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+@media (max-width: 480px) {
+    .source-btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+    }
+}
+
+/* Marketplace CTA section */
+.marketplace-cta {
+    margin-top: 3rem;
+    text-align: center;
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 769px) {
+    .marketplace-cta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+        padding: 2.5rem;
+    }
+}
+
+.marketplace-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 480px) {
+    .marketplace-stats {
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+}
+
+@media (min-width: 769px) {
+    .marketplace-stats {
+        margin-bottom: 0;
+    }
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1;
+}
+
+@media (max-width: 480px) {
+    .stat-number {
+        font-size: 1.2rem;
+    }
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.25rem;
+}
+
+.marketplace-action p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+    .marketplace-action p {
+        font-size: 0.9rem;
+    }
+}
+
+.marketplace-action .btn-outline {
+    background: transparent;
+    color: #667eea;
+    border: 2px solid #667eea;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    display: inline-block;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.marketplace-action .btn-outline:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+@media (max-width: 480px) {
+    .marketplace-action .btn-outline {
+        width: 100%;
+        padding: 0.75rem 1rem;
+    }
+}
+
+/* Enhanced Jobs Section - Mobile First */
+.enhanced-jobs-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+@media (min-width: 481px) {
+    .enhanced-jobs-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+}
+
+@media (min-width: 769px) {
+    .enhanced-jobs-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .enhanced-jobs-grid {
+        grid-template-columns: repeat(4, 1fr); /* 4 columns for wider screens */
+        gap: 2rem;
+    }
+}
+
+/* Job card specific styling */
+.job-card {
+    position: relative;
+}
+
+.job-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 3;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: linear-gradient(45deg, #ff6b35, #ff4757);
+    color: white;
+}
+
+.job-title a {
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.job-title a:hover {
+    color: #667eea;
+}
+
+.job-description {
+    color: #666;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.job-features {
+    margin: 1rem 0;
+}
+
+.job-features .feature {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.job-features .feature i {
+    color: #667eea;
+    width: 14px;
+    text-align: center;
+}
+
+.job-salary {
+    margin: 1rem 0;
+}
+
+.salary-range {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #10b981;
+}
+
+/* Job apply button - mobile-first */
+.job-apply-btn {
+    background: linear-gradient(45deg, #10b981, #059669);
+    color: white;
+    text-decoration: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 120px;
+    text-align: center;
+}
+
+.job-apply-btn:hover {
+    background: linear-gradient(45deg, #059669, #047857);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+@media (max-width: 480px) {
+    .job-apply-btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+    }
+}
+
+/* Jobs CTA section */
+.jobs-cta {
+    margin-top: 3rem;
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+.jobs-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.jobs-cta > * {
+    position: relative;
+    z-index: 2;
+}
+
+@media (min-width: 769px) {
+    .jobs-cta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+        padding: 2.5rem;
+    }
+}
+
+.jobs-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 480px) {
+    .jobs-stats {
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+}
+
+@media (min-width: 769px) {
+    .jobs-stats {
+        margin-bottom: 0;
+    }
+}
+
+.jobs-stats .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.jobs-stats .stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+}
+
+@media (max-width: 480px) {
+    .jobs-stats .stat-number {
+        font-size: 1.2rem;
+    }
+}
+
+.jobs-stats .stat-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 0.25rem;
+}
+
+.jobs-action p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+    .jobs-action p {
+        font-size: 0.9rem;
+    }
+}
+
+.jobs-action .btn-outline {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    cursor: pointer;
+}
+
+.jobs-action .btn-outline:hover {
+    background: white;
+    color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 480px) {
+    .jobs-action .btn-outline {
+        width: 100%;
+        padding: 0.75rem 1rem;
+    }
+}
+
+/* Mobile Performance & Touch Optimizations */
+@media (max-width: 768px) {
+    /* Improve section spacing on mobile */
+    section {
+        padding: 3rem 0;
+    }
+    
+    /* Enhanced touch targets */
+    .btn, .source-btn, .job-apply-btn, .course-btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.75rem 1rem;
+    }
+    
+    /* Optimize text readability on mobile */
+    .section-title {
+        font-size: 1.8rem;
+        line-height: 1.2;
+        margin-bottom: 0.75rem;
+    }
+    
+    .section-subtitle {
+        font-size: 1rem;
+        line-height: 1.4;
+        margin-bottom: 2rem;
+    }
+    
+    /* Improve card readability on mobile */
+    .source-card, .topic-card, .blog-card, .course-card {
+        padding: 1rem;
+    }
+    
+    .source-content, .topic-content, .blog-content, .course-content {
+        padding: 1rem;
+    }
+    
+    /* Optimize font sizes for mobile screens */
+    .source-title, .topic-title, .blog-title, .course-title {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+    
+    .source-description, .topic-excerpt, .blog-excerpt, .course-description {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    /* Reduce motion for better mobile performance */
+    * {
+        transition-duration: 0.2s !important;
+    }
+    
+    /* Optimize grid gaps on mobile */
+    .marketplace-grid, .topics-grid, .blog-grid, .courses-grid {
+        gap: 1.25rem;
+    }
+}
+
+/* Reduce motion for users with motion sensitivity */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .source-card:hover, .topic-card:hover, .blog-card:hover, .course-card:hover {
+        transform: none !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .source-card, .topic-card, .blog-card, .course-card {
+        border: 2px solid currentColor;
+    }
+    
+    .source-overlay, .topic-overlay, .blog-overlay, .course-overlay {
+        background: rgba(0, 0, 0, 0.8);
+    }
+}
+
 /* Blog & News Section Styles */
 .blog-news-section {
     background: #f8fafc;
