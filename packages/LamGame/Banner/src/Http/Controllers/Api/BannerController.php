@@ -199,6 +199,43 @@ class BannerController extends Controller
             return $this->errorResponse('Failed to track click', $e->getMessage());
         }
     }
+    
+    /**
+     * Track banner impression.
+     * 
+     * @group Banner API
+     * @urlParam id integer required Banner ID. Example: 1
+     * @bodyParam user_agent string User agent string.
+     * @bodyParam referrer string Referrer URL.
+     * 
+     * @response {
+     *   "success": true,
+     *   "message": "Impression tracked successfully"
+     * }
+     */
+    public function trackImpression(Request $request, int $id): JsonResponse
+    {
+        try {
+            $this->bannerRepository->incrementImpressions($id);
+
+            // Log impression for analytics
+            \Log::info('Banner impression tracked', [
+                'banner_id' => $id,
+                'user_agent' => $request->header('User-Agent'),
+                'ip' => $request->ip(),
+                'referrer' => $request->header('Referer'),
+                'timestamp' => now()->toISOString(),
+            ]);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Impression tracked successfully',
+            ]);
+
+        } catch (\Exception $e) {
+            return $this->errorResponse('Failed to track impression', $e->getMessage());
+        }
+    }
 
     /**
      * Get banner positions.

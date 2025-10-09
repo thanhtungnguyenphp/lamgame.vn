@@ -24,9 +24,14 @@ Route::middleware(['api', 'throttle:60,1'])->prefix('api/banners')->group(functi
         ->name('api.banners.position')
         ->where('position', '[a-zA-Z0-9_-]+');
     
-    // Track banner click
-    Route::post('/{id}/click', [BannerController::class, 'trackClick'])
+    // Track click
+    Route::post('/{id}/track-click', [BannerController::class, 'trackClick'])
         ->name('api.banners.click')
+        ->where('id', '[0-9]+');
+    
+    // Track impression
+    Route::post('/{id}/track-impression', [BannerController::class, 'trackImpression'])
+        ->name('api.banners.impression')
         ->where('id', '[0-9]+');
     
     // Get available positions
