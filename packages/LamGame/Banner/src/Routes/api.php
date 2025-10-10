@@ -41,4 +41,9 @@ Route::middleware(['api', 'throttle:60,1'])->prefix('api/banners')->group(functi
     // Get available device types
     Route::get('/device-types', [BannerController::class, 'deviceTypes'])
         ->name('api.banners.device-types');
+        
+    // Delete banner
+    Route::delete('/{id}', [BannerController::class, 'destroy'])
+        ->name('api.banners.destroy')
+        ->where('id', '[0-9]+');
 });

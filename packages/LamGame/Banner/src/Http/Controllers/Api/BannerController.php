@@ -5,6 +5,7 @@ namespace LamGame\Banner\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use LamGame\Banner\Http\Requests\DeleteBannerRequest;
 use LamGame\Banner\Repositories\BannerRepository;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -282,6 +283,72 @@ class BannerController extends Controller
 
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to fetch device types', $e->getMessage());
+        }
+    }
+
+    /**
+     * Delete a banner.
+     * 
+     * @group Banner API
+     * @urlParam id integer required Banner ID to delete. Example: 1
+     * 
+     * @response 200 {
+     *   "success": true,
+     *   "message": "Banner deleted successfully",
+     *   "data": {
+     *     "id": 1,
+     *     "name": "Homepage Hero Banner"
+     *   }
+     * }
+     * 
+     * @response 404 {
+     *   "success": false,
+     *   "message": "Banner not found"
+     * }
+     * 
+     * @response 500 {
+     *   "success": false,
+     *   "message": "Failed to delete banner"
+     * }
+     */
+    public function destroy(DeleteBannerRequest $request, int $id): JsonResponse
+    {
+        try {
+            // Validate banner ID
+            if ($id <= 0) {
+                return $this->errorResponse('Invalid banner ID', null, Response::HTTP_BAD_REQUEST);
+            }
+
+            // Find and delete the banner
+            $bannerData = $this->bannerRepository->delete($id);
+
+            // Log the deletion
+            \Log::info('Banner deleted successfully', [
+                'banner_id' => $id,
+                'banner_name' => $bannerData['name'] ?? 'Unknown',
+                'deleted_at' => now()->toISOString(),
+                'user_agent' => request()->header('User-Agent'),
+                'ip' => request()->ip(),
+            ]);
+
+            return $this->jsonResponse([
+                'success' => true,
+                'message' => 'Banner deleted successfully',
+                'data' => array_merge($bannerData, [
+                    'deleted_at' => now()->toISOString(),
+                ]),
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->errorResponse('Banner not found', $e->getMessage(), Response::HTTP_NOT_FOUND);
+        } catch (\Exception $e) {
+            \Log::error('Failed to delete banner', [
+                'banner_id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            
+            return $this->errorResponse('Failed to delete banner', $e->getMessage());
         }
     }
 
