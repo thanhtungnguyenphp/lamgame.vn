@@ -98,7 +98,8 @@
             "Webkul\\Tax\\": "packages/Webkul/Tax/src",
             "Webkul\\Theme\\": "packages/Webkul/Theme/src",
             "Webkul\\User\\": "packages/Webkul/User/src",
-            "Webkul\\Menu\\": "packages/Webkul/Menu/src"
+            "Webkul\\Menu\\": "packages/Webkul/Menu/src",
+            "LamGame\\Banner\\": "packages/LamGame/Banner/src"
         }
     },
     "autoload-dev": {

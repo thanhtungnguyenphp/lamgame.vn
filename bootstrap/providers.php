@@ -44,5 +44,6 @@ return [
     Webkul\Tax\Providers\TaxServiceProvider::class,
     Webkul\Theme\Providers\ThemeServiceProvider::class,
     Webkul\User\Providers\UserServiceProvider::class,
-    Webkul\Menu\Providers\MenuServiceProvider::class
+    Webkul\Menu\Providers\MenuServiceProvider::class,
+    LamGame\Banner\Providers\BannerServiceProvider::class,
 ];
