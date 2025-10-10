@@ -279,6 +279,108 @@ class BannerRepository extends Repository
     }
 
     /**
+     * Delete a banner by ID.
+     */
+    public function deleteBanner(int $id): array
+    {
+        try {
+            $banner = $this->find($id);
+            
+            if (!$banner) {
+                throw new \Illuminate\Database\Eloquent\ModelNotFoundException('Banner not found');
+            }
+
+            // Store banner data before deletion for response
+            $bannerData = [
+                'id' => $banner->id,
+                'name' => $banner->name,
+                'position' => $banner->position,
+                'type' => $banner->type,
+            ];
+
+            // Clear cache before deletion
+            $this->clearBannerCache($banner);
+            
+            // Delete the banner
+            $deleted = $banner->delete();
+            
+            if ($deleted) {
+                // Clear all banner caches to ensure consistency
+                $this->clearAllCache();
+                
+                Log::info('Banner deleted from repository', [
+                    'banner_id' => $id,
+                    'banner_name' => $bannerData['name'],
+                    'deleted_at' => now()->toISOString(),
+                ]);
+            }
+            
+            return $bannerData;
+            
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::warning('Attempted to delete non-existent banner', ['banner_id' => $id]);
+            throw $e;
+        } catch (\Exception $e) {
+            Log::error('Failed to delete banner in repository', [
+                'banner_id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Soft delete a banner (if using soft deletes).
+     */
+    public function softDelete(int $id): array
+    {
+        try {
+            $banner = $this->find($id);
+            
+            if (!$banner) {
+                throw new \Illuminate\Database\Eloquent\ModelNotFoundException('Banner not found');
+            }
+
+            // Store banner data before soft deletion
+            $bannerData = [
+                'id' => $banner->id,
+                'name' => $banner->name,
+                'position' => $banner->position,
+                'type' => $banner->type,
+                'status' => 'soft_deleted',
+            ];
+
+            // Update status instead of deleting
+            $banner->update([
+                'status' => false,
+                'deleted_at' => now(),
+            ]);
+            
+            // Clear cache
+            $this->clearBannerCache($banner);
+            $this->clearAllCache();
+            
+            Log::info('Banner soft deleted from repository', [
+                'banner_id' => $id,
+                'banner_name' => $bannerData['name'],
+                'soft_deleted_at' => now()->toISOString(),
+            ]);
+            
+            return $bannerData;
+            
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Log::warning('Attempted to soft delete non-existent banner', ['banner_id' => $id]);
+            throw $e;
+        } catch (\Exception $e) {
+            Log::error('Failed to soft delete banner in repository', [
+                'banner_id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
      * Get HTML attributes as string.
      */
     private function getHtmlAttributesString(Banner $banner): string
