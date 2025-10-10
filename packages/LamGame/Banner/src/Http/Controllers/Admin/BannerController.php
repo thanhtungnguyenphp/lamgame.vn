@@ -78,11 +78,16 @@ class BannerController extends Controller
     public function create(): View
     {
         $channels = Channel::all();
-        $positions = Banner::getPositionOptions();
-        $deviceTypes = Banner::getDeviceTypeOptions();
-        $bannerTypes = Banner::getBannerTypeOptions();
+        $positions = Banner::POSITIONS;
+        $deviceTypes = Banner::DEVICE_TYPES;
+        $bannerTypes = Banner::BANNER_TYPES;
 
-        return view('banner::admin.banners.create');
+        return view('banner::admin.banners.create', compact(
+            'channels', 
+            'positions', 
+            'deviceTypes', 
+            'bannerTypes'
+        ));
     }
 
     /**
@@ -127,9 +132,9 @@ class BannerController extends Controller
     {
         $banner = $this->bannerRepository->findOrFail($id);
         $channels = Channel::all();
-        $positions = Banner::getPositionOptions();
-        $deviceTypes = Banner::getDeviceTypeOptions();
-        $bannerTypes = Banner::getBannerTypeOptions();
+        $positions = Banner::POSITIONS;
+        $deviceTypes = Banner::DEVICE_TYPES;
+        $bannerTypes = Banner::BANNER_TYPES;
 
         return view('banner::admin.banners.edit', compact(
             'banner',
