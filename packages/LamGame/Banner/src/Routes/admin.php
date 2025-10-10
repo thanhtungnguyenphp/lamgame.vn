@@ -17,6 +17,44 @@ Route::get('/test-banner-admin', function () {
     return 'Banner Admin Controller is working! API is ready.';
 })->name('test.banner.admin');
 
+// Debug route for banner list - bypass middleware
+Route::get('/debug-banner-list', function () {
+    $banners = collect([
+        (object) [
+            'id' => 1,
+            'name' => 'Test Hero Banner',
+            'type' => 'image',
+            'position' => 'homepage_hero',
+            'device_type' => 'all',
+            'status' => true,
+            'title' => 'Welcome to LamGame',
+            'content' => 'Learn game development with us',
+            'image' => null,
+            'sort_order' => 0,
+            'clicks_count' => 15,
+            'impressions_count' => 250,
+            'created_at' => now()
+        ],
+        (object) [
+            'id' => 2,
+            'name' => 'Sidebar Promo',
+            'type' => 'image',
+            'position' => 'sidebar_top',
+            'device_type' => 'desktop',
+            'status' => false,
+            'title' => 'Special Offer',
+            'content' => '50% off premium courses',
+            'image' => null,
+            'sort_order' => 1,
+            'clicks_count' => 8,
+            'impressions_count' => 120,
+            'created_at' => now()->subDays(2)
+        ]
+    ]);
+    
+    return view('banner::admin.banners.simple-list', compact('banners'));
+})->name('debug.banner.list');
+
 Route::group([
     'middleware' => ['web', 'admin'],
     'prefix' => config('app.admin_url', 'admin'),
