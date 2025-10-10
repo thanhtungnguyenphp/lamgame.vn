@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use App\Models\Blog;
 use App\Models\BlogCategory;
 use App\Models\ForumPost;
 use App\Models\ForumCategory;
+use LamGame\Banner\Repositories\BannerRepository;
 
 class HomeController extends Controller
 {
@@ -35,6 +37,9 @@ class HomeController extends Controller
     private function getHomepageData()
     {
         return [
+            // Dynamic banners from Banner API
+            'homepageBanners' => $this->getBannersForHomepage(),
+            
             // Jobs section - from product database
             'jobs' => $this->getJobsData(),
             
@@ -803,6 +808,121 @@ class HomeController extends Controller
                 'banner_url' => null, // Will be dynamically loaded via JavaScript
                 'avatar_url' => 'https://yt3.googleusercontent.com/ytc/AIdro_lCL4LgHPQJU8-FMRZNjLgtIoJKwk7zJZ4xJQrYB4d3iw=s240-c-k-c0x00ffffff-no-rj'
             ]
+        ];
+    }
+    
+    /**
+     * Get banners for homepage hero section from Banner API
+     */
+    private function getBannersForHomepage()
+    {
+        try {
+            // Use Banner Repository directly instead of HTTP call
+            $bannerRepository = app(BannerRepository::class);
+            
+            // Get banners for homepage_hero position
+            $banners = $bannerRepository->getByPosition(
+                'homepage_hero',
+                'all', // device_type
+                null,  // channel_id
+                null,  // locale
+                4      // limit
+            );
+            
+            if ($banners->isNotEmpty()) {
+                // Transform repository data for homepage usage
+                $bannerData = [];
+                foreach ($banners as $banner) {
+                    $bannerData[] = [
+                        'id' => $banner['id'],
+                        'title' => $banner['title'] ?? 'LamGame.vn',
+                        'content' => $banner['content'] ?? 'Cộng đồng Game Developer Việt Nam',
+                        'image' => $banner['image'],
+                        'image_alt' => $banner['image_alt'] ?? $banner['title'],
+                        'link' => $banner['link'] ?? '#',
+                        'target' => $banner['target'] ?? '_self',
+                        'css_classes' => $banner['css_classes'],
+                        'is_active' => $banner['is_active'],
+                        'sort_order' => $banner['sort_order'] ?? 0,
+                    ];
+                }
+                
+                return [
+                    'banners' => $bannerData,
+                    'has_banners' => true,
+                    'total_count' => count($bannerData)
+                ];
+            }
+        } catch (\Exception $e) {
+            // Log error for debugging
+            \Log::warning('Failed to fetch banners for homepage', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+        
+        // Return fallback data if API fails
+        return [
+            'banners' => $this->getFallbackBanners(),
+            'has_banners' => false,
+            'total_count' => 4
+        ];
+    }
+    
+    /**
+     * Fallback banners if API is not available
+     */
+    private function getFallbackBanners()
+    {
+        return [
+            [
+                'id' => 'fallback-1',
+                'title' => 'Khám Phá Việc Làm Game Dev Hot Nhất!',
+                'content' => 'Hàng trăm vị trí từ VNG, Gameloft: Unity Developer lương 20-40tr VNĐ. 50+ jobs tuần này, apply ngay để kết nối với công ty hàng đầu!',
+                'image' => null,
+                'image_alt' => 'Việc làm game developer',
+                'link' => route('lamgame.viec-lam-game'),
+                'target' => '_self',
+                'css_classes' => 'jobs',
+                'is_active' => true,
+                'sort_order' => 1,
+            ],
+            [
+                'id' => 'fallback-2',
+                'title' => 'Thảo Luận Sôi Động: Topic Forum Nóng Hổi!',
+                'content' => 'Topic hot: "Unity vs Unreal cho game mobile?" – 150 comments, 500 views, 80 likes trong 24h. Tham gia ngay để chia sẻ kinh nghiệm với cộng đồng dev!',
+                'image' => null,
+                'image_alt' => 'Forum thảo luận',
+                'link' => route('forum.index'),
+                'target' => '_self',
+                'css_classes' => 'forum',
+                'is_active' => true,
+                'sort_order' => 2,
+            ],
+            [
+                'id' => 'fallback-3',
+                'title' => 'Bài Viết Mới Nhất Từ Developer!',
+                'content' => 'Bài mới: "Tối ưu hóa performance Unity cho game 3D" – Đăng bởi dev @UserX, 200 views, 50 shares. Đọc để cập nhật kiến thức hot nhất!',
+                'image' => null,
+                'image_alt' => 'Blog developer',
+                'link' => route('lamgame.blog'),
+                'target' => '_self',
+                'css_classes' => 'blog',
+                'is_active' => true,
+                'sort_order' => 3,
+            ],
+            [
+                'id' => 'fallback-4',
+                'title' => 'Khám Phá Game Mới & Ý Tưởng Sáng Tạo!',
+                'content' => 'Source mới: "Roguelike Unity kit" trên GitHub. Ý tưởng: "VR adventure Việt Nam folklore". Game demo từ dev cộng đồng – Download & phát triển ngay!',
+                'image' => null,
+                'image_alt' => 'Source code và ý tưởng game',
+                'link' => route('lamgame.source-game'),
+                'target' => '_self',
+                'css_classes' => 'creative',
+                'is_active' => true,
+                'sort_order' => 4,
+            ],
         ];
     }
 }
