@@ -19,6 +19,10 @@ return [
             'update-error' => 'Lỗi khi cập nhật banner. Vui lòng thử lại.',
             'delete-success' => 'Xóa banner thành công!',
             'delete-error' => 'Lỗi khi xóa banner. Vui lòng thử lại.',
+            'mass-delete-success' => 'Xóa nhiều banner thành công!',
+            'mass-delete-error' => 'Lỗi khi xóa banner. Vui lòng thử lại.',
+            'mass-update-success' => 'Cập nhật banner thành công!',
+            'mass-update-error' => 'Lỗi khi cập nhật banner. Vui lòng thử lại.',
         ],
         'analytics' => [
             'title' => 'Thống kê Banner',

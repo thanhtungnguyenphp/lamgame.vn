@@ -31,7 +31,7 @@ class BannerController extends Controller
                         ->orderBy('created_at', 'desc')
                         ->get();
                         
-        return view('banner::admin.banners.simple', compact('banners'));
+        return view('banner::admin.banners.list', compact('banners'));
     }
 
     /**
@@ -138,7 +138,7 @@ class BannerController extends Controller
             // Clear banner cache before deletion
             $this->bannerRepository->clearBannerCache($banner);
             
-            $this->bannerRepository->delete($id);
+            $this->bannerRepository->deleteBanner($id);
 
             session()->flash('success', trans('banner::app.admin.banners.delete-success'));
 
@@ -166,7 +166,7 @@ class BannerController extends Controller
                 $banner = $this->bannerRepository->find($id);
                 if ($banner) {
                     $this->bannerRepository->clearBannerCache($banner);
-                    $this->bannerRepository->delete($id);
+                    $this->bannerRepository->deleteBanner($id);
                 }
             }
 
