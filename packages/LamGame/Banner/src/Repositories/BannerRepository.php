@@ -281,7 +281,7 @@ class BannerRepository extends Repository
     /**
      * Delete a banner by ID.
      */
-    public function delete(int $id): array
+    public function deleteBanner(int $id): array
     {
         try {
             $banner = $this->find($id);

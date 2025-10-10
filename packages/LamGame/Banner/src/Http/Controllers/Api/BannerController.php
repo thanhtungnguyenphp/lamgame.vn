@@ -320,7 +320,7 @@ class BannerController extends Controller
             }
 
             // Find and delete the banner
-            $bannerData = $this->bannerRepository->delete($id);
+            $bannerData = $this->bannerRepository->deleteBanner($id);
 
             // Log the deletion
             \Log::info('Banner deleted successfully', [
