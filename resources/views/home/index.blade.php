@@ -11,24 +11,24 @@
     <meta name="author" content="LamGame.vn Team">
     <meta name="robots" content="index,follow">
     <link rel="canonical" href="{{ url()->current() }}">
-    
+
     {{-- Language and Locale --}}
     <meta name="language" content="Vietnamese">
     <meta property="og:locale" content="vi_VN">
     <meta property="og:site_name" content="LamGame.vn">
-    
+
     {{-- Twitter Cards --}}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('page_title')">
     <meta name="twitter:description" content="@yield('page_description')">
     <meta name="twitter:image" content="{{ asset('assets/logos/png/logo-square-512.png') }}">
-    
+
     {{-- Mobile App Meta --}}
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="LamGame">
-    
+
     {{-- Structured Data for Organization --}}
     <script type="application/ld+json">
     {
@@ -55,7 +55,7 @@
         ]
     }
     </script>
-    
+
     {{-- Structured Data for Website --}}
     <script type="application/ld+json">
     {
@@ -85,7 +85,7 @@
         background-position: center;
         background-repeat: no-repeat;
     }
-    
+
     /* Fallback banner styles */
     .banner-fallback {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -98,7 +98,7 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     .banner-fallback::before {
         content: '';
         position: absolute;
@@ -109,33 +109,33 @@
         background: rgba(0, 0, 0, 0.3);
         z-index: 1;
     }
-    
+
     .banner-fallback .content {
         position: relative;
         z-index: 2;
         max-width: 800px;
         padding: 2rem;
     }
-    
+
     .banner-fallback h1 {
         font-size: 2.5rem;
         margin-bottom: 1rem;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     }
-    
+
     .banner-fallback p {
         font-size: 1.2rem;
         margin-bottom: 2rem;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
     }
-    
+
     .banner-fallback .btns {
         display: flex;
         gap: 1rem;
         justify-content: center;
         flex-wrap: wrap;
     }
-    
+
     .banner-fallback .btn {
         padding: 1rem 2rem;
         text-decoration: none;
@@ -144,53 +144,53 @@
         transition: all 0.3s ease;
         display: inline-block;
     }
-    
+
     .banner-fallback .btn.primary {
         background: #ff6b35;
         color: white;
     }
-    
+
     .banner-fallback .btn.primary:hover {
         background: #e55a2e;
         transform: translateY(-2px);
     }
-    
+
     .banner-fallback .btn.secondary {
         background: transparent;
         color: white;
         border: 2px solid white;
     }
-    
+
     .banner-fallback .btn.secondary:hover {
         background: white;
         color: #667eea;
     }
-    
+
     /* Mobile responsive fallback */
     @media (max-width: 768px) {
         .banner-fallback {
             min-height: 300px;
         }
-        
+
         .banner-fallback h1 {
             font-size: 2rem;
         }
-        
+
         .banner-fallback p {
             font-size: 1rem;
         }
-        
+
         .banner-fallback .btns {
             flex-direction: column;
             align-items: center;
         }
-        
+
         .banner-fallback .btn {
             width: 100%;
             max-width: 300px;
         }
     }
-    
+
     /* Banner tracking debug info (only in development) */
     @if(config('app.debug'))
     .banner-debug {
@@ -215,7 +215,7 @@
         @if(!empty($homepageBanners['banners']))
             <button class="arrow banner-arrow prev" aria-label="Slide trước" tabindex="0">◄</button>
             <button class="arrow banner-arrow next" aria-label="Slide sau" tabindex="0">►</button>
-            
+
             <div class="track" id="banner-track">
                 @foreach($homepageBanners['banners'] as $index => $banner)
                     @if($banner['is_active'])
@@ -242,7 +242,7 @@
                     @endif
                 @endforeach
             </div>
-            
+
             <div class="dots" aria-hidden="true">
                 @foreach($homepageBanners['banners'] as $index => $banner)
                     @if($banner['is_active'])
@@ -250,7 +250,7 @@
                     @endif
                 @endforeach
             </div>
-            
+
             @if($homepageBanners['has_banners'])
                 <!-- Banner Analytics Tracking -->
                 <script>
@@ -269,7 +269,7 @@
                             }
                         });
                     });
-                    
+
                     // Track banner clicks
                     function trackBannerClick(bannerId) {
                         if (bannerId && !bannerId.toString().startsWith('fallback-')) {
@@ -288,7 +288,7 @@
                             });
                         }
                     }
-                    
+
                     // Track banner impressions
                     function trackBannerImpression(bannerId) {
                         fetch('/api/banners/' + bannerId + '/track-impression', {
@@ -305,12 +305,12 @@
                             console.log('Banner impression tracking failed:', error);
                         });
                     }
-                    
+
                     // Helper function to check if element is visible
                     function isElementVisible(element) {
                         const rect = element.getBoundingClientRect();
-                        return rect.top >= 0 && rect.left >= 0 && 
-                               rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && 
+                        return rect.top >= 0 && rect.left >= 0 &&
+                               rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
                                rect.right <= (window.innerWidth || document.documentElement.clientWidth);
                     }
                 </script>
@@ -339,7 +339,7 @@
                     Top 4 topic mới/comment nhiều từ cộng đồng game developer Việt Nam
                 </p>
             </div>
-            
+
             <div class="topics-grid">
                 @if(isset($hotForumTopics['featured']) && count($hotForumTopics['featured']) > 0)
                     @foreach($hotForumTopics['featured'] as $index => $topic)
@@ -355,13 +355,13 @@
                                     @endif
                                 </div>
                             </div>
-                            
+
                             <div class="topic-content">
                                 <h4 class="topic-title">
                                     <a href="{{ $topic['url'] }}" target="_blank">{{ $topic['title'] }}</a>
                                 </h4>
                                 <p class="topic-excerpt">{{ $topic['excerpt'] }}</p>
-                                
+
                                 @if($topic['comment_snippet'])
                                     <div class="topic-comment-teaser">
                                         <div class="comment-icon">💬</div>
@@ -372,7 +372,7 @@
                                     </div>
                                 @endif
                             </div>
-                            
+
                             <div class="topic-stats">
                                 <div class="stat-item">
                                     <i class="fa fa-comments"></i>
@@ -387,7 +387,7 @@
                                     <span>{{ number_format($topic['views']) }} views</span>
                                 </div>
                             </div>
-                            
+
                             <div class="topic-cta">
                                 <a href="{{ $topic['url'] }}" class="btn btn-outline btn-sm" target="_blank">
                                     Tham gia thảo luận
@@ -407,13 +407,13 @@
                                 <span class="topic-hot">🔥 Hot</span>
                             </div>
                         </div>
-                        
+
                         <div class="topic-content">
                             <h4 class="topic-title">
                                 <a href="{{ route('forum.index') }}" target="_blank">Share source code AR game</a>
                             </h4>
                             <p class="topic-excerpt">Mình đang phát triển AR game với Unity, muốn chia sẻ source code để cộng đồng cùng học hỏi.</p>
-                            
+
                             <div class="topic-comment-teaser">
                                 <div class="comment-icon">💬</div>
                                 <div class="comment-content">
@@ -422,7 +422,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="topic-stats">
                             <div class="stat-item">
                                 <i class="fa fa-comments"></i>
@@ -437,14 +437,14 @@
                                 <span>1,250 views</span>
                             </div>
                         </div>
-                        
+
                         <div class="topic-cta">
                             <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
                                 Tham gia thảo luận
                             </a>
                         </div>
                     </div>
-                    
+
                     <div class="topic-card featured">
                         <div class="topic-header">
                             <div class="topic-category" style="background: #667eea20; color: #667eea">
@@ -454,13 +454,13 @@
                                 <span class="topic-time">5 giờ trước</span>
                             </div>
                         </div>
-                        
+
                         <div class="topic-content">
                             <h4 class="topic-title">
                                 <a href="{{ route('forum.index') }}" target="_blank">Ý tưởng game dựa trên lịch sử VN</a>
                             </h4>
                             <p class="topic-excerpt">Làm game RPG lấy bối cảnh lịch sử Việt Nam, từ thời Hùng Vương đến các triều đại phong kiến.</p>
-                            
+
                             <div class="topic-comment-teaser">
                                 <div class="comment-icon">💬</div>
                                 <div class="comment-content">
@@ -469,7 +469,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="topic-stats">
                             <div class="stat-item">
                                 <i class="fa fa-comments"></i>
@@ -484,14 +484,14 @@
                                 <span>800 views</span>
                             </div>
                         </div>
-                        
+
                         <div class="topic-cta">
                             <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
                                 Tham gia thảo luận
                             </a>
                         </div>
                     </div>
-                    
+
                     <div class="topic-card">
                         <div class="topic-header">
                             <div class="topic-category" style="background: #8b5cf620; color: #8b5cf6">
@@ -501,13 +501,13 @@
                                 <span class="topic-time">1 ngày trước</span>
                             </div>
                         </div>
-                        
+
                         <div class="topic-content">
                             <h4 class="topic-title">
                                 <a href="{{ route('forum.index') }}" target="_blank">Làm thế nào để tối ưu performance Unity?</a>
                             </h4>
                             <p class="topic-excerpt">Game mobile FPS giảm mạnh, đã thử object pooling nhưng vẫn chưa đủ.</p>
-                            
+
                             <div class="topic-comment-teaser">
                                 <div class="comment-icon">💬</div>
                                 <div class="comment-content">
@@ -516,7 +516,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="topic-stats">
                             <div class="stat-item">
                                 <i class="fa fa-comments"></i>
@@ -531,14 +531,14 @@
                                 <span>420 views</span>
                             </div>
                         </div>
-                        
+
                         <div class="topic-cta">
                             <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
                                 Tham gia thảo luận
                             </a>
                         </div>
                     </div>
-                    
+
                     <div class="topic-card">
                         <div class="topic-header">
                             <div class="topic-category" style="background: #ff6b3520; color: #ff6b35">
@@ -548,13 +548,13 @@
                                 <span class="topic-time">3 ngày trước</span>
                             </div>
                         </div>
-                        
+
                         <div class="topic-content">
                             <h4 class="topic-title">
                                 <a href="{{ route('forum.index') }}" target="_blank">Tìm Unity Developer cho game horror indie</a>
                             </h4>
                             <p class="topic-excerpt">Dự án "Midnight School" cần Unity dev với 2+ năm kinh nghiệm, rev-share model.</p>
-                            
+
                             <div class="topic-comment-teaser">
                                 <div class="comment-icon">💬</div>
                                 <div class="comment-content">
@@ -563,7 +563,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="topic-stats">
                             <div class="stat-item">
                                 <i class="fa fa-comments"></i>
@@ -578,18 +578,18 @@
                                 <span>180 views</span>
                             </div>
                         </div>
-                        
+
                         <div class="topic-cta">
                             <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
                                 Tham gia thảo luận
                             </a>
                         </div>
                     </div>
-                    
-                    
+
+
                 @endif
             </div>
-            
+
             <div class="topics-cta">
                 <p>Khám phá thêm {{ isset($hotForumTopics['total_posts']) ? $hotForumTopics['total_posts'] : '50+' }} chủ đề thú vị từ cộng đồng</p>
                 <a href="{{ route('forum.index') }}" class="btn btn-outline" target="_blank">
@@ -823,21 +823,21 @@
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
-    
+
     .topic-card.featured {
         transform: none;
     }
-    
+
     .topic-header {
         flex-direction: column;
         gap: 0.5rem;
         align-items: flex-start;
     }
-    
+
     .topic-meta {
         margin-top: 0.5rem;
     }
-    
+
     .topic-stats {
         flex-wrap: wrap;
         gap: 0.75rem;
@@ -926,7 +926,7 @@
                     <a href="{{ route('lamgame.blog') }}" class="subtitle-link" target="_blank">Xem tất cả blog</a>
                 </p>
             </div>
-            
+
             <div class="blog-grid">
                 @if(isset($latestBlogs['featured']) && count($latestBlogs['featured']) > 0)
                     @foreach($latestBlogs['featured'] as $index => $blog)
@@ -942,7 +942,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="blog-content">
                                 <div class="blog-meta">
                                     <span class="blog-author">
@@ -952,14 +952,14 @@
                                         <i class="fa fa-calendar"></i> {{ $blog['time_ago'] }}
                                     </span>
                                 </div>
-                                
+
                                 <h3 class="blog-title">
                                     <a href="{{ $blog['url'] }}" target="_blank">{{ $blog['title'] }}</a>
                                 </h3>
-                                
+
                                 <p class="blog-excerpt">{{ $blog['excerpt'] }}</p>
-                                
-                                
+
+
                                 <div class="blog-stats">
                                     <div class="stat-item">
                                         <i class="fa fa-eye"></i>
@@ -974,7 +974,7 @@
                                         <span>{{ rand(5, 50) }} comments</span>
                                     </div>
                                 </div>
-                                
+
                                 <div class="blog-cta">
                                     <a href="{{ $blog['url'] }}" class="btn btn-outline btn-sm" target="_blank">
                                         Đọc thêm
@@ -997,7 +997,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="blog-content">
                             <div class="blog-meta">
                                 <span class="blog-author">
@@ -1007,14 +1007,14 @@
                                     <i class="fa fa-calendar"></i> 2 giờ trước
                                 </span>
                             </div>
-                            
+
                             <h3 class="blog-title">
                                 <a href="{{ route('lamgame.blog') }}" target="_blank">Hướng dẫn Unity 2024 - Tính năng mới</a>
                             </h3>
-                            
+
                             <p class="blog-excerpt">Unity 2024 mang đến nhiều cải tiến quan trọng giúp game developer tăng hiệu suất và chất lượng game.</p>
-                            
-                            
+
+
                             <div class="blog-stats">
                                 <div class="stat-item">
                                     <i class="fa fa-eye"></i>
@@ -1029,7 +1029,7 @@
                                     <span>24 comments</span>
                                 </div>
                             </div>
-                            
+
                             <div class="blog-cta">
                                 <a href="{{ route('lamgame.blog') }}" class="btn btn-outline btn-sm" target="_blank">
                                     Đọc thêm
@@ -1037,7 +1037,7 @@
                             </div>
                         </div>
                     </article>
-                    
+
                     <article class="blog-card featured">
                         <div class="blog-image">
                             <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop" alt="C# Programming" loading="lazy">
@@ -1050,7 +1050,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="blog-content">
                             <div class="blog-meta">
                                 <span class="blog-author">
@@ -1060,14 +1060,14 @@
                                     <i class="fa fa-calendar"></i> 1 ngày trước
                                 </span>
                             </div>
-                            
+
                             <h3 class="blog-title">
                                 <a href="{{ route('lamgame.blog') }}" target="_blank">C# Cơ bản cho Game Developer</a>
                             </h3>
-                            
+
                             <p class="blog-excerpt">Hướng dẫn C# từ cơ bản đến nâng cao dành cho Unity game development.</p>
-                            
-                            
+
+
                             <div class="blog-stats">
                                 <div class="stat-item">
                                     <i class="fa fa-eye"></i>
@@ -1082,7 +1082,7 @@
                                     <span>18 comments</span>
                                 </div>
                             </div>
-                            
+
                             <div class="blog-cta">
                                 <a href="{{ route('lamgame.blog') }}" class="btn btn-outline btn-sm" target="_blank">
                                     Đọc thêm
@@ -1092,7 +1092,7 @@
                     </article>
                 @endif
             </div>
-            
+
         </div>
     </section>
 
@@ -1105,7 +1105,7 @@
                     Khám phá và tải về những source code game chất lượng cao từ cộng đồng developer
                 </p>
             </div>
-            
+
             <div class="marketplace-grid">
                 @if(isset($sourceGames['featured']) && count($sourceGames['featured']) > 0)
                     @foreach($sourceGames['featured'] as $index => $source)
@@ -1118,12 +1118,12 @@
                             @elseif($source['price'] ?? 0 < $source['original_price'] ?? 0)
                                 <div class="source-badge sale-badge">Sale</div>
                             @endif
-                            
+
                             <div class="source-image">
-                                <img src="{{ $source['thumbnail'] ?? '' }}" 
+                                <img src="{{ $source['thumbnail'] ?? '' }}"
                                      srcset="{{ $source['thumbnail'] ?? '' }}&w=320 320w, {{ $source['thumbnail'] ?? '' }}&w=640 640w, {{ $source['thumbnail'] ?? '' }}&w=800 800w"
                                      sizes="(max-width: 480px) 320px, (max-width: 768px) 640px, 800px"
-                                     alt="{{ $source['title'] ?? 'No title' }}" 
+                                     alt="{{ $source['title'] ?? 'No title' }}"
                                      loading="lazy" />
                                 <div class="source-overlay">
                                     <div class="source-engine-badge">{{ $source['engine'] ?? 'Unknown' }}</div>
@@ -1141,14 +1141,14 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="source-content">
                                 <div class="source-category">{{ $source['category'] ?? 'General' }}</div>
                                 <h3 class="source-title">
                                     <a href="{{ $source['url'] ?? '#' }}">{{ $source['title'] ?? 'No title' }}</a>
                                 </h3>
                                 <p class="source-description">{{ $source['short_description'] ?? 'No description available' }}</p>
-                                
+
                                 <div class="source-meta">
                                     <div class="meta-item">
                                         <i class="fa fa-download"></i>
@@ -1163,13 +1163,13 @@
                                         <span>{{ $source['updated_ago'] ?? 'Unknown' }}</span>
                                     </div>
                                 </div>
-                                
+
                                 <div class="source-tags">
                                     @foreach(array_slice($source['tags'] ?? [], 0, 3) as $tag)
                                         <span class="tag">{{ $tag }}</span>
                                     @endforeach
                                 </div>
-                                
+
                                 <div class="source-price-action">
                                     <div class="source-pricing">
                                         @if($source['is_free'] ?? false)
@@ -1226,7 +1226,7 @@
                     </div>
                 @endif
             </div>
-            
+
             <div class="marketplace-cta">
                 <div class="marketplace-stats">
                     <div class="stat">
@@ -1274,11 +1274,11 @@
                     <h2 class="section-title">💼 Bảng Tin Tuyển Dụng</h2>
                     <p>
                         Cơ hội việc làm hot nhất từ các studio game hàng đầu Việt Nam
-                        <a href="{{ route('lamgame.viec-lam-game') }}" class="subtitle-link" target="_blank">Xem tất cả việc làm</a>
                     </p>
+                    <p><a href="{{ route('lamgame.viec-lam-game') }}" class="btn btn-outline" target="_blank">Xem tất cả việc làm</a></p>
                 </div>
             </div>
-            
+
             <div class="courses-grid enhanced-jobs-grid">
                 @if(isset($jobs['featured']) && count($jobs['featured']) > 0)
                     @php
@@ -1293,7 +1293,7 @@
                         $jobLevels = ['Entry → Mid Level', 'Mid → Senior Level', 'Senior Level', 'Mid Level', 'All Levels'];
                         $badges = ['Hot 🔥', 'Urgent', 'High Salary', 'Remote OK', 'New'];
                     @endphp
-                    
+
                     @foreach($featuredJobs as $index => $job)
                         <div class="course-card job-card {{ $index === 0 ? 'featured' : '' }}">
                             @if($index < 2)
@@ -1370,7 +1370,7 @@
                             <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn job-apply-btn">Apply Ngay</a>
                         </div>
                     </div>
-                    
+
                     <div class="course-card job-card">
                         <div class="course-badge job-badge">Urgent</div>
                         <div class="course-image">
@@ -1406,7 +1406,7 @@
                             <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn job-apply-btn">Apply Ngay</a>
                         </div>
                     </div>
-                    
+
                     <div class="course-card job-card">
                         <div class="course-image">
                             <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop" alt="Game Backend Developer" loading="lazy" />
@@ -1441,7 +1441,7 @@
                             <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn job-apply-btn">Apply Ngay</a>
                         </div>
                     </div>
-                    
+
                     <div class="course-card job-card">
                         <div class="course-image">
                             <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop" alt="Mobile Game Developer" loading="lazy" />
@@ -1477,29 +1477,6 @@
                         </div>
                     </div>
                 @endif
-            </div>
-            
-            <div class="courses-cta jobs-cta">
-                <div class="jobs-stats">
-                    <div class="stat">
-                        <span class="stat-number">{{ isset($jobs['total_count']) ? $jobs['total_count'] : '50' }}+</span>
-                        <span class="stat-label">Việc làm</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">{{ isset($jobs['weekly_new']) ? $jobs['weekly_new'] : '12' }}</span>
-                        <span class="stat-label">Mới tuần này</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">VNG, Gameloft</span>
-                        <span class="stat-label">Công ty đối tác</span>
-                    </div>
-                </div>
-                <div class="jobs-action">
-                    <p>Khám phá thêm những cơ hội việc làm game development hấp dẫn</p>
-                    <button class="btn btn-outline" onclick="window.location.href='{{ route('lamgame.viec-lam-game') }}'">
-                        Xem Tất Cả Việc Làm
-                    </button>
-                </div>
             </div>
         </div>
     </section>
@@ -1552,7 +1529,7 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 2rem;
     }
-    
+
     .source-marketplace-section {
         padding: 4rem 0;
     }
@@ -2233,52 +2210,52 @@
     section {
         padding: 3rem 0;
     }
-    
+
     /* Enhanced touch targets */
     .btn, .source-btn, .job-apply-btn, .course-btn {
         min-height: 44px;
         min-width: 44px;
         padding: 0.75rem 1rem;
     }
-    
+
     /* Optimize text readability on mobile */
     .section-title {
         font-size: 1.8rem;
         line-height: 1.2;
         margin-bottom: 0.75rem;
     }
-    
+
     .section-subtitle {
         font-size: 1rem;
         line-height: 1.4;
         margin-bottom: 2rem;
     }
-    
+
     /* Improve card readability on mobile */
     .source-card, .topic-card, .blog-card, .course-card {
         padding: 1rem;
     }
-    
+
     .source-content, .topic-content, .blog-content, .course-content {
         padding: 1rem;
     }
-    
+
     /* Optimize font sizes for mobile screens */
     .source-title, .topic-title, .blog-title, .course-title {
         font-size: 1rem;
         line-height: 1.3;
     }
-    
+
     .source-description, .topic-excerpt, .blog-excerpt, .course-description {
         font-size: 0.9rem;
         line-height: 1.5;
     }
-    
+
     /* Reduce motion for better mobile performance */
     * {
         transition-duration: 0.2s !important;
     }
-    
+
     /* Optimize grid gaps on mobile */
     .marketplace-grid, .topics-grid, .blog-grid, .courses-grid {
         gap: 1.25rem;
@@ -2293,7 +2270,7 @@
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
-    
+
     .source-card:hover, .topic-card:hover, .blog-card:hover, .course-card:hover {
         transform: none !important;
     }
@@ -2304,7 +2281,7 @@
     .source-card, .topic-card, .blog-card, .course-card {
         border: 2px solid currentColor;
     }
-    
+
     .source-overlay, .topic-overlay, .blog-overlay, .course-overlay {
         background: rgba(0, 0, 0, 0.8);
     }
@@ -2484,22 +2461,22 @@
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
-    
+
     .blog-card.featured {
         transform: none;
     }
-    
+
     .blog-meta {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
     }
-    
+
     .blog-stats {
         flex-wrap: wrap;
         gap: 0.75rem;
     }
-    
+
 }
 
 /* YouTube Videos Section */
@@ -2905,7 +2882,7 @@
         min-height: calc(100vw / 4);
         max-height: 300px;
     }
-    
+
     .channel-stats-minimal {
         gap: 0.5rem;
         padding: 0.5rem 0.75rem;
@@ -2913,25 +2890,25 @@
         flex-wrap: wrap;
         justify-content: center;
     }
-    
+
     .stat-divider-minimal {
         display: none;
     }
-    
+
     .stat-number-minimal {
         font-size: 0.8rem;
     }
-    
+
     .stat-label-minimal {
         font-size: 0.7rem;
     }
-    
+
     .btn-youtube-minimal {
         font-size: 0.7rem;
         padding: 0.25rem 0.5rem;
         margin-top: 0.25rem;
     }
-    
+
     .btn-youtube-minimal i {
         font-size: 0.7rem;
     }
@@ -2942,17 +2919,17 @@
         min-height: calc(100vw / 5);
         max-height: 350px;
     }
-    
+
     .channel-stats-minimal {
         gap: 0.6rem;
         padding: 0.6rem 1rem;
         font-size: 0.85rem;
     }
-    
+
     .stat-number-minimal {
         font-size: 0.85rem;
     }
-    
+
     .btn-youtube-minimal {
         font-size: 0.75rem;
         padding: 0.3rem 0.6rem;
@@ -2964,7 +2941,7 @@
         min-height: calc(100vw / 6);
         max-height: 350px;
     }
-    
+
     .channel-stats-minimal {
         gap: 0.8rem;
         padding: 0.8rem 1.5rem;
@@ -2976,26 +2953,26 @@
         min-height: calc(100vw / 6);
         max-height: 400px;
     }
-    
+
     .channel-stats-minimal {
         gap: 1rem;
         padding: 1rem 2rem;
         font-size: 0.9rem;
     }
-    
+
     .stat-number-minimal {
         font-size: 1rem;
     }
-    
+
     .stat-label-minimal {
         font-size: 0.8rem;
     }
-    
+
     .btn-youtube-minimal {
         font-size: 0.8rem;
         padding: 0.4rem 0.8rem;
     }
-    
+
     .btn-youtube-minimal i {
         font-size: 0.85rem;
     }
@@ -3019,13 +2996,13 @@
                     Học game development từ các video tutorial chất lượng trên kênh YouTube Làm Game
                 </p>
             </div>
-            
+
             <div class="youtube-videos-grid">
                 @foreach($youtubeVideos['featured'] as $video)
                 <div class="youtube-video-card">
                     <div class="video-thumbnail">
                         <a href="{{ $video['url'] }}" target="_blank" class="thumbnail-link">
-                            <img src="{{ $video['thumbnail'] }}" alt="{{ $video['title'] }}" loading="lazy" 
+                            <img src="{{ $video['thumbnail'] }}" alt="{{ $video['title'] }}" loading="lazy"
                                  onerror="this.onerror=null; this.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.innerHTML='<i class=&quot;fa fa-play&quot; style=&quot;color:white;font-size:3rem;&quot;></i>'; this.removeAttribute('src');">
                             <div class="play-overlay">
                                 <div class="play-button">
@@ -3057,13 +3034,13 @@
                 </div>
                 @endforeach
             </div>
-            
+
             <div class="youtube-cta-section" id="youtube-channel-section" data-channel-id="{{ $youtubeVideos['channel_info']['channel_id'] }}">
                 <!-- Banner Background Container -->
                 <div class="channel-banner-background" id="channel-banner-bg">
                     <!-- Overlay for text readability -->
                     <div class="banner-overlay"></div>
-                    
+
                     <!-- Minimal Channel Stats at Bottom -->
                     <div class="channel-stats-minimal">
                         <div class="stat-item-minimal">
@@ -3077,15 +3054,15 @@
                         </div>
                         <div class="stat-divider-minimal">•</div>
                         <div class="youtube-action-minimal">
-                            <a href="{{ $youtubeVideos['channel_info']['channel_url'] }}" 
-                               target="_blank" 
+                            <a href="{{ $youtubeVideos['channel_info']['channel_url'] }}"
+                               target="_blank"
                                class="btn-youtube-minimal"
                                rel="noopener">
                                 <i class="fab fa-youtube"></i> Xem thêm video
                             </a>
                         </div>
                     </div>
-                    
+
                     <!-- Loading State -->
                     <div class="banner-loading" id="banner-loading">
                         <div class="loading-spinner"></div>
@@ -3105,7 +3082,7 @@
                     Nhận tư vấn miễn phí và lộ trình học phù hợp nhất cho bạn
                 </p>
             </div>
-            
+
             <div class="contact-content">
                 <div class="contact-form">
                     <form class="modern-form" onsubmit="handleContactSubmit(event)">
@@ -3142,7 +3119,7 @@
                         </button>
                     </form>
                 </div>
-                
+
                 <div class="contact-info">
                     <div class="info-card">
                         <h3>📍 Địa chỉ trụ sở</h3>
@@ -3169,42 +3146,42 @@
         function scrollToSection(selector) {
             const element = document.querySelector(selector);
             if (element) {
-                element.scrollIntoView({ 
+                element.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'
                 });
             }
         }
-        
+
         // Contact form submission handler
         function handleContactSubmit(event) {
             event.preventDefault();
-            
+
             // Collect form data
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData.entries());
-            
+
             // Here you would normally send data to your server
             console.log('Contact form data:', data);
-            
+
             // Show success message
             alert('Cảm ơn bạn đã gửi thông tin! Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.');
-            
+
             // Optional: Reset form
             event.target.reset();
         }
-        
+
         // Track user interactions (for analytics)
         function trackRegistration() {
             console.log('Registration attempt tracked');
             // Add your analytics code here
         }
-        
+
         function trackCTA(action) {
             console.log('CTA clicked:', action);
             // Add your analytics code here
         }
-        
+
         // YouTube Channel Banner Loading
         // To get a YouTube Data API v3 key:
         // 1. Go to https://console.developers.google.com/
@@ -3226,13 +3203,13 @@
                 // Flag to skip API calls if key is invalid
                 this.apiKeyValid = true;
             }
-            
+
             async fetchChannelBanner(channelId) {
                 // Check cache first
                 if (this.cache[channelId]) {
                     return this.cache[channelId];
                 }
-                
+
                 // Try alternative method first - extract from channel page
                 try {
                     const alternativeBanner = await this.extractBannerFromChannelPage(channelId);
@@ -3244,16 +3221,16 @@
                 } catch (error) {
                     console.warn('Alternative banner extraction failed:', error);
                 }
-                
+
                 // Skip API call if we know the key is invalid
                 if (!this.apiKeyValid) {
                     console.log('Skipping YouTube API (invalid key), using local fallback');
                     return this.localFallbackUrl;
                 }
-                
+
                 try {
                     console.log('Fetching YouTube channel banner via API...');
-                    
+
                     // YouTube Data API v3 endpoint for channel branding
                     const apiUrl = `https://www.googleapis.com/youtube/v3/channels`;
                     const params = new URLSearchParams({
@@ -3261,10 +3238,10 @@
                         id: channelId,
                         key: this.apiKey
                     });
-                    
+
                     // Try with OAuth2 token first (if key starts with certain patterns)
                     const isOAuthToken = this.apiKey.includes('.') || this.apiKey.startsWith('ya29');
-                    
+
                     let response;
                     if (isOAuthToken) {
                         console.log('Using OAuth2 token for YouTube API...');
@@ -3286,21 +3263,21 @@
                             }
                         });
                     }
-                    
+
                     if (!response.ok) {
                         throw new Error(`YouTube API error: ${response.status} - ${response.statusText}`);
                     }
-                    
+
                     const data = await response.json();
                     console.log('YouTube API response:', data);
-                    
+
                     if (data.items && data.items.length > 0) {
                         const branding = data.items[0].brandingSettings;
                         const bannerUrl = branding?.image?.bannerExternalUrl;
-                        
+
                         if (bannerUrl) {
                             console.log('Found YouTube banner:', bannerUrl);
-                            
+
                             // Test if the banner URL is accessible
                             const testImg = new Image();
                             const isAccessible = await new Promise((resolve) => {
@@ -3319,7 +3296,7 @@
                                     resolve(false);
                                 }, 5000);
                             });
-                            
+
                             if (isAccessible) {
                                 // Cache the successful result
                                 this.cache[channelId] = bannerUrl;
@@ -3332,10 +3309,10 @@
                     } else {
                         console.warn('No channel data found in API response');
                     }
-                    
+
                 } catch (error) {
                     console.error('YouTube API fetch failed:', error);
-                    
+
                     // Check if it's an API key error
                     if (error.message.includes('API key not valid') || error.message.includes('400')) {
                         console.warn('Invalid API key detected, marking as invalid');
@@ -3344,7 +3321,7 @@
                         console.log('Using local fallback due to invalid API key');
                         return this.localFallbackUrl;
                     }
-                    
+
                     // Retry logic for other API failures (network, quota, etc.)
                     if (this.retryCount < this.maxRetries) {
                         this.retryCount++;
@@ -3353,17 +3330,17 @@
                         return this.fetchChannelBanner(channelId);
                     }
                 }
-                
+
                 // Fallback to local image if YouTube API fails
                 console.log('Using local fallback banner');
                 return this.localFallbackUrl;
             }
-            
+
             async extractBannerFromChannelPage(channelId) {
                 // Since we can't easily scrape YouTube due to CORS and dynamic content,
                 // we'll use a known working banner URL for the LamGame channel
                 // This can be manually updated when needed
-                
+
                 if (channelId === 'UCv2lripWdZDKtlrRy1J0dBw') {
                     // Known banner URLs for LamGame channel (update manually when needed)
                     const knownBanners = [
@@ -3372,7 +3349,7 @@
                         'https://yt3.googleusercontent.com/K8dWs8jRMbCSGnc0iF2eS-M7Hxsqi1CWZ9ZrE0pLr8ikUFu4Ogure4hyFmiYt6CHGZrISDRYxag=w1440-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj',
                         'https://yt3.googleusercontent.com/K8dWs8jRMbCSGnc0iF2eS-M7Hxsqi1CWZ9ZrE0pLr8ikUFu4Ogure4hyFmiYt6CHGZrISDRYxag=w1024-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj'
                     ];
-                    
+
                     // Test each known banner URL
                     for (const bannerUrl of knownBanners) {
                         try {
@@ -3383,7 +3360,7 @@
                                 testImg.src = bannerUrl;
                                 setTimeout(() => resolve(false), 3000); // 3 second timeout
                             });
-                            
+
                             if (isAccessible) {
                                 console.log('Found working banner URL:', bannerUrl);
                                 return bannerUrl;
@@ -3393,23 +3370,23 @@
                         }
                     }
                 }
-                
+
                 // If no known banners work, return null to try other methods
                 return null;
             }
-            
+
             getResponsiveBannerUrl(baseUrl) {
                 if (!baseUrl) return null;
-                
+
                 // Check if it's a local image
                 if (baseUrl.startsWith('/') || baseUrl.startsWith(window.location.origin)) {
                     return baseUrl;
                 }
-                
+
                 // Handle YouTube banner URLs with responsive sizing
                 if (baseUrl.includes('yt3.googleusercontent.com')) {
                     const screenWidth = window.innerWidth || 1920;
-                    
+
                     // Extract base URL without size parameters
                     let baseImageUrl;
                     if (baseUrl.includes('=w')) {
@@ -3418,7 +3395,7 @@
                     } else {
                         baseImageUrl = baseUrl;
                     }
-                    
+
                     // Add appropriate size parameter based on screen width
                     let sizeParam;
                     if (screenWidth <= 480) {
@@ -3430,65 +3407,65 @@
                     } else {
                         sizeParam = '=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj';
                     }
-                    
+
                     // Combine base URL with responsive size parameter
                     const responsiveUrl = baseImageUrl + sizeParam;
-                    
+
                     console.log(`Responsive YouTube banner URL for width ${screenWidth}:`, responsiveUrl);
                     return responsiveUrl;
                 }
-                
+
                 // For other external URLs, return as-is
                 return baseUrl;
             }
-            
+
             async applyBannerBackground() {
                 const bannerContainer = document.getElementById('channel-banner-bg');
                 const loadingElement = document.getElementById('banner-loading');
-                
+
                 if (!bannerContainer) {
                     console.warn('Banner container not found');
                     return;
                 }
-                
+
                 console.log('Starting banner loading process...');
                 const startTime = performance.now();
-                
+
                 // Show loading state
                 if (loadingElement) {
                     loadingElement.classList.add('loading');
                 }
-                
+
                 try {
                     const baseBannerUrl = await this.fetchChannelBanner(this.channelId);
-                    
+
                     if (baseBannerUrl) {
                         const responsiveBannerUrl = this.getResponsiveBannerUrl(baseBannerUrl);
-                        
+
                         // Preload the image
                         const img = new Image();
                         img.onload = () => {
                             const loadTime = performance.now() - startTime;
                             console.log(`Banner loaded successfully in ${loadTime.toFixed(2)}ms`);
-                            
+
                             bannerContainer.style.backgroundImage = `url('${responsiveBannerUrl}')`;
                             bannerContainer.classList.add('banner-loaded');
-                            
+
                             // Hide loading state
                             if (loadingElement) {
                                 setTimeout(() => {
                                     loadingElement.classList.remove('loading');
                                 }, 500);
                             }
-                            
+
                             console.log('YouTube banner applied to background');
                         };
-                        
+
                         img.onerror = () => {
                             console.warn('Failed to load banner image');
                             this.handleBannerError();
                         };
-                        
+
                         img.src = responsiveBannerUrl;
                     } else {
                         this.handleBannerError();
@@ -3498,21 +3475,21 @@
                     this.handleBannerError();
                 }
             }
-            
+
             handleBannerError() {
                 const bannerContainer = document.getElementById('channel-banner-bg');
                 const loadingElement = document.getElementById('banner-loading');
-                
+
                 // Try local fallback image first
                 if (bannerContainer && this.localFallbackUrl) {
                     console.log('Attempting to use local fallback image:', this.localFallbackUrl);
-                    
+
                     const testImg = new Image();
                     testImg.onload = () => {
                         console.log('Local fallback image loaded successfully');
                         bannerContainer.style.backgroundImage = `url('${this.localFallbackUrl}')`;
                         bannerContainer.classList.add('banner-loaded');
-                        
+
                         // Hide loading state
                         if (loadingElement) {
                             setTimeout(() => {
@@ -3520,12 +3497,12 @@
                             }, 300);
                         }
                     };
-                    
+
                     testImg.onerror = () => {
                         console.warn('Local fallback image also failed, using gradient');
                         // Final fallback to gradient
                         bannerContainer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                        
+
                         // Hide loading state
                         if (loadingElement) {
                             setTimeout(() => {
@@ -3533,14 +3510,14 @@
                             }, 300);
                         }
                     };
-                    
+
                     testImg.src = this.localFallbackUrl;
                 } else {
                     // Use gradient if no local fallback
                     if (bannerContainer) {
                         bannerContainer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                     }
-                    
+
                     // Hide loading state
                     if (loadingElement) {
                         setTimeout(() => {
@@ -3548,27 +3525,27 @@
                         }, 300);
                     }
                 }
-                
+
                 console.log('Using fallback banner background');
             }
         }
-        
+
         // Initialize YouTube banner loader
         let youtubeBanner;
-        
+
         // Debug function to test banner loading and layout
         window.testYouTubeBanner = async function() {
             console.log('=== Testing Optimized YouTube Banner ===');
             const banner = new YouTubeChannelBanner();
             const channelId = 'UCv2lripWdZDKtlrRy1J0dBw';
-            
+
             try {
                 const bannerUrl = await banner.fetchChannelBanner(channelId);
                 console.log('Final banner URL:', bannerUrl);
-                
+
                 const responsiveUrl = banner.getResponsiveBannerUrl(bannerUrl);
                 console.log('Responsive banner URL:', responsiveUrl);
-                
+
                 // Test the URL and check aspect ratio
                 const img = new Image();
                 img.onload = () => {
@@ -3579,13 +3556,13 @@
                         isOptimal: aspectRatio >= '5.5' && aspectRatio <= '6.5' ? 'Yes' : 'Check ratio',
                         url: responsiveUrl
                     });
-                    
+
                     // Test layout elements
                     const bannerContainer = document.getElementById('channel-banner-bg');
                     const statsContainer = document.querySelector('.channel-stats-minimal');
                     const youtubeButton = document.querySelector('.btn-youtube-minimal');
                     const description = document.querySelector('.channel-description');
-                    
+
                     console.log('Minimal Layout Check:', {
                         bannerContainer: bannerContainer ? '✅ Found' : '❌ Missing',
                         statsContainerMinimal: statsContainer ? '✅ Found at bottom' : '❌ Missing',
@@ -3600,16 +3577,16 @@
                     console.error('❌ Banner test failed');
                 };
                 img.src = responsiveUrl;
-                
+
             } catch (error) {
                 console.error('Banner test error:', error);
             }
         };
-        
+
         // Lazy loading with Intersection Observer
         function initializeLazyBannerLoading() {
             const channelSection = document.getElementById('youtube-channel-section');
-            
+
             if (!channelSection || !('IntersectionObserver' in window)) {
                 // Fallback for browsers without Intersection Observer
                 if (channelSection) {
@@ -3618,15 +3595,15 @@
                 }
                 return;
             }
-            
+
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting && !entry.target.dataset.bannerLoaded) {
                         entry.target.dataset.bannerLoaded = 'true';
-                        
+
                         youtubeBanner = new YouTubeChannelBanner();
                         youtubeBanner.applyBannerBackground();
-                        
+
                         // Stop observing after loading
                         observer.unobserve(entry.target);
                     }
@@ -3635,10 +3612,10 @@
                 rootMargin: '100px 0px', // Load when 100px before entering viewport
                 threshold: 0.1
             });
-            
+
             observer.observe(channelSection);
         }
-        
+
         // Handle window resize for responsive banner
         let resizeTimeout;
         function handleBannerResize() {
@@ -3674,22 +3651,22 @@
                 section.style.transition = 'all 0.6s ease';
                 observer.observe(section);
             });
-            
+
             // Initialize hero section immediately
             const heroSection = document.querySelector('.hero-modern');
             if (heroSection) {
                 heroSection.style.opacity = '1';
                 heroSection.style.transform = 'translateY(0)';
             }
-            
+
             // Initialize YouTube channel banner lazy loading
             initializeLazyBannerLoading();
-            
+
             // Add resize event listener for responsive banner
             window.addEventListener('resize', handleBannerResize);
         });
     </script>
-    
+
     <!-- Banner Slider JavaScript -->
     <script src="{{ asset('themes/shop/emsaigon/assets/js/lamgame-optimized-banner.js') }}"></script>
     @endpush
