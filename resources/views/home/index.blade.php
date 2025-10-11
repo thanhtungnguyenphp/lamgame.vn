@@ -2208,7 +2208,7 @@
 @media (max-width: 768px) {
     /* Improve section spacing on mobile */
     section {
-        padding: 3rem 0;
+        padding: 1rem 0;
     }
 
     /* Enhanced touch targets */
@@ -2977,6 +2977,9 @@
         font-size: 0.85rem;
     }
 }
+
+/* Global section spacing override for homepage */
+section { padding-top: 1rem !important; padding-bottom: 1rem !important; }
 
 /* Legacy responsive fixes */
 @media (max-width: 768px) {
