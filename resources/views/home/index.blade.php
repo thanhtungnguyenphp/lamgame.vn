@@ -335,9 +335,10 @@
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">🔥 Chủ Đề Nổi Bật</h2>
-                <p class="section-subtitle">
-                    Top 4 topic mới/comment nhiều từ cộng đồng game developer Việt Nam
-                </p>
+                <p>Khám phá thêm {{ isset($hotForumTopics['total_posts']) ? $hotForumTopics['total_posts'] : '50+' }} chủ đề thú vị từ cộng đồng</p>
+                <a href="{{ route('forum.index') }}" class="btn btn-outline" target="_blank">
+                    Xem Tất Cả Forum
+                </a>
             </div>
 
             <div class="topics-grid">
@@ -588,13 +589,6 @@
 
 
                 @endif
-            </div>
-
-            <div class="topics-cta">
-                <p>Khám phá thêm {{ isset($hotForumTopics['total_posts']) ? $hotForumTopics['total_posts'] : '50+' }} chủ đề thú vị từ cộng đồng</p>
-                <a href="{{ route('forum.index') }}" class="btn btn-outline" target="_blank">
-                    Xem Tất Cả Forum
-                </a>
             </div>
         </div>
     </section>
