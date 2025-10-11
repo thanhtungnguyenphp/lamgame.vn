@@ -335,9 +335,10 @@
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">🔥 Chủ Đề Nổi Bật</h2>
-                <p class="section-subtitle">
-                    Top 4 topic mới/comment nhiều từ cộng đồng game developer Việt Nam
-                </p>
+                <p>Khám phá thêm {{ isset($hotForumTopics['total_posts']) ? $hotForumTopics['total_posts'] : '50+' }} chủ đề thú vị từ cộng đồng</p>
+                <a href="{{ route('forum.index') }}" class="btn btn-outline" target="_blank">
+                    Xem Tất Cả Forum
+                </a>
             </div>
 
             <div class="topics-grid">
@@ -588,13 +589,6 @@
 
 
                 @endif
-            </div>
-
-            <div class="topics-cta">
-                <p>Khám phá thêm {{ isset($hotForumTopics['total_posts']) ? $hotForumTopics['total_posts'] : '50+' }} chủ đề thú vị từ cộng đồng</p>
-                <a href="{{ route('forum.index') }}" class="btn btn-outline" target="_blank">
-                    Xem Tất Cả Forum
-                </a>
             </div>
         </div>
     </section>
@@ -1099,13 +1093,31 @@
     <!-- Source Code Marketplace Section -->
     <section id="source-marketplace" class="source-marketplace-section">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">🛒 Source Code Marketplace</h2>
-                <p class="section-subtitle">
-                    Khám phá và tải về những source code game chất lượng cao từ cộng đồng developer
-                </p>
-            </div>
+            <div class="marketplace-cta">
+                <div class="marketplace-action">
+                    <h2 class="section-title">🛒 Source Code Marketplace</h2>
+                    <p class="section-subtitle">
+                        Khám phá và tải về những source code game chất lượng cao từ cộng đồng developer
+                    </p>
+                </div>
+                <div class="marketplace-stats">
+                    <p></p>
+                    <div class="stat">
+                        <span class="stat-number">{{ $sourceGames['total_sources'] ?? '25' }}+</span>
+                        <span class="stat-label">Source codes</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">{{ $sourceGames['free_sources'] ?? '8' }}</span>
+                        <span class="stat-label">Miễn phí</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">Unity</span>
+                        <span class="stat-label">Engine chính</span>
+                    </div>
 
+                </div>
+
+            </div>
             <div class="marketplace-grid">
                 @if(isset($sourceGames['featured']) && count($sourceGames['featured']) > 0)
                     @foreach($sourceGames['featured'] as $index => $source)
@@ -1225,29 +1237,6 @@
                         </div>
                     </div>
                 @endif
-            </div>
-
-            <div class="marketplace-cta">
-                <div class="marketplace-stats">
-                    <div class="stat">
-                        <span class="stat-number">{{ $sourceGames['total_sources'] ?? '25' }}+</span>
-                        <span class="stat-label">Source codes</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">{{ $sourceGames['free_sources'] ?? '8' }}</span>
-                        <span class="stat-label">Miễn phí</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">Unity</span>
-                        <span class="stat-label">Engine chính</span>
-                    </div>
-                </div>
-                <div class="marketplace-action">
-                    <p>Khám phá toàn bộ kho tàng source code cho game development</p>
-                    <a href="{{ route('lamgame.source-game') }}" class="btn btn-outline" target="_blank">
-                        Xem Tất Cả Source Code
-                    </a>
-                </div>
             </div>
         </div>
     </section>
@@ -2208,7 +2197,7 @@
 @media (max-width: 768px) {
     /* Improve section spacing on mobile */
     section {
-        padding: 3rem 0;
+        padding: 1rem 0;
     }
 
     /* Enhanced touch targets */
@@ -2977,6 +2966,9 @@
         font-size: 0.85rem;
     }
 }
+
+/* Global section spacing override for homepage */
+section { padding-top: 1rem !important; padding-bottom: 1rem !important; }
 
 /* Legacy responsive fixes */
 @media (max-width: 768px) {
