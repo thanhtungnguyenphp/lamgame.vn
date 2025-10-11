@@ -1099,13 +1099,31 @@
     <!-- Source Code Marketplace Section -->
     <section id="source-marketplace" class="source-marketplace-section">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">🛒 Source Code Marketplace</h2>
-                <p class="section-subtitle">
-                    Khám phá và tải về những source code game chất lượng cao từ cộng đồng developer
-                </p>
-            </div>
+            <div class="marketplace-cta">
+                <div class="marketplace-action">
+                    <h2 class="section-title">🛒 Source Code Marketplace</h2>
+                    <p class="section-subtitle">
+                        Khám phá và tải về những source code game chất lượng cao từ cộng đồng developer
+                    </p>
+                </div>
+                <div class="marketplace-stats">
+                    <p></p>
+                    <div class="stat">
+                        <span class="stat-number">{{ $sourceGames['total_sources'] ?? '25' }}+</span>
+                        <span class="stat-label">Source codes</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">{{ $sourceGames['free_sources'] ?? '8' }}</span>
+                        <span class="stat-label">Miễn phí</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">Unity</span>
+                        <span class="stat-label">Engine chính</span>
+                    </div>
 
+                </div>
+
+            </div>
             <div class="marketplace-grid">
                 @if(isset($sourceGames['featured']) && count($sourceGames['featured']) > 0)
                     @foreach($sourceGames['featured'] as $index => $source)
@@ -1225,29 +1243,6 @@
                         </div>
                     </div>
                 @endif
-            </div>
-
-            <div class="marketplace-cta">
-                <div class="marketplace-stats">
-                    <div class="stat">
-                        <span class="stat-number">{{ $sourceGames['total_sources'] ?? '25' }}+</span>
-                        <span class="stat-label">Source codes</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">{{ $sourceGames['free_sources'] ?? '8' }}</span>
-                        <span class="stat-label">Miễn phí</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">Unity</span>
-                        <span class="stat-label">Engine chính</span>
-                    </div>
-                </div>
-                <div class="marketplace-action">
-                    <p>Khám phá toàn bộ kho tàng source code cho game development</p>
-                    <a href="{{ route('lamgame.source-game') }}" class="btn btn-outline" target="_blank">
-                        Xem Tất Cả Source Code
-                    </a>
-                </div>
             </div>
         </div>
     </section>
