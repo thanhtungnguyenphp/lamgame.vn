@@ -1255,11 +1255,28 @@
     <!-- Featured Jobs Section - Enhanced -->
     <section id="viec-lam-noi-bat" class="courses-section">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">💼 Bảng Tin Tuyển Dụng</h2>
-                <p class="section-subtitle">
-                    Cơ hội việc làm hot nhất từ các studio game hàng đầu Việt Nam
-                </p>
+            <div class="courses-cta jobs-cta">
+                <div class="jobs-stats">
+                    <div class="stat">
+                        <div class="stat-number">{{ $jobs['total_count'] ?? '50+' }}</div>
+                        <div class="stat-label">Jobs hiện có</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">{{ isset($jobs['featured']) ? count($jobs['featured']) : 0 }}</div>
+                        <div class="stat-label">Nổi bật</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">Hỗ trợ có việc</div>
+                    </div>
+                </div>
+                <div class="jobs-action">
+                    <h2 class="section-title">💼 Bảng Tin Tuyển Dụng</h2>
+                    <p>
+                        Cơ hội việc làm hot nhất từ các studio game hàng đầu Việt Nam
+                        <a href="{{ route('lamgame.viec-lam-game') }}" class="subtitle-link" target="_blank">Xem tất cả việc làm</a>
+                    </p>
+                </div>
             </div>
             
             <div class="courses-grid enhanced-jobs-grid">
@@ -2158,6 +2175,21 @@
     margin-bottom: 1.5rem;
     font-size: 1rem;
 }
+
+/* Inline small link inside jobs description */
+.jobs-action .subtitle-link {
+    font-size: 0.95rem;
+    margin-left: 0.75rem;
+    color: #fff;
+    text-decoration: underline;
+    white-space: nowrap;
+}
+@media (prefers-contrast: more) {
+    .jobs-action .subtitle-link { text-decoration-thickness: 2px; }
+}
+
+/* Make jobs section title white */
+#viec-lam-noi-bat .section-title { color: #fff; }
 
 @media (max-width: 480px) {
     .jobs-action p {
