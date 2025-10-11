@@ -922,6 +922,8 @@
                 <h2 class="section-title">📰 Blog & Tin tức</h2>
                 <p class="section-subtitle">
                     Những bài viết mới và được đọc giả nhiều nhất từ cộng đồng game developer
+                    <span class="subtitle-meta">• Khám phá thêm {{ isset($latestBlogs['total_posts']) ? $latestBlogs['total_posts'] : '50+' }} bài viết chất lượng</span>
+                    <a href="{{ route('lamgame.blog') }}" class="subtitle-link" target="_blank">Xem tất cả blog</a>
                 </p>
             </div>
             
@@ -1091,12 +1093,6 @@
                 @endif
             </div>
             
-            <div class="blog-cta-section">
-                <p>Khám phá thêm {{ isset($latestBlogs['total_posts']) ? $latestBlogs['total_posts'] : '50+' }} bài viết chất lượng</p>
-                <a href="{{ route('lamgame.blog') }}" class="btn btn-outline" target="_blank">
-                    Xem Tất Cả Blog
-                </a>
-            </div>
         </div>
     </section>
 
@@ -2406,6 +2402,22 @@
     overflow: hidden;
 }
 
+/* Inline subtitle link and meta for Blog & News section */
+.section-subtitle .subtitle-link {
+    font-size: 0.9rem;
+    margin-left: 0.75rem;
+    color: #667eea;
+    text-decoration: underline;
+    white-space: nowrap;
+}
+.section-subtitle .subtitle-link:hover {
+    color: #5a67d8;
+}
+.section-subtitle .subtitle-meta {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-left: 0.25rem;
+}
 
 .blog-stats {
     display: flex;
@@ -2433,35 +2445,6 @@
     margin-top: 1rem;
 }
 
-.blog-cta-section {
-    text-align: center;
-    margin-top: 3rem;
-}
-
-.blog-cta-section p {
-    color: #666;
-    margin-bottom: 1.5rem;
-    font-size: 1.1rem;
-}
-
-.blog-cta-section .btn-outline {
-    background: transparent;
-    color: #667eea;
-    border: 2px solid #667eea;
-    padding: 1rem 2rem;
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: 30px;
-    transition: all 0.3s ease;
-    display: inline-block;
-}
-
-.blog-cta-section .btn-outline:hover {
-    background: #667eea;
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-}
 
 /* Responsive */
 @media (max-width: 768px) {
