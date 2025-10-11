@@ -1271,7 +1271,7 @@
             <div class="courses-grid enhanced-jobs-grid">
                 @if(isset($jobs['featured']) && count($jobs['featured']) > 0)
                     @php
-                        $featuredJobs = array_slice($jobs['featured'], 0, 5); // Lấy 5 việc làm đầu tiên
+                        $featuredJobs = array_slice($jobs['featured'], 0, 3); // Lấy tối đa 3 việc làm đầu tiên
                         $jobImages = [
                             'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop', // Game dev
                             'https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop', // Unity
@@ -1945,7 +1945,7 @@
 
 @media (min-width: 1200px) {
     .enhanced-jobs-grid {
-        grid-template-columns: repeat(4, 1fr); /* 4 columns for wider screens */
+        grid-template-columns: repeat(3, 1fr); /* Giữ 3 cột cho màn hình rất rộng để UX nhất quán */
         gap: 2rem;
     }
 }
@@ -1981,6 +1981,14 @@
     color: #667eea;
 }
 
+/* Force job title to be single-line with ellipsis */
+.job-title, .job-title a {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .job-description {
     color: #666;
     font-size: 0.85rem;
@@ -1993,15 +2001,28 @@
 
 .job-features {
     margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: nowrap;           /* keep on one line */
+    overflow: hidden;            /* clip overflow */
+    white-space: nowrap;         /* prevent wrapping */
 }
 
 .job-features .feature {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    gap: 0.35rem;
+    margin: 0;                   /* remove bottom spacing */
     font-size: 0.8rem;
     color: #666;
+    min-width: 0;                /* allow inner text to ellipsis */
+}
+
+.job-features .feature span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;     /* truncate long company/location */
 }
 
 .job-features .feature i {
