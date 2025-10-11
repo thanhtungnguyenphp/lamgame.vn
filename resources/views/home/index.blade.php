@@ -2990,11 +2990,40 @@
     <!-- YouTube Videos Section -->
     <section id="co-hoi-viec-lam" class="youtube-section">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">🎥 Channel - Lamgame</h2>
-                <p class="section-subtitle">
-                    Học game development từ các video tutorial chất lượng trên kênh YouTube Làm Game
-                </p>
+            <div class="youtube-cta-section" id="youtube-channel-section" data-channel-id="{{ $youtubeVideos['channel_info']['channel_id'] }}">
+                <!-- Banner Background Container -->
+                <div class="channel-banner-background" id="channel-banner-bg">
+                    <!-- Overlay for text readability -->
+                    <div class="banner-overlay"></div>
+
+                    <!-- Minimal Channel Stats at Bottom -->
+                    <div class="channel-stats-minimal">
+                        <div class="stat-item-minimal">
+                            <span class="stat-number-minimal">{{ $youtubeVideos['channel_info']['subscribers'] }}</span>
+                            <span class="stat-label-minimal">subscribers</span>
+                        </div>
+                        <div class="stat-divider-minimal">•</div>
+                        <div class="stat-item-minimal">
+                            <span class="stat-number-minimal">{{ $youtubeVideos['channel_info']['total_views'] }}</span>
+                            <span class="stat-label-minimal">total views</span>
+                        </div>
+                        <div class="stat-divider-minimal">•</div>
+                        <div class="youtube-action-minimal">
+                            <a href="{{ $youtubeVideos['channel_info']['channel_url'] }}"
+                               target="_blank"
+                               class="btn-youtube-minimal"
+                               rel="noopener">
+                                <i class="fab fa-youtube"></i> Xem thêm video
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div class="banner-loading" id="banner-loading">
+                        <div class="loading-spinner"></div>
+                        <p>Đang tải banner...</p>
+                    </div>
+                </div>
             </div>
 
             <div class="youtube-videos-grid">
@@ -3035,41 +3064,7 @@
                 @endforeach
             </div>
 
-            <div class="youtube-cta-section" id="youtube-channel-section" data-channel-id="{{ $youtubeVideos['channel_info']['channel_id'] }}">
-                <!-- Banner Background Container -->
-                <div class="channel-banner-background" id="channel-banner-bg">
-                    <!-- Overlay for text readability -->
-                    <div class="banner-overlay"></div>
 
-                    <!-- Minimal Channel Stats at Bottom -->
-                    <div class="channel-stats-minimal">
-                        <div class="stat-item-minimal">
-                            <span class="stat-number-minimal">{{ $youtubeVideos['channel_info']['subscribers'] }}</span>
-                            <span class="stat-label-minimal">subscribers</span>
-                        </div>
-                        <div class="stat-divider-minimal">•</div>
-                        <div class="stat-item-minimal">
-                            <span class="stat-number-minimal">{{ $youtubeVideos['channel_info']['total_views'] }}</span>
-                            <span class="stat-label-minimal">total views</span>
-                        </div>
-                        <div class="stat-divider-minimal">•</div>
-                        <div class="youtube-action-minimal">
-                            <a href="{{ $youtubeVideos['channel_info']['channel_url'] }}"
-                               target="_blank"
-                               class="btn-youtube-minimal"
-                               rel="noopener">
-                                <i class="fab fa-youtube"></i> Xem thêm video
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Loading State -->
-                    <div class="banner-loading" id="banner-loading">
-                        <div class="loading-spinner"></div>
-                        <p>Đang tải banner...</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
