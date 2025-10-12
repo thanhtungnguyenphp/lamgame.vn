@@ -213,6 +213,14 @@
                                                 @{{ element.name }}
                                             </span>
 
+                                            <!-- Ensure name is always posted when not editing -->
+                                            <input
+                                                type="hidden"
+                                                :name="'attribute_groups[' + element.id + '][name]'"
+                                                :value="element.name"
+                                                v-show="editableGroup.id != element.id"
+                                            />
+
                                             <input
                                                 type="hidden"
                                                 :name="'attribute_groups[' + element.id + '][code]'"
