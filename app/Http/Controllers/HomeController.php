@@ -15,6 +15,17 @@ use LamGame\Banner\Repositories\BannerRepository;
 class HomeController extends Controller
 {
     /**
+     * Default recruitment thumbnails for jobs without images
+     */
+    private const DEFAULT_JOB_THUMBNAILS = [
+        'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop&q=80', // Game development office
+        'https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop&q=80', // Unity/coding screen  
+        'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop&q=80', // Programming code
+        'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop&q=80', // Mobile game dev
+        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop&q=80', // VR/AR development
+    ];
+
+    /**
      * Show homepage with dynamic content from database
      * 70% community content, 30% curated content
      */
@@ -81,6 +92,12 @@ class HomeController extends Controller
                 $join->on('pc.category_id', '=', 'ct.category_id')
                      ->where('ct.locale', '=', 'vi');
             })
+            // Left join to get the first product image (thumbnail)
+            ->leftJoin('product_images as pi', function($join) {
+                $join->on('p.id', '=', 'pi.product_id')
+                     ->where('pi.type', '=', 'images')
+                     ->whereRaw('pi.id = (SELECT MIN(id) FROM product_images WHERE product_id = p.id AND type = "images")');
+            })
             ->where('p.sku', 'LIKE', 'JOB_%')
             ->where('pf.status', 1)
             ->where('pf.visible_individually', 1)
@@ -91,7 +108,8 @@ class HomeController extends Controller
                 'pf.price',
                 'pf.url_key',
                 'ct.name as company',
-                'p.created_at'
+                'p.created_at',
+                'pi.path as thumbnail'
             )
             ->orderBy('p.created_at', 'desc')
             ->limit(6)
@@ -109,6 +127,7 @@ class HomeController extends Controller
                 'location' => $this->extractLocation($job->short_description),
                 'posted_ago' => \Carbon\Carbon::parse($job->created_at)->diffForHumans(),
                 'url' => route('lamgame.job.detail', $job->url_key),
+                'thumbnail' => $this->getJobThumbnail($job->thumbnail),
             ];
         }
 
@@ -753,6 +772,30 @@ class HomeController extends Controller
         ];
         
         return $snippets[array_rand($snippets)];
+    }
+    
+    /**
+     * Get job thumbnail with fallback to default recruitment image
+     */
+    private function getJobThumbnail($thumbnailPath)
+    {
+        // If job has thumbnail from database
+        if (!empty($thumbnailPath)) {
+            // Handle different path formats
+            if (str_starts_with($thumbnailPath, 'http://') || str_starts_with($thumbnailPath, 'https://')) {
+                return $thumbnailPath; // Already full URL
+            }
+            
+            // For local storage paths
+            if (str_starts_with($thumbnailPath, '/')) {
+                return asset($thumbnailPath); // Path starts with /
+            }
+            
+            return asset('storage/' . $thumbnailPath); // Relative path in storage
+        }
+        
+        // Fallback: Use default recruitment thumbnails from constant
+        return self::DEFAULT_JOB_THUMBNAILS[array_rand(self::DEFAULT_JOB_THUMBNAILS)];
     }
     
     /**
