@@ -1272,13 +1272,6 @@
                 @if(isset($jobs['featured']) && count($jobs['featured']) > 0)
                     @php
                         $featuredJobs = array_slice($jobs['featured'], 0, 3); // Lấy tối đa 3 việc làm đầu tiên
-                        $jobImages = [
-                            'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop', // Game dev
-                            'https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop', // Unity
-                            'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop', // Programming
-                            'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop', // Mobile Dev
-                            'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop'  // VR/AR
-                        ];
                         $jobLevels = ['Entry → Mid Level', 'Mid → Senior Level', 'Senior Level', 'Mid Level', 'All Levels'];
                         $badges = ['Hot 🔥', 'Urgent', 'High Salary', 'Remote OK', 'New'];
                     @endphp
@@ -1289,7 +1282,7 @@
                                 <div class="course-badge job-badge">{{ $badges[$index] ?? 'Hot 🔥' }}</div>
                             @endif
                             <div class="course-image">
-                                <img src="{{ $jobImages[$index] ?? $jobImages[0] }}" alt="{{ $job['title'] }} at {{ $job['company'] }}" loading="lazy" />
+                                <img src="{{ $job['thumbnail'] }}" alt="{{ $job['title'] }} at {{ $job['company'] }}" loading="lazy" />
                                 <div class="course-overlay">
                                     <div class="course-level">{{ $jobLevels[$index] ?? 'All Levels' }}</div>
                                 </div>
@@ -1327,7 +1320,7 @@
                     <div class="course-card job-card featured">
                         <div class="course-badge job-badge">Hot 🔥</div>
                         <div class="course-image">
-                            <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop" alt="Unity Developer at VNG" loading="lazy" />
+                            <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop&q=80" alt="Unity Developer at VNG" loading="lazy" />
                             <div class="course-overlay">
                                 <div class="course-level">Mid → Senior Level</div>
                             </div>
@@ -1363,7 +1356,7 @@
                     <div class="course-card job-card">
                         <div class="course-badge job-badge">Urgent</div>
                         <div class="course-image">
-                            <img src="https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop" alt="3D Artist at Gameloft" loading="lazy" />
+                            <img src="https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop&q=80" alt="3D Artist at Gameloft" loading="lazy" />
                             <div class="course-overlay">
                                 <div class="course-level">Entry → Mid Level</div>
                             </div>
@@ -1398,7 +1391,7 @@
 
                     <div class="course-card job-card">
                         <div class="course-image">
-                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop" alt="Game Backend Developer" loading="lazy" />
+                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop&q=80" alt="Game Backend Developer" loading="lazy" />
                             <div class="course-overlay">
                                 <div class="course-level">Senior Level</div>
                             </div>
@@ -1433,7 +1426,7 @@
 
                     <div class="course-card job-card">
                         <div class="course-image">
-                            <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop" alt="Mobile Game Developer" loading="lazy" />
+                            <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop&q=80" alt="Mobile Game Developer" loading="lazy" />
                             <div class="course-overlay">
                                 <div class="course-level">Mid Level</div>
                             </div>

@@ -392,6 +392,7 @@ class LamGamePageController extends Controller
     public function jobDetail($slug)
     {
         // Get job product from database by url_key (slug)
+
         $job = \DB::table('products as p')
             ->leftJoin('product_flat as pf', function($join) {
                 $join->on('p.id', '=', 'pf.product_id')
