@@ -181,7 +181,7 @@
                                         </div>
                                     </div>
                                     <div class="job-description">
-                                        <p>{{ \Str::limit($job->short_description, 150) }}</p>
+                                        <div class="job-desc-content">{!! $job->processed_description !!}</div>
                                     </div>
                                     <div class="job-tags">
                                         @if(isset($job->attributes['job_type']))
@@ -1035,6 +1035,33 @@
             margin: 1rem 0;
             color: #555;
             line-height: 1.6;
+        }
+        
+        .job-desc-content {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .job-desc-content p {
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .job-desc-content p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .job-desc-content strong,
+        .job-desc-content b {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .job-desc-content em,
+        .job-desc-content i {
+            font-style: italic;
         }
         
         .job-tags {
