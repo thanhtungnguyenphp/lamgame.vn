@@ -1,0 +1,143 @@
+config:
+  target: 'https://lamgame.localhost'
+  phases:
+    # Warm up phase
+    - duration: 30
+      arrivalRate: 1
+      name: "Warm up"
+    # Normal load
+    - duration: 120  
+      arrivalRate: 2
+      name: "Sustained load (120 req/min)"
+    # Peak load test
+    - duration: 60
+      arrivalRate: 3
+      name: "Peak load (180 req/min)"
+    # Cooldown
+    - duration: 30
+      arrivalRate: 1
+      name: "Cool down"
+  http:
+    timeout: 10
+    pool: 10 # Connection pool size
+  variables:
+    search_terms:
+      - "php"
+      - "javascript" 
+      - "laravel"
+      - "react"
+      - "marketing"
+      - "design"
+    locations:
+      - "HCM"
+      - "Hà Nội"
+      - "Đà Nẵng"
+    companies:
+      - "FPT"
+      - "VNG"
+      - "Viettel"
+    categories:
+      - "IT"
+      - "Marketing"
+      - "Design"
+
+scenarios:
+  # Main endpoints testing
+  - name: "Filter Options Endpoint"
+    weight: 20
+    requests:
+      - get:
+          url: "/api/jobs/options/filter-options"
+          headers:
+            Accept: "application/json"
+          expect:
+            - statusCode: 200
+            - hasHeader: "content-type"
+            - contentType: json
+          capture:
+            - json: "$.success"
+              as: "success_flag"
+
+  - name: "Form Data Endpoint"
+    weight: 15
+    requests:
+      - get:
+          url: "/api/jobs/options/form-data"
+          headers:
+            Accept: "application/json"
+          expect:
+            - statusCode: 200
+          capture:
+            - json: "$.data.attributes"
+              as: "form_attributes"
+
+  # Search endpoints with variables
+  - name: "Locations Search"
+    weight: 15
+    requests:
+      - get:
+          url: "/api/jobs/options/locations?search={{ $randomPick(locations) }}&limit=10"
+          headers:
+            Accept: "application/json"
+          expect:
+            - statusCode: 200
+
+  - name: "Skills Search"
+    weight: 15
+    requests:
+      - get:
+          url: "/api/jobs/options/skills?search={{ $randomPick(search_terms) }}&limit=15"
+          headers:
+            Accept: "application/json"
+          expect:
+            - statusCode: 200
+
+  - name: "Skills by Category"
+    weight: 10
+    requests:
+      - get:
+          url: "/api/jobs/options/skills?category={{ $randomPick(categories) }}&limit=20"
+          headers:
+            Accept: "application/json"
+          expect:
+            - statusCode: 200
+
+  - name: "Companies Search"
+    weight: 10
+    requests:
+      - get:
+          url: "/api/jobs/options/companies?search={{ $randomPick(companies) }}&limit=10"
+          headers:
+            Accept: "application/json"
+          expect:
+            - statusCode: 200
+
+  - name: "Multi-type Search"
+    weight: 10
+    requests:
+      - get:
+          url: "/api/jobs/options/search?query={{ $randomPick(search_terms) }}&types[]=skills&types[]=companies&limit=10"
+          headers:
+            Accept: "application/json"
+          expect:
+            - statusCode: 200
+
+  # Static endpoints (should be fast due to caching)
+  - name: "Static Endpoints"
+    weight: 5
+    requests:
+      - get:
+          url: "/api/jobs/options/{{ $randomPick(['salary-ranges', 'industries', 'popular-keywords', 'benefits']) }}"
+          headers:
+            Accept: "application/json"
+          expect:
+            - statusCode: 200
+
+# Plugin configuration for advanced metrics
+plugins:
+  expect: {}
+  metrics-by-endpoint: 
+    useOnlyRequestNames: true
+
+# Custom metrics
+processor: "./artillery-processor.js"
