@@ -7,6 +7,26 @@
 @section('meta_keywords', $page_keywords)
 @endif
 
+@push('meta')
+<!-- Blog tracking -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Track blog view
+        if (typeof window.trackBlogView === 'function') {
+            window.trackBlogView('{{ $blog->id }}', '{{ addslashes($blog->title) }}', '{{ $blog->category ?? "general" }}');
+        } else if (typeof window.trackEvent === 'function') {
+            window.trackEvent('blog_view', {
+                'event_category': 'blog',
+                'event_label': '{{ addslashes($blog->title) }}',
+                'blog_id': '{{ $blog->id }}',
+                'blog_category': '{{ $blog->category ?? "general" }}',
+                'value': 1
+            });
+        }
+    });
+</script>
+@endpush
+
 @section('content')
     <!-- Hero Section -->
     <section class="hero-simple">
