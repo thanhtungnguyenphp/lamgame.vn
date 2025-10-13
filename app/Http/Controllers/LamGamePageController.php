@@ -15,6 +15,17 @@ use App\Models\ForumPost;
 class LamGamePageController extends Controller
 {
     /**
+     * Default recruitment thumbnails for jobs without images
+     */
+    private const DEFAULT_JOB_THUMBNAILS = [
+        'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop&q=80', // Game development office
+        'https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop&q=80', // Unity/coding screen  
+        'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop&q=80', // Programming code
+        'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop&q=80', // Mobile game dev
+        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop&q=80', // VR/AR development
+    ];
+
+    /**
      * Show Gioi thieu page
      */
     public function gioiThieu()
@@ -253,6 +264,12 @@ class LamGamePageController extends Controller
                      ->leftJoin('attributes as a_email', 'pav_email.attribute_id', '=', 'a_email.id')
                      ->where('a_email.code', '=', 'contact_email');
             })
+            // Left join to get the first product image (thumbnail)
+            ->leftJoin('product_images as pi', function($join) {
+                $join->on('p.id', '=', 'pi.product_id')
+                     ->where('pi.type', '=', 'images')
+                     ->whereRaw('pi.id = (SELECT MIN(id) FROM product_images WHERE product_id = p.id AND type = "images")');
+            })
             ->where('p.sku', 'LIKE', 'JOB_%')
             ->where('pf.status', 1)
             ->where('pf.visible_individually', 1)
@@ -267,7 +284,8 @@ class LamGamePageController extends Controller
                 'ct.name as category_name',
                 'p.created_at',
                 'pav_deadline.text_value as application_deadline',
-                'pav_email.text_value as contact_email'
+                'pav_email.text_value as contact_email',
+                'pi.path as thumbnail'
             );
 
         // Apply search filters
@@ -303,6 +321,9 @@ class LamGamePageController extends Controller
         // Get additional job attributes for each job and ensure url_key exists
         foreach ($jobs as $job) {
             $job->attributes = $this->getJobAttributes($job->id);
+            
+            // Add thumbnail URL with fallback
+            $job->thumbnail_url = $this->getJobThumbnailUrl($job->thumbnail);
 
             // Ensure url_key exists, if not create one from job title and id
             if (empty($job->url_key)) {
@@ -387,6 +408,30 @@ class LamGamePageController extends Controller
     }
 
     /**
+     * Get job thumbnail URL with fallback to default recruitment image
+     */
+    private function getJobThumbnailUrl($thumbnailPath)
+    {
+        // If job has thumbnail from database
+        if (!empty($thumbnailPath)) {
+            // Handle different path formats
+            if (str_starts_with($thumbnailPath, 'http://') || str_starts_with($thumbnailPath, 'https://')) {
+                return $thumbnailPath; // Already full URL
+            }
+            
+            // For local storage paths
+            if (str_starts_with($thumbnailPath, '/')) {
+                return asset($thumbnailPath); // Path starts with /
+            }
+            
+            return asset('storage/' . $thumbnailPath); // Relative path in storage
+        }
+        
+        // Fallback: Use default recruitment thumbnails from constant
+        return self::DEFAULT_JOB_THUMBNAILS[array_rand(self::DEFAULT_JOB_THUMBNAILS)];
+    }
+
+    /**
      * Show Job detail page
      */
     public function jobDetail($slug)
@@ -413,6 +458,12 @@ class LamGamePageController extends Controller
                      ->leftJoin('attributes as a_email', 'pav_email.attribute_id', '=', 'a_email.id')
                      ->where('a_email.code', '=', 'contact_email');
             })
+            // Left join to get the first product image (thumbnail)
+            ->leftJoin('product_images as pi', function($join) {
+                $join->on('p.id', '=', 'pi.product_id')
+                     ->where('pi.type', '=', 'images')
+                     ->whereRaw('pi.id = (SELECT MIN(id) FROM product_images WHERE product_id = p.id AND type = "images")');
+            })
             ->where('pf.url_key', $slug)
             ->where('p.sku', 'LIKE', 'JOB_%')
             ->where('pf.status', 1)
@@ -429,7 +480,8 @@ class LamGamePageController extends Controller
                 'p.created_at',
                 'p.updated_at',
                 'pav_deadline.text_value as application_deadline',
-                'pav_email.text_value as contact_email'
+                'pav_email.text_value as contact_email',
+                'pi.path as thumbnail'
             )
             ->first();
 
@@ -439,6 +491,9 @@ class LamGamePageController extends Controller
 
         // Get job attributes
         $job->attributes = $this->getJobAttributes($job->id);
+        
+        // Add thumbnail URL with fallback
+        $job->thumbnail_url = $this->getJobThumbnailUrl($job->thumbnail);
 
         // Parse job data
         $companyName = trim(str_replace(' - ', ' ', explode(' - ', $job->name)[1] ?? $job->name));
