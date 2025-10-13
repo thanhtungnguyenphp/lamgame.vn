@@ -5,6 +5,49 @@ window.initializeVueApp = function() {
     // Vue app initialization - optional since we're not using complex Vue components
 };
 
+// Helper function to get job ID from current page - moved to top for global access
+window.getJobIdFromPage = function() {
+    // Try multiple ways to get job ID
+    const urlParts = window.location.pathname.split('/');
+    const jobIdFromUrl = urlParts[urlParts.length - 1];
+    
+    // Check if it's a number
+    if (!isNaN(jobIdFromUrl) && jobIdFromUrl !== '') {
+        return parseInt(jobIdFromUrl);
+    }
+    
+    // Try to get from meta tag or data attribute
+    const jobIdMeta = document.querySelector('meta[name="job-id"]')?.getAttribute('content');
+    if (jobIdMeta && !isNaN(jobIdMeta)) {
+        return parseInt(jobIdMeta);
+    }
+    
+    // Try to get from global variable
+    if (typeof window.currentJobId !== 'undefined') {
+        return window.currentJobId;
+    }
+    
+    // Try to extract from URL pattern /viec-lam/{slug}
+    if (urlParts.length >= 2 && urlParts[urlParts.length - 2] === 'viec-lam') {
+        const slug = urlParts[urlParts.length - 1];
+        
+        const knownJobs = {
+            'blockchain-game-developer-sky-mavis': 6,
+            '3d-platformer-demo': 20,
+            'job-appota-backend-003': 23
+        };
+        
+        if (knownJobs[slug]) {
+            return knownJobs[slug];
+        }
+    }
+    
+    return null;
+};
+
+// Alias for easier access
+window.getJobId = window.getJobIdFromPage;
+
 // Define modal functions immediately - available for onclick
 window.openApplyModal = function() {
     const modal = document.getElementById('applyModal');
@@ -15,6 +58,21 @@ window.openApplyModal = function() {
     
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+    
+    // Track modal open event
+    if (typeof window.trackEvent === 'function') {
+        const jobId = getJobIdFromPage();
+        const jobTitle = document.querySelector('h1.job-title')?.textContent?.trim();
+        const companyName = document.querySelector('.company-name')?.textContent?.trim();
+        
+        window.trackEvent('job_application_modal_open', {
+            'event_category': 'jobs',
+            'event_label': jobTitle,
+            'job_id': jobId,
+            'company': companyName,
+            'value': 1
+        });
+    }
     
     // Auto-fill form if user is logged in (with delay for DOM)
     setTimeout(() => {
@@ -95,6 +153,21 @@ window.toggleSaveJob = function(button) {
         button.classList.add('saved');
         if (text) text.textContent = 'Đã lưu';
         
+        // Track job save event
+        if (typeof window.trackEvent === 'function') {
+            const jobId = getJobIdFromPage();
+            const jobTitle = document.querySelector('h1.job-title')?.textContent?.trim();
+            const companyName = document.querySelector('.company-name')?.textContent?.trim();
+            
+            window.trackEvent('job_save', {
+                'event_category': 'jobs',
+                'event_label': jobTitle,
+                'job_id': jobId,
+                'company': companyName,
+                'value': 1
+            });
+        }
+        
         // Show success message
         showMessage('Đã lưu việc làm vào danh sách yêu thích!', 'success');
     } else {
@@ -103,6 +176,19 @@ window.toggleSaveJob = function(button) {
         icon.classList.add('fa-heart-o');
         button.classList.remove('saved');
         if (text) text.textContent = 'Lưu việc làm';
+        
+        // Track job unsave event
+        if (typeof window.trackEvent === 'function') {
+            const jobId = getJobIdFromPage();
+            const jobTitle = document.querySelector('h1.job-title')?.textContent?.trim();
+            
+            window.trackEvent('job_unsave', {
+                'event_category': 'jobs',
+                'event_label': jobTitle,
+                'job_id': jobId,
+                'value': 1
+            });
+        }
         
         showMessage('Đã xóa khỏi danh sách yêu thích!', 'info');
     }
@@ -637,11 +723,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     resetForm();
                 }, 2000);
                 
-                // Track success event
-                if (typeof gtag !== 'undefined') {
-                    gtag('event', 'job_application_success', {
+                // Track successful job application
+                if (typeof window.trackJobApplication === 'function') {
+                    const jobTitle = document.querySelector('h1.job-title')?.textContent?.trim();
+                    const companyName = document.querySelector('.company-name')?.textContent?.trim();
+                    window.trackJobApplication(jobId, jobTitle, companyName);
+                } else if (typeof window.trackEvent === 'function') {
+                    window.trackEvent('job_application_success', {
+                        'event_category': 'jobs',
                         'job_id': jobId,
-                        'response': result
+                        'application_code': result.data?.application_code,
+                        'value': 1
                     });
                 }
                 
@@ -653,11 +745,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     showErrorMessage(result.message || 'Có lỗi xảy ra khi gửi hồ sơ');
                 }
                 
-                // Track error event
-                if (typeof gtag !== 'undefined') {
-                    gtag('event', 'job_application_error', {
+                // Track application error event
+                if (typeof window.trackEvent === 'function') {
+                    window.trackEvent('job_application_error', {
+                        'event_category': 'jobs',
                         'job_id': jobId,
-                        'error': result.error || 'unknown'
+                        'error_type': 'validation',
+                        'error_message': result.message,
+                        'value': 1
                     });
                 }
             }
@@ -671,9 +766,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Track network error
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'job_application_network_error', {
-                    'error': error.message
+            if (typeof window.trackEvent === 'function') {
+                const jobId = getJobIdFromPage();
+                window.trackEvent('job_application_network_error', {
+                    'event_category': 'jobs',
+                    'job_id': jobId,
+                    'error_type': 'network',
+                    'error_message': error.message,
+                    'value': 1
                 });
             }
         } finally {
@@ -681,44 +781,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Helper function to get job ID from current page
+    // Helper function to get job ID (using global function)
     function getJobIdFromPage() {
-        // Try multiple ways to get job ID
-        const urlParts = window.location.pathname.split('/');
-        const jobIdFromUrl = urlParts[urlParts.length - 1];
-        
-        // Check if it's a number
-        if (!isNaN(jobIdFromUrl) && jobIdFromUrl !== '') {
-            return parseInt(jobIdFromUrl);
-        }
-        
-        // Try to get from meta tag or data attribute
-        const jobIdMeta = document.querySelector('meta[name="job-id"]')?.getAttribute('content');
-        if (jobIdMeta && !isNaN(jobIdMeta)) {
-            return parseInt(jobIdMeta);
-        }
-        
-        // Try to get from global variable
-        if (typeof window.currentJobId !== 'undefined') {
-            return window.currentJobId;
-        }
-        
-        // Try to extract from URL pattern /viec-lam/{slug}
-        if (urlParts.length >= 2 && urlParts[urlParts.length - 2] === 'viec-lam') {
-            const slug = urlParts[urlParts.length - 1];
-            
-            const knownJobs = {
-                'blockchain-game-developer-sky-mavis': 6,
-                '3d-platformer-demo': 20,
-                'job-appota-backend-003': 23
-            };
-            
-            if (knownJobs[slug]) {
-                return knownJobs[slug];
-            }
-        }
-        
-        return null;
+        return window.getJobIdFromPage();
     }
     
     // Test function - can be called from browser console

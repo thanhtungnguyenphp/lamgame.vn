@@ -274,6 +274,87 @@
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 
     @stack('styles')
+
+    <!-- Google Analytics -->
+    @if(config('google_analytics.enabled') && (app()->environment('production') || config('google_analytics.enabled')))
+    @php
+        $gaId = config('google_analytics.tracking_id');
+        $anonymizeIp = config('google_analytics.anonymize_ip') ? 'true' : 'false';
+        $allowSignals = config('google_analytics.allow_google_signals') ? 'true' : 'false';
+    @endphp
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', '{{ $gaId }}', {
+        'page_title': document.title,
+        'page_location': window.location.href,
+        'anonymize_ip': {{ $anonymizeIp }},
+        'allow_google_signals': {{ $allowSignals }},
+        'cookie_flags': 'SameSite=None;Secure'
+      });
+
+      // Enhanced tracking functions
+      window.trackEvent = function(eventName, parameters = {}) {
+        if (typeof gtag !== 'undefined') {
+          gtag('event', eventName, parameters);
+          console.log('GA Event tracked:', eventName, parameters);
+        }
+      };
+
+      window.trackPageView = function(pageTitle, pagePath) {
+        if (typeof gtag !== 'undefined') {
+          gtag('config', '{{ $gaId }}', {
+            'page_title': pageTitle,
+            'page_path': pagePath
+          });
+        }
+      };
+
+      // Enhanced CTA tracking
+      window.trackCTA = function(action, category = 'engagement') {
+        trackEvent('cta_click', {
+          'event_category': category,
+          'event_label': action,
+          'value': 1
+        });
+      };
+
+      // Job application tracking
+      window.trackJobApplication = function(jobId, jobTitle, company) {
+        trackEvent('job_application', {
+          'event_category': 'jobs',
+          'event_label': jobTitle,
+          'job_id': jobId,
+          'company': company,
+          'value': 1
+        });
+      };
+
+      // Blog engagement tracking
+      window.trackBlogView = function(blogId, blogTitle, category) {
+        trackEvent('blog_view', {
+          'event_category': 'blog',
+          'event_label': blogTitle,
+          'blog_id': blogId,
+          'blog_category': category,
+          'value': 1
+        });
+      };
+
+      // Contact form tracking
+      window.trackFormSubmit = function(formType) {
+        trackEvent('form_submit', {
+          'event_category': 'forms',
+          'event_label': formType,
+          'value': 1
+        });
+      };
+    </script>
+    @endif
 </head>
 <body>
     <!-- Header -->
@@ -491,15 +572,25 @@
             });
         }
 
-        // Analytics placeholder functions
-        function trackCTA(action) {
-            console.log('CTA tracked:', action);
-            // Add your analytics tracking here
+        // Analytics functions (enhanced versions in GA script above)
+        function trackCTA(action, category = 'engagement') {
+            if (typeof window.trackCTA === 'function') {
+                window.trackCTA(action, category);
+            } else {
+                console.log('CTA tracked:', action, category);
+            }
         }
 
         function trackRegistration() {
-            console.log('Registration tracked');
-            // Add your analytics tracking here
+            if (typeof window.trackEvent === 'function') {
+                window.trackEvent('registration', {
+                    'event_category': 'user',
+                    'event_label': 'account_registration',
+                    'value': 1
+                });
+            } else {
+                console.log('Registration tracked');
+            }
         }
 
         // Initialize active menu states and mount Vue app after DOM is loaded
