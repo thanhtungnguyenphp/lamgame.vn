@@ -166,8 +166,8 @@
                                 @endif
                                 <div class="job-content">
                                     <div class="job-header">
-                                        <div class="company-logo">
-                                            <img src="https://via.placeholder.com/60x60?text={{ strtoupper(substr($companyName, 0, 3)) }}" alt="{{ $companyName }}">
+                                        <div class="job-thumbnail">
+                                            <img src="{{ $job->thumbnail_url }}" alt="{{ $jobTitle }} at {{ $companyName }}" class="job-thumbnail-img">
                                         </div>
                                         <div class="job-info">
                                             <h3><a href="{{ route('lamgame.job.detail', $job->url_key) }}" class="job-title" title="{{ $jobTitle }}">{{ $jobTitle }}</a></h3>
@@ -970,12 +970,22 @@
             margin-bottom: 1rem;
         }
         
-        .company-logo img {
-            width: 60px;
+        .job-thumbnail {
+            flex-shrink: 0;
+        }
+        
+        .job-thumbnail-img {
+            width: 80px;
             height: 60px;
             border-radius: 8px;
             object-fit: cover;
             border: 1px solid #e1e5e9;
+            transition: all 0.3s ease;
+        }
+        
+        .job-item:hover .job-thumbnail-img {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         
         .job-info {
@@ -1381,6 +1391,16 @@
             .job-header {
                 flex-direction: column;
                 text-align: center;
+            }
+            
+            .job-thumbnail {
+                align-self: center;
+                margin-bottom: 1rem;
+            }
+            
+            .job-thumbnail-img {
+                width: 100px;
+                height: 75px;
             }
             
             .job-meta {
