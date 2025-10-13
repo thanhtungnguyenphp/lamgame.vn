@@ -119,7 +119,7 @@
                     <div class="content-section">
                         <h2 class="section-title">Yêu cầu công việc</h2>
                         <div class="section-content">
-                            {!! nl2br($job->short_description) !!}
+                            {!! $job->processed_description !!}
                         </div>
                     </div>
                     @endif
