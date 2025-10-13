@@ -324,11 +324,14 @@ class LamGamePageController extends Controller
             
             // Add thumbnail URL with fallback
             $job->thumbnail_url = $this->getJobThumbnailUrl($job->thumbnail);
+            
+            // Process description for safe HTML display in listing
+            $job->processed_description = $this->processJobDescription($job->short_description, 150);
 
             // Ensure url_key exists, if not create one from job title and id
             if (empty($job->url_key)) {
                 $jobTitle = explode(' - ', $job->name)[0] ?? $job->name;
-                $job->url_key = \Str::slug($jobTitle . '-' . $job->id);
+                $job->url_key = \Str::slug($jobTitle) . '-' . $job->id;
             }
         }
 
@@ -432,6 +435,55 @@ class LamGamePageController extends Controller
     }
 
     /**
+     * Process job description for safe HTML display with text truncation
+     */
+    private function processJobDescription($description, $limit = null)
+    {
+        if (empty($description)) {
+            return 'Thông tin mô tả công việc sẽ được cập nhật sớm.';
+        }
+
+        // Clean up the HTML - remove dangerous tags, keep safe formatting
+        $allowedTags = '<strong><b><em><i><u><br><p><ul><ol><li>';
+        $cleanText = strip_tags($description, $allowedTags);
+        
+        // Convert plain line breaks to <br> tags if needed
+        $cleanText = preg_replace('/\n(?![^<]*>)/', '<br>', $cleanText);
+        
+        // Clean up multiple consecutive <br> tags
+        $cleanText = preg_replace('/(<br\s*\/?>\s*){3,}/', '<br><br>', $cleanText);
+        
+        // If we need to truncate for listing view
+        if ($limit !== null) {
+            // Get plain text for length calculation
+            $plainText = strip_tags($cleanText);
+            
+            if (strlen($plainText) > $limit) {
+                // Truncate plain text at word boundary
+                $truncated = substr($plainText, 0, $limit);
+                $truncated = substr($truncated, 0, strrpos($truncated, ' '));
+                
+                // Try to preserve some HTML formatting in truncated version
+                $words = explode(' ', $truncated);
+                $wordCount = count($words);
+                
+                // Create a truncated version with HTML
+                $htmlWords = explode(' ', strip_tags($cleanText));
+                $truncatedWithHtml = implode(' ', array_slice($htmlWords, 0, $wordCount));
+                
+                return '<p>' . $truncatedWithHtml . '...</p>';
+            }
+        }
+        
+        // Wrap in paragraph if not already wrapped
+        if (!str_starts_with(trim($cleanText), '<p>')) {
+            $cleanText = '<p>' . $cleanText . '</p>';
+        }
+        
+        return $cleanText;
+    }
+
+    /**
      * Show Job detail page
      */
     public function jobDetail($slug)
@@ -494,6 +546,9 @@ class LamGamePageController extends Controller
         
         // Add thumbnail URL with fallback
         $job->thumbnail_url = $this->getJobThumbnailUrl($job->thumbnail);
+        
+        // Process description for safe HTML display
+        $job->processed_description = $this->processJobDescription($job->short_description);
 
         // Parse job data
         $companyName = trim(str_replace(' - ', ' ', explode(' - ', $job->name)[1] ?? $job->name));
