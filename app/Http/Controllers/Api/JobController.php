@@ -8,6 +8,7 @@ use App\Http\Requests\Api\UpdateJobRequest;
 use App\Http\Resources\JobResource;
 use App\Http\Resources\CategoryResource;
 use App\Services\JobService;
+use App\Services\JobFilterService;
 use Webkul\Product\Models\Product;
 use Webkul\Category\Models\Category;
 use Webkul\Attribute\Models\Attribute;
@@ -19,10 +20,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class JobController extends Controller
 {
     protected JobService $jobService;
+    protected JobFilterService $jobFilterService;
 
-    public function __construct(JobService $jobService)
+    public function __construct(JobService $jobService, JobFilterService $jobFilterService)
     {
         $this->jobService = $jobService;
+        $this->jobFilterService = $jobFilterService;
     }
 
     /**
@@ -250,28 +253,12 @@ class JobController extends Controller
     public function getCategories(): JsonResponse
     {
         try {
-            // Lấy job categories (con của "Việc Làm")
-            $jobParentCategory = Category::whereHas('translations', function ($query) {
-                $query->where('slug', 'viec-lam');
-            })->first();
-
-            if (!$jobParentCategory) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Job categories not found',
-                ], Response::HTTP_NOT_FOUND);
-            }
-
-            $categories = Category::where('parent_id', $jobParentCategory->id)
-                ->where('status', 1)
-                ->with('translations')
-                ->orderBy('position')
-                ->get();
+            $categories = $this->jobFilterService->getJobCategories();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Job categories retrieved successfully',
-                'data' => CategoryResource::collection($categories),
+                'data' => $categories,
             ], Response::HTTP_OK);
 
         } catch (\Exception $e) {
@@ -291,38 +278,7 @@ class JobController extends Controller
     public function getAttributes(): JsonResponse
     {
         try {
-            $jobAttributeCodes = [
-                'job_type', 'experience_level', 'salary_range', 'job_location',
-                'company_size', 'required_skills', 'education_level', 'english_level',
-                'job_benefits', 'application_method'
-            ];
-
-            $attributes = Attribute::whereIn('code', $jobAttributeCodes)
-                ->with(['options.translations' => function ($query) {
-                    $query->where('locale', 'vi');
-                }, 'translations' => function ($query) {
-                    $query->where('locale', 'vi');
-                }])
-                ->get()
-                ->map(function ($attribute) {
-                    $translation = $attribute->translations->first();
-                    
-                    return [
-                        'code' => $attribute->code,
-                        'name' => $translation?->name ?? $attribute->admin_name,
-                        'type' => $attribute->type,
-                        'is_required' => $attribute->is_required,
-                        'is_filterable' => $attribute->is_filterable,
-                        'options' => $attribute->options->map(function ($option) {
-                            $optionTranslation = $option->translations->first();
-                            return [
-                                'id' => $option->id,
-                                'value' => $optionTranslation?->label ?? $option->admin_name,
-                                'sort_order' => $option->sort_order,
-                            ];
-                        })->sortBy('sort_order')->values(),
-                    ];
-                });
+            $attributes = $this->jobFilterService->getJobAttributesForForm();
 
             return response()->json([
                 'success' => true,

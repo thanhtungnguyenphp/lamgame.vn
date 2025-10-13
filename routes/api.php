@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\UserJobController;
 use App\Http\Controllers\Api\JobAnalyticsController;
 use App\Http\Controllers\Api\JobBulkController;
 use App\Http\Controllers\Api\JobImportExportController;
+use App\Http\Controllers\Api\JobOptionsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -97,6 +98,31 @@ Route::prefix('jobs')->name('api.jobs.')->middleware('throttle:60,1')->group(fun
     Route::post('/bulk', [\App\Http\Controllers\Api\JobController::class, 'bulkStore'])->name('bulk-store');
     Route::post('/{id}/publish', [\App\Http\Controllers\Api\JobController::class, 'publish'])->name('publish')->where('id', '[0-9]+');
     Route::post('/{id}/unpublish', [\App\Http\Controllers\Api\JobController::class, 'unpublish'])->name('unpublish')->where('id', '[0-9]+');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Job Options & Filter API Routes (Public)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('jobs/options')->name('api.jobs.options.')->middleware('throttle:120,1')->group(function () {
+    // Get all filter options for search/filter forms
+    Route::get('/filter-options', [JobOptionsController::class, 'getFilterOptions'])->name('filter-options');
+    
+    // Get job form data (combined endpoint for job creation forms)
+    Route::get('/form-data', [JobOptionsController::class, 'getJobFormData'])->name('form-data');
+    
+    // Individual option endpoints
+    Route::get('/locations', [JobOptionsController::class, 'getLocations'])->name('locations');
+    Route::get('/skills', [JobOptionsController::class, 'getSkills'])->name('skills');
+    Route::get('/companies', [JobOptionsController::class, 'getCompanies'])->name('companies');
+    Route::get('/benefits', [JobOptionsController::class, 'getBenefits'])->name('benefits');
+    Route::get('/salary-ranges', [JobOptionsController::class, 'getSalaryRanges'])->name('salary-ranges');
+    Route::get('/industries', [JobOptionsController::class, 'getIndustries'])->name('industries');
+    Route::get('/popular-keywords', [JobOptionsController::class, 'getPopularKeywords'])->name('popular-keywords');
+    
+    // Search across multiple option types
+    Route::get('/search', [JobOptionsController::class, 'searchOptions'])->name('search');
 });
 
 /*
