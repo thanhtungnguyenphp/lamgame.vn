@@ -18,6 +18,22 @@
         window.isLoggedIn = false;
     </script>
     @endif
+    
+    <!-- Job tracking -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Track job view
+            if (typeof window.trackEvent === 'function') {
+                window.trackEvent('job_view', {
+                    'event_category': 'jobs',
+                    'event_label': '{{ $jobTitle }}',
+                    'job_id': '{{ $job->id }}',
+                    'company': '{{ $companyName }}',
+                    'value': 1
+                });
+            }
+        });
+    </script>
 @endpush
 
 @section('content')
