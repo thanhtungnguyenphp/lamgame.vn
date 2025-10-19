@@ -58,7 +58,8 @@
         border-radius: 8px;
         font-size: 1rem;
         transition: all 0.3s ease;
-        background: #f8f9fa;
+        background: white;
+        color: #333;
     }
     
     .form-control:focus {
@@ -66,6 +67,11 @@
         border-color: #6a4c93;
         background: white;
         box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
+    }
+    
+    .form-control::placeholder {
+        color: #999;
+        opacity: 1;
     }
     
     .form-control.error {
