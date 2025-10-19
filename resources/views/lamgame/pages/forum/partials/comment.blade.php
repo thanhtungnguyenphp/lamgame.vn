@@ -62,39 +62,70 @@
 
     <!-- Reply Form -->
     <div class="reply-form" id="reply-form-{{ $comment->id }}" style="display: none;">
-        <form action="{{ route('forum.comments.store', $comment->post) }}" method="POST" class="comment-form">
-            @csrf
-            <input type="hidden" name="parent_id" value="{{ $comment->id }}">
-            
-            <div class="form-header">
-                <div class="reply-avatar">
-                    {{ strtoupper(substr(session('user_name', 'U'), 0, 2)) }}
+        @auth('customer')
+            <form action="{{ route('forum.comments.store', $comment->post) }}" method="POST" class="comment-form">
+                @csrf
+                <input type="hidden" name="parent_id" value="{{ $comment->id }}">
+                
+                <div class="form-header">
+                    <div class="reply-avatar">
+                        {{ strtoupper(substr(auth('customer')->user()->first_name, 0, 1) . substr(auth('customer')->user()->last_name, 0, 1)) }}
+                    </div>
+                    <div class="reply-author-info">
+                        <span class="reply-author-name">{{ auth('customer')->user()->first_name }} {{ auth('customer')->user()->last_name }}</span>
+                        <span class="reply-context">Trả lời <strong>{{ $comment->author_name }}</strong></span>
+                    </div>
                 </div>
-                <div class="form-fields">
-                    <div class="form-row">
-                        <input type="text" name="author_name" placeholder="Tên của bạn" required 
-                               value="{{ session('user_name') }}" class="form-input">
-                        <input type="email" name="author_email" placeholder="Email" required 
-                               value="{{ session('user_email') }}" class="form-input">
+                
+                <div class="form-group">
+                    <div class="reply-textarea-wrapper">
+                        <textarea name="content" 
+                                 placeholder="Trả lời {{ $comment->author_name }}..." 
+                                 required 
+                                 class="form-textarea reply-textarea" 
+                                 rows="3"
+                                 maxlength="2000"></textarea>
+                        <div class="reply-textarea-footer">
+                            <div class="reply-tools">
+                                <span class="reply-hint">💬 Trả lời nhanh</span>
+                            </div>
+                            <div class="reply-char-counter">
+                                <span class="reply-char-count">0</span><span class="char-limit">/2000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" onclick="toggleReplyForm({{ $comment->id }})">
+                        <i class="fas fa-times"></i>
+                        Hủy
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-reply"></i>
+                        Gửi trả lời
+                    </button>
+                </div>
+            </form>
+        @else
+            <div class="reply-login-prompt">
+                <div class="reply-login-icon">🔒</div>
+                <div class="reply-login-content">
+                    <h5>Tham gia thảo luận</h5>
+                    <p>Bạn cần đăng nhập để trả lời bình luận này</p>
+                    <div class="reply-login-actions">
+                        <a href="{{ route('auth.login') }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Đăng nhập
+                        </a>
+                        <a href="{{ route('auth.register') }}" class="btn btn-outline btn-sm">
+                            <i class="fas fa-user-plus"></i>
+                            Đăng ký
+                        </a>
                     </div>
                 </div>
             </div>
-            
-            <div class="form-group">
-                <textarea name="content" placeholder="Viết trả lời của bạn..." required 
-                          class="form-textarea" rows="3"></textarea>
-            </div>
-            
-            <div class="form-actions">
-                <button type="button" class="btn btn-cancel" onclick="toggleReplyForm({{ $comment->id }})">
-                    Hủy
-                </button>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-reply"></i>
-                    Trả lời
-                </button>
-            </div>
-        </form>
+        @endauth
     </div>
 
     <!-- Replies -->
@@ -310,14 +341,18 @@
 
 .form-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.75rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
 }
 
 .reply-avatar {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
@@ -325,18 +360,133 @@
     align-items: center;
     justify-content: center;
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.form-fields {
-    flex: 1;
+.reply-author-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+.reply-author-name {
+    font-weight: 600;
+    color: #1a202c;
+    font-size: 0.9rem;
+}
+
+.reply-context {
+    color: #667eea;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.reply-context strong {
+    color: #4a5568;
+}
+
+.reply-textarea-wrapper {
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.reply-textarea-wrapper:focus-within {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.reply-textarea {
+    border: none;
+    border-radius: 8px 8px 0 0;
+    box-shadow: none;
+    resize: vertical;
+    min-height: 80px;
+}
+
+.reply-textarea:focus {
+    border: none;
+    box-shadow: none;
+}
+
+.reply-textarea-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    font-size: 0.75rem;
+}
+
+.reply-tools {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.reply-hint {
+    color: #718096;
+    opacity: 0.8;
+}
+
+.reply-char-counter {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: 'SF Mono', 'Monaco', monospace;
+    font-weight: 500;
+}
+
+.reply-char-count {
+    color: #4a5568;
+    transition: color 0.2s ease;
+}
+
+.reply-login-prompt {
+    text-align: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8fafc, #edf2f7);
+    border-radius: 8px;
+    border: 2px dashed #cbd5e0;
+}
+
+.reply-login-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.7;
+}
+
+.reply-login-content h5 {
+    color: #1a202c;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+}
+
+.reply-login-content p {
+    color: #4a5568;
+    font-size: 0.9rem;
+    margin: 0 0 1rem 0;
+    line-height: 1.4;
+}
+
+.reply-login-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
 }
 
 .form-group {
@@ -401,6 +551,19 @@
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
+.btn-outline {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.btn-outline:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
 .comment-replies {
     margin-top: 1rem;
 }
@@ -461,12 +624,35 @@
         justify-content: flex-end;
     }
     
-    .form-row {
-        grid-template-columns: 1fr;
+    .form-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 1rem;
+    }
+    
+    .reply-author-info {
+        align-self: stretch;
+        text-align: left;
+    }
+    
+    .reply-login-prompt {
+        padding: 1.25rem;
+    }
+    
+    .reply-login-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .reply-login-actions .btn {
+        width: 100%;
+        justify-content: center;
     }
     
     .form-actions {
         justify-content: stretch;
+        gap: 0.5rem;
     }
     
     .btn {
@@ -497,8 +683,53 @@ function toggleReplyForm(commentId) {
     if (!isVisible) {
         // Focus on textarea when showing form
         const textarea = form.querySelector('textarea');
-        setTimeout(() => textarea.focus(), 100);
+        setTimeout(() => {
+            textarea.focus();
+            initReplyCharCounter(textarea);
+        }, 100);
     }
+}
+
+function initReplyCharCounter(textarea) {
+    const counter = textarea.closest('.reply-form').querySelector('.reply-char-count');
+    if (!counter) return;
+    
+    // Initialize count
+    updateReplyCharCount(textarea, counter);
+    
+    // Add event listener if not already added
+    if (!textarea.hasAttribute('data-counter-init')) {
+        textarea.setAttribute('data-counter-init', 'true');
+        textarea.addEventListener('input', () => updateReplyCharCount(textarea, counter));
+    }
+}
+
+function updateReplyCharCount(textarea, counter) {
+    const currentLength = textarea.value.length;
+    const maxLength = 2000;
+    
+    counter.textContent = currentLength;
+    
+    // Remove existing classes
+    counter.classList.remove('char-count-warning', 'char-count-danger');
+    
+    // Add appropriate class based on length
+    if (currentLength > maxLength * 0.9) {
+        counter.classList.add('char-count-danger');
+        counter.style.color = '#e53e3e';
+        counter.style.fontWeight = '700';
+    } else if (currentLength > maxLength * 0.75) {
+        counter.classList.add('char-count-warning');
+        counter.style.color = '#f6ad55';
+        counter.style.fontWeight = '600';
+    } else {
+        counter.style.color = '#4a5568';
+        counter.style.fontWeight = '500';
+    }
+    
+    // Auto-resize textarea
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.max(80, textarea.scrollHeight) + 'px';
 }
 
 function toggleReplies(commentId) {
