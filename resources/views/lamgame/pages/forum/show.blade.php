@@ -131,34 +131,87 @@
                     <div class="comments-header">
                         <h3>💬 Bình luận ({{ $post->comments_count }})</h3>
                         <div class="comments-sort">
+                            <label class="sort-label">
+                                <i class="fas fa-sort-amount-down"></i>
+                                Sắp xếp:
+                            </label>
                             <select onchange="sortComments(this.value)">
-                                <option value="newest">Mới nhất</option>
-                                <option value="oldest">Cũ nhất</option>
-                                <option value="popular">Phổ biến nhất</option>
+                                <option value="newest">🕒 Mới nhất</option>
+                                <option value="oldest">📅 Cũ nhất</option>
+                                <option value="popular">🔥 Phổ biến nhất</option>
                             </select>
                         </div>
                     </div>
 
                     <!-- Add Comment Form -->
                     <div class="add-comment-form">
-                        <form action="{{ route('forum.comments.store', $post) }}" method="POST" class="comment-form">
-                            @csrf
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <input type="text" name="author_name" placeholder="Tên của bạn" required class="form-input">
+                        @auth('customer')
+                            <div class="comment-author-info">
+                                <div class="author-avatar">
+                                    {{ strtoupper(substr(auth('customer')->user()->first_name, 0, 1) . substr(auth('customer')->user()->last_name, 0, 1)) }}
                                 </div>
-                                <div class="form-group">
-                                    <input type="email" name="author_email" placeholder="Email" required class="form-input">
+                                <div class="author-details">
+                                    <span class="author-name">{{ auth('customer')->user()->first_name }} {{ auth('customer')->user()->last_name }}</span>
+                                    <span class="author-status">Thành viên</span>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <textarea name="content" placeholder="Viết bình luận của bạn..." required class="form-textarea" rows="4"></textarea>
+                            
+                            <form action="{{ route('forum.comments.store', $post) }}" method="POST" class="comment-form">
+                                @csrf
+                                <div class="form-group">
+                                    <div class="textarea-wrapper">
+                                        <textarea name="content" 
+                                                 id="comment-textarea"
+                                                 placeholder="Chia sẻ suy nghĩ của bạn về bài viết này..." 
+                                                 required 
+                                                 class="form-textarea {{ $errors->has('content') ? 'error' : '' }}" 
+                                                 rows="4"
+                                                 maxlength="2000">{{ old('content') }}</textarea>
+                                        <div class="textarea-footer">
+                                            <div class="textarea-tools">
+                                                <span class="textarea-hint">📝 Markdown hỗ trợ</span>
+                                            </div>
+                                            <div class="character-counter">
+                                                <span id="char-count">0</span><span class="char-limit">/2000</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @if($errors->has('content'))
+                                        <div class="error-message">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            {{ $errors->first('content') }}
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="comment-form-actions">
+                                    <div class="form-tips">
+                                        <small>💡 Hãy thể hiện quan điểm một cách văn minh và tôn trọng</small>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane"></i>
+                                        Đăng bình luận
+                                    </button>
+                                </div>
+                            </form>
+                        @else
+                            <div class="login-prompt">
+                                <div class="login-prompt-icon">🔐</div>
+                                <div class="login-prompt-content">
+                                    <h4>Tham gia thảo luận</h4>
+                                    <p>Bạn cần đăng nhập để có thể bình luận và trao đổi với cộng đồng</p>
+                                    <div class="login-prompt-actions">
+                                        <a href="{{ route('auth.login') }}" class="btn btn-primary">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                            Đăng nhập ngay
+                                        </a>
+                                        <a href="{{ route('auth.register') }}" class="btn btn-outline">
+                                            <i class="fas fa-user-plus"></i>
+                                            Tạo tài khoản
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-paper-plane"></i>
-                                Gửi bình luận
-                            </button>
-                        </form>
+                        @endauth
                     </div>
 
                     <!-- Comments List -->
@@ -465,19 +518,351 @@
     margin: 0;
 }
 
+.comments-sort {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+}
+
+.sort-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #4a5568;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.sort-label i {
+    color: #667eea;
+    font-size: 0.85rem;
+}
+
 .comments-sort select {
-    padding: 0.5rem;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
     border: 2px solid #e2e8f0;
-    border-radius: 6px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    color: #2d3748;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    min-width: 160px;
+}
+
+.comments-sort select:hover {
+    border-color: #cbd5e0;
+    background: linear-gradient(135deg, #ffffff 0%, #edf2f7 100%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.comments-sort select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 4px 12px rgba(0, 0, 0, 0.15);
     background: white;
+}
+
+.comments-sort select:active {
+    transform: translateY(0);
+}
+
+/* Custom dropdown arrow */
+.comments-sort::after {
+    content: '⌄';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #667eea;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.comments-sort:hover::after {
+    color: #5a67d8;
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Enhanced dropdown states */
+.comments-sort select[aria-expanded="true"] {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.comments-sort select[aria-expanded="true"] + .comments-sort::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* Option styling */
+.comments-sort select option {
+    padding: 0.875rem;
+    background: white;
+    color: #2d3748;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border: none;
+    line-height: 1.4;
+}
+
+.comments-sort select option:hover {
+    background: #f7fafc;
+    color: #667eea;
+}
+
+.comments-sort select option:checked,
+.comments-sort select option:focus {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-weight: 600;
+}
+
+/* Add subtle animation */
+.comments-sort select {
+    background-position: right 1rem center;
+    background-size: 1rem;
+    background-repeat: no-repeat;
+}
+
+/* Visual feedback for active state */
+.comments-sort.active select {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
 }
 
 .add-comment-form {
     margin-bottom: 2rem;
-    padding: 1.5rem;
-    background: #f8fafc;
-    border-radius: 8px;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 16px;
     border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.add-comment-form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.comment-author-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.comment-author-info .author-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.comment-author-info .author-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.comment-author-info .author-name {
+    font-weight: 600;
+    color: #1a202c;
+    font-size: 0.95rem;
+}
+
+.comment-author-info .author-status {
+    font-size: 0.8rem;
+    color: #718096;
+}
+
+.comment-form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.form-tips {
+    color: #718096;
+    font-size: 0.875rem;
+}
+
+.comment-form .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.comment-form .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+}
+
+.comment-form .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.comment-form .btn-primary i {
+    margin-right: 0.5rem;
+}
+
+.textarea-wrapper {
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.textarea-wrapper:focus-within {
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    transform: translateY(-1px);
+}
+
+.textarea-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    font-size: 0.8rem;
+}
+
+.textarea-tools {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.textarea-hint {
+    color: #718096;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.character-counter {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 500;
+    font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+}
+
+#char-count {
+    color: #4a5568;
+    transition: color 0.2s ease;
+}
+
+.char-limit {
+    color: #a0aec0;
+}
+
+.textarea-wrapper .form-textarea {
+    border: none;
+    border-radius: 12px 12px 0 0;
+    box-shadow: none;
+    margin-bottom: 0;
+}
+
+.textarea-wrapper .form-textarea:focus {
+    box-shadow: none;
+    border: none;
+}
+
+/* Character count color states */
+.char-count-warning {
+    color: #f6ad55 !important;
+}
+
+.char-count-danger {
+    color: #e53e3e !important;
+    font-weight: 700;
+}
+
+.login-prompt {
+    text-align: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    border-radius: 12px;
+    border: 2px dashed #cbd5e0;
+}
+
+.login-prompt-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.login-prompt-content h4 {
+    color: #1a202c;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.login-prompt-content p {
+    color: #4a5568;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.login-prompt-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-outline {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.btn-outline:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-1px);
 }
 
 .form-row {
@@ -487,27 +872,69 @@
     margin-bottom: 1rem;
 }
 
-.form-group {
-    margin-bottom: 1rem;
+.comment-form .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.comment-form .form-group:last-of-type {
+    margin-bottom: 0;
 }
 
 .form-input, .form-textarea {
     width: 100%;
-    padding: 0.875rem;
+    padding: 1rem 1.25rem;
     border: 2px solid #e2e8f0;
-    border-radius: 6px;
+    border-radius: 12px;
     font-size: 1rem;
-    transition: border-color 0.2s ease;
+    line-height: 1.6;
+    background: white;
+    color: #2d3748;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .form-input:focus, .form-textarea:focus {
     outline: none;
     border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: #fefefe;
 }
 
 .form-textarea {
     resize: vertical;
     font-family: inherit;
+    min-height: 120px;
+}
+
+.form-textarea::placeholder {
+    color: #a0aec0;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.form-textarea:hover {
+    border-color: #cbd5e0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.form-textarea.error {
+    border-color: #e53e3e;
+    background-color: #fef5f5;
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #fed7d7;
+    border-radius: 6px;
+    border-left: 4px solid #e53e3e;
 }
 
 .btn {
@@ -668,6 +1095,53 @@
         justify-content: center;
         min-width: 0;
     }
+    
+    .comment-author-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        text-align: left;
+    }
+    
+    .comment-form-actions {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .login-prompt {
+        padding: 1.5rem;
+    }
+    
+    .login-prompt-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .login-prompt-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .comments-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .comments-sort {
+        align-self: stretch;
+        justify-content: space-between;
+    }
+    
+    .comments-sort select {
+        min-width: 140px;
+        font-size: 0.85rem;
+    }
+    
+    .sort-label {
+        font-size: 0.85rem;
+    }
 }
 </style>
 @endpush
@@ -702,6 +1176,41 @@ function sortComments(sortType) {
     console.log('Sort comments:', sortType);
     // Implement comment sorting
 }
+
+// Character counter for comment textarea
+document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.getElementById('comment-textarea');
+    const charCount = document.getElementById('char-count');
+    
+    if (textarea && charCount) {
+        // Initialize count
+        updateCharacterCount();
+        
+        // Update on input
+        textarea.addEventListener('input', updateCharacterCount);
+        
+        function updateCharacterCount() {
+            const currentLength = textarea.value.length;
+            const maxLength = 2000;
+            
+            charCount.textContent = currentLength;
+            
+            // Remove existing classes
+            charCount.classList.remove('char-count-warning', 'char-count-danger');
+            
+            // Add appropriate class based on length
+            if (currentLength > maxLength * 0.9) {
+                charCount.classList.add('char-count-danger');
+            } else if (currentLength > maxLength * 0.75) {
+                charCount.classList.add('char-count-warning');
+            }
+            
+            // Auto-resize textarea
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.max(120, textarea.scrollHeight) + 'px';
+        }
+    }
+});
 </script>
 @endpush
 @endsection
