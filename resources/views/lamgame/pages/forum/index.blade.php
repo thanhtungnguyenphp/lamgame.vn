@@ -139,11 +139,12 @@
                     </div>
                     
                     <div class="posts-filters">
+                        <span class="filter-label">Sắp xếp:</span>
                         <select onchange="updateSort(this.value)" class="sort-select">
-                            <option value="latest" {{ $sort === 'latest' ? 'selected' : '' }}>Mới nhất</option>
-                            <option value="popular" {{ $sort === 'popular' ? 'selected' : '' }}>Phổ biến</option>
-                            <option value="activity" {{ $sort === 'activity' ? 'selected' : '' }}>Hoạt động</option>
-                            <option value="oldest" {{ $sort === 'oldest' ? 'selected' : '' }}>Cũ nhất</option>
+                            <option value="latest" {{ $sort === 'latest' ? 'selected' : '' }}>📅 Mới nhất</option>
+                            <option value="popular" {{ $sort === 'popular' ? 'selected' : '' }}>🔥 Phổ biến</option>
+                            <option value="activity" {{ $sort === 'activity' ? 'selected' : '' }}>💬 Hoạt động</option>
+                            <option value="oldest" {{ $sort === 'oldest' ? 'selected' : '' }}>⏰ Cũ nhất</option>
                         </select>
                     </div>
                 </div>
@@ -183,9 +184,22 @@
 }
 
 .forum-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #6a4c93 0%, #9b5de5 100%);
     color: white;
     padding: 60px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.forum-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="80" cy="40" r="0.3" fill="%23ffffff" opacity="0.1"/><circle cx="40" cy="80" r="0.4" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+    opacity: 0.3;
 }
 
 .header-content {
@@ -264,55 +278,80 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #6a4c93, #9b5de5);
     color: white;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.3);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 6px 20px rgba(106, 76, 147, 0.4);
+    background: linear-gradient(135deg, #553c7b, #8b4dd1);
 }
 
 .btn-outline {
     background: white;
-    color: #667eea;
-    border-color: #667eea;
+    color: #6a4c93;
+    border-color: #6a4c93;
 }
 
 .btn-outline:hover {
-    background: #667eea;
+    background: linear-gradient(135deg, #6a4c93, #9b5de5);
     color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.2);
 }
 
 .search-form {
     display: flex;
     background: white;
     border: 2px solid #e2e8f0;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
-    min-width: 300px;
+    min-width: 320px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
 }
 
-.search-input {
+.search-form:focus-within {
+    border-color: #6a4c93;
+    box-shadow: 0 4px 20px rgba(106, 76, 147, 0.2);
+}
+
+.forum-page .search-input {
     flex: 1;
     padding: 0.875rem 1rem;
     border: none;
     outline: none;
     font-size: 1rem;
+    background: white;
+    color: #2d3748;
+}
+
+.search-input::placeholder {
+    color: #a0aec0;
+    font-weight: 400;
 }
 
 .search-btn {
-    background: #667eea;
+    background: linear-gradient(135deg, #6a4c93, #9b5de5);
     color: white;
     border: none;
-    padding: 0 1.5rem;
+    padding: 0 1.25rem;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .search-btn:hover {
-    background: #5a67d8;
+    background: linear-gradient(135deg, #553c7b, #8b4dd1);
+    transform: scale(1.05);
+}
+
+.search-btn i {
+    font-size: 1rem;
 }
 
 .forum-content {
@@ -363,18 +402,39 @@
 
 .category-item:hover {
     background: #f7fafc;
-    color: #667eea;
+    color: #6a4c93;
+    transform: translateX(2px);
 }
 
 .category-item.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #6a4c93, #9b5de5);
     color: white;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.3);
+    transform: translateX(4px);
 }
 
 .category-item.featured {
-    border: 2px solid #ffd700;
-    background: linear-gradient(135deg, #fff9e6, #fff3cd);
+    border: 2px solid #f6e05e;
+    background: linear-gradient(135deg, #fefcbf, #faf089);
+    position: relative;
+    overflow: hidden;
+}
+
+.category-item.featured::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: rotate(45deg);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
 
 .category-icon {
@@ -397,14 +457,23 @@
 
 .featured-badge {
     position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #ff6b35;
+    top: -8px;
+    right: -8px;
+    background: linear-gradient(135deg, #ff6b35, #f56565);
     color: white;
-    font-size: 0.7rem;
-    padding: 2px 6px;
-    border-radius: 10px;
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: 12px;
     font-weight: bold;
+    box-shadow: 0 2px 6px rgba(255, 107, 53, 0.4);
+    animation: pulse 2s infinite;
+    border: 2px solid white;
+    z-index: 1;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
 }
 
 .popular-tags {
@@ -459,13 +528,45 @@
     margin-left: 0.5rem;
 }
 
+.posts-filters {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.filter-label {
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
 .sort-select {
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.25rem;
     border: 2px solid #e2e8f0;
-    border-radius: 8px;
+    border-radius: 12px;
     background: white;
     font-weight: 500;
     cursor: pointer;
+    font-size: 0.95rem;
+    color: #4a5568;
+    transition: all 0.2s ease;
+    min-width: 160px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    appearance: none;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDFMNiA2TDExIDEiIHN0cm9rZT0iIzRBNTU2OCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 3rem;
+}
+
+.sort-select:focus {
+    outline: none;
+    border-color: #6a4c93;
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.15);
+}
+
+.sort-select:hover {
+    border-color: #6a4c93;
 }
 
 .sticky-posts {
@@ -532,6 +633,11 @@
         gap: 1rem;
     }
 
+    .stat-item {
+        min-width: 100px;
+        padding: 1rem;
+    }
+
     .actions-row {
         flex-direction: column;
         gap: 1rem;
@@ -540,11 +646,20 @@
     .action-buttons {
         flex-wrap: wrap;
         justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .search-form {
+        min-width: auto;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
     }
 
     .forum-content {
         grid-template-columns: 1fr;
         gap: 1rem;
+        padding: 1rem 0;
     }
 
     .categories-sidebar {
@@ -556,6 +671,16 @@
         flex-direction: column;
         gap: 1rem;
         align-items: stretch;
+    }
+
+    .posts-filters {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .sort-select {
+        width: 100%;
+        max-width: 220px;
     }
 }
 </style>
