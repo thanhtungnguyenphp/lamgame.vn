@@ -141,24 +141,61 @@
 
                     <!-- Add Comment Form -->
                     <div class="add-comment-form">
-                        <form action="{{ route('forum.comments.store', $post) }}" method="POST" class="comment-form">
-                            @csrf
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <input type="text" name="author_name" placeholder="Tên của bạn" required class="form-input">
+                        @auth('customer')
+                            <div class="comment-author-info">
+                                <div class="author-avatar">
+                                    {{ strtoupper(substr(auth('customer')->user()->first_name, 0, 1) . substr(auth('customer')->user()->last_name, 0, 1)) }}
                                 </div>
-                                <div class="form-group">
-                                    <input type="email" name="author_email" placeholder="Email" required class="form-input">
+                                <div class="author-details">
+                                    <span class="author-name">{{ auth('customer')->user()->first_name }} {{ auth('customer')->user()->last_name }}</span>
+                                    <span class="author-status">Thành viên</span>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <textarea name="content" placeholder="Viết bình luận của bạn..." required class="form-textarea" rows="4"></textarea>
+                            
+                            <form action="{{ route('forum.comments.store', $post) }}" method="POST" class="comment-form">
+                                @csrf
+                                <div class="form-group">
+                                    <textarea name="content" 
+                                             placeholder="Chia sẻ suy nghĩ của bạn về bài viết này..." 
+                                             required 
+                                             class="form-textarea {{ $errors->has('content') ? 'error' : '' }}" 
+                                             rows="4">{{ old('content') }}</textarea>
+                                    @if($errors->has('content'))
+                                        <div class="error-message">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                            {{ $errors->first('content') }}
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="comment-form-actions">
+                                    <div class="form-tips">
+                                        <small>💡 Hãy thể hiện quan điểm một cách văn minh và tôn trọng</small>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane"></i>
+                                        Đăng bình luận
+                                    </button>
+                                </div>
+                            </form>
+                        @else
+                            <div class="login-prompt">
+                                <div class="login-prompt-icon">🔐</div>
+                                <div class="login-prompt-content">
+                                    <h4>Tham gia thảo luận</h4>
+                                    <p>Bạn cần đăng nhập để có thể bình luận và trao đổi với cộng đồng</p>
+                                    <div class="login-prompt-actions">
+                                        <a href="{{ route('auth.login') }}" class="btn btn-primary">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                            Đăng nhập ngay
+                                        </a>
+                                        <a href="{{ route('auth.register') }}" class="btn btn-outline">
+                                            <i class="fas fa-user-plus"></i>
+                                            Tạo tài khoản
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-paper-plane"></i>
-                                Gửi bình luận
-                            </button>
-                        </form>
+                        @endauth
                     </div>
 
                     <!-- Comments List -->
@@ -476,8 +513,104 @@
     margin-bottom: 2rem;
     padding: 1.5rem;
     background: #f8fafc;
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid #e2e8f0;
+}
+
+.comment-author-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.comment-author-info .author-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.comment-author-info .author-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.comment-author-info .author-name {
+    font-weight: 600;
+    color: #1a202c;
+    font-size: 0.95rem;
+}
+
+.comment-author-info .author-status {
+    font-size: 0.8rem;
+    color: #718096;
+}
+
+.comment-form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.form-tips {
+    color: #718096;
+}
+
+.login-prompt {
+    text-align: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    border-radius: 12px;
+    border: 2px dashed #cbd5e0;
+}
+
+.login-prompt-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.login-prompt-content h4 {
+    color: #1a202c;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.login-prompt-content p {
+    color: #4a5568;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.login-prompt-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-outline {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.btn-outline:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-1px);
 }
 
 .form-row {
@@ -508,6 +641,24 @@
 .form-textarea {
     resize: vertical;
     font-family: inherit;
+}
+
+.form-textarea.error {
+    border-color: #e53e3e;
+    background-color: #fed7d7;
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #fed7d7;
+    border-radius: 6px;
+    border-left: 4px solid #e53e3e;
 }
 
 .btn {
@@ -667,6 +818,33 @@
         flex: 1;
         justify-content: center;
         min-width: 0;
+    }
+    
+    .comment-author-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        text-align: left;
+    }
+    
+    .comment-form-actions {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .login-prompt {
+        padding: 1.5rem;
+    }
+    
+    .login-prompt-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .login-prompt-actions .btn {
+        width: 100%;
+        justify-content: center;
     }
 }
 </style>
