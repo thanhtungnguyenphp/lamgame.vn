@@ -349,7 +349,7 @@ class ForumController extends Controller
         $user = Auth::guard('customer')->user();
         
         $validator = Validator::make($request->all(), [
-            'content' => 'required|string|min:10|max:2000',
+            'content' => 'required|string|min:3|max:2000',
             'parent_id' => 'nullable|exists:forum_comments,id',
         ]);
 
