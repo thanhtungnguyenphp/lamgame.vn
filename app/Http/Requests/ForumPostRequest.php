@@ -25,7 +25,7 @@ class ForumPostRequest extends FormRequest
             'title' => 'required|string|max:255',
             'content' => 'required|string|min:10',
             'category_id' => 'required|exists:forum_categories,id',
-            'type' => 'required|in:discussion,idea,question,showcase,job,review',
+            'type' => 'nullable|in:discussion,idea,question,showcase,job,review',
             'tags' => 'nullable|string|max:500',
             'edit_reason' => 'nullable|string|max:255',
         ];
@@ -60,7 +60,6 @@ class ForumPostRequest extends FormRequest
             'content.min' => ':attribute phải có ít nhất :min ký tự.',
             'category_id.required' => 'Vui lòng chọn :attribute.',
             'category_id.exists' => ':attribute được chọn không hợp lệ.',
-            'type.required' => 'Vui lòng chọn :attribute.',
             'type.in' => ':attribute được chọn không hợp lệ.',
             'tags.max' => ':attribute không được vượt quá :max ký tự.',
             'edit_reason.max' => ':attribute không được vượt quá :max ký tự.',
@@ -72,6 +71,13 @@ class ForumPostRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
+        // Set default post type if not provided
+        if (!$this->has('type') || empty($this->input('type'))) {
+            $this->merge([
+                'type' => 'discussion',
+            ]);
+        }
+        
         // Clean HTML content but keep basic formatting
         if ($this->has('content')) {
             $content = $this->input('content');

@@ -23,55 +23,8 @@
             <form action="{{ route('forum.posts.store') }}" method="POST" enctype="multipart/form-data" class="post-form" id="postForm">
                 @csrf
                 
-                <!-- Post Type & Category -->
-                <div class="form-section">
-                    <h3>Loại bài viết</h3>
-                    <div class="post-types">
-                        <label class="type-option {{ $selectedType === 'discussion' ? 'active' : '' }}">
-                            <input type="radio" name="type" value="discussion" {{ $selectedType === 'discussion' ? 'checked' : '' }}>
-                            <div class="type-card">
-                                <div class="type-icon">💬</div>
-                                <div class="type-info">
-                                    <h4>Thảo luận</h4>
-                                    <p>Thảo luận chung về game development</p>
-                                </div>
-                            </div>
-                        </label>
-                        
-                        <label class="type-option {{ $selectedType === 'idea' ? 'active' : '' }}">
-                            <input type="radio" name="type" value="idea" {{ $selectedType === 'idea' ? 'checked' : '' }}>
-                            <div class="type-card">
-                                <div class="type-icon">💡</div>
-                                <div class="type-info">
-                                    <h4>Ý tưởng</h4>
-                                    <p>Chia sẻ ý tưởng game mới</p>
-                                </div>
-                            </div>
-                        </label>
-                        
-                        <label class="type-option {{ $selectedType === 'question' ? 'active' : '' }}">
-                            <input type="radio" name="type" value="question" {{ $selectedType === 'question' ? 'checked' : '' }}>
-                            <div class="type-card">
-                                <div class="type-icon">❓</div>
-                                <div class="type-info">
-                                    <h4>Câu hỏi</h4>
-                                    <p>Đặt câu hỏi và tìm giải đáp</p>
-                                </div>
-                            </div>
-                        </label>
-                        
-                        <label class="type-option {{ $selectedType === 'showcase' ? 'active' : '' }}">
-                            <input type="radio" name="type" value="showcase" {{ $selectedType === 'showcase' ? 'checked' : '' }}>
-                            <div class="type-card">
-                                <div class="type-icon">🎯</div>
-                                <div class="type-info">
-                                    <h4>Showcase</h4>
-                                    <p>Khoe dự án và nhận feedback</p>
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                </div>
+                <!-- Hidden input for default post type -->
+                <input type="hidden" name="type" value="discussion">
 
                 <!-- Category -->
                 <div class="form-section">
@@ -251,58 +204,6 @@
     color: #e53e3e;
 }
 
-.post-types {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-}
-
-.type-option {
-    cursor: pointer;
-}
-
-.type-option input {
-    display: none;
-}
-
-.type-card {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    transition: all 0.2s ease;
-    background: white;
-}
-
-.type-option:hover .type-card {
-    border-color: #667eea;
-    background: #667eea05;
-}
-
-.type-option.active .type-card {
-    border-color: #667eea;
-    background: #667eea10;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-}
-
-.type-icon {
-    font-size: 2rem;
-}
-
-.type-info h4 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #1a202c;
-    margin-bottom: 0.25rem;
-}
-
-.type-info p {
-    color: #718096;
-    font-size: 0.9rem;
-    margin: 0;
-}
 
 .form-select, .form-input {
     width: 100%;
@@ -564,9 +465,6 @@
         align-items: flex-start;
     }
     
-    .post-types {
-        grid-template-columns: 1fr;
-    }
     
     .user-info {
         flex-direction: column;
@@ -588,15 +486,6 @@ document.getElementById('titleInput').addEventListener('input', function() {
     document.getElementById('titleCount').textContent = this.value.length;
 });
 
-// Post type selection
-document.querySelectorAll('input[name="type"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-        document.querySelectorAll('.type-option').forEach(option => {
-            option.classList.remove('active');
-        });
-        this.closest('.type-option').classList.add('active');
-    });
-});
 
 // Rich text editor
 function formatText(command) {
@@ -733,7 +622,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (confirm('Có bản nháp từ lần trước. Bạn muốn khôi phục không?')) {
                 document.querySelector('[name="title"]').value = data.title || '';
                 document.getElementById('contentEditor').innerHTML = data.content || '';
-                document.querySelector(`[name="type"][value="${data.type}"]`).checked = true;
                 document.querySelector('[name="category_id"]').value = data.category_id || '';
                 
                 if (data.tags) {

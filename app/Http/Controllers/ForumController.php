@@ -124,7 +124,8 @@ class ForumController extends Controller
         $categories = ForumCategory::active()->ordered()->get();
         $tags = ForumTag::popular()->get();
         $selectedCategory = $request->get('category');
-        $selectedType = $request->get('type', 'discussion');
+        // Always use discussion as default type since UI no longer shows type selection
+        $selectedType = 'discussion';
         
         // Get authenticated user info
         $user = Auth::guard('customer')->user();
