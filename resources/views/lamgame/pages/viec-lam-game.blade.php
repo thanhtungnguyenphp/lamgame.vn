@@ -129,6 +129,22 @@
                                         onclick="setQuickFilter('keyword', 'Game Designer')">Game Design</button>
                             </div>
                         </div>
+                        
+                        <!-- Sort options moved from jobs-header -->
+                        <div class="search-sort-section">
+                            <div class="search-results-info">
+                                <span class="results-count">Tìm thấy <strong class="job-count">{{ $totalJobs }}</strong> việc làm phù hợp</span>
+                            </div>
+                            <div class="sort-options">
+                                <label for="sort-select" class="sort-label">Sắp xếp:</label>
+                                <select id="sort-select" class="sort-select" onchange="this.form.submit()" form="search-form">
+                                    <option value="newest" {{ ($searchParams['sort'] ?? 'newest') == 'newest' ? 'selected' : '' }}>Mới nhất</option>
+                                    <option value="salary-high" {{ ($searchParams['sort'] ?? '') == 'salary-high' ? 'selected' : '' }}>Lương cao nhất</option>
+                                    <option value="company" {{ ($searchParams['sort'] ?? '') == 'company' ? 'selected' : '' }}>Theo công ty</option>
+                                </select>
+                                <input type="hidden" name="sort" value="{{ $searchParams['sort'] ?? 'newest' }}" form="search-form">
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -141,17 +157,6 @@
             <div class="row">
                 <!-- Job List -->
                 <div class="col-lg-8">
-                    <div class="jobs-header">
-                        <h2>Tìm thấy <span class="job-count">{{ $totalJobs }}</span> việc làm phù hợp</h2>
-                        <div class="sort-options">
-                            <select class="sort-select" onchange="this.form.submit()" form="search-form">
-                                <option value="newest" {{ ($searchParams['sort'] ?? 'newest') == 'newest' ? 'selected' : '' }}>Mới nhất</option>
-                                <option value="salary-high" {{ ($searchParams['sort'] ?? '') == 'salary-high' ? 'selected' : '' }}>Lương cao nhất</option>
-                                <option value="company" {{ ($searchParams['sort'] ?? '') == 'company' ? 'selected' : '' }}>Theo công ty</option>
-                            </select>
-                            <input type="hidden" name="sort" value="{{ $searchParams['sort'] ?? 'newest' }}" form="search-form">
-                        </div>
-                    </div>
 
                     <div class="job-list">
                         <div id="jobs-container">
@@ -173,12 +178,16 @@
                                         <div class="job-info">
                                             <h3><a href="{{ route('lamgame.job.detail', $job->url_key) }}" class="job-title" title="{{ $jobTitle }}">{{ $jobTitle }}</a></h3>
                                             <div class="company-name">{{ $companyName }}</div>
-                                            <div class="job-meta">
-                                                <span class="location"><i class="fa fa-map-marker"></i> Việt Nam</span>
-                                                <span class="salary"><i class="fa fa-money"></i> {{ $salaryFormatted }}</span>
-                                                <span class="type"><i class="fa fa-clock-o"></i> Full-time</span>
-                                                <span class="posted"><i class="fa fa-calendar"></i> {{ $postedAgo }}</span>
-                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="job-meta">
+                                        <div class="job-meta-primary">
+                                            <span class="salary highlight"><i class="fa fa-money"></i> {{ $salaryFormatted }}</span>
+                                            <span class="posted"><i class="fa fa-clock-o"></i> {{ $postedAgo }}</span>
+                                        </div>
+                                        <div class="job-meta-secondary">
+                                            <span class="location"><i class="fa fa-map-marker"></i> VN</span>
+                                            <span class="type">Full-time</span>
                                         </div>
                                     </div>
                                     <div class="job-description">
@@ -1124,6 +1133,7 @@
             align-items: center;
             gap: 1rem;
             flex-wrap: wrap;
+            margin-bottom: 1rem;
         }
         
         .quick-filters-label {
@@ -1159,6 +1169,56 @@
             background: #6a4c93;
             color: white;
             border-color: #6a4c93;
+        }
+        
+        /* Search Sort Section */
+        .search-sort-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0 0.5rem;
+            border-top: 1px solid rgba(106, 76, 147, 0.1);
+            margin-top: 0.5rem;
+        }
+        
+        .search-results-info {
+            color: #333;
+            font-size: 0.95rem;
+        }
+        
+        .search-results-info .job-count {
+            color: #6a4c93;
+            font-weight: 700;
+        }
+        
+        .search-sort-section .sort-options {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .sort-label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .search-sort-section .sort-select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #e1e5e9;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 0.85rem;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 130px;
+        }
+        
+        .search-sort-section .sort-select:focus {
+            outline: none;
+            border-color: #6a4c93;
+            box-shadow: 0 0 0 2px rgba(106, 76, 147, 0.1);
         }
         
         /* Screen reader only */
@@ -1212,55 +1272,6 @@
             flex: 0 0 33.33%;
         }
         
-        .jobs-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,255,0.9) 100%);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(106, 76, 147, 0.08);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(106, 76, 147, 0.1);
-        }
-        
-        .jobs-header h2 {
-            color: #333;
-            margin: 0;
-            position: relative;
-            padding-left: 1rem;
-        }
-        
-        .jobs-header h2::before {
-            content: '💼';
-            position: absolute;
-            left: -0.5rem;
-            font-size: 1.5rem;
-        }
-        
-        .job-count {
-            color: #6a4c93;
-            font-weight: bold;
-        }
-        
-        .sort-select {
-            padding: 0.75rem 1rem;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
-            font-size: 0.9rem;
-            color: #333;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 150px;
-        }
-        
-        .sort-select:focus {
-            outline: none;
-            border-color: #6a4c93;
-            box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
-        }
 
         /* Job Items */
         .job-list {
@@ -1316,6 +1327,7 @@
             display: flex;
             gap: 1rem;
             margin-bottom: 1rem;
+            align-items: flex-start;
         }
         
         .job-thumbnail {
@@ -1355,16 +1367,25 @@
         
         .job-info {
             flex: 1;
+            min-width: 0; /* Allow text truncation */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
         }
         
         .job-title {
             color: #333;
             text-decoration: none;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
-            display: block;
+            margin-bottom: 0.25rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             transition: color 0.3s ease;
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .job-title:hover {
@@ -1375,25 +1396,63 @@
         .company-name {
             color: #6a4c93;
             font-weight: 500;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0;
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         
         .job-meta {
             display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-            font-size: 0.9rem;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.85rem;
             color: #666;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .job-meta-primary {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .job-meta-secondary {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #888;
         }
         
         .job-meta span {
             display: flex;
             align-items: center;
             gap: 0.25rem;
+            white-space: nowrap;
         }
         
         .job-meta i {
             color: #6a4c93;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        
+        .job-meta .salary.highlight {
+            color: #6a4c93;
+            font-weight: 600;
+            background: rgba(106, 76, 147, 0.08);
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+        
+        .job-meta .posted {
+            color: #28a745;
+            font-weight: 500;
         }
         
         .job-description {
@@ -1769,6 +1828,7 @@
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 0.75rem;
+                margin-bottom: 0.75rem;
             }
             
             .quick-filters-label {
@@ -1806,23 +1866,41 @@
             }
             
             .job-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .job-thumbnail {
-                align-self: center;
-                margin-bottom: 1rem;
+                align-items: flex-start;
+                gap: 0.5rem;
             }
             
             .job-thumbnail-img {
-                width: 100px;
-                height: 75px;
+                width: 50px;
+                height: 38px;
+            }
+            
+            .job-title {
+                font-size: 0.95rem;
+                margin-bottom: 0.1rem;
+                -webkit-line-clamp: 2;
+            }
+            
+            .company-name {
+                font-size: 0.8rem;
             }
             
             .job-meta {
-                flex-direction: column;
-                gap: 0.5rem;
+                gap: 0.4rem;
+            }
+            
+            .job-meta-primary {
+                gap: 0.75rem;
+            }
+            
+            .job-meta-secondary {
+                gap: 0.75rem;
+                font-size: 0.75rem;
+            }
+            
+            .job-meta .salary.highlight {
+                font-size: 0.85rem;
+                padding: 0.2rem 0.4rem;
             }
             
             .job-actions {
@@ -1899,6 +1977,22 @@
             .quick-filter-btn {
                 padding: 0.5rem 0.875rem;
                 font-size: 0.8rem;
+            }
+            
+            .search-sort-section {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: flex-start;
+                padding: 0.75rem 0 0.25rem;
+            }
+            
+            .search-sort-section .sort-options {
+                align-self: stretch;
+                justify-content: space-between;
+            }
+            
+            .search-results-info {
+                font-size: 0.9rem;
             }
             
             .job-actions {
@@ -2113,18 +2207,36 @@
             }
             
             .job-header {
-                flex-direction: row;
-                text-align: left;
+                align-items: flex-start;
+                gap: 0.75rem;
+                margin-bottom: 0.75rem;
             }
             
             .job-thumbnail {
-                align-self: flex-start;
-                margin-bottom: 0;
+                flex-shrink: 0;
             }
             
             .job-thumbnail-img {
-                width: 70px;
-                height: 52px;
+                width: 60px;
+                height: 45px;
+                border-radius: 8px;
+            }
+            
+            .job-title {
+                font-size: 1rem;
+                line-height: 1.4;
+                margin-bottom: 0.15rem;
+                -webkit-line-clamp: 2;
+            }
+            
+            .company-name {
+                font-size: 0.85rem;
+                margin-bottom: 0;
+            }
+            
+            .job-meta {
+                margin-top: 0.75rem;
+                padding-top: 0.75rem;
             }
             
             .job-content {
@@ -2157,10 +2269,6 @@
         }
         
         /* Better visual hierarchy */
-        .jobs-header h2 {
-            font-weight: 700;
-            letter-spacing: -0.025em;
-        }
         
         .job-title {
             line-height: 1.3;
