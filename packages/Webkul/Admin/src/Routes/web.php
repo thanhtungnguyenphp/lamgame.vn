@@ -54,6 +54,11 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     require 'notification-routes.php';
 
     /**
+     * Forum moderation routes.
+     */
+    require 'forum-routes.php';
+
+    /**
      * Remaining routes.
      */
     require 'rest-routes.php';
