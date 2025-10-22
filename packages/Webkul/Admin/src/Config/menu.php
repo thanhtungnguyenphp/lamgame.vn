@@ -141,6 +141,35 @@ return [
     ],
 
     /**
+     * Forum.
+     */
+    [
+        'key'        => 'forum',
+        'name'       => 'Forum',
+        'route'      => 'admin.forum.posts.index',
+        'sort'       => 5.5,
+        'icon'       => 'icon-customer',
+    ], [
+        'key'        => 'forum.posts',
+        'name'       => 'Bài viết',
+        'route'      => 'admin.forum.posts.index',
+        'sort'       => 1,
+        'icon'       => '',
+    ], [
+        'key'        => 'forum.comments',
+        'name'       => 'Bình luận',
+        'route'      => 'admin.forum.comments.index',
+        'sort'       => 2,
+        'icon'       => '',
+    ], [
+        'key'        => 'forum.reports',
+        'name'       => 'Báo cáo',
+        'route'      => 'admin.forum.reports.index',
+        'sort'       => 3,
+        'icon'       => '',
+    ],
+
+    /**
      * Marketing.
      */
     [

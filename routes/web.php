@@ -53,28 +53,7 @@ Route::prefix('forum')->name('forum.')->group(function () {
     Route::post('/report', [ForumController::class, 'report'])->name('report');
 });
 
-// Admin forum routes
-Route::prefix('admin/forum')->name('admin.forum.')->middleware('admin')->group(function () {
-
-    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
-
-    // Posts management
-    Route::get('/posts', [AdminController::class, 'posts'])->name('posts');
-    Route::put('/posts/{post}/status', [AdminController::class, 'updatePostStatus'])->name('posts.status');
-
-    // Comments management
-    Route::get('/comments', [AdminController::class, 'comments'])->name('comments');
-    Route::put('/comments/{comment}/status', [AdminController::class, 'updateCommentStatus'])->name('comments.status');
-
-    // Reports management
-    Route::get('/reports', [AdminController::class, 'reports'])->name('reports');
-    Route::put('/reports/{report}/review', [AdminController::class, 'reviewReport'])->name('reports.review');
-
-    // Users management
-    Route::get('/users', [AdminController::class, 'users'])->name('users');
-    Route::put('/users/{user}/status', [AdminController::class, 'updateUserStatus'])->name('users.status');
-    Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('users.role');
-});
+// Admin forum routes - handled by packages/Webkul/Admin/src/Routes/forum-routes.php
 
 // User Profile routes
 Route::prefix('profile')->name('forum.profile.')->group(function () {
