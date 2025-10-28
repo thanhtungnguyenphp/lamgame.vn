@@ -34,30 +34,36 @@
     <!-- Quick Actions -->
     <div class="forum-actions">
         <div class="container">
-            <div class="actions-row">
-                <div class="action-buttons">
-                    <a href="{{ route('forum.posts.create') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i>
-                        Tạo bài viết mới
-                    </a>
-                    <a href="{{ route('forum.posts.create', ['type' => 'idea']) }}" class="btn btn-outline">
-                        <i class="fas fa-lightbulb"></i>
-                        Chia sẻ ý tưởng
-                    </a>
-                    <a href="{{ route('forum.posts.create', ['type' => 'question']) }}" class="btn btn-outline">
-                        <i class="fas fa-question-circle"></i>
-                        Đặt câu hỏi
-                    </a>
-                </div>
-                
+            <div class="actions-wrapper">
                 <!-- Search -->
                 <div class="forum-search">
                     <form action="{{ route('forum.search') }}" method="GET" class="search-form">
-                        <input type="text" name="q" placeholder="Tìm kiếm bài viết..." value="{{ $search }}" class="search-input">
-                        <button type="submit" class="search-btn">
-                            <i class="fas fa-search"></i>
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" name="q" placeholder="Tìm kiếm bài viết, thảo luận..." value="{{ $search }}" class="search-input">
+                        @if($search)
+                        <button type="button" onclick="window.location='{{ route('forum.index') }}'" class="clear-btn">
+                            <i class="fas fa-times"></i>
                         </button>
+                        @endif
                     </form>
+                </div>
+                
+                <!-- Tags + Create Button -->
+                <div class="tags-row">
+                    <div class="tags-scroll">
+                        @if($popularTags->count() > 0)
+                            @foreach($popularTags as $tag)
+                            <a href="{{ route('forum.tag', $tag->slug) }}" class="tag-chip">
+                                {{ $tag->name }}
+                            </a>
+                            @endforeach
+                        @endif
+                        
+                        <a href="{{ route('forum.posts.create') }}" class="btn btn-primary btn-create">
+                            <i class="fas fa-pen"></i>
+                            <span class="btn-text">Đăng bài</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -65,52 +71,6 @@
 
     <div class="container">
         <div class="forum-content">
-            <!-- Categories Sidebar -->
-            <div class="categories-sidebar">
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Danh mục</h3>
-                    <div class="categories-list">
-                        <a href="{{ route('forum.index') }}" class="category-item {{ !$category ? 'active' : '' }}">
-                            <span class="category-icon">📋</span>
-                            <div class="category-info">
-                                <div class="category-name">Tất cả</div>
-                                <div class="category-count">{{ $stats['total_posts'] }}</div>
-                            </div>
-                        </a>
-                        
-                        @foreach($categories as $cat)
-                        <a href="{{ route('forum.category', $cat->slug) }}" 
-                           class="category-item {{ $category === $cat->slug ? 'active' : '' }} {{ $cat->is_featured ? 'featured' : '' }}">
-                            <span class="category-icon">{{ $cat->icon }}</span>
-                            <div class="category-info">
-                                <div class="category-name">{{ $cat->name }}</div>
-                                <div class="category-count">{{ $cat->posts_count }}</div>
-                            </div>
-                            @if($cat->is_featured)
-                            <span class="featured-badge">Hot</span>
-                            @endif
-                        </a>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Popular Tags -->
-                @if($popularTags->count() > 0)
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Tags phổ biến</h3>
-                    <div class="popular-tags">
-                        @foreach($popularTags as $tag)
-                        <a href="{{ route('forum.tag', $tag->slug) }}" 
-                           class="tag-item" style="background-color: {{ $tag->color }}20; color: {{ $tag->color }};">
-                            {{ $tag->name }}
-                            <span class="tag-count">{{ $tag->posts_count }}</span>
-                        </a>
-                        @endforeach
-                    </div>
-                </div>
-                @endif
-            </div>
-
             <!-- Posts Feed -->
             <div class="posts-feed">
                 <!-- Sticky Posts -->
@@ -122,32 +82,6 @@
                     @endforeach
                 </div>
                 @endif
-
-                <!-- Filter & Sort -->
-                <div class="posts-header">
-                    <div class="posts-title">
-                        <h2>
-                            @if($category)
-                                {{ $categories->where('slug', $category)->first()->name ?? 'Danh mục' }}
-                            @elseif($search)
-                                Kết quả tìm kiếm: "{{ $search }}"
-                            @else
-                                Bài viết mới nhất
-                            @endif
-                        </h2>
-                        <span class="posts-count">{{ $posts->total() }} bài viết</span>
-                    </div>
-                    
-                    <div class="posts-filters">
-                        <span class="filter-label">Sắp xếp:</span>
-                        <select onchange="updateSort(this.value)" class="sort-select">
-                            <option value="latest" {{ $sort === 'latest' ? 'selected' : '' }}>📅 Mới nhất</option>
-                            <option value="popular" {{ $sort === 'popular' ? 'selected' : '' }}>🔥 Phổ biến</option>
-                            <option value="activity" {{ $sort === 'activity' ? 'selected' : '' }}>💬 Hoạt động</option>
-                            <option value="oldest" {{ $sort === 'oldest' ? 'selected' : '' }}>⏰ Cũ nhất</option>
-                        </select>
-                    </div>
-                </div>
 
                 <!-- Posts List -->
                 <div class="posts-list">
@@ -248,326 +182,178 @@
 
 .forum-actions {
     background: white;
-    padding: 2rem 0;
+    padding: 0.875rem 0;
     border-bottom: 1px solid #e2e8f0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-.actions-row {
+.actions-wrapper {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
+    flex-direction: column;
+    gap: 0.625rem;
 }
 
-.action-buttons {
-    display: flex;
-    gap: 1rem;
+.forum-search {
+    width: 100%;
+}
+
+.tags-row {
+    width: 100%;
+    overflow: hidden;
 }
 
 .btn {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.875rem 1.5rem;
-    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.2s ease;
-    border: 2px solid transparent;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    white-space: nowrap;
 }
 
 .btn-primary {
     background: linear-gradient(135deg, #6a4c93, #9b5de5);
     color: white;
-    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.3);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.25);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(106, 76, 147, 0.4);
-    background: linear-gradient(135deg, #553c7b, #8b4dd1);
+    box-shadow: 0 6px 20px rgba(106, 76, 147, 0.35);
 }
 
-.btn-outline {
-    background: white;
-    color: #6a4c93;
-    border-color: #6a4c93;
+.btn-create {
+    flex-shrink: 0;
+    margin-left: auto;
 }
 
-.btn-outline:hover {
-    background: linear-gradient(135deg, #6a4c93, #9b5de5);
-    color: white;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.2);
+.btn-create i {
+    font-size: 0.95rem;
+}
+
+.btn-text {
+    font-size: 0.9rem;
 }
 
 .search-form {
+    position: relative;
     display: flex;
+    align-items: center;
     background: white;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
+    border: 2px solid #cbd5e0;
+    border-radius: 10px;
     overflow: hidden;
-    min-width: 320px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     transition: all 0.2s ease;
+}
+
+.search-form:hover {
+    border-color: #94a3b8;
 }
 
 .search-form:focus-within {
     border-color: #6a4c93;
-    box-shadow: 0 4px 20px rgba(106, 76, 147, 0.2);
+    box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    color: #64748b;
+    font-size: 1.1rem;
+    pointer-events: none;
+    transition: color 0.2s ease;
+}
+
+.search-form:focus-within .search-icon {
+    color: #6a4c93;
 }
 
 .forum-page .search-input {
     flex: 1;
-    padding: 0.875rem 1rem;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
     border: none;
     outline: none;
-    font-size: 1rem;
-    background: white;
-    color: #2d3748;
+    font-size: 0.95rem;
+    background: transparent;
+    color: #1a202c;
+    font-weight: 500;
 }
 
 .search-input::placeholder {
-    color: #a0aec0;
+    color: #64748b;
     font-weight: 400;
 }
 
-.search-btn {
-    background: linear-gradient(135deg, #6a4c93, #9b5de5);
-    color: white;
+.clear-btn {
+    background: none;
     border: none;
-    padding: 0 1.25rem;
+    color: #94a3b8;
+    padding: 0 1rem;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    justify-content: center;
-}
-
-.search-btn:hover {
-    background: linear-gradient(135deg, #553c7b, #8b4dd1);
-    transform: scale(1.05);
-}
-
-.search-btn i {
     font-size: 1rem;
 }
 
+.clear-btn:hover {
+    color: #6a4c93;
+    transform: scale(1.1);
+}
+
 .forum-content {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
     padding: 2rem 0;
 }
 
-.categories-sidebar {
-    position: sticky;
-    top: 2rem;
-    height: fit-content;
+.posts-feed {
+    width: 100%;
 }
 
-.sidebar-section {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    margin-bottom: 1.5rem;
-}
-
-.sidebar-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #1a202c;
-    margin-bottom: 1rem;
-}
-
-.categories-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.category-item {
+/* Tags in Forum Actions - Compact Keyword Style */
+.tags-scroll {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    border-radius: 8px;
-    text-decoration: none;
-    color: #4a5568;
-    transition: all 0.2s ease;
-    position: relative;
-}
-
-.category-item:hover {
-    background: #f7fafc;
-    color: #6a4c93;
-    transform: translateX(2px);
-}
-
-.category-item.active {
-    background: linear-gradient(135deg, #6a4c93, #9b5de5);
-    color: white;
-    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.3);
-    transform: translateX(4px);
-}
-
-.category-item.featured {
-    border: 2px solid #f6e05e;
-    background: linear-gradient(135deg, #fefcbf, #faf089);
-    position: relative;
-    overflow: hidden;
-}
-
-.category-item.featured::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transform: rotate(45deg);
-    animation: shimmer 3s infinite;
-}
-
-@keyframes shimmer {
-    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-}
-
-.category-icon {
-    font-size: 1.2rem;
-}
-
-.category-info {
-    flex: 1;
-}
-
-.category-name {
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.category-count {
-    font-size: 0.8rem;
-    opacity: 0.7;
-}
-
-.featured-badge {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: linear-gradient(135deg, #ff6b35, #f56565);
-    color: white;
-    font-size: 0.65rem;
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-weight: bold;
-    box-shadow: 0 2px 6px rgba(255, 107, 53, 0.4);
-    animation: pulse 2s infinite;
-    border: 2px solid white;
-    z-index: 1;
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
-
-.popular-tags {
-    display: flex;
-    flex-wrap: wrap;
     gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
 }
 
-.tag-item {
+.tags-scroll::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome/Safari */
+}
+
+.tag-chip {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 20px;
+    padding: 0.375rem 0.75rem;
+    border-radius: 5px;
     text-decoration: none;
-    font-size: 0.8rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.tag-item:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.tag-count {
-    background: rgba(0,0,0,0.1);
-    padding: 2px 6px;
-    border-radius: 10px;
-    font-size: 0.7rem;
-}
-
-.posts-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #e2e8f0;
-}
-
-.posts-title h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #1a202c;
-    margin: 0;
-}
-
-.posts-count {
-    font-size: 0.9rem;
-    color: #718096;
-    margin-left: 0.5rem;
-}
-
-.posts-filters {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.filter-label {
     font-weight: 600;
-    color: #4a5568;
-    font-size: 0.9rem;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+    border: none;
+    font-size: 0.8rem;
+    line-height: 1;
+    background: #e2e8f0;
+    color: #1a202c;
 }
 
-.sort-select {
-    padding: 0.75rem 1.25rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    background: white;
-    font-weight: 500;
-    cursor: pointer;
-    font-size: 0.95rem;
-    color: #4a5568;
-    transition: all 0.2s ease;
-    min-width: 160px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    appearance: none;
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDFMNiA2TDExIDEiIHN0cm9rZT0iIzRBNTU2OCIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+');
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    padding-right: 3rem;
+.tag-chip:hover {
+    background: #cbd5e0;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.sort-select:focus {
-    outline: none;
-    border-color: #6a4c93;
-    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.15);
-}
-
-.sort-select:hover {
-    border-color: #6a4c93;
-}
 
 .sticky-posts {
     margin-bottom: 2rem;
@@ -638,50 +424,57 @@
         padding: 1rem;
     }
 
-    .actions-row {
-        flex-direction: column;
-        gap: 1rem;
+    .forum-actions {
+        padding: 0.75rem 0;
     }
 
-    .action-buttons {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.75rem;
+    .actions-wrapper {
+        gap: 0.5rem;
+    }
+
+    .forum-search {
+        width: 100%;
     }
 
     .search-form {
-        min-width: auto;
         width: 100%;
-        max-width: 400px;
-        margin: 0 auto;
     }
 
-    .forum-content {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        padding: 1rem 0;
-    }
-
-    .categories-sidebar {
-        position: static;
-        order: 2;
-    }
-
-    .posts-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: stretch;
-    }
-
-    .posts-filters {
-        justify-content: center;
+    .tags-scroll {
         flex-wrap: wrap;
     }
 
-    .sort-select {
+    .btn-create {
+        margin-left: 0;
+        order: -1;
         width: 100%;
-        max-width: 220px;
+        justify-content: center;
+        padding: 0.75rem 1.25rem;
     }
+
+    .btn-text {
+        font-size: 0.95rem;
+    }
+
+    .tags-row {
+        margin: 0 -1rem;
+        padding: 0 1rem;
+    }
+
+    .tags-scroll {
+        gap: 0.375rem;
+    }
+
+    .tag-chip {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.625rem;
+    }
+
+    .forum-content {
+        padding: 1rem 0;
+    }
+
+
 }
 </style>
 @endpush
