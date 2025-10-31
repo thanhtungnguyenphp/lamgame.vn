@@ -26,6 +26,27 @@ class AiChatGptService
         return $this->parseJsonResponse($response);
     }
 
+    public function callChatGptWithPrompt(string $prompt): string
+    {
+        return $this->callChatGpt($prompt);
+    }
+
+    public function parseJsonResponse(string $response): array
+    {
+        // Clean response to extract JSON
+        $response = trim($response);
+        $response = preg_replace('/^```json\s*/', '', $response);
+        $response = preg_replace('/\s*```$/', '', $response);
+        
+        $decoded = json_decode($response, true);
+        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \Exception('Invalid JSON response from ChatGPT: ' . json_last_error_msg());
+        }
+        
+        return $decoded;
+    }
+
     private function callChatGpt(string $prompt): string
     {
         $response = Http::withHeaders([
@@ -52,21 +73,5 @@ class AiChatGptService
         }
 
         return $response->json('choices.0.message.content');
-    }
-
-    private function parseJsonResponse(string $response): array
-    {
-        // Clean response to extract JSON
-        $response = trim($response);
-        $response = preg_replace('/^```json\s*/', '', $response);
-        $response = preg_replace('/\s*```$/', '', $response);
-        
-        $decoded = json_decode($response, true);
-        
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception('Invalid JSON response from ChatGPT: ' . json_last_error_msg());
-        }
-        
-        return $decoded;
     }
 }
