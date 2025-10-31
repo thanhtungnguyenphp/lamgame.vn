@@ -15,6 +15,9 @@ use App\Http\Controllers\Api\JobOptionsController;
 // Include recruitment dashboard routes
 require __DIR__.'/api/recruitment.php';
 
+// Include AI job description routes
+require __DIR__.'/api/ai-job-description.php';
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
