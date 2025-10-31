@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\JobBulkController;
 use App\Http\Controllers\Api\JobImportExportController;
 use App\Http\Controllers\Api\JobOptionsController;
 use App\Http\Controllers\Api\AiJobDescriptionController;
+use App\Http\Controllers\Api\JobFileParserController;
 
 // Include recruitment dashboard routes
 require __DIR__.'/api/recruitment.php';
@@ -20,6 +21,7 @@ require __DIR__.'/api/recruitment.php';
 Route::middleware('auth:sanctum')->prefix('ai')->group(function () {
     Route::post('job-description/optimize', [AiJobDescriptionController::class, 'optimize']);
     Route::post('job-description/suggestions', [AiJobDescriptionController::class, 'generateSuggestions']);
+    Route::post('job-description/parse-file', [JobFileParserController::class, 'parseJobFile']);
 });
 
 /*
