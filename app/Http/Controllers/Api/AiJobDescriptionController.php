@@ -26,16 +26,27 @@ class AiJobDescriptionController extends Controller
             'salary' => 'nullable|string',
             'skills' => 'nullable|string',
             'experience' => 'nullable|integer',
-            'company' => 'nullable|string'
+            'company' => 'nullable|string',
+            'requirements' => 'nullable|string',
+            'benefits' => 'nullable|string'
         ]);
 
-        $optimized = $this->optimizer->optimizeJobPosting($request->all());
+        try {
+            $optimized = $this->optimizer->optimizeJobPosting($request->all());
 
-        return response()->json([
-            'success' => true,
-            'original' => $request->all(),
-            'optimized' => $optimized
-        ]);
+            return response()->json([
+                'success' => true,
+                'original' => $request->all(),
+                'optimized' => $optimized,
+                'ai_powered' => true
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'AI optimization failed',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function generateSuggestions(Request $request): JsonResponse

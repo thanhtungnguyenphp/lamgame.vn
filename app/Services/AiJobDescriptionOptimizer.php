@@ -4,20 +4,37 @@ namespace App\Services;
 
 class AiJobDescriptionOptimizer
 {
+    private AiChatGptService $chatGptService;
+
+    public function __construct(AiChatGptService $chatGptService)
+    {
+        $this->chatGptService = $chatGptService;
+    }
+
     public function optimizeJobPosting(array $payload): array
     {
-        $optimized = [
+        try {
+            // Use ChatGPT for AI optimization
+            return $this->chatGptService->optimizeJobDescription($payload);
+        } catch (\Exception $e) {
+            // Fallback to basic optimization if AI fails
+            return $this->basicOptimization($payload);
+        }
+    }
+
+    private function basicOptimization(array $payload): array
+    {
+        return [
             'title' => $this->optimizeTitle($payload['title'] ?? ''),
             'description' => $this->optimizeDescription($payload),
             'requirements' => $this->extractRequirements($payload),
             'benefits' => $this->extractBenefits($payload),
+            'skills' => $this->extractSkills($payload),
             'salary_range' => $this->optimizeSalary($payload),
             'location' => $this->optimizeLocation($payload['location'] ?? ''),
             'job_type' => $this->determineJobType($payload),
             'experience_level' => $this->determineExperienceLevel($payload)
         ];
-
-        return array_filter($optimized);
     }
 
     private function optimizeTitle(string $title): string
@@ -41,8 +58,8 @@ class AiJobDescriptionOptimizer
     {
         $requirements = [];
         
-        if (!empty($payload['skills'])) {
-            $requirements = array_merge($requirements, explode(',', $payload['skills']));
+        if (!empty($payload['requirements'])) {
+            $requirements = explode(',', $payload['requirements']);
         }
         
         if (!empty($payload['experience'])) {
@@ -61,6 +78,17 @@ class AiJobDescriptionOptimizer
         }
         
         return array_map('trim', $benefits);
+    }
+
+    private function extractSkills(array $payload): array
+    {
+        $skills = [];
+        
+        if (!empty($payload['skills'])) {
+            $skills = explode(',', $payload['skills']);
+        }
+        
+        return array_map('trim', $skills);
     }
 
     private function optimizeSalary(array $payload): ?string
