@@ -30,15 +30,24 @@ class JobController extends Controller
             'title' => 'required|string',
             'description' => 'required|string',
             'location' => 'required|string',
-            'salary' => 'nullable|numeric'
+            'salary' => 'nullable|numeric',
+            'auto_optimize' => 'nullable|boolean'
         ]);
 
         $user = auth()->user();
         $jobData = array_merge($request->all(), ['user_id' => $user->id]);
 
+        // Auto-optimize if requested
+        if ($request->auto_optimize) {
+            $optimizer = app(\App\Services\AiJobDescriptionOptimizer::class);
+            $optimized = $optimizer->optimizeJobPosting($request->all());
+            $jobData = array_merge($jobData, $optimized);
+        }
+
         return response()->json([
             'message' => 'Job created successfully',
-            'job' => $jobData
+            'job' => $jobData,
+            'optimized' => $request->auto_optimize ?? false
         ], 201);
     }
 
