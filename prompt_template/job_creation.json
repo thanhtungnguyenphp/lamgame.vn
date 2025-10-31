@@ -1,0 +1,23 @@
+{
+  "system_prompt": "Bạn là một chuyên gia HR chuyên viết Job Description (JD) chuyên nghiệp, ngắn gọn, hấp dẫn và tối ưu SEO cho các nền tảng tuyển dụng. Viết bằng tiếng Việt, sử dụng ngôn ngữ tuyển dụng hiện đại, tập trung vào lợi ích ứng viên và yêu cầu rõ ràng. Định dạng JD theo cấu trúc chuẩn: Tiêu đề → Mô tả công ty → Mô tả công việc → Yêu cầu → Quyền lợi → Thông tin ứng tuyển. Sử dụng bullet points, động từ mạnh, và từ khóa liên quan đến vị trí.",
+  "user_prompt_template": "Tạo Job Description cho vị trí sau:\n\n- **Vị trí**: {job_title}\n- **Công ty**: {company_name}\n- **Ngành nghề**: {industry}\n- **Địa điểm làm việc**: {location} (hỗ trợ {work_mode})\n- **Mức lương**: {salary_range}\n- **Số lượng tuyển**: {open_positions}\n- **Loại hình**: {job_type}\n- **Mô tả ngắn công ty**: {company_description}\n- **Trách nhiệm chính** (3-6 mục):\n  {responsibilities}\n- **Yêu cầu bắt buộc** (4-7 mục):\n  {requirements}\n- **Quyền lợi nổi bật** (4-6 mục):\n  {benefits}\n- **Kỹ năng ưu tiên** (tùy chọn):\n  {nice_to_have}\n- **Hashtag / Từ khóa SEO** (5-7 từ):\n  {keywords}\n\nYêu cầu: JD dưới 500 từ, có nút CTA rõ ràng, dễ share trên LinkedIn/X/Facebook Jobs.",
+  "field_input": {
+    "job_title": "Senior Frontend Developer",
+    "company_name": "Oh Emp Tech",
+    "industry": "Công nghệ phần mềm",
+    "location": "TP. Hồ Chí Minh",
+    "work_mode": "Hybrid",
+    "salary_range": "25 - 35 triệu VNĐ",
+    "open_positions": "2",
+    "job_type": "Full-time",
+    "company_description": "Oh Emp là nền tảng HR SaaS giúp doanh nghiệp post job, share job và quản lý ứng viên hiệu quả chỉ trong 1 app.",
+    "responsibilities": "- Phát triển giao diện dashboard tuyển dụng tối ưu UX/UI\n- Tích hợp tính năng post/share job đa nền tảng\n- Quản lý pipeline ứng viên real-time\n- Tối ưu performance ứng dụng mobile/web",
+    "requirements": "- 4+ năm kinh nghiệm React/Vue\n- Thành thạo TypeScript, RESTful API\n- Có kinh nghiệm với ATS/HR system là lợi thế\n- Tiếng Anh giao tiếp tốt",
+    "benefits": "- Lương cạnh tranh + thưởng hiệu suất\n- Bảo hiểm full gói + khám sức khỏe định kỳ\n- Remote 2 ngày/tuần\n- MacBook Pro + budget học tập 20tr/năm",
+    "nice_to_have": "- Biết Next.js, Tailwind CSS\n- Đã làm sản phẩm tuyển dụng/ATS",
+    "keywords": "Frontend, React, Developer, Remote, Hybrid, Tuyển dụng, ATS"
+  },
+  "requirements": {
+    "output": ["JSON","MAKE DOWN"]
+  }
+}

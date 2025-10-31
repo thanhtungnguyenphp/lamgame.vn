@@ -13,9 +13,9 @@ class PromptTemplateService
 
     public function getJobCreationPrompt(array $inputData): string
     {
-        $template = file_get_contents($this->templatePath . '/job_creation.txt');
-        
-        return str_replace('{input_data}', json_encode($inputData, JSON_PRETTY_PRINT), $template);
+        return $this->loadTemplate('job_creation', [
+            'input_data' => json_encode($inputData, JSON_PRETTY_PRINT)
+        ]);
     }
 
     public function loadTemplate(string $templateName, array $variables = []): string
