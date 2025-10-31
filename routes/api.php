@@ -12,6 +12,9 @@ use App\Http\Controllers\Api\JobBulkController;
 use App\Http\Controllers\Api\JobImportExportController;
 use App\Http\Controllers\Api\JobOptionsController;
 
+// Include recruitment dashboard routes
+require __DIR__.'/api/recruitment.php';
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
