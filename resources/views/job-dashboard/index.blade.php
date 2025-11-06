@@ -67,7 +67,7 @@
                             <tbody>
                                 @foreach($recentJobs as $job)
                                 <tr>
-                                    <td>{{ $job->name }}</td>
+                                    <td>{{ $job->name ?: $job->sku }}</td>
                                     <td><code>{{ $job->sku }}</code></td>
                                     <td>{{ date('d/m/Y H:i', strtotime($job->created_at)) }}</td>
                                 </tr>
