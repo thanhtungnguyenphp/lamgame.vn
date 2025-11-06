@@ -187,10 +187,22 @@ Route::prefix('auth')->name('auth.')->group(function () {
     });
 });
 
+// Login alias for middleware compatibility
+Route::get('/customer/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLoginForm'])->name('customer.session.create');
+Route::get('/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLoginForm'])->name('login');
+
 // Test auth route
 Route::get('/test-auth', function() {
     return 'Auth routes working!';
 });
 
 Route::get('/test-controller', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'test']);
+
+// Job Dashboard Routes
+require __DIR__.'/job-dashboard.php';
+
+// Test route without auth
+Route::get('/job-dashboard-test', function() {
+    return view('job-dashboard.index');
+});
 
