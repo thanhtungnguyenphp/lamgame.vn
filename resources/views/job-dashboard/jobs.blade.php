@@ -17,6 +17,14 @@
         @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
+        
+        @if($errors->any())
+            <div class="alert alert-danger">
+                @foreach($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                @endforeach
+            </div>
+        @endif
 
         <div class="card">
             <div class="card-body">
@@ -34,13 +42,17 @@
                             <tbody>
                                 @foreach($jobs as $job)
                                 <tr>
-                                    <td>{{ $job->name }}</td>
+                                    <td><strong>{{ $job->name ?: $job->sku }}</strong></td>
                                     <td><code>{{ $job->sku }}</code></td>
                                     <td>{{ date('d/m/Y H:i', strtotime($job->created_at)) }}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-outline-primary">Sửa</button>
-                                            <button class="btn btn-outline-danger">Xóa</button>
+                                            <a href="{{ route('job.dashboard.edit', $job->id) }}" class="btn btn-outline-primary">Sửa</a>
+                                            <form method="POST" action="{{ route('job.dashboard.destroy', $job->id) }}" style="display: inline;" onsubmit="return confirm('Bạn có chắc muốn xóa job này?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-outline-danger">Xóa</button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
