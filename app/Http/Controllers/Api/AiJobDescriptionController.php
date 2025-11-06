@@ -20,23 +20,56 @@ class AiJobDescriptionController extends Controller
     public function optimize(Request $request): JsonResponse
     {
         $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
+            'job_title' => 'nullable|string|max:255', 
+            'company_name' => 'nullable|string',
+            'company' => 'nullable|string',
             'description' => 'nullable|string',
             'location' => 'nullable|string',
             'salary' => 'nullable|string',
+            'salary_range' => 'nullable|string',
             'skills' => 'nullable|string',
             'experience' => 'nullable|integer',
-            'company' => 'nullable|string',
             'requirements' => 'nullable|string',
-            'benefits' => 'nullable|string'
+            'benefits' => 'nullable|string',
+            'responsibilities' => 'nullable|string',
+            'industry' => 'nullable|string',
+            'work_mode' => 'nullable|string',
+            'job_type' => 'nullable|string',
+            'open_positions' => 'nullable|string',
+            'nice_to_have' => 'nullable|string',
+            'keywords' => 'nullable|string'
         ]);
 
+        // Normalize the data to standard field names
+        $normalizedData = [
+            'title' => $request->input('title') ?: $request->input('job_title'),
+            'company' => $request->input('company') ?: $request->input('company_name'),
+            'description' => $request->input('description') ?: $request->input('company_description'),
+            'location' => $request->input('location'),
+            'salary' => $request->input('salary') ?: $request->input('salary_range'),
+            'skills' => $request->input('skills') ?: $request->input('keywords'),
+            'requirements' => $request->input('requirements'),
+            'benefits' => $request->input('benefits'),
+            'responsibilities' => $request->input('responsibilities'),
+            'industry' => $request->input('industry'),
+            'work_mode' => $request->input('work_mode'),
+            'job_type' => $request->input('job_type'),
+            'nice_to_have' => $request->input('nice_to_have')
+        ];
+
+        // Remove null values
+        $normalizedData = array_filter($normalizedData, function($value) {
+            return $value !== null;
+        });
+
         try {
-            $optimized = $this->optimizer->optimizeJobPosting($request->all());
+            $optimized = $this->optimizer->optimizeJobPosting($normalizedData);
 
             return response()->json([
                 'success' => true,
                 'original' => $request->all(),
+                'normalized' => $normalizedData,
                 'optimized' => $optimized,
                 'ai_powered' => true
             ]);
