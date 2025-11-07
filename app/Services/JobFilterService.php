@@ -43,7 +43,6 @@ class JobFilterService
                 'company_sizes' => $this->getAttributeOptions('company_size'),
                 'application_methods' => $this->getAttributeOptions('application_method'),
                 'categories' => $this->getJobCategories(),
-                'locations' => $this->getLocations(null, 20),
                 'popular_skills' => $this->getSkills(null, null, 20),
                 'common_benefits' => $this->getBenefits(null, 15),
             ];
@@ -360,9 +359,6 @@ class JobFilterService
             switch ($type) {
                 case 'skills':
                     $results['skills'] = $this->getSkills($query, null, $limit);
-                    break;
-                case 'locations':
-                    $results['locations'] = $this->getLocations($query, $limit);
                     break;
                 case 'companies':
                     $results['companies'] = $this->getCompanies($query, $limit);
