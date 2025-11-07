@@ -63,28 +63,16 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Kinh nghiệm *</label>
-                                <select class="form-select" name="experience_level" required>
+                                <select class="form-select" name="experience_level" id="experience_level" required>
                                     <option value="">Chọn mức kinh nghiệm</option>
-                                    <option value="fresher">Fresher (0-1 năm)</option>
-                                    <option value="junior">Junior (1-3 năm)</option>
-                                    <option value="middle">Middle (3-5 năm)</option>
-                                    <option value="senior">Senior (5+ năm)</option>
-                                    <option value="lead">Team Lead</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Mức lương *</label>
-                                <select class="form-select" name="salary_range" required>
+                                <select class="form-select" name="salary_range" id="salary_range" required>
                                     <option value="">Chọn mức lương</option>
-                                    <option value="5m-10m">5-10 triệu</option>
-                                    <option value="10m-15m">10-15 triệu</option>
-                                    <option value="15m-20m">15-20 triệu</option>
-                                    <option value="20m-30m">20-30 triệu</option>
-                                    <option value="30m-50m">30-50 triệu</option>
-                                    <option value="50m+">Trên 50 triệu</option>
-                                    <option value="negotiate">Thỏa thuận</option>
                                 </select>
                             </div>
                         </div>
@@ -94,14 +82,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Địa điểm làm việc</label>
-                                <select class="form-select" name="job_location">
+                                <select class="form-select" name="job_location" id="job_location">
                                     <option value="">Chọn địa điểm</option>
-                                    <option value="ha-noi">Hà Nội</option>
-                                    <option value="ho-chi-minh">TP. Hồ Chí Minh</option>
-                                    <option value="da-nang">Đà Nẵng</option>
-                                    <option value="remote">Remote</option>
-                                    <option value="hybrid">Hybrid</option>
-                                    <option value="other">Khác</option>
                                 </select>
                             </div>
                         </div>
@@ -154,63 +136,64 @@
 
     <script>
     $(document).ready(function() {
-        // Load job types from API
+        // Load all form data once and cache it
         $.ajax({
-            url: '/api/jobs/options/filter-options',
+            url: '/api/jobs/options/form-data',
             method: 'GET',
             dataType: 'json',
             success: function(response) {
-                if (response.success && response.data.job_types) {
-                    const jobTypeSelect = $('#job_type');
-                    response.data.job_types.forEach(function(jobType) {
-                        jobTypeSelect.append(`<option value="${jobType.id}">${jobType.value}</option>`);
+                if (response.success && response.data) {
+                    const formData = response.data;
+                    
+                    // Populate job types
+                    if (formData.job_types) {
+                        const jobTypeSelect = $('#job_type');
+                        formData.job_types.forEach(function(item) {
+                            jobTypeSelect.append(`<option value="${item.id}">${item.value}</option>`);
+                        });
+                    }
+                    
+                    // Populate experience levels
+                    if (formData.experience_levels) {
+                        const experienceSelect = $('#experience_level');
+                        formData.experience_levels.forEach(function(item) {
+                            experienceSelect.append(`<option value="${item.id}">${item.value}</option>`);
+                        });
+                    }
+                    
+                    // Populate salary ranges
+                    if (formData.salary_ranges) {
+                        const salarySelect = $('#salary_range');
+                        formData.salary_ranges.forEach(function(item) {
+                            salarySelect.append(`<option value="${item.id}">${item.value}</option>`);
+                        });
+                    }
+                    
+                    // Populate locations
+                    if (formData.locations) {
+                        const locationSelect = $('#job_location');
+                        formData.locations.forEach(function(item) {
+                            locationSelect.append(`<option value="${item.id}">${item.value}</option>`);
+                        });
+                    }
+                    
+                    // Initialize Select2 for skills
+                    $('#required_skills').select2({
+                        tags: true,
+                        tokenSeparators: [','],
+                        placeholder: 'Chọn kỹ năng...'
+                    });
+                    
+                    // Initialize Select2 for benefits
+                    $('#job_benefits').select2({
+                        tags: true,
+                        tokenSeparators: [','],
+                        placeholder: 'Chọn quyền lợi...'
                     });
                 }
             },
             error: function() {
-                console.error('Failed to load job types');
-            }
-        });
-
-        // Skills multiselect with API
-        $('#required_skills').select2({
-            tags: true,
-            tokenSeparators: [','],
-            placeholder: 'Chọn kỹ năng...',
-            ajax: {
-                url: '/api/jobs/options/skills',
-                dataType: 'json',
-                delay: 250,
-                processResults: function (data) {
-                    return {
-                        results: data.data ? data.data.map(item => ({
-                            id: item.value,
-                            text: item.value
-                        })) : []
-                    };
-                },
-                cache: true
-            }
-        });
-
-        // Benefits multiselect with API
-        $('#job_benefits').select2({
-            tags: true,
-            tokenSeparators: [','],
-            placeholder: 'Chọn quyền lợi...',
-            ajax: {
-                url: '/api/jobs/options/benefits',
-                dataType: 'json',
-                delay: 250,
-                processResults: function (data) {
-                    return {
-                        results: data.data ? data.data.map(item => ({
-                            id: item.value,
-                            text: item.value
-                        })) : []
-                    };
-                },
-                cache: true
+                console.error('Failed to load form data');
             }
         });
     });
