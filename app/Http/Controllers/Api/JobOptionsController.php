@@ -43,35 +43,7 @@ class JobOptionsController extends Controller
         }
     }
 
-    /**
-     * Get locations for job posting
-     * 
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function getLocations(Request $request): JsonResponse
-    {
-        try {
-            $search = $request->get('search');
-            $limit = min($request->get('limit', 50), 100);
-            
-            $locations = $this->jobFilterService->getLocations($search, $limit);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Locations retrieved successfully',
-                'data' => $locations,
-                'total' => count($locations),
-            ], Response::HTTP_OK);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve locations',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
 
     /**
      * Get skills for job posting
@@ -251,7 +223,6 @@ class JobOptionsController extends Controller
             $formData = [
                 'attributes' => $this->jobFilterService->getJobAttributesForForm(),
                 'categories' => $this->jobFilterService->getJobCategories(),
-                'locations' => $this->jobFilterService->getLocations(null, 20),
                 'popular_skills' => $this->jobFilterService->getSkills(null, null, 30),
                 'common_benefits' => $this->jobFilterService->getBenefits(null, 20),
                 'application_methods' => $this->jobFilterService->getApplicationMethods(),
@@ -283,13 +254,13 @@ class JobOptionsController extends Controller
         $request->validate([
             'query' => 'required|string|min:2',
             'types' => 'nullable|array',
-            'types.*' => 'string|in:skills,locations,companies,benefits',
+            'types.*' => 'string|in:skills,companies,benefits',
             'limit' => 'nullable|integer|min:1|max:50',
         ]);
 
         try {
             $query = $request->get('query');
-            $types = $request->get('types', ['skills', 'locations', 'companies']);
+            $types = $request->get('types', ['skills', 'companies']);
             $limit = $request->get('limit', 10);
 
             $results = $this->jobFilterService->searchAcrossOptions($query, $types, $limit);
