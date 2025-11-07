@@ -136,64 +136,127 @@
 
     <script>
     $(document).ready(function() {
-        // Load all form data once and cache it
+        console.log('Loading job form data...');
+        
+        // Load form data from API
         $.ajax({
             url: '/api/jobs/options/form-data',
             method: 'GET',
+            headers: {
+                'Authorization': 'Bearer null'
+            },
             dataType: 'json',
             success: function(response) {
-                if (response.success && response.data) {
-                    const formData = response.data;
+                console.log('API Response:', response);
+                
+                if (response.success && response.data && response.data.attributes) {
+                    const attrs = response.data.attributes;
                     
                     // Populate job types
-                    if (formData.job_types) {
+                    if (attrs.job_type && attrs.job_type.options) {
                         const jobTypeSelect = $('#job_type');
-                        formData.job_types.forEach(function(item) {
+                        attrs.job_type.options.forEach(function(item) {
                             jobTypeSelect.append(`<option value="${item.id}">${item.value}</option>`);
                         });
+                        console.log('Loaded job types:', attrs.job_type.options.length);
                     }
                     
                     // Populate experience levels
-                    if (formData.experience_levels) {
+                    if (attrs.experience_level && attrs.experience_level.options) {
                         const experienceSelect = $('#experience_level');
-                        formData.experience_levels.forEach(function(item) {
+                        attrs.experience_level.options.forEach(function(item) {
                             experienceSelect.append(`<option value="${item.id}">${item.value}</option>`);
                         });
+                        console.log('Loaded experience levels:', attrs.experience_level.options.length);
                     }
                     
                     // Populate salary ranges
-                    if (formData.salary_ranges) {
+                    if (attrs.salary_range && attrs.salary_range.options) {
                         const salarySelect = $('#salary_range');
-                        formData.salary_ranges.forEach(function(item) {
+                        attrs.salary_range.options.forEach(function(item) {
                             salarySelect.append(`<option value="${item.id}">${item.value}</option>`);
                         });
+                        console.log('Loaded salary ranges:', attrs.salary_range.options.length);
                     }
                     
                     // Populate locations
-                    if (formData.locations) {
+                    if (attrs.job_location && attrs.job_location.options) {
                         const locationSelect = $('#job_location');
-                        formData.locations.forEach(function(item) {
+                        attrs.job_location.options.forEach(function(item) {
                             locationSelect.append(`<option value="${item.id}">${item.value}</option>`);
+                        });
+                        console.log('Loaded locations:', attrs.job_location.options.length);
+                    }
+                    
+                    // Populate skills for Select2
+                    if (attrs.required_skills && attrs.required_skills.options) {
+                        const skillsData = attrs.required_skills.options.map(item => ({
+                            id: item.id,
+                            text: item.value
+                        }));
+                        
+                        $('#required_skills').select2({
+                            data: skillsData,
+                            tags: true,
+                            tokenSeparators: [','],
+                            placeholder: 'Chọn kỹ năng...'
+                        });
+                        console.log('Loaded skills:', skillsData.length);
+                    } else {
+                        $('#required_skills').select2({
+                            tags: true,
+                            tokenSeparators: [','],
+                            placeholder: 'Chọn kỹ năng...'
                         });
                     }
                     
-                    // Initialize Select2 for skills
-                    $('#required_skills').select2({
-                        tags: true,
-                        tokenSeparators: [','],
-                        placeholder: 'Chọn kỹ năng...'
-                    });
+                    // Populate benefits for Select2
+                    if (attrs.job_benefits && attrs.job_benefits.options) {
+                        const benefitsData = attrs.job_benefits.options.map(item => ({
+                            id: item.id,
+                            text: item.value
+                        }));
+                        
+                        $('#job_benefits').select2({
+                            data: benefitsData,
+                            tags: true,
+                            tokenSeparators: [','],
+                            placeholder: 'Chọn quyền lợi...'
+                        });
+                        console.log('Loaded benefits:', benefitsData.length);
+                    } else {
+                        $('#job_benefits').select2({
+                            tags: true,
+                            tokenSeparators: [','],
+                            placeholder: 'Chọn quyền lợi...'
+                        });
+                    }
                     
-                    // Initialize Select2 for benefits
-                    $('#job_benefits').select2({
-                        tags: true,
-                        tokenSeparators: [','],
-                        placeholder: 'Chọn quyền lợi...'
-                    });
+                    console.log('Form data loaded successfully!');
+                } else {
+                    console.error('Invalid API response structure');
                 }
             },
-            error: function() {
-                console.error('Failed to load form data');
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    error: error,
+                    response: xhr.responseText
+                });
+                
+                // Initialize Select2 even if API fails
+                $('#required_skills').select2({
+                    tags: true,
+                    tokenSeparators: [','],
+                    placeholder: 'Chọn kỹ năng...'
+                });
+                
+                $('#job_benefits').select2({
+                    tags: true,
+                    tokenSeparators: [','],
+                    placeholder: 'Chọn quyền lợi...'
+                });
             }
         });
     });
