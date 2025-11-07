@@ -125,7 +125,6 @@ Route::prefix('jobs/options')->name('api.jobs.options.')->middleware('throttle:1
     Route::get('/form-data', [JobOptionsController::class, 'getJobFormData'])->name('form-data');
     
     // Individual option endpoints
-    Route::get('/locations', [JobOptionsController::class, 'getLocations'])->name('locations');
     Route::get('/skills', [JobOptionsController::class, 'getSkills'])->name('skills');
     Route::get('/companies', [JobOptionsController::class, 'getCompanies'])->name('companies');
     Route::get('/benefits', [JobOptionsController::class, 'getBenefits'])->name('benefits');
