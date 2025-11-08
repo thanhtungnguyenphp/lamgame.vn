@@ -550,9 +550,7 @@
             background: white;
             border-radius: 16px;
             padding: 1.5rem;
-            margin: 1.5rem 0;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-            border: 1px solid #f1f3f4;
+            margin: 0 0 1.5rem 0;
             text-align: center;
         }
 
