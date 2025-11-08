@@ -87,10 +87,33 @@ class HomeController extends Controller
                 $join->on('p.id', '=', 'pf.product_id')
                      ->where('pf.locale', '=', 'vi');
             })
-            ->leftJoin('product_categories as pc', 'p.id', '=', 'pc.product_id')
-            ->leftJoin('category_translations as ct', function($join) {
-                $join->on('pc.category_id', '=', 'ct.category_id')
-                     ->where('ct.locale', '=', 'vi');
+            // Join job attributes
+            ->leftJoin('product_attribute_values as pav_salary', function($join) {
+                $join->on('p.id', '=', 'pav_salary.product_id')
+                     ->where('pav_salary.attribute_id', '=', 42); // salary_range
+            })
+            ->leftJoin('attribute_options as ao_salary', 'pav_salary.text_value', '=', 'ao_salary.id')
+            ->leftJoin('attribute_option_translations as aot_salary', function($join) {
+                $join->on('ao_salary.id', '=', 'aot_salary.attribute_option_id')
+                     ->where('aot_salary.locale', '=', 'vi');
+            })
+            ->leftJoin('product_attribute_values as pav_location', function($join) {
+                $join->on('p.id', '=', 'pav_location.product_id')
+                     ->where('pav_location.attribute_id', '=', 43); // job_location
+            })
+            ->leftJoin('attribute_options as ao_location', 'pav_location.text_value', '=', 'ao_location.id')
+            ->leftJoin('attribute_option_translations as aot_location', function($join) {
+                $join->on('ao_location.id', '=', 'aot_location.attribute_option_id')
+                     ->where('aot_location.locale', '=', 'vi');
+            })
+            ->leftJoin('product_attribute_values as pav_type', function($join) {
+                $join->on('p.id', '=', 'pav_type.product_id')
+                     ->where('pav_type.attribute_id', '=', 40); // job_type
+            })
+            ->leftJoin('attribute_options as ao_type', 'pav_type.text_value', '=', 'ao_type.id')
+            ->leftJoin('attribute_option_translations as aot_type', function($join) {
+                $join->on('ao_type.id', '=', 'aot_type.attribute_option_id')
+                     ->where('aot_type.locale', '=', 'vi');
             })
             // Left join to get the first product image (thumbnail)
             ->leftJoin('product_images as pi', function($join) {
@@ -105,11 +128,12 @@ class HomeController extends Controller
                 'p.id',
                 'pf.name',
                 'pf.short_description',
-                'pf.price',
                 'pf.url_key',
-                'ct.name as company',
                 'p.created_at',
-                'pi.path as thumbnail'
+                'pi.path as thumbnail',
+                DB::raw('COALESCE(aot_salary.label, ao_salary.admin_name) as salary_range'),
+                DB::raw('COALESCE(aot_location.label, ao_location.admin_name) as job_location'),
+                DB::raw('COALESCE(aot_type.label, ao_type.admin_name) as job_type')
             )
             ->orderBy('p.created_at', 'desc')
             ->limit(6)
@@ -122,9 +146,10 @@ class HomeController extends Controller
             $jobsData[] = [
                 'id' => $job->id,
                 'title' => $parts[0] ?? $job->name,
-                'company' => trim($parts[1] ?? $job->company ?? 'Studio Game VN'),
-                'salary' => number_format($job->price / 1000000, 1) . ' triệu VND',
-                'location' => $this->extractLocation($job->short_description),
+                'company' => trim($parts[1] ?? 'Studio Game VN'),
+                'salary' => $job->salary_range ?: 'Thỏa thuận',
+                'location' => $job->job_location ?: 'Remote',
+                'type' => $job->job_type ?: 'Full-time',
                 'posted_ago' => \Carbon\Carbon::parse($job->created_at)->diffForHumans(),
                 'url' => route('lamgame.job.detail', $job->url_key),
                 'thumbnail' => $this->getJobThumbnail($job->thumbnail),

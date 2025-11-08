@@ -391,7 +391,7 @@ class LamGamePageController extends Controller
                      ->where('aot.locale', '=', 'vi');
             })
             ->where('pav.product_id', $productId)
-            ->whereIn('a.code', ['job_type', 'experience_level', 'salary_range', 'location', 'skills_required'])
+            ->whereIn('a.code', ['job_type', 'experience_level', 'salary_range', 'job_location', 'required_skills'])
             ->select(
                 'a.code',
                 'pav.text_value',
@@ -553,7 +553,7 @@ class LamGamePageController extends Controller
         // Parse job data
         $companyName = trim(str_replace(' - ', ' ', explode(' - ', $job->name)[1] ?? $job->name));
         $jobTitle = explode(' - ', $job->name)[0] ?? $job->name;
-        $salaryFormatted = number_format($job->price / 1000000, 1) . ' triệu VND';
+        $salaryFormatted = $job->attributes['salary_range'] ?? 'Thỏa thuận';
         $postedAgo = \Carbon\Carbon::parse($job->created_at)->diffForHumans();
 
         // Get similar jobs
