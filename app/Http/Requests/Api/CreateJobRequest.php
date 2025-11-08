@@ -28,6 +28,18 @@ class CreateJobRequest extends FormRequest
             'description' => 'required|string',
             'short_description' => 'required|string|max:500',
             
+            // Company information (optional - for new companies)
+            'company' => 'sometimes|array',
+            'company.name' => 'required_with:company|string|max:255',
+            'company.description' => 'nullable|string',
+            'company.website' => 'nullable|url',
+            'company.email' => 'nullable|email',
+            'company.phone' => 'nullable|string|max:20',
+            'company.address' => 'nullable|string',
+            'company.employee_count' => 'nullable|integer|min:1',
+            'company.founded_year' => 'nullable|integer|min:1900|max:' . date('Y'),
+            'company.industry' => 'nullable|string|max:255',
+            
             // Job details
             'job_type' => 'required|string|in:full-time,part-time,contract,freelance,internship,remote,hybrid',
             'experience_level' => 'required|string|in:fresher,junior,middle,senior,lead,director',

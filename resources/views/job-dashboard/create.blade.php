@@ -3,6 +3,7 @@
 <head>
     <title>Đăng Job Mới</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-4">
@@ -121,6 +122,71 @@
                         </div>
                     </div>
 
+                    <!-- Thông tin công ty -->
+                    <h5 class="mb-3 mt-4">Thông tin công ty</h5>
+                    <div id="company-section">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Tên công ty *</label>
+                                    <input type="text" class="form-control" name="company[name]" id="company_name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Website</label>
+                                    <input type="url" class="form-control" name="company[website]" id="company_website" placeholder="https://example.com">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Mô tả công ty</label>
+                            <textarea class="form-control" name="company[description]" id="company_description" rows="3" placeholder="Mô tả ngắn về công ty..."></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Email công ty</label>
+                                    <input type="email" class="form-control" name="company[email]" id="company_email">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Số điện thoại</label>
+                                    <input type="text" class="form-control" name="company[phone]" id="company_phone">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Số nhân viên</label>
+                                    <input type="number" class="form-control" name="company[employee_count]" id="company_employee_count" min="1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Năm thành lập</label>
+                                    <input type="number" class="form-control" name="company[founded_year]" id="company_founded_year" min="1900" max="{{ date('Y') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Ngành nghề</label>
+                                    <input type="text" class="form-control" name="company[industry]" id="company_industry" placeholder="Game Development">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Địa chỉ</label>
+                            <textarea class="form-control" name="company[address]" id="company_address" rows="2" placeholder="Địa chỉ công ty..."></textarea>
+                        </div>
+                    </div>
+
                     <div class="d-flex gap-2 mt-4">
                         <button type="submit" class="btn btn-primary">Đăng Job</button>
                         <a href="{{ route('job.dashboard.index') }}" class="btn btn-secondary">Hủy</a>
@@ -137,6 +203,9 @@
     <script>
     $(document).ready(function() {
         console.log('Loading job form data...');
+        
+        // Load company info first
+        loadCompanyInfo();
         
         // Load form data from API
         $.ajax({
@@ -260,6 +329,38 @@
             }
         });
     });
+
+    function loadCompanyInfo() {
+        @if(isset($company) && $company)
+            // Fill company form with existing data
+            const company = @json($company);
+            $('#company_name').val(company.name || '');
+            $('#company_description').val(company.description || '');
+            $('#company_website').val(company.website || '');
+            $('#company_email').val(company.email || '');
+            $('#company_phone').val(company.phone || '');
+            $('#company_employee_count').val(company.employee_count || '');
+            $('#company_founded_year').val(company.founded_year || '');
+            $('#company_industry').val(company.industry || '');
+            $('#company_address').val(company.address || '');
+            
+            // Add info message
+            $('#company-section').prepend(`
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Thông tin công ty hiện tại. Bạn có thể cập nhật thông tin này.
+                </div>
+            `);
+        @else
+            // Add message for new company
+            $('#company-section').prepend(`
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Bạn chưa có thông tin công ty. Vui lòng nhập thông tin công ty để đăng job.
+                </div>
+            `);
+        @endif
+    }
     </script>
 </body>
 </html>

@@ -103,17 +103,17 @@
                 <!-- Company Info -->
                 <div class="company-info">
                     <div class="company-logo-large">
-                        {{ strtoupper(substr($companyName, 0, 2)) }}
+                        {{ strtoupper(substr($companyInfo['name'], 0, 2)) }}
                     </div>
-                    <h4 class="company-name-large">{{ $companyName }}</h4>
-                    <p class="company-desc">Công ty hoạt động trong lĩnh vực phát triển game, mang đến những trải nghiệm giải trí tuyệt vời.</p>
+                    <h4 class="company-name-large">{{ $companyInfo['name'] }}</h4>
+                    <p class="company-desc">{!! nl2br(e($companyInfo['description'])) !!}</p>
                     <div class="company-stats">
                         <div class="stat">
-                            <div class="stat-number">50+</div>
+                            <div class="stat-number">{{ $companyInfo['employee_count'] }}+</div>
                             <div class="stat-label">Nhân viên</div>
                         </div>
                         <div class="stat">
-                            <div class="stat-number">5+</div>
+                            <div class="stat-number">{{ date('Y') - $companyInfo['founded_year'] }}+</div>
                             <div class="stat-label">Năm KN</div>
                         </div>
                     </div>

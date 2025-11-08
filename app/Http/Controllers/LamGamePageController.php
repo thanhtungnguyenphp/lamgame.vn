@@ -531,6 +531,7 @@ class LamGamePageController extends Controller
                 $join->on('pc.category_id', '=', 'ct.category_id')
                      ->where('ct.locale', '=', 'vi');
             })
+            ->leftJoin('companies as c', 'p.company_id', '=', 'c.id')
             ->leftJoin('product_attribute_values as pav_deadline', function($join) {
                 $join->on('p.id', '=', 'pav_deadline.product_id')
                      ->leftJoin('attributes as a_deadline', 'pav_deadline.attribute_id', '=', 'a_deadline.id')
@@ -564,7 +565,15 @@ class LamGamePageController extends Controller
                 'p.updated_at',
                 'pav_deadline.text_value as application_deadline',
                 'pav_email.text_value as contact_email',
-                'pi.path as thumbnail'
+                'pi.path as thumbnail',
+                'c.name as company_name',
+                'c.description as company_description',
+                'c.website as company_website',
+                'c.email as company_email',
+                'c.phone as company_phone',
+                'c.employee_count',
+                'c.founded_year',
+                'c.industry'
             )
             ->first();
 
@@ -582,10 +591,22 @@ class LamGamePageController extends Controller
         $job->processed_description = $this->processJobDescription($job->short_description);
 
         // Parse job data
-        $companyName = trim(str_replace(' - ', ' ', explode(' - ', $job->name)[1] ?? $job->name));
+        $companyName = $job->company_name ?: trim(str_replace(' - ', ' ', explode(' - ', $job->name)[1] ?? $job->name));
         $jobTitle = explode(' - ', $job->name)[0] ?? $job->name;
         $salaryFormatted = $job->attributes['salary_range'] ?? 'Thỏa thuận';
         $postedAgo = \Carbon\Carbon::parse($job->created_at)->diffForHumans();
+
+        // Company info from database or fallback
+        $companyInfo = [
+            'name' => $companyName,
+            'description' => $job->company_description ?: 'Công ty hoạt động trong lĩnh vực phát triển game, mang đến những trải nghiệm giải trí tuyệt vời.',
+            'website' => $job->company_website,
+            'email' => $job->company_email,
+            'phone' => $job->company_phone,
+            'employee_count' => $job->employee_count ?: 50,
+            'founded_year' => $job->founded_year ?: 2020,
+            'industry' => $job->industry ?: 'Game Development'
+        ];
 
         // Get similar jobs
         $similarJobs = \DB::table('products as p')
@@ -631,6 +652,7 @@ class LamGamePageController extends Controller
             'job' => $job,
             'jobTitle' => $jobTitle,
             'companyName' => $companyName,
+            'companyInfo' => $companyInfo,
             'salaryFormatted' => $salaryFormatted,
             'postedAgo' => $postedAgo,
             'similarJobs' => $similarJobs,
