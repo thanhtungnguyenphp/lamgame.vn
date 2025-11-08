@@ -69,7 +69,7 @@
                             <div class="job-meta">
                                 <div class="meta-item">
                                     <i class="fa fa-map-marker"></i>
-                                    <span>Việt Nam</span>
+                                    <span>{{ $job->attributes['job_location'] ?? 'Việt Nam' }}</span>
                                 </div>
                                 <div class="meta-item">
                                     <i class="fa fa-money"></i>
@@ -77,7 +77,7 @@
                                 </div>
                                 <div class="meta-item">
                                     <i class="fa fa-clock-o"></i>
-                                    <span>Full-time</span>
+                                    <span>{{ $job->attributes['job_type'] ?? 'Full-time' }}</span>
                                 </div>
                                 <div class="meta-item">
                                     <i class="fa fa-calendar"></i>
