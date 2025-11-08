@@ -91,6 +91,10 @@ Route::prefix('jobs')->name('api.jobs.')->middleware('throttle:60,1')->group(fun
     // Job Application endpoints
     Route::post('/{jobId}/apply', [\App\Http\Controllers\Api\JobApplicationController::class, 'apply'])->name('apply')->where('jobId', '[0-9]+');
     
+    // Company management endpoints
+    Route::get('/company/info', [JobController::class, 'getCompanyInfo'])->name('company.info');
+    Route::post('/company/save', [JobController::class, 'saveCompanyInfo'])->name('company.save');
+    
     // Protected endpoints (auth required) - uncomment when auth is implemented
     /*
     Route::middleware('auth:sanctum')->group(function () {

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Company;
 
 class JobDashboardController extends Controller
 {
@@ -27,7 +28,14 @@ class JobDashboardController extends Controller
 
     public function create()
     {
-        return view('job-dashboard.create');
+        $admin = Auth::guard('admin')->user();
+        $company = null;
+        
+        if ($admin && $admin->company_id) {
+            $company = Company::find($admin->company_id);
+        }
+        
+        return view('job-dashboard.create', compact('company'));
     }
 
     public function store(Request $request)
@@ -35,17 +43,51 @@ class JobDashboardController extends Controller
         try {
             DB::beginTransaction();
             
+            $admin = Auth::guard('admin')->user();
+            $companyId = null;
+            
+            // Handle company logic
+            if ($request->has('company')) {
+                if ($admin->company_id) {
+                    // Update existing company
+                    $company = Company::find($admin->company_id);
+                    if ($company) {
+                        $company->update($request->company);
+                        $companyId = $company->id;
+                    }
+                } else {
+                    // Create new company
+                    $companyData = $request->company;
+                    $companyData['created_by_admin_id'] = $admin->id;
+                    
+                    $company = Company::create($companyData);
+                    $companyId = $company->id;
+                    
+                    // Link admin to company
+                    $admin->update(['company_id' => $company->id]);
+                }
+            } else if ($admin->company_id) {
+                // Use existing company
+                $companyId = $admin->company_id;
+            }
+            
             $sku = 'JOB_' . strtoupper(uniqid());
             
             // Tạo product
-            $productId = DB::table('products')->insertGetId([
+            $productData = [
                 'type' => 'job',
                 'sku' => $sku,
                 'attribute_family_id' => 1,
-                'created_by_admin_id' => Auth::guard('admin')->id(),
+                'created_by_admin_id' => $admin->id,
                 'created_at' => now(),
                 'updated_at' => now()
-            ]);
+            ];
+            
+            if ($companyId) {
+                $productData['company_id'] = $companyId;
+            }
+            
+            $productId = DB::table('products')->insertGetId($productData);
             
             // Tạo product_flat với product_id
             DB::table('product_flat')->insert([
