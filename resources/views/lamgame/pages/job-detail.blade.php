@@ -100,21 +100,24 @@
                     </div>
                 </div>
 
-                <!-- Job Tags -->
-                @if(isset($job->attributes['job_type']) || isset($job->attributes['experience_level']) || $job->category_name)
-                <div class="job-tags">
-                    @if(isset($job->attributes['job_type']))
-                        <span class="tag">{{ $job->attributes['job_type'] }}</span>
-                    @endif
-                    @if(isset($job->attributes['experience_level']))
-                        <span class="tag">{{ $job->attributes['experience_level'] }}</span>
-                    @endif
-                    @if($job->category_name)
-                        <span class="tag">{{ $job->category_name }}</span>
-                    @endif
-                    <span class="tag">Game Development</span>
+                <!-- Company Info -->
+                <div class="company-info">
+                    <div class="company-logo-large">
+                        {{ strtoupper(substr($companyName, 0, 2)) }}
+                    </div>
+                    <h4 class="company-name-large">{{ $companyName }}</h4>
+                    <p class="company-desc">Công ty hoạt động trong lĩnh vực phát triển game, mang đến những trải nghiệm giải trí tuyệt vời.</p>
+                    <div class="company-stats">
+                        <div class="stat">
+                            <div class="stat-number">50+</div>
+                            <div class="stat-label">Nhân viên</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">5+</div>
+                            <div class="stat-label">Năm KN</div>
+                        </div>
+                    </div>
                 </div>
-                @endif
 
                 <!-- Main Content Sections -->
                 <div class="content-sections">
@@ -140,34 +143,42 @@
                     </div>
                     @endif
 
+                    <!-- Skills -->
+                    @if(isset($job->attributes['required_skills']) && !empty($job->attributes['required_skills']))
+                    <div class="content-section">
+                        <h2 class="section-title">Kỹ năng yêu cầu</h2>
+                        <div class="section-content">
+                            <div class="skills-list">
+                                @php
+                                    $skills = explode(',', $job->attributes['required_skills']);
+                                @endphp
+                                @foreach($skills as $skill)
+                                    <span class="skill-tag">{{ trim($skill) }}</span>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
                     <!-- Benefits -->
+                    @if(isset($job->attributes['job_benefits']) && !empty($job->attributes['job_benefits']))
                     <div class="content-section">
                         <h2 class="section-title">Quyền lợi</h2>
                         <div class="section-content">
                             <div class="benefits-list">
-                                <div class="benefit-item">
-                                    <i class="fa fa-check-circle"></i>
-                                    <span>Mức lương cạnh tranh: {{ $salaryFormatted }}</span>
-                                </div>
-                                <div class="benefit-item">
-                                    <i class="fa fa-check-circle"></i>
-                                    <span>Môi trường làm việc chuyên nghiệp</span>
-                                </div>
-                                <div class="benefit-item">
-                                    <i class="fa fa-check-circle"></i>
-                                    <span>Cơ hội phát triển nghề nghiệp</span>
-                                </div>
-                                <div class="benefit-item">
-                                    <i class="fa fa-check-circle"></i>
-                                    <span>Bảo hiểm y tế và xã hội đầy đủ</span>
-                                </div>
-                                <div class="benefit-item">
-                                    <i class="fa fa-check-circle"></i>
-                                    <span>Các hoạt động team building, du lịch</span>
-                                </div>
+                                @php
+                                    $benefits = explode(',', $job->attributes['job_benefits']);
+                                @endphp
+                                @foreach($benefits as $benefit)
+                                    <div class="benefit-item">
+                                        <i class="fa fa-check-circle"></i>
+                                        <span>{{ trim($benefit) }}</span>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
+                    @endif
 
                     <!-- Additional Info -->
                     @if(isset($job->attributes['skills_required']) || $job->application_deadline)
@@ -195,28 +206,6 @@
 
                 <!-- Sidebar -->
                 <div class="sidebar">
-                    <!-- Company Info Card -->
-                    <div class="sidebar-card">
-                        <h3 class="sidebar-title">Về công ty</h3>
-                        <div class="company-info">
-                            <div class="company-logo-large">
-                                {{ strtoupper(substr($companyName, 0, 2)) }}
-                            </div>
-                            <h4 class="company-name-large">{{ $companyName }}</h4>
-                            <p class="company-desc">Công ty hoạt động trong lĩnh vực phát triển game, mang đến những trải nghiệm giải trí tuyệt vời.</p>
-                            <div class="company-stats">
-                                <div class="stat">
-                                    <div class="stat-number">50+</div>
-                                    <div class="stat-label">Nhân viên</div>
-                                </div>
-                                <div class="stat">
-                                    <div class="stat-number">5+</div>
-                                    <div class="stat-label">Năm KN</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Similar Jobs Card -->
                     @if($similarJobs->count() > 0)
                     <div class="sidebar-card">
@@ -556,6 +545,68 @@
             border-color: #667eea;
         }
 
+        /* Company Info */
+        .company-info {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f1f3f4;
+            text-align: center;
+        }
+
+        .company-logo-large {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin: 0 auto 1rem auto;
+        }
+
+        .company-name-large {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 0 0 0.75rem 0;
+        }
+
+        .company-desc {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0 0 1rem 0;
+        }
+
+        .company-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
         /* Job Tags */
         .job-tags {
             margin: 1.5rem 0;
@@ -605,6 +656,23 @@
 
         .section-content p {
             margin: 0;
+        }
+
+        /* Skills List */
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .skill-tag {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
         }
 
         /* Benefits List */

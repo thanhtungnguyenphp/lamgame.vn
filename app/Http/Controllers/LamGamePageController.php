@@ -388,10 +388,14 @@ class LamGamePageController extends Controller
             ->leftJoin('attribute_options as ao', 'pav.text_value', '=', 'ao.id')
             ->leftJoin('attribute_option_translations as aot', function($join) {
                 $join->on('ao.id', '=', 'aot.attribute_option_id')
-                     ->where('aot.locale', '=', 'vi');
+                     ->where(function($query) {
+                         $query->where('aot.locale', '=', 'vi')
+                               ->orWhereNull('aot.locale')
+                               ->orWhere('aot.locale', '=', '');
+                     });
             })
             ->where('pav.product_id', $productId)
-            ->whereIn('a.code', ['job_type', 'experience_level', 'salary_range', 'job_location', 'required_skills'])
+            ->whereIn('a.code', ['job_type', 'experience_level', 'salary_range', 'job_location', 'required_skills', 'job_benefits'])
             ->select(
                 'a.code',
                 'pav.text_value',
@@ -403,8 +407,35 @@ class LamGamePageController extends Controller
 
         $jobAttributes = [];
         foreach ($attributes as $attr) {
-            $value = $attr->option_label ?: $attr->text_value ?: $attr->integer_value;
-            $jobAttributes[$attr->code] = $value;
+            if (in_array($attr->code, ['job_benefits', 'required_skills']) && $attr->text_value) {
+                // Handle multiple values (comma-separated IDs)
+                $valueIds = explode(',', $attr->text_value);
+                $valueLabels = [];
+                
+                foreach ($valueIds as $valueId) {
+                    $valueId = trim($valueId);
+                    if ($valueId) {
+                        $valueLabel = \DB::table('attribute_options as ao')
+                            ->join('attribute_option_translations as aot', 'ao.id', '=', 'aot.attribute_option_id')
+                            ->where('ao.id', $valueId)
+                            ->where(function($query) {
+                                $query->where('aot.locale', 'vi')
+                                      ->orWhereNull('aot.locale')
+                                      ->orWhere('aot.locale', '');
+                            })
+                            ->value('aot.label');
+                        
+                        if ($valueLabel) {
+                            $valueLabels[] = $valueLabel;
+                        }
+                    }
+                }
+                
+                $jobAttributes[$attr->code] = implode(',', $valueLabels);
+            } else {
+                $value = $attr->option_label ?: $attr->text_value ?: $attr->integer_value;
+                $jobAttributes[$attr->code] = $value;
+            }
         }
 
         return $jobAttributes;
