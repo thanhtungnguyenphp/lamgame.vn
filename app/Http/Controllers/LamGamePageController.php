@@ -385,7 +385,7 @@ class LamGamePageController extends Controller
     {
         $attributes = \DB::table('product_attribute_values as pav')
             ->join('attributes as a', 'pav.attribute_id', '=', 'a.id')
-            ->leftJoin('attribute_options as ao', 'pav.integer_value', '=', 'ao.id')
+            ->leftJoin('attribute_options as ao', 'pav.text_value', '=', 'ao.id')
             ->leftJoin('attribute_option_translations as aot', function($join) {
                 $join->on('ao.id', '=', 'aot.attribute_option_id')
                      ->where('aot.locale', '=', 'vi');
@@ -403,7 +403,7 @@ class LamGamePageController extends Controller
 
         $jobAttributes = [];
         foreach ($attributes as $attr) {
-            $value = $attr->text_value ?: $attr->option_label ?: $attr->integer_value;
+            $value = $attr->option_label ?: $attr->text_value ?: $attr->integer_value;
             $jobAttributes[$attr->code] = $value;
         }
 
