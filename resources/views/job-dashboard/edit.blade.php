@@ -41,13 +41,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Loại Job *</label>
-                                <select class="form-select" name="job_type" required>
+                                <select class="form-select" name="job_type" id="job_type" required>
                                     <option value="">Chọn loại job</option>
-                                    <option value="full-time" {{ ($attributes[40] ?? '') == 'full-time' ? 'selected' : '' }}>Full-time</option>
-                                    <option value="part-time" {{ ($attributes[40] ?? '') == 'part-time' ? 'selected' : '' }}>Part-time</option>
-                                    <option value="contract" {{ ($attributes[40] ?? '') == 'contract' ? 'selected' : '' }}>Contract</option>
-                                    <option value="internship" {{ ($attributes[40] ?? '') == 'internship' ? 'selected' : '' }}>Internship</option>
-                                    <option value="freelance" {{ ($attributes[40] ?? '') == 'freelance' ? 'selected' : '' }}>Freelance</option>
                                 </select>
                             </div>
                         </div>
@@ -69,28 +64,16 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Kinh nghiệm *</label>
-                                <select class="form-select" name="experience_level" required>
+                                <select class="form-select" name="experience_level" id="experience_level" required>
                                     <option value="">Chọn mức kinh nghiệm</option>
-                                    <option value="fresher" {{ ($attributes[41] ?? '') == 'fresher' ? 'selected' : '' }}>Fresher (0-1 năm)</option>
-                                    <option value="junior" {{ ($attributes[41] ?? '') == 'junior' ? 'selected' : '' }}>Junior (1-3 năm)</option>
-                                    <option value="middle" {{ ($attributes[41] ?? '') == 'middle' ? 'selected' : '' }}>Middle (3-5 năm)</option>
-                                    <option value="senior" {{ ($attributes[41] ?? '') == 'senior' ? 'selected' : '' }}>Senior (5+ năm)</option>
-                                    <option value="lead" {{ ($attributes[41] ?? '') == 'lead' ? 'selected' : '' }}>Team Lead</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Mức lương *</label>
-                                <select class="form-select" name="salary_range" required>
+                                <select class="form-select" name="salary_range" id="salary_range" required>
                                     <option value="">Chọn mức lương</option>
-                                    <option value="5m-10m" {{ ($attributes[42] ?? '') == '5m-10m' ? 'selected' : '' }}>5-10 triệu</option>
-                                    <option value="10m-15m" {{ ($attributes[42] ?? '') == '10m-15m' ? 'selected' : '' }}>10-15 triệu</option>
-                                    <option value="15m-20m" {{ ($attributes[42] ?? '') == '15m-20m' ? 'selected' : '' }}>15-20 triệu</option>
-                                    <option value="20m-30m" {{ ($attributes[42] ?? '') == '20m-30m' ? 'selected' : '' }}>20-30 triệu</option>
-                                    <option value="30m-50m" {{ ($attributes[42] ?? '') == '30m-50m' ? 'selected' : '' }}>30-50 triệu</option>
-                                    <option value="50m+" {{ ($attributes[42] ?? '') == '50m+' ? 'selected' : '' }}>Trên 50 triệu</option>
-                                    <option value="negotiate" {{ ($attributes[42] ?? '') == 'negotiate' ? 'selected' : '' }}>Thỏa thuận</option>
                                 </select>
                             </div>
                         </div>
@@ -100,21 +83,16 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Địa điểm làm việc</label>
-                                <select class="form-select" name="job_location">
+                                <select class="form-select" name="job_location" id="job_location">
                                     <option value="">Chọn địa điểm</option>
-                                    <option value="ha-noi" {{ ($attributes[43] ?? '') == 'ha-noi' ? 'selected' : '' }}>Hà Nội</option>
-                                    <option value="ho-chi-minh" {{ ($attributes[43] ?? '') == 'ho-chi-minh' ? 'selected' : '' }}>TP. Hồ Chí Minh</option>
-                                    <option value="da-nang" {{ ($attributes[43] ?? '') == 'da-nang' ? 'selected' : '' }}>Đà Nẵng</option>
-                                    <option value="remote" {{ ($attributes[43] ?? '') == 'remote' ? 'selected' : '' }}>Remote</option>
-                                    <option value="hybrid" {{ ($attributes[43] ?? '') == 'hybrid' ? 'selected' : '' }}>Hybrid</option>
-                                    <option value="other" {{ ($attributes[43] ?? '') == 'other' ? 'selected' : '' }}>Khác</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Kỹ năng yêu cầu</label>
-                                <input type="text" class="form-control" name="required_skills" value="{{ $attributes[45] ?? '' }}">
+                                <select class="form-control" name="required_skills[]" id="required_skills" multiple>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -123,7 +101,8 @@
                     <h5 class="mb-3 mt-4">Quyền lợi & Liên hệ</h5>
                     <div class="mb-3">
                         <label class="form-label">Quyền lợi</label>
-                        <textarea class="form-control" name="job_benefits" rows="3">{{ $attributes[48] ?? '' }}</textarea>
+                        <select class="form-control" name="job_benefits[]" id="job_benefits" multiple>
+                        </select>
                     </div>
 
                     <div class="row">
@@ -149,5 +128,97 @@
             </div>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <script>
+    $(document).ready(function() {
+        const savedValues = @json($attributes);
+        
+        $.ajax({
+            url: '/api/jobs/options/form-data',
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer null' },
+            success: function(response) {
+                if (response.success && response.data.attributes) {
+                    const attrs = response.data.attributes;
+                    
+                    // Job Type
+                    if (attrs.job_type?.options) {
+                        const select = $('#job_type');
+                        attrs.job_type.options.forEach(item => {
+                            const selected = savedValues[40] == item.id ? 'selected' : '';
+                            select.append(`<option value="${item.id}" ${selected}>${item.value}</option>`);
+                        });
+                    }
+                    
+                    // Experience Level
+                    if (attrs.experience_level?.options) {
+                        const select = $('#experience_level');
+                        attrs.experience_level.options.forEach(item => {
+                            const selected = savedValues[41] == item.id ? 'selected' : '';
+                            select.append(`<option value="${item.id}" ${selected}>${item.value}</option>`);
+                        });
+                    }
+                    
+                    // Salary Range
+                    if (attrs.salary_range?.options) {
+                        const select = $('#salary_range');
+                        attrs.salary_range.options.forEach(item => {
+                            const selected = savedValues[42] == item.id ? 'selected' : '';
+                            select.append(`<option value="${item.id}" ${selected}>${item.value}</option>`);
+                        });
+                    }
+                    
+                    // Location
+                    if (attrs.job_location?.options) {
+                        const select = $('#job_location');
+                        attrs.job_location.options.forEach(item => {
+                            const selected = savedValues[43] == item.id ? 'selected' : '';
+                            select.append(`<option value="${item.id}" ${selected}>${item.value}</option>`);
+                        });
+                    }
+                    
+                    // Skills
+                    const skillsData = attrs.required_skills?.options?.map(item => ({
+                        id: item.id, text: item.value
+                    })) || [];
+                    
+                    $('#required_skills').select2({
+                        data: skillsData,
+                        tags: true,
+                        placeholder: 'Chọn kỹ năng...'
+                    });
+                    
+                    if (savedValues[45]) {
+                        const skillIds = savedValues[45].toString().split(',');
+                        $('#required_skills').val(skillIds).trigger('change');
+                    }
+                    
+                    // Benefits
+                    const benefitsData = attrs.job_benefits?.options?.map(item => ({
+                        id: item.id, text: item.value
+                    })) || [];
+                    
+                    $('#job_benefits').select2({
+                        data: benefitsData,
+                        tags: true,
+                        placeholder: 'Chọn quyền lợi...'
+                    });
+                    
+                    if (savedValues[48]) {
+                        const benefitIds = savedValues[48].toString().split(',');
+                        $('#job_benefits').val(benefitIds).trigger('change');
+                    }
+                }
+            },
+            error: function() {
+                $('#required_skills, #job_benefits').select2({ tags: true });
+            }
+        });
+    });
+    </script>
 </body>
 </html>
