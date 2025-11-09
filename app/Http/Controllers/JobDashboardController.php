@@ -146,11 +146,13 @@ class JobDashboardController extends Controller
 
     public function edit($id)
     {
+        $admin = Auth::guard('admin')->user();
+        
         $job = DB::table('products')
             ->leftJoin('product_flat', 'products.id', '=', 'product_flat.product_id')
             ->select('products.*', 'product_flat.name', 'product_flat.description', 'product_flat.short_description')
             ->where('products.id', $id)
-            ->where('products.created_by_admin_id', Auth::guard('admin')->id())
+            ->where('products.created_by_admin_id', $admin->id)
             ->first();
             
         if (!$job) {
@@ -162,14 +164,48 @@ class JobDashboardController extends Controller
             ->where('product_id', $id)
             ->whereIn('attribute_id', [40, 41, 42, 43, 45, 48, 50, 51])
             ->pluck('text_value', 'attribute_id');
+
+        // Load company data
+        $company = null;
+        if ($admin && $admin->company_id) {
+            $company = Company::find($admin->company_id);
+        }
         
-        return view('job-dashboard.edit', compact('job', 'attributes'));
+        return view('job-dashboard.edit', compact('job', 'attributes', 'company'));
     }
 
     public function update(Request $request, $id)
     {
         try {
             DB::beginTransaction();
+            
+            $admin = Auth::guard('admin')->user();
+            $companyId = null;
+            
+            // Handle company logic
+            if ($request->has('company')) {
+                if ($admin->company_id) {
+                    // Update existing company
+                    $company = Company::find($admin->company_id);
+                    if ($company) {
+                        $company->update($request->company);
+                        $companyId = $company->id;
+                    }
+                } else {
+                    // Create new company
+                    $companyData = $request->company;
+                    $companyData['created_by_admin_id'] = $admin->id;
+                    
+                    $company = Company::create($companyData);
+                    $companyId = $company->id;
+                    
+                    // Link admin to company
+                    $admin->update(['company_id' => $company->id]);
+                }
+            } else if ($admin->company_id) {
+                // Use existing company
+                $companyId = $admin->company_id;
+            }
             
             // Cập nhật product_flat
             DB::table('product_flat')
@@ -182,10 +218,18 @@ class JobDashboardController extends Controller
                 ]);
             
             // Cập nhật products
+            $productUpdateData = [
+                'updated_at' => now()
+            ];
+            
+            if ($companyId) {
+                $productUpdateData['company_id'] = $companyId;
+            }
+            
             DB::table('products')
                 ->where('id', $id)
-                ->where('created_by_admin_id', Auth::guard('admin')->id())
-                ->update(['updated_at' => now()]);
+                ->where('created_by_admin_id', $admin->id)
+                ->update($productUpdateData);
 
             // Cập nhật job attributes
             DB::table('product_attribute_values')->where('product_id', $id)->delete();
