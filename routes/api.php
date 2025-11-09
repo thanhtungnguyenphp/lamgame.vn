@@ -12,6 +12,25 @@ use App\Http\Controllers\Api\JobBulkController;
 use App\Http\Controllers\Api\JobImportExportController;
 use App\Http\Controllers\Api\JobOptionsController;
 use App\Http\Controllers\Api\AiJobDescriptionController;
+
+// Company logo API
+Route::get('/company-logo/{filename}', function($filename) {
+    $path = 'company-logos/' . $filename;
+    
+    if (!\Storage::disk('public')->exists($path)) {
+        return response()->json(['error' => 'Logo not found'], 404);
+    }
+    
+    try {
+        $file = \Storage::disk('public')->get($path);
+        $mimeType = \Storage::disk('public')->mimeType($path);
+        $logoUrl = 'data:' . $mimeType . ';base64,' . base64_encode($file);
+        
+        return response()->json(['logo_url' => $logoUrl]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Failed to load logo'], 500);
+    }
+})->where('filename', '[A-Za-z0-9\-_\.]+');
 use App\Http\Controllers\Api\JobFileParserController;
 
 // Include recruitment dashboard routes

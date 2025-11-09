@@ -43,4 +43,30 @@ class Company extends Model
     {
         return $this->hasMany(\Webkul\Product\Models\Product::class, 'company_id');
     }
+
+    /**
+     * Get logo URL
+     */
+    public function getLogoUrlAttribute()
+    {
+        if (!$this->logo) {
+            return null;
+        }
+
+        // Try to get file from storage
+        $path = 'company-logos/' . basename($this->logo);
+        
+        if (\Storage::disk('public')->exists($path)) {
+            try {
+                $file = \Storage::disk('public')->get($path);
+                $mimeType = \Storage::disk('public')->mimeType($path);
+                return 'data:' . $mimeType . ';base64,' . base64_encode($file);
+            } catch (\Exception $e) {
+                \Log::error('Failed to encode logo: ' . $e->getMessage());
+            }
+        }
+
+        // Fallback to storage URL
+        return \Storage::disk('public')->url($this->logo);
+    }
 }
