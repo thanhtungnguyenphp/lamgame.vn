@@ -103,7 +103,11 @@
                 <!-- Company Info -->
                 <div class="company-info">
                     <div class="company-logo-large">
-                        {{ strtoupper(substr($companyInfo['name'], 0, 2)) }}
+                        @if(isset($companyInfo['logo_url']) && $companyInfo['logo_url'])
+                            <img src="{{ $companyInfo['logo_url'] }}" alt="{{ $companyInfo['name'] }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 12px;">
+                        @else
+                            {{ strtoupper(substr($companyInfo['name'], 0, 2)) }}
+                        @endif
                     </div>
                     <h4 class="company-name-large">{{ $companyInfo['name'] }}</h4>
                     <p class="company-desc">{!! nl2br(e($companyInfo['description'])) !!}</p>

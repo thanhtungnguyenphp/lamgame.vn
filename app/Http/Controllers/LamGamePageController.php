@@ -568,6 +568,7 @@ class LamGamePageController extends Controller
                 'pi.path as thumbnail',
                 'c.name as company_name',
                 'c.description as company_description',
+                'c.logo as company_logo',
                 'c.website as company_website',
                 'c.email as company_email',
                 'c.phone as company_phone',
@@ -597,9 +598,25 @@ class LamGamePageController extends Controller
         $postedAgo = \Carbon\Carbon::parse($job->created_at)->diffForHumans();
 
         // Company info from database or fallback
+        $logoUrl = null;
+        if ($job->company_logo) {
+            $path = 'company-logos/' . basename($job->company_logo);
+            if (\Storage::disk('public')->exists($path)) {
+                try {
+                    $file = \Storage::disk('public')->get($path);
+                    $mimeType = \Storage::disk('public')->mimeType($path);
+                    $logoUrl = 'data:' . $mimeType . ';base64,' . base64_encode($file);
+                } catch (\Exception $e) {
+                    \Log::error('Failed to encode logo: ' . $e->getMessage());
+                }
+            }
+        }
+
         $companyInfo = [
             'name' => $companyName,
             'description' => $job->company_description ?: 'Công ty hoạt động trong lĩnh vực phát triển game, mang đến những trải nghiệm giải trí tuyệt vời.',
+            'logo' => $job->company_logo,
+            'logo_url' => $logoUrl,
             'website' => $job->company_website,
             'email' => $job->company_email,
             'phone' => $job->company_phone,

@@ -48,16 +48,25 @@ class JobDashboardController extends Controller
             
             // Handle company logic
             if ($request->has('company')) {
+                $companyData = $request->company;
+                
+                // Handle logo upload
+                if ($request->hasFile('company_logo')) {
+                    $logoPath = $this->uploadCompanyLogo($request->file('company_logo'));
+                    if ($logoPath) {
+                        $companyData['logo'] = $logoPath;
+                    }
+                }
+                
                 if ($admin->company_id) {
                     // Update existing company
                     $company = Company::find($admin->company_id);
                     if ($company) {
-                        $company->update($request->company);
+                        $company->update($companyData);
                         $companyId = $company->id;
                     }
                 } else {
                     // Create new company
-                    $companyData = $request->company;
                     $companyData['created_by_admin_id'] = $admin->id;
                     
                     $company = Company::create($companyData);
@@ -169,6 +178,20 @@ class JobDashboardController extends Controller
         $company = null;
         if ($admin && $admin->company_id) {
             $company = Company::find($admin->company_id);
+            
+            // Encode logo to base64 if exists
+            if ($company && $company->logo) {
+                $path = 'company-logos/' . basename($company->logo);
+                if (\Storage::disk('public')->exists($path)) {
+                    try {
+                        $file = \Storage::disk('public')->get($path);
+                        $mimeType = \Storage::disk('public')->mimeType($path);
+                        $company->logo_base64 = 'data:' . $mimeType . ';base64,' . base64_encode($file);
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to encode logo: ' . $e->getMessage());
+                    }
+                }
+            }
         }
         
         return view('job-dashboard.edit', compact('job', 'attributes', 'company'));
@@ -184,16 +207,25 @@ class JobDashboardController extends Controller
             
             // Handle company logic
             if ($request->has('company')) {
+                $companyData = $request->company;
+                
+                // Handle logo upload
+                if ($request->hasFile('company_logo')) {
+                    $logoPath = $this->uploadCompanyLogo($request->file('company_logo'));
+                    if ($logoPath) {
+                        $companyData['logo'] = $logoPath;
+                    }
+                }
+                
                 if ($admin->company_id) {
                     // Update existing company
                     $company = Company::find($admin->company_id);
                     if ($company) {
-                        $company->update($request->company);
+                        $company->update($companyData);
                         $companyId = $company->id;
                     }
                 } else {
                     // Create new company
-                    $companyData = $request->company;
                     $companyData['created_by_admin_id'] = $admin->id;
                     
                     $company = Company::create($companyData);
@@ -331,5 +363,39 @@ class JobDashboardController extends Controller
         });
         
         return $jobs;
+    }
+
+    private function uploadCompanyLogo($file)
+    {
+        try {
+            // Validate file
+            if (!$file->isValid()) {
+                return null;
+            }
+
+            // Check file size (2MB max)
+            if ($file->getSize() > 2 * 1024 * 1024) {
+                return null;
+            }
+
+            // Check file type
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!in_array($file->getMimeType(), $allowedTypes)) {
+                return null;
+            }
+
+            // Generate unique filename
+            $filename = 'company_logo_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            
+            // Store file using Laravel storage
+            $path = $file->storeAs('company-logos', $filename, 'public');
+            
+            // Return storage path
+            return $path;
+            
+        } catch (\Exception $e) {
+            \Log::error('Logo upload failed: ' . $e->getMessage());
+            return null;
+        }
     }
 }
