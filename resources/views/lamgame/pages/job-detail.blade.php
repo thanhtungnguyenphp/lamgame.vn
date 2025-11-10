@@ -111,16 +111,6 @@
                     </div>
                     <h4 class="company-name-large">{{ $companyInfo['name'] }}</h4>
                     <p class="company-desc">{!! nl2br(e($companyInfo['description'])) !!}</p>
-                    <div class="company-stats">
-                        <div class="stat">
-                            <div class="stat-number">{{ $companyInfo['employee_count'] }}+</div>
-                            <div class="stat-label">Nhân viên</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-number">{{ date('Y') - $companyInfo['founded_year'] }}+</div>
-                            <div class="stat-label">Năm KN</div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Main Content Sections -->

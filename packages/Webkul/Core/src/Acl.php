@@ -62,6 +62,7 @@ class Acl
         }
 
         $roles = collect($this->getAclConfig())
+            ->filter(fn ($role) => isset($role['route']) && isset($role['key']))
             ->mapWithKeys(fn ($role) => [$role['route'] => $role['key']]);
 
         return $roles;
@@ -75,7 +76,9 @@ class Acl
         $aclWithDotNotation = [];
 
         foreach ($this->getAclConfig() as $item) {
-            $aclWithDotNotation[$item['key']] = $item;
+            if (isset($item['key'])) {
+                $aclWithDotNotation[$item['key']] = $item;
+            }
         }
 
         $acl = Arr::undot(Arr::dot($aclWithDotNotation));
