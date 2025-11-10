@@ -104,3 +104,4 @@ cleanup-backups/
 *-summary.md
 *-fix-summary.md
 CLEANUP_SUMMARY.md
+*export*.sql
