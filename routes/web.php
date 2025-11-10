@@ -20,6 +20,11 @@ Route::get('source-game/{slug}', [LamGamePageController::class, 'sourceGameDetai
 Route::get('blog', [LamGamePageController::class, 'blog'])->name('lamgame.blog');
 Route::get('blog/{slug}', [LamGamePageController::class, 'blogShow'])->name('blog.show');
 
+// Company logo route
+Route::get('storage/company-logos/{filename}', [App\Http\Controllers\LogoController::class, 'show'])
+    ->where('filename', '[A-Za-z0-9\-_\.]+')
+    ->name('company.logo');
+
 // Job routes
 Route::get('viec-lam-game', [LamGamePageController::class, 'jobs'])->name('lamgame.viec-lam-game');
 Route::get('viec-lam/{slug}', [LamGamePageController::class, 'jobDetail'])->name('lamgame.job.detail');

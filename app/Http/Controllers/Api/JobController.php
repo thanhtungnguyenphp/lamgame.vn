@@ -90,6 +90,34 @@ class JobController extends Controller
         try {
             $validatedData = $request->validated();
             
+            // Handle company logic
+            $admin = auth('admin')->user();
+            if ($admin) {
+                // Check if admin has company
+                if ($admin->company_id) {
+                    // Use existing company
+                    $validatedData['company_id'] = $admin->company_id;
+                } else {
+                    // Create new company if company data provided
+                    if (isset($validatedData['company'])) {
+                        $companyData = $validatedData['company'];
+                        $companyData['created_by_admin_id'] = $admin->id;
+                        
+                        $company = \App\Models\Company::create($companyData);
+                        
+                        // Link admin to company
+                        $admin->update(['company_id' => $company->id]);
+                        
+                        $validatedData['company_id'] = $company->id;
+                    }
+                }
+                
+                $validatedData['created_by_admin_id'] = $admin->id;
+            }
+            
+            // Remove company data from job data
+            unset($validatedData['company']);
+            
             $job = $this->jobService->createJobPosting($validatedData);
 
             return response()->json([
@@ -413,5 +441,88 @@ class JobController extends Controller
                 'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * Get or create company for current admin
+     */
+    public function getCompanyInfo()
+    {
+        $admin = auth('admin')->user();
+        
+        if (!$admin) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $company = $admin->company;
+        
+        return response()->json([
+            'has_company' => !is_null($company),
+            'company' => $company ? [
+                'id' => $company->id,
+                'name' => $company->name,
+                'description' => $company->description,
+                'website' => $company->website,
+                'email' => $company->email,
+                'phone' => $company->phone,
+                'address' => $company->address,
+                'employee_count' => $company->employee_count,
+                'founded_year' => $company->founded_year,
+                'industry' => $company->industry
+            ] : null
+        ]);
+    }
+
+    /**
+     * Create or update company for current admin
+     */
+    public function saveCompanyInfo(Request $request)
+    {
+        $admin = auth('admin')->user();
+        
+        if (!$admin) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'website' => 'nullable|url',
+            'email' => 'nullable|email',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'employee_count' => 'nullable|integer|min:1',
+            'founded_year' => 'nullable|integer|min:1900|max:' . date('Y'),
+            'industry' => 'nullable|string|max:255'
+        ]);
+
+        if ($admin->company_id) {
+            // Update existing company
+            $company = $admin->company;
+            $company->update($validated);
+        } else {
+            // Create new company
+            $validated['created_by_admin_id'] = $admin->id;
+            $company = \App\Models\Company::create($validated);
+            
+            // Link admin to company
+            $admin->update(['company_id' => $company->id]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'company' => [
+                'id' => $company->id,
+                'name' => $company->name,
+                'description' => $company->description,
+                'website' => $company->website,
+                'email' => $company->email,
+                'phone' => $company->phone,
+                'address' => $company->address,
+                'employee_count' => $company->employee_count,
+                'founded_year' => $company->founded_year,
+                'industry' => $company->industry
+            ]
+        ]);
     }
 }

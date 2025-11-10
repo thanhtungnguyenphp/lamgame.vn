@@ -113,15 +113,27 @@ class JobService
      */
     protected function createProduct(array $data): Product
     {
-        $sku = $this->generateJobSku($data['company_name'], $data['title']);
+        $sku = $this->generateJobSku($data['company_name'] ?? 'COMPANY', $data['title']);
         
-        return Product::create([
+        $productData = [
             'sku' => $sku,
             'type' => 'simple',
             'attribute_family_id' => 1, // Default attribute family
             'parent_id' => null,
             'additional' => null,
-        ]);
+        ];
+
+        // Add company_id if provided
+        if (isset($data['company_id'])) {
+            $productData['company_id'] = $data['company_id'];
+        }
+
+        // Add created_by_admin_id if provided
+        if (isset($data['created_by_admin_id'])) {
+            $productData['created_by_admin_id'] = $data['created_by_admin_id'];
+        }
+        
+        return Product::create($productData);
     }
 
     /**
