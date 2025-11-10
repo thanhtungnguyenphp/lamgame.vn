@@ -45,5 +45,6 @@ return [
     Webkul\Theme\Providers\ThemeServiceProvider::class,
     Webkul\User\Providers\UserServiceProvider::class,
     Webkul\Menu\Providers\MenuServiceProvider::class,
+    Webkul\JobManagement\Providers\JobManagementServiceProvider::class,
     LamGame\Banner\Providers\BannerServiceProvider::class,
 ];

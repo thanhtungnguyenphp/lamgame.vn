@@ -99,7 +99,8 @@
             "Webkul\\Theme\\": "packages/Webkul/Theme/src",
             "Webkul\\User\\": "packages/Webkul/User/src",
             "Webkul\\Menu\\": "packages/Webkul/Menu/src",
-            "LamGame\\Banner\\": "packages/LamGame/Banner/src"
+            "LamGame\\Banner\\": "packages/LamGame/Banner/src",
+            "Webkul\\JobManagement\\": "packages/Webkul/JobManagement/src"
         }
     },
     "autoload-dev": {
