@@ -388,10 +388,14 @@ class LamGamePageController extends Controller
             ->leftJoin('attribute_options as ao', 'pav.text_value', '=', 'ao.id')
             ->leftJoin('attribute_option_translations as aot', function($join) {
                 $join->on('ao.id', '=', 'aot.attribute_option_id')
-                     ->where('aot.locale', '=', 'vi');
+                     ->where(function($query) {
+                         $query->where('aot.locale', '=', 'vi')
+                               ->orWhereNull('aot.locale')
+                               ->orWhere('aot.locale', '=', '');
+                     });
             })
             ->where('pav.product_id', $productId)
-            ->whereIn('a.code', ['job_type', 'experience_level', 'salary_range', 'job_location', 'required_skills'])
+            ->whereIn('a.code', ['job_type', 'experience_level', 'salary_range', 'job_location', 'required_skills', 'job_benefits'])
             ->select(
                 'a.code',
                 'pav.text_value',
@@ -403,8 +407,35 @@ class LamGamePageController extends Controller
 
         $jobAttributes = [];
         foreach ($attributes as $attr) {
-            $value = $attr->option_label ?: $attr->text_value ?: $attr->integer_value;
-            $jobAttributes[$attr->code] = $value;
+            if (in_array($attr->code, ['job_benefits', 'required_skills']) && $attr->text_value) {
+                // Handle multiple values (comma-separated IDs)
+                $valueIds = explode(',', $attr->text_value);
+                $valueLabels = [];
+                
+                foreach ($valueIds as $valueId) {
+                    $valueId = trim($valueId);
+                    if ($valueId) {
+                        $valueLabel = \DB::table('attribute_options as ao')
+                            ->join('attribute_option_translations as aot', 'ao.id', '=', 'aot.attribute_option_id')
+                            ->where('ao.id', $valueId)
+                            ->where(function($query) {
+                                $query->where('aot.locale', 'vi')
+                                      ->orWhereNull('aot.locale')
+                                      ->orWhere('aot.locale', '');
+                            })
+                            ->value('aot.label');
+                        
+                        if ($valueLabel) {
+                            $valueLabels[] = $valueLabel;
+                        }
+                    }
+                }
+                
+                $jobAttributes[$attr->code] = implode(',', $valueLabels);
+            } else {
+                $value = $attr->option_label ?: $attr->text_value ?: $attr->integer_value;
+                $jobAttributes[$attr->code] = $value;
+            }
         }
 
         return $jobAttributes;
@@ -500,6 +531,7 @@ class LamGamePageController extends Controller
                 $join->on('pc.category_id', '=', 'ct.category_id')
                      ->where('ct.locale', '=', 'vi');
             })
+            ->leftJoin('companies as c', 'p.company_id', '=', 'c.id')
             ->leftJoin('product_attribute_values as pav_deadline', function($join) {
                 $join->on('p.id', '=', 'pav_deadline.product_id')
                      ->leftJoin('attributes as a_deadline', 'pav_deadline.attribute_id', '=', 'a_deadline.id')
@@ -533,7 +565,16 @@ class LamGamePageController extends Controller
                 'p.updated_at',
                 'pav_deadline.text_value as application_deadline',
                 'pav_email.text_value as contact_email',
-                'pi.path as thumbnail'
+                'pi.path as thumbnail',
+                'c.name as company_name',
+                'c.description as company_description',
+                'c.logo as company_logo',
+                'c.website as company_website',
+                'c.email as company_email',
+                'c.phone as company_phone',
+                'c.employee_count',
+                'c.founded_year',
+                'c.industry'
             )
             ->first();
 
@@ -551,10 +592,38 @@ class LamGamePageController extends Controller
         $job->processed_description = $this->processJobDescription($job->short_description);
 
         // Parse job data
-        $companyName = trim(str_replace(' - ', ' ', explode(' - ', $job->name)[1] ?? $job->name));
+        $companyName = $job->company_name ?: trim(str_replace(' - ', ' ', explode(' - ', $job->name)[1] ?? $job->name));
         $jobTitle = explode(' - ', $job->name)[0] ?? $job->name;
         $salaryFormatted = $job->attributes['salary_range'] ?? 'Thỏa thuận';
         $postedAgo = \Carbon\Carbon::parse($job->created_at)->diffForHumans();
+
+        // Company info from database or fallback
+        $logoUrl = null;
+        if ($job->company_logo) {
+            $path = 'company-logos/' . basename($job->company_logo);
+            if (\Storage::disk('public')->exists($path)) {
+                try {
+                    $file = \Storage::disk('public')->get($path);
+                    $mimeType = \Storage::disk('public')->mimeType($path);
+                    $logoUrl = 'data:' . $mimeType . ';base64,' . base64_encode($file);
+                } catch (\Exception $e) {
+                    \Log::error('Failed to encode logo: ' . $e->getMessage());
+                }
+            }
+        }
+
+        $companyInfo = [
+            'name' => $companyName,
+            'description' => $job->company_description ?: 'Công ty hoạt động trong lĩnh vực phát triển game, mang đến những trải nghiệm giải trí tuyệt vời.',
+            'logo' => $job->company_logo,
+            'logo_url' => $logoUrl,
+            'website' => $job->company_website,
+            'email' => $job->company_email,
+            'phone' => $job->company_phone,
+            'employee_count' => $job->employee_count ?: 50,
+            'founded_year' => $job->founded_year ?: 2020,
+            'industry' => $job->industry ?: 'Game Development'
+        ];
 
         // Get similar jobs
         $similarJobs = \DB::table('products as p')
@@ -600,6 +669,7 @@ class LamGamePageController extends Controller
             'job' => $job,
             'jobTitle' => $jobTitle,
             'companyName' => $companyName,
+            'companyInfo' => $companyInfo,
             'salaryFormatted' => $salaryFormatted,
             'postedAgo' => $postedAgo,
             'similarJobs' => $similarJobs,

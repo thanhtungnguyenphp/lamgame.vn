@@ -12,6 +12,25 @@ use App\Http\Controllers\Api\JobBulkController;
 use App\Http\Controllers\Api\JobImportExportController;
 use App\Http\Controllers\Api\JobOptionsController;
 use App\Http\Controllers\Api\AiJobDescriptionController;
+
+// Company logo API
+Route::get('/company-logo/{filename}', function($filename) {
+    $path = 'company-logos/' . $filename;
+    
+    if (!\Storage::disk('public')->exists($path)) {
+        return response()->json(['error' => 'Logo not found'], 404);
+    }
+    
+    try {
+        $file = \Storage::disk('public')->get($path);
+        $mimeType = \Storage::disk('public')->mimeType($path);
+        $logoUrl = 'data:' . $mimeType . ';base64,' . base64_encode($file);
+        
+        return response()->json(['logo_url' => $logoUrl]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Failed to load logo'], 500);
+    }
+})->where('filename', '[A-Za-z0-9\-_\.]+');
 use App\Http\Controllers\Api\JobFileParserController;
 
 // Include recruitment dashboard routes
@@ -90,6 +109,10 @@ Route::prefix('jobs')->name('api.jobs.')->middleware('throttle:60,1')->group(fun
     
     // Job Application endpoints
     Route::post('/{jobId}/apply', [\App\Http\Controllers\Api\JobApplicationController::class, 'apply'])->name('apply')->where('jobId', '[0-9]+');
+    
+    // Company management endpoints
+    Route::get('/company/info', [JobController::class, 'getCompanyInfo'])->name('company.info');
+    Route::post('/company/save', [JobController::class, 'saveCompanyInfo'])->name('company.save');
     
     // Protected endpoints (auth required) - uncomment when auth is implemented
     /*

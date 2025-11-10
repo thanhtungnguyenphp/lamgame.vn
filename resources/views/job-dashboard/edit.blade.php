@@ -3,6 +3,7 @@
 <head>
     <title>Sửa Job</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-4">
@@ -25,7 +26,7 @@
 
         <div class="card">
             <div class="card-body">
-                <form method="POST" action="{{ route('job.dashboard.update', $job->id) }}">
+                <form method="POST" action="{{ route('job.dashboard.update', $job->id) }}" enctype="multipart/form-data">>
                     @csrf
                     @method('PUT')
                     
@@ -120,6 +121,85 @@
                         </div>
                     </div>
 
+                    <!-- Thông tin công ty -->
+                    <h5 class="mb-3 mt-4">Thông tin công ty</h5>
+                    <div id="company-section">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Tên công ty *</label>
+                                    <input type="text" class="form-control" name="company[name]" id="company_name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Website</label>
+                                    <input type="url" class="form-control" name="company[website]" id="company_website" placeholder="https://example.com">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Logo công ty</label>
+                                    <input type="file" class="form-control" name="company_logo" id="company_logo" accept="image/*">
+                                    <small class="text-muted">Chọn file ảnh (JPG, PNG, GIF). Tối đa 2MB</small>
+                                    <div id="logo_preview" class="mt-2" style="display: none;">
+                                        <img id="logo_image" src="" alt="Logo preview" style="max-width: 100px; max-height: 100px; border-radius: 8px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Mô tả công ty</label>
+                                    <textarea class="form-control" name="company[description]" id="company_description" rows="3" placeholder="Mô tả ngắn về công ty..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Email công ty</label>
+                                    <input type="email" class="form-control" name="company[email]" id="company_email">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Số điện thoại</label>
+                                    <input type="text" class="form-control" name="company[phone]" id="company_phone">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Số nhân viên</label>
+                                    <input type="number" class="form-control" name="company[employee_count]" id="company_employee_count" min="1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Năm thành lập</label>
+                                    <input type="number" class="form-control" name="company[founded_year]" id="company_founded_year" min="1900" max="{{ date('Y') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Ngành nghề</label>
+                                    <input type="text" class="form-control" name="company[industry]" id="company_industry" placeholder="Game Development">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Địa chỉ</label>
+                            <textarea class="form-control" name="company[address]" id="company_address" rows="2" placeholder="Địa chỉ công ty..."></textarea>
+                        </div>
+                    </div>
+
                     <div class="d-flex gap-2 mt-4">
                         <button type="submit" class="btn btn-primary">Cập Nhật Job</button>
                         <a href="{{ route('job.dashboard.jobs') }}" class="btn btn-secondary">Hủy</a>
@@ -136,6 +216,9 @@
     <script>
     $(document).ready(function() {
         const savedValues = @json($attributes);
+        
+        // Load company info first
+        loadCompanyInfo();
         
         $.ajax({
             url: '/api/jobs/options/form-data',
@@ -218,6 +301,74 @@
                 $('#required_skills, #job_benefits').select2({ tags: true });
             }
         });
+    });
+
+    function loadCompanyInfo() {
+        @if(isset($company) && $company)
+            // Fill company form with existing data
+            const company = @json($company);
+            $('#company_name').val(company.name || '');
+            $('#company_description').val(company.description || '');
+            $('#company_website').val(company.website || '');
+            $('#company_email').val(company.email || '');
+            $('#company_phone').val(company.phone || '');
+            $('#company_employee_count').val(company.employee_count || '');
+            $('#company_founded_year').val(company.founded_year || '');
+            $('#company_industry').val(company.industry || '');
+            $('#company_address').val(company.address || '');
+            
+            // Show existing logo if available
+            if (company.logo_base64) {
+                $('#logo_preview').show();
+                $('#logo_image').attr('src', company.logo_base64);
+            }
+            
+            // Add info message
+            $('#company-section').prepend(`
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Thông tin công ty hiện tại. Bạn có thể cập nhật thông tin này.
+                </div>
+            `);
+        @else
+            // Add message for new company
+            $('#company-section').prepend(`
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Bạn chưa có thông tin công ty. Vui lòng nhập thông tin công ty.
+                </div>
+            `);
+        @endif
+    }
+
+    // Logo preview functionality
+    $(document).on('change', '#company_logo', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file size (2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('File quá lớn. Vui lòng chọn file nhỏ hơn 2MB.');
+                $(this).val('');
+                return;
+            }
+            
+            // Validate file type
+            if (!file.type.match('image.*')) {
+                alert('Vui lòng chọn file ảnh.');
+                $(this).val('');
+                return;
+            }
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                $('#logo_preview').show();
+                $('#logo_image').attr('src', e.target.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            $('#logo_preview').hide();
+        }
     });
     </script>
 </body>

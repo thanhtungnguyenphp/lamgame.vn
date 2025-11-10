@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Company;
 
 class JobDashboardController extends Controller
 {
@@ -27,7 +28,14 @@ class JobDashboardController extends Controller
 
     public function create()
     {
-        return view('job-dashboard.create');
+        $admin = Auth::guard('admin')->user();
+        $company = null;
+        
+        if ($admin && $admin->company_id) {
+            $company = Company::find($admin->company_id);
+        }
+        
+        return view('job-dashboard.create', compact('company'));
     }
 
     public function store(Request $request)
@@ -35,17 +43,60 @@ class JobDashboardController extends Controller
         try {
             DB::beginTransaction();
             
+            $admin = Auth::guard('admin')->user();
+            $companyId = null;
+            
+            // Handle company logic
+            if ($request->has('company')) {
+                $companyData = $request->company;
+                
+                // Handle logo upload
+                if ($request->hasFile('company_logo')) {
+                    $logoPath = $this->uploadCompanyLogo($request->file('company_logo'));
+                    if ($logoPath) {
+                        $companyData['logo'] = $logoPath;
+                    }
+                }
+                
+                if ($admin->company_id) {
+                    // Update existing company
+                    $company = Company::find($admin->company_id);
+                    if ($company) {
+                        $company->update($companyData);
+                        $companyId = $company->id;
+                    }
+                } else {
+                    // Create new company
+                    $companyData['created_by_admin_id'] = $admin->id;
+                    
+                    $company = Company::create($companyData);
+                    $companyId = $company->id;
+                    
+                    // Link admin to company
+                    $admin->update(['company_id' => $company->id]);
+                }
+            } else if ($admin->company_id) {
+                // Use existing company
+                $companyId = $admin->company_id;
+            }
+            
             $sku = 'JOB_' . strtoupper(uniqid());
             
             // Tạo product
-            $productId = DB::table('products')->insertGetId([
+            $productData = [
                 'type' => 'job',
                 'sku' => $sku,
                 'attribute_family_id' => 1,
-                'created_by_admin_id' => Auth::guard('admin')->id(),
+                'created_by_admin_id' => $admin->id,
                 'created_at' => now(),
                 'updated_at' => now()
-            ]);
+            ];
+            
+            if ($companyId) {
+                $productData['company_id'] = $companyId;
+            }
+            
+            $productId = DB::table('products')->insertGetId($productData);
             
             // Tạo product_flat với product_id
             DB::table('product_flat')->insert([
@@ -104,11 +155,13 @@ class JobDashboardController extends Controller
 
     public function edit($id)
     {
+        $admin = Auth::guard('admin')->user();
+        
         $job = DB::table('products')
             ->leftJoin('product_flat', 'products.id', '=', 'product_flat.product_id')
             ->select('products.*', 'product_flat.name', 'product_flat.description', 'product_flat.short_description')
             ->where('products.id', $id)
-            ->where('products.created_by_admin_id', Auth::guard('admin')->id())
+            ->where('products.created_by_admin_id', $admin->id)
             ->first();
             
         if (!$job) {
@@ -120,14 +173,71 @@ class JobDashboardController extends Controller
             ->where('product_id', $id)
             ->whereIn('attribute_id', [40, 41, 42, 43, 45, 48, 50, 51])
             ->pluck('text_value', 'attribute_id');
+
+        // Load company data
+        $company = null;
+        if ($admin && $admin->company_id) {
+            $company = Company::find($admin->company_id);
+            
+            // Encode logo to base64 if exists
+            if ($company && $company->logo) {
+                $path = 'company-logos/' . basename($company->logo);
+                if (\Storage::disk('public')->exists($path)) {
+                    try {
+                        $file = \Storage::disk('public')->get($path);
+                        $mimeType = \Storage::disk('public')->mimeType($path);
+                        $company->logo_base64 = 'data:' . $mimeType . ';base64,' . base64_encode($file);
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to encode logo: ' . $e->getMessage());
+                    }
+                }
+            }
+        }
         
-        return view('job-dashboard.edit', compact('job', 'attributes'));
+        return view('job-dashboard.edit', compact('job', 'attributes', 'company'));
     }
 
     public function update(Request $request, $id)
     {
         try {
             DB::beginTransaction();
+            
+            $admin = Auth::guard('admin')->user();
+            $companyId = null;
+            
+            // Handle company logic
+            if ($request->has('company')) {
+                $companyData = $request->company;
+                
+                // Handle logo upload
+                if ($request->hasFile('company_logo')) {
+                    $logoPath = $this->uploadCompanyLogo($request->file('company_logo'));
+                    if ($logoPath) {
+                        $companyData['logo'] = $logoPath;
+                    }
+                }
+                
+                if ($admin->company_id) {
+                    // Update existing company
+                    $company = Company::find($admin->company_id);
+                    if ($company) {
+                        $company->update($companyData);
+                        $companyId = $company->id;
+                    }
+                } else {
+                    // Create new company
+                    $companyData['created_by_admin_id'] = $admin->id;
+                    
+                    $company = Company::create($companyData);
+                    $companyId = $company->id;
+                    
+                    // Link admin to company
+                    $admin->update(['company_id' => $company->id]);
+                }
+            } else if ($admin->company_id) {
+                // Use existing company
+                $companyId = $admin->company_id;
+            }
             
             // Cập nhật product_flat
             DB::table('product_flat')
@@ -140,10 +250,18 @@ class JobDashboardController extends Controller
                 ]);
             
             // Cập nhật products
+            $productUpdateData = [
+                'updated_at' => now()
+            ];
+            
+            if ($companyId) {
+                $productUpdateData['company_id'] = $companyId;
+            }
+            
             DB::table('products')
                 ->where('id', $id)
-                ->where('created_by_admin_id', Auth::guard('admin')->id())
-                ->update(['updated_at' => now()]);
+                ->where('created_by_admin_id', $admin->id)
+                ->update($productUpdateData);
 
             // Cập nhật job attributes
             DB::table('product_attribute_values')->where('product_id', $id)->delete();
@@ -245,5 +363,39 @@ class JobDashboardController extends Controller
         });
         
         return $jobs;
+    }
+
+    private function uploadCompanyLogo($file)
+    {
+        try {
+            // Validate file
+            if (!$file->isValid()) {
+                return null;
+            }
+
+            // Check file size (2MB max)
+            if ($file->getSize() > 2 * 1024 * 1024) {
+                return null;
+            }
+
+            // Check file type
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!in_array($file->getMimeType(), $allowedTypes)) {
+                return null;
+            }
+
+            // Generate unique filename
+            $filename = 'company_logo_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            
+            // Store file using Laravel storage
+            $path = $file->storeAs('company-logos', $filename, 'public');
+            
+            // Return storage path
+            return $path;
+            
+        } catch (\Exception $e) {
+            \Log::error('Logo upload failed: ' . $e->getMessage());
+            return null;
+        }
     }
 }
