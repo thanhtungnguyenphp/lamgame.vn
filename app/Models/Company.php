@@ -5,9 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class Company extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'name',
         'description',
@@ -45,7 +50,7 @@ class Company extends Model
     }
 
     /**
-     * Get logo URL
+     * Get logo URL (optimized - returns storage URL)
      */
     public function getLogoUrlAttribute()
     {
@@ -53,20 +58,32 @@ class Company extends Model
             return null;
         }
 
-        // Try to get file from storage
+        return Storage::disk('public')->url($this->logo);
+    }
+
+    /**
+     * Get logo as base64 encoded string (use only when necessary)
+     * This method should be called explicitly when base64 is needed
+     */
+    public function getLogoBase64()
+    {
+        if (!$this->logo) {
+            return null;
+        }
+
         $path = 'company-logos/' . basename($this->logo);
         
-        if (\Storage::disk('public')->exists($path)) {
+        if (Storage::disk('public')->exists($path)) {
             try {
-                $file = \Storage::disk('public')->get($path);
-                $mimeType = \Storage::disk('public')->mimeType($path);
+                $file = Storage::disk('public')->get($path);
+                $mimeType = Storage::disk('public')->mimeType($path);
                 return 'data:' . $mimeType . ';base64,' . base64_encode($file);
             } catch (\Exception $e) {
-                \Log::error('Failed to encode logo: ' . $e->getMessage());
+                Log::error('Failed to encode logo: ' . $e->getMessage());
+                return null;
             }
         }
 
-        // Fallback to storage URL
-        return \Storage::disk('public')->url($this->logo);
+        return null;
     }
 }

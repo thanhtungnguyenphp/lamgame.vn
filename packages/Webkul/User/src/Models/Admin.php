@@ -29,6 +29,7 @@ class Admin extends Authenticatable implements AdminContract
         'api_token',
         'role_id',
         'status',
+        'company_id',
     ];
 
     /**
@@ -82,6 +83,16 @@ class Admin extends Authenticatable implements AdminContract
     public function role()
     {
         return $this->belongsTo(RoleProxy::modelClass());
+    }
+
+    /**
+     * Get the company that the admin belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function company()
+    {
+        return $this->belongsTo(\App\Models\Company::class, 'company_id');
     }
 
     /**

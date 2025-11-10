@@ -26,10 +26,13 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('created_by_admin_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
-            $table->foreign('created_by_admin_id')->references('id')->on('admins')->onDelete('set null');
+            // Note: Foreign key will be added in separate migration to avoid circular dependency
             $table->index('status');
             $table->index('created_by_admin_id');
+            $table->index('email');
+            $table->index('name');
         });
     }
 

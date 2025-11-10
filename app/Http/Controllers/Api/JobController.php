@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\Rule;
 
 class JobController extends Controller
 {
@@ -475,6 +476,8 @@ class JobController extends Controller
 
     /**
      * Create or update company for current admin
+    /**
+     * Create or update company for current admin
      */
     public function saveCompanyInfo(Request $request)
     {
@@ -484,17 +487,37 @@ class JobController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
+        // Validation rules
+        $rules = [
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('companies', 'name')->ignore($admin->company_id)
+            ],
             'description' => 'nullable|string',
-            'website' => 'nullable|url',
-            'email' => 'nullable|email',
+            'website' => 'nullable|url|max:255',
+            'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'employee_count' => 'nullable|integer|min:1',
             'founded_year' => 'nullable|integer|min:1900|max:' . date('Y'),
-            'industry' => 'nullable|string|max:255'
-        ]);
+            'industry' => 'nullable|string|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,jpg,png,gif,svg|max:2048'
+        ];
+
+        $validated = $request->validate($rules);
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $path = $request->file('logo')->store('company-logos', 'public');
+            $validated['logo'] = $path;
+            
+            // Delete old logo if updating
+            if ($admin->company_id && $admin->company->logo) {
+                \Storage::disk('public')->delete($admin->company->logo);
+            }
+        }
 
         if ($admin->company_id) {
             // Update existing company
@@ -515,6 +538,7 @@ class JobController extends Controller
                 'id' => $company->id,
                 'name' => $company->name,
                 'description' => $company->description,
+                'logo_url' => $company->logo_url,
                 'website' => $company->website,
                 'email' => $company->email,
                 'phone' => $company->phone,
