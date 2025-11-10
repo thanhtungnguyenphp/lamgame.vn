@@ -211,3 +211,4 @@ Route::get('/job-dashboard-test', function() {
     return view('job-dashboard.index');
 });
 
+Route::get('/test-companies', function() { return 'Companies route works!'; });
