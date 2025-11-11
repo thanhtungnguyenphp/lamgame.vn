@@ -37,6 +37,35 @@
     </script>
     
     @stack('styles')
+    
+    <!-- Custom Admin Styles -->
+    <style>
+        /* Custom input padding for job admin system */
+        input[type="text"],
+        input[type="email"],
+        input[type="url"],
+        input[type="password"],
+        input[type="number"],
+        input[type="tel"],
+        input[type="search"],
+        input[type="date"],
+        input[type="time"],
+        input[type="datetime-local"],
+        select,
+        textarea {
+            padding: 10px !important;
+        }
+        
+        /* Adjust for file inputs */
+        input[type="file"] {
+            padding: 8px !important;
+        }
+        
+        /* Ensure proper line height */
+        input:not([type="checkbox"]):not([type="radio"]) {
+            line-height: 1.5;
+        }
+    </style>
 </head>
 <body class="h-full font-sans antialiased">
     <div class="min-h-full">
