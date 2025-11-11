@@ -1,59 +1,116 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Quản Lý Job</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Quản Lý Job</h2>
-            <div>
-                <a href="{{ route('job.dashboard.index') }}" class="btn btn-secondary me-2">Dashboard</a>
-                <a href="{{ route('job.dashboard.create') }}" class="btn btn-primary">Đăng Job Mới</a>
-            </div>
+@extends('admin.layouts.app')
+
+@section('title', 'Quản Lý Job')
+
+@push('styles')
+<style>
+.job-actions .btn {
+    margin-right: 5px;
+}
+.job-stats {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+.empty-state-icon {
+    font-size: 48px;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+</style>
+@endpush
+
+@section('content')
+<div class="content">
+    <div class="page-header">
+        <div class="page-title">
+            <h1>Quản Lý Job</h1>
         </div>
+        <div class="page-actions">
+            <a href="{{ route('job.dashboard.index') }}" class="btn btn-secondary">
+                <i class="icon-dashboard"></i> Dashboard
+            </a>
+            <a href="{{ route('job.dashboard.create') }}" class="btn btn-primary">
+                <i class="icon-plus"></i> Đăng Job Mới
+            </a>
+        </div>
+    </div>
 
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-        
-        @if($errors->any())
-            <div class="alert alert-danger">
-                @foreach($errors->all() as $error)
-                    <div>{{ $error }}</div>
-                @endforeach
+    @if(session('success'))
+        <div class="alert alert--success">
+            <i class="icon-check-circle"></i>
+            {{ session('success') }}
+        </div>
+    @endif
+    
+    @if($errors->any())
+        <div class="alert alert--error">
+            <i class="icon-alert-circle"></i>
+            @foreach($errors->all() as $error)
+                <div>{{ $error }}</div>
+            @endforeach
+        </div>
+    @endif
+
+    <div class="page-content">
+        @if($jobs && $jobs->count() > 0)
+            <div class="job-stats">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <h3>{{ $jobs->total() ?? $jobs->count() }}</h3>
+                            <p>Tổng số job</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        @endif
 
-        <div class="card">
-            <div class="card-body">
-                @if($jobs && $jobs->count() > 0)
+            <div class="card">
+                <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>Tên Job</th>
                                     <th>SKU</th>
                                     <th>Ngày tạo</th>
-                                    <th>Thao tác</th>
+                                    <th width="200">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($jobs as $job)
                                 <tr>
-                                    <td><strong>{{ $job->name ?: $job->sku }}</strong></td>
-                                    <td><code>{{ $job->sku }}</code></td>
-                                    <td>{{ date('d/m/Y H:i', strtotime($job->created_at)) }}</td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <a href="{{ route('job.dashboard.edit', $job->id) }}" class="btn btn-outline-primary">Sửa</a>
-                                            <form method="POST" action="{{ route('job.dashboard.destroy', $job->id) }}" style="display: inline;" onsubmit="return confirm('Bạn có chắc muốn xóa job này?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-outline-danger">Xóa</button>
-                                            </form>
-                                        </div>
+                                        <strong>{{ $job->name ?: $job->sku }}</strong>
+                                    </td>
+                                    <td>
+                                        <code class="badge badge-light">{{ $job->sku }}</code>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            {{ date('d/m/Y H:i', strtotime($job->created_at)) }}
+                                        </small>
+                                    </td>
+                                    <td class="job-actions">
+                                        <a href="{{ route('job.dashboard.edit', $job->id) }}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="icon-edit"></i> Sửa
+                                        </a>
+                                        <form method="POST" 
+                                              action="{{ route('job.dashboard.destroy', $job->id) }}" 
+                                              style="display: inline;" 
+                                              onsubmit="return confirm('Bạn có chắc muốn xóa job này?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="icon-trash"></i> Xóa
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -61,20 +118,25 @@
                         </table>
                     </div>
 
-                    <!-- Pagination -->
                     @if(method_exists($jobs, 'links'))
-                        <div class="d-flex justify-content-center">
+                        <div class="pagination-wrapper">
                             {{ $jobs->links() }}
                         </div>
                     @endif
-                @else
-                    <div class="text-center py-4">
-                        <p class="text-muted">Chưa có job nào được tạo.</p>
-                        <a href="{{ route('job.dashboard.create') }}" class="btn btn-primary">Đăng Job Đầu Tiên</a>
-                    </div>
-                @endif
+                </div>
             </div>
-        </div>
+        @else
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="icon-briefcase"></i>
+                </div>
+                <h3>Chưa có job nào</h3>
+                <p class="text-muted">Bắt đầu bằng cách tạo job đầu tiên của bạn.</p>
+                <a href="{{ route('job.dashboard.create') }}" class="btn btn-primary">
+                    <i class="icon-plus"></i> Đăng Job Đầu Tiên
+                </a>
+            </div>
+        @endif
     </div>
-</body>
-</html>
+</div>
+@endsection
