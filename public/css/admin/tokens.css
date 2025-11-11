@@ -1,0 +1,58 @@
+/* Design System Tokens */
+
+:root {
+    /* Colors */
+    --color-primary: #6a4c93;
+    --color-primary-light: #8b6fb8;
+    --color-primary-dark: #4a2c73;
+    
+    --color-success: #11998e;
+    --color-success-light: #38ef7d;
+    --color-success-dark: #0d7a72;
+    
+    --color-warning: #f5576c;
+    --color-warning-light: #f093fb;
+    --color-warning-dark: #d43f54;
+    
+    --color-info: #4facfe;
+    --color-info-light: #00f2fe;
+    --color-info-dark: #3a8cd9;
+    
+    --color-danger: #dc3545;
+    --color-danger-light: #e74c3c;
+    --color-danger-dark: #c82333;
+    
+    --color-gray-50: #f8f9fa;
+    --color-gray-100: #e9ecef;
+    --color-gray-200: #dee2e6;
+    --color-gray-300: #ced4da;
+    --color-gray-400: #adb5bd;
+    --color-gray-500: #6c757d;
+    --color-gray-600: #495057;
+    --color-gray-700: #343a40;
+    --color-gray-800: #212529;
+    --color-gray-900: #000000;
+    
+    /* Spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+    
+    /* Border Radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-full: 9999px;
+    
+    /* Shadows */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.15);
+}

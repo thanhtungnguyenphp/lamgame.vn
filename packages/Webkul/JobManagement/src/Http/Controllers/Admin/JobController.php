@@ -34,7 +34,37 @@ class JobController extends Controller
             ->orderBy('p.created_at', 'desc')
             ->paginate(15);
 
-        return view('job_management::admin.jobs.index', compact('jobs'));
+        // Get statistics
+        $totalJobs = DB::table('products as p')
+            ->leftJoin('product_flat as pf', 'p.id', '=', 'pf.product_id')
+            ->where('p.sku', 'LIKE', 'JOB_%')
+            ->where('pf.locale', 'vi')
+            ->count();
+
+        $publishedJobs = DB::table('products as p')
+            ->leftJoin('product_flat as pf', 'p.id', '=', 'pf.product_id')
+            ->where('p.sku', 'LIKE', 'JOB_%')
+            ->where('pf.locale', 'vi')
+            ->where('pf.status', 1)
+            ->count();
+
+        $unpublishedJobs = $totalJobs - $publishedJobs;
+
+        $thisWeekJobs = DB::table('products as p')
+            ->leftJoin('product_flat as pf', 'p.id', '=', 'pf.product_id')
+            ->where('p.sku', 'LIKE', 'JOB_%')
+            ->where('pf.locale', 'vi')
+            ->where('p.created_at', '>=', now()->subDays(7))
+            ->count();
+
+        $stats = [
+            'total' => $totalJobs,
+            'published' => $publishedJobs,
+            'unpublished' => $unpublishedJobs,
+            'thisWeek' => $thisWeekJobs
+        ];
+
+        return view('job_management::admin.jobs.index', compact('jobs', 'stats'));
     }
 
     /**

@@ -14,9 +14,12 @@ use Webkul\Admin\Http\Controllers\User\SessionController;
  */
 Route::controller(DashboardController::class)->prefix('dashboard')->group(function () {
     Route::get('', 'index')->name('admin.dashboard.index');
-
+    
     Route::get('stats', 'stats')->name('admin.dashboard.stats');
 });
+
+// Backward compatibility alias
+Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
 /**
  * Datagrid routes.

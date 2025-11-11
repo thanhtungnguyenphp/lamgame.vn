@@ -2,6 +2,43 @@
 
 return [
     'admin' => [
+        'layouts' => [
+            'jobs' => 'Jobs',
+            'manage-jobs' => 'Manage Jobs',
+            'companies' => 'Companies',
+        ],
+        'jobs' => [
+            'title' => 'Jobs',
+            'add-title' => 'Add Job',
+            'edit-title' => 'Edit Job',
+            'view' => 'View',
+            'edit' => 'Edit',
+            'delete' => 'Delete',
+            'publish' => 'Publish',
+            'unpublish' => 'Unpublish',
+            'published' => 'Published',
+            'unpublished' => 'Unpublished',
+            'id' => 'ID',
+            'company' => 'Company',
+            'status' => 'Status',
+            'created-by' => 'Created By',
+            'created-at' => 'Created At',
+            'actions' => 'Actions',
+            'delete-confirm' => 'Are you sure you want to delete this job?',
+            
+            // Messages
+            'create-success' => 'Job created successfully.',
+            'create-error' => 'Error creating job.',
+            'update-success' => 'Job updated successfully.',
+            'update-error' => 'Error updating job.',
+            'delete-success' => 'Job deleted successfully.',
+            'delete-error' => 'Error deleting job.',
+            'publish-success' => 'Job published successfully.',
+            'unpublish-success' => 'Job unpublished successfully.',
+            'mass-update-success' => 'Jobs updated successfully.',
+            'mass-delete-success' => 'Jobs deleted successfully.',
+            'not-found' => 'Job not found.',
+        ],
         'companies' => [
             'title' => 'Companies',
             'add-title' => 'Add Company',
