@@ -162,22 +162,27 @@
                         <div id="jobs-container">
                         @forelse($jobs as $index => $job)
                             @php
-                                $companyName = trim(str_replace(' - ', ' ', explode(' - ', $job->name)[1] ?? $job->name));
-                                $jobTitle = explode(' - ', $job->name)[0] ?? $job->name;
                                 $salaryFormatted = number_format($job->price / 1000000, 1) . ' triệu';
                                 $postedAgo = \Carbon\Carbon::parse($job->created_at)->diffForHumans();
-                                $companySlug = \Str::slug($companyName);
                                 $isFeatured = $index < 2; // First 2 jobs are featured
                             @endphp
                             <div class="job-item {{ $isFeatured ? 'featured' : '' }}">
                                 <div class="job-content">
                                     <div class="job-header">
                                         <div class="job-thumbnail">
-                                            <img src="{{ $job->thumbnail_url }}" alt="{{ $jobTitle }} at {{ $companyName }}" class="job-thumbnail-img">
+                                            @if($job->company_logo_url)
+                                                <img src="{{ $job->company_logo_url }}" alt="{{ $job->company_name }}" class="job-thumbnail-img">
+                                            @else
+                                                <div class="job-thumbnail-img job-thumbnail-placeholder">
+                                                    <span>{{ strtoupper(substr($job->company_name, 0, 2)) }}</span>
+                                                </div>
+                                            @endif
                                         </div>
                                         <div class="job-info">
-                                            <h3><a href="{{ route('lamgame.job.detail', $job->url_key) }}" class="job-title" title="{{ $jobTitle }}">{{ $jobTitle }}</a></h3>
-                                            <div class="company-name">{{ $companyName }}</div>
+                                            <h3><a href="{{ route('lamgame.job.detail', $job->url_key) }}" class="job-title" title="{{ $job->job_title }}">{{ $job->job_title }}</a></h3>
+                                            <div class="company-name">
+                                                <span>{{ $job->company_name }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="job-meta">
@@ -211,7 +216,7 @@
                                             <span class="btn-text">Chi tiết</span>
                                         </a>
                                         @if($job->contact_email)
-                                            <a href="mailto:{{ $job->contact_email }}?subject=Ứng tuyển: {{ $jobTitle }}" class="btn btn-apply">
+                                            <a href="mailto:{{ $job->contact_email }}?subject=Ứng tuyển: {{ $job->job_title }}" class="btn btn-apply">
                                                 <i class="fa fa-paper-plane"></i>
                                                 <span class="btn-text">Ứng tuyển</span>
                                             </a>
@@ -286,7 +291,32 @@
                             <div class="top-companies">
                                 @forelse($topCompanies as $company)
                                     <div class="company-item">
-                                        <img src="https://via.placeholder.com/40x40?text={{ strtoupper(substr($company->company_name, 0, 3)) }}" alt="{{ $company->company_name }}">
+                                        @if($company->logo)
+                                            @php
+                                                $path = 'company-logos/' . basename($company->logo);
+                                                $logoUrl = null;
+                                                if (\Storage::disk('public')->exists($path)) {
+                                                    try {
+                                                        $file = \Storage::disk('public')->get($path);
+                                                        $mimeType = \Storage::disk('public')->mimeType($path);
+                                                        $logoUrl = 'data:' . $mimeType . ';base64,' . base64_encode($file);
+                                                    } catch (\Exception $e) {
+                                                        $logoUrl = null;
+                                                    }
+                                                }
+                                            @endphp
+                                            @if($logoUrl)
+                                                <img src="{{ $logoUrl }}" alt="{{ $company->company_name }}" style="object-fit: contain; padding: 4px; background: white;">
+                                            @else
+                                                <div style="width: 40px; height: 40px; border-radius: 4px; background: linear-gradient(135deg, #6a4c93, #9b59b6); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">
+                                                    {{ strtoupper(substr($company->company_name, 0, 2)) }}
+                                                </div>
+                                            @endif
+                                        @else
+                                            <div style="width: 40px; height: 40px; border-radius: 4px; background: linear-gradient(135deg, #6a4c93, #9b59b6); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">
+                                                {{ strtoupper(substr($company->company_name, 0, 2)) }}
+                                            </div>
+                                        @endif
                                         <div class="company-info">
                                             <h4>{{ $company->company_name }}</h4>
                                             <span class="job-count">{{ $company->job_count }} việc làm</span>
@@ -1335,14 +1365,27 @@
         }
         
         .job-thumbnail-img {
-            width: 80px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border-radius: 12px;
-            object-fit: cover;
+            object-fit: contain;
             border: 2px solid #e1e5e9;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            background: white;
+            padding: 8px;
+        }
+        
+        .job-thumbnail-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #6a4c93 0%, #9b59b6 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
         }
         
         .job-thumbnail-img::before {
@@ -1871,8 +1914,13 @@
             }
             
             .job-thumbnail-img {
-                width: 50px;
-                height: 38px;
+                width: 55px;
+                height: 55px;
+                padding: 6px;
+            }
+            
+            .job-thumbnail-placeholder {
+                font-size: 1rem;
             }
             
             .job-title {
