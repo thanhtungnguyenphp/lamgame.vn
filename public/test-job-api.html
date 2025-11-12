@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Job API</title>
+</head>
+<body>
+    <h1>Test Job Form API</h1>
+    
+    <div>
+        <label>Job Type:</label>
+        <select id="job_type">
+            <option value="">Chọn loại job</option>
+        </select>
+    </div>
+    
+    <div>
+        <label>Required Skills:</label>
+        <div id="required_skills_container"></div>
+    </div>
+    
+    <script>
+    console.log('Starting test...');
+    
+    fetch('/api/jobs/options/form-data', {
+        method: 'GET',
+        headers: { 
+            'Authorization': 'Bearer null',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+    })
+    .then(data => {
+        console.log('API Data:', data);
+        
+        // Populate job_type
+        const select = document.getElementById('job_type');
+        const options = data.data.attributes.job_type.options;
+        
+        options.forEach(option => {
+            const opt = document.createElement('option');
+            opt.value = option.id;
+            opt.textContent = option.value;
+            select.appendChild(opt);
+        });
+        
+        console.log(`Added ${options.length} job types`);
+        
+        // Populate skills
+        const container = document.getElementById('required_skills_container');
+        const skills = data.data.attributes.required_skills.options;
+        
+        skills.slice(0, 5).forEach(skill => {
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <input type="checkbox" id="skill_${skill.id}" value="${skill.id}">
+                <label for="skill_${skill.id}">${skill.value}</label>
+            `;
+            container.appendChild(div);
+        });
+        
+        console.log(`Added ${skills.slice(0, 5).length} skills`);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+    </script>
+</body>
+</html>
