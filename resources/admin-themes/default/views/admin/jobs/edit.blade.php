@@ -184,6 +184,19 @@
         <div class="px-4 py-5 sm:p-6">
             <h3 class="text-base font-semibold leading-6 text-gray-900 mb-4">Thông tin công ty</h3>
             
+            {{-- DEBUG INFO --}}
+            <div class="mb-4 p-3 bg-gray-100 rounded text-xs">
+                <strong>Debug Info:</strong><br>
+                @if(isset($company) && $company)
+                    Company object: EXISTS<br>
+                    Company ID: {{ $company->id }}<br>
+                    Company Name: {{ $company->name }}<br>
+                    Company Website: {{ $company->website ?? 'N/A' }}<br>
+                @else
+                    Company object: NULL<br>
+                @endif
+            </div>
+            
             @if(isset($company) && $company)
                 <div class="mb-4 rounded-md bg-blue-50 p-4">
                     <div class="flex">
@@ -216,6 +229,17 @@
                 </div>
             @endif
             
+            @php
+                // Debug company data
+                if (isset($company) && $company) {
+                    \Log::info('Company loaded in view', [
+                        'id' => $company->id ?? 'N/A',
+                        'name' => $company->name ?? 'N/A',
+                        'website' => $company->website ?? 'N/A'
+                    ]);
+                }
+            @endphp
+            
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
                     <label for="company_name" class="block text-sm font-medium leading-6 text-gray-900">Tên công ty *</label>
@@ -223,6 +247,9 @@
                         <input type="text" name="company[name]" id="company_name" required 
                                value="{{ old('company.name', $company->name ?? '') }}"
                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                        @if(isset($company) && $company)
+                            <small class="text-xs text-gray-500 mt-1">Current: {{ $company->name }}</small>
+                        @endif
                     </div>
                 </div>
 
@@ -274,6 +301,19 @@
 @push('scripts')
 <script>
 console.log('Edit job script loaded');
+
+// Debug company data
+const companyData = @json($company ?? null);
+console.log('Company data from controller:', companyData);
+
+// Debug form submission
+document.querySelector('form').addEventListener('submit', function(e) {
+    const formData = new FormData(this);
+    console.log('Form data being submitted:');
+    for (let [key, value] of formData.entries()) {
+        console.log(`  ${key}: ${value}`);
+    }
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, starting API call');

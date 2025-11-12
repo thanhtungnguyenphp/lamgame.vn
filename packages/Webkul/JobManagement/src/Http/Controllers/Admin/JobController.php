@@ -155,7 +155,6 @@ class JobController extends Controller
     public function edit($id)
     {
         $job = $this->getJobWithDetails($id);
-        $companies = Company::where('status', 1)->get();
         
         if (!$job) {
             session()->flash('error', trans('job_management::app.admin.jobs.not-found'));
@@ -166,8 +165,30 @@ class JobController extends Controller
         $attributes = DB::table('product_attribute_values')
             ->where('product_id', $id)
             ->pluck('text_value', 'attribute_id');
+        
+        // Load admin's company
+        $admin = auth()->guard('admin')->user();
+        $company = null;
+        
+        if ($admin && $admin->company_id) {
+            $company = Company::find($admin->company_id);
+            
+            // Load logo as base64 if exists
+            if ($company && $company->logo) {
+                $path = 'company-logos/' . basename($company->logo);
+                if (\Storage::disk('public')->exists($path)) {
+                    try {
+                        $file = \Storage::disk('public')->get($path);
+                        $mimeType = \Storage::disk('public')->mimeType($path);
+                        $company->logo_base64 = 'data:' . $mimeType . ';base64,' . base64_encode($file);
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to encode logo: ' . $e->getMessage());
+                    }
+                }
+            }
+        }
 
-        return view('job_management::admin.jobs.edit', compact('job', 'companies', 'attributes'));
+        return view('admin.jobs.edit', compact('job', 'attributes', 'company'));
     }
 
     /**

@@ -32,6 +32,24 @@ class JobController extends Controller
 
     public function store(Request $request)
     {
+        // Validate request
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'short_description' => 'nullable|string',
+            'job_type' => 'required',
+            'experience_level' => 'required',
+            'job_location' => 'required',
+            'contact_email' => 'required|email',
+            'company.name' => 'required|string|max:255',
+        ], [
+            'title.required' => 'Tiêu đề job là bắt buộc',
+            'description.required' => 'Mô tả chi tiết là bắt buộc',
+            'contact_email.required' => 'Email liên hệ là bắt buộc',
+            'contact_email.email' => 'Email liên hệ không hợp lệ',
+            'company.name.required' => 'Tên công ty là bắt buộc',
+        ]);
+        
         try {
             DB::beginTransaction();
             
@@ -114,6 +132,13 @@ class JobController extends Controller
     {
         $admin = Auth::guard('admin')->user();
         
+        \Log::info('Edit job - Admin info', [
+            'admin_id' => $admin->id,
+            'admin_name' => $admin->name,
+            'admin_company_id' => $admin->company_id,
+            'job_id' => $id
+        ]);
+        
         $job = DB::table('products')
             ->leftJoin('product_flat', 'products.id', '=', 'product_flat.product_id')
             ->select('products.*', 'product_flat.name', 'product_flat.description', 'product_flat.short_description')
@@ -131,8 +156,22 @@ class JobController extends Controller
             ->pluck('text_value', 'attribute_id');
 
         $company = null;
+        
+        \Log::info('Before loading company', [
+            'admin_exists' => $admin ? 'yes' : 'no',
+            'admin_company_id' => $admin ? $admin->company_id : 'N/A',
+            'admin_company_id_type' => $admin && $admin->company_id ? gettype($admin->company_id) : 'N/A'
+        ]);
+        
         if ($admin && $admin->company_id) {
             $company = Company::find($admin->company_id);
+            
+            \Log::info('Company loaded for edit', [
+                'company_id' => $company ? $company->id : 'not found',
+                'company_name' => $company ? $company->name : 'N/A',
+                'has_logo' => $company && $company->logo ? 'yes' : 'no',
+                'company_object' => $company ? json_encode($company->toArray()) : 'null'
+            ]);
             
             if ($company && $company->logo) {
                 $path = 'company-logos/' . basename($company->logo);
@@ -153,6 +192,37 @@ class JobController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Remove empty company_id if exists (might come from hidden input)
+        if ($request->has('company_id') && empty($request->company_id)) {
+            $request->request->remove('company_id');
+        }
+        
+        // Debug: Check what's in the request
+        \Log::info('Update job request data:', $request->all());
+        
+        // Validate request
+        try {
+            $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'short_description' => 'nullable|string',
+            'job_type' => 'required',
+            'experience_level' => 'required',
+            'job_location' => 'required',
+            'contact_email' => 'required|email',
+            'company.name' => 'required_if:company,array|string|max:255',
+        ], [
+            'title.required' => 'Tiêu đề job là bắt buộc',
+            'description.required' => 'Mô tả chi tiết là bắt buộc',
+            'contact_email.required' => 'Email liên hệ là bắt buộc',
+            'contact_email.email' => 'Email liên hệ không hợp lệ',
+            'company.name.required_if' => 'Tên công ty là bắt buộc',
+        ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation failed:', $e->errors());
+            throw $e;
+        }
+        
         try {
             DB::beginTransaction();
             
@@ -212,7 +282,12 @@ class JobController extends Controller
             
         } catch (\Exception $e) {
             DB::rollback();
-            return back()->withErrors(['error' => 'Lỗi: ' . $e->getMessage()]);
+            \Log::error('Job update failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+            return back()->withErrors(['error' => 'Lỗi: ' . $e->getMessage()])->withInput();
         }
     }
 
