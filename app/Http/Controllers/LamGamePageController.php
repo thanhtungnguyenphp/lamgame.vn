@@ -249,6 +249,7 @@ class LamGamePageController extends Controller
                 $join->on('p.id', '=', 'pf.product_id')
                      ->where('pf.locale', '=', 'vi');
             })
+            ->leftJoin('companies as c', 'p.company_id', '=', 'c.id')
             ->leftJoin('product_categories as pc', 'p.id', '=', 'pc.product_id')
             ->leftJoin('category_translations as ct', function($join) {
                 $join->on('pc.category_id', '=', 'ct.category_id')
@@ -276,6 +277,7 @@ class LamGamePageController extends Controller
             ->select(
                 'p.id',
                 'p.sku',
+                'p.company_id',
                 'pf.name',
                 'pf.short_description',
                 'pf.description',
@@ -285,7 +287,9 @@ class LamGamePageController extends Controller
                 'p.created_at',
                 'pav_deadline.text_value as application_deadline',
                 'pav_email.text_value as contact_email',
-                'pi.path as thumbnail'
+                'pi.path as thumbnail',
+                'c.name as company_name',
+                'c.logo as company_logo'
             );
 
         // Apply search filters
@@ -322,6 +326,34 @@ class LamGamePageController extends Controller
         foreach ($jobs as $job) {
             $job->attributes = $this->getJobAttributes($job->id);
             
+            // Parse job title from name (may contain company name as fallback)
+            $nameParts = explode(' - ', $job->name, 2);
+            $job->job_title = $nameParts[0] ?? $job->name;
+            
+            // Use company_name from database join, fallback to parsing or default
+            if (empty($job->company_name)) {
+                $job->company_name = $nameParts[1] ?? 'Công ty chưa xác định';
+            }
+            
+            // Add company logo URL from database
+            if ($job->company_logo) {
+                $path = 'company-logos/' . basename($job->company_logo);
+                if (\Storage::disk('public')->exists($path)) {
+                    try {
+                        $file = \Storage::disk('public')->get($path);
+                        $mimeType = \Storage::disk('public')->mimeType($path);
+                        $job->company_logo_url = 'data:' . $mimeType . ';base64,' . base64_encode($file);
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to encode logo for job ' . $job->id . ': ' . $e->getMessage());
+                        $job->company_logo_url = null;
+                    }
+                } else {
+                    $job->company_logo_url = null;
+                }
+            } else {
+                $job->company_logo_url = null;
+            }
+            
             // Add thumbnail URL with fallback
             $job->thumbnail_url = $this->getJobThumbnailUrl($job->thumbnail);
             
@@ -330,8 +362,7 @@ class LamGamePageController extends Controller
 
             // Ensure url_key exists, if not create one from job title and id
             if (empty($job->url_key)) {
-                $jobTitle = explode(' - ', $job->name)[0] ?? $job->name;
-                $job->url_key = \Str::slug($jobTitle) . '-' . $job->id;
+                $job->url_key = \Str::slug($job->job_title) . '-' . $job->id;
             }
         }
 
@@ -347,18 +378,22 @@ class LamGamePageController extends Controller
             ->count();
 
         // Get companies with job counts
-        $topCompanies = \DB::table('products as p')
+        $topCompanies = \DB::table('companies as c')
+            ->leftJoin('products as p', 'c.id', '=', 'p.company_id')
             ->leftJoin('product_flat as pf', function($join) {
                 $join->on('p.id', '=', 'pf.product_id')
                      ->where('pf.locale', '=', 'vi');
             })
             ->where('p.sku', 'LIKE', 'JOB_%')
             ->where('pf.status', 1)
+            ->where('c.status', 1)
             ->select(
-                \DB::raw('SUBSTRING_INDEX(SUBSTRING_INDEX(pf.name, " - ", -1), " ", 2) as company_name'),
-                \DB::raw('COUNT(*) as job_count')
+                'c.id',
+                'c.name as company_name',
+                'c.logo',
+                \DB::raw('COUNT(p.id) as job_count')
             )
-            ->groupBy('company_name')
+            ->groupBy('c.id', 'c.name', 'c.logo')
             ->orderBy('job_count', 'desc')
             ->take(5)
             ->get();
