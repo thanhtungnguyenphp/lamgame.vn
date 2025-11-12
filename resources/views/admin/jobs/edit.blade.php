@@ -293,27 +293,39 @@ jobFormAPI.init();
         </div>
 
         <!-- Thông tin công ty -->
-        @if($company)
         <div class="form-section">
             <h5><i class="fas fa-building"></i> Thông tin công ty</h5>
+            
+            @if($company)
+                <div class="alert alert-info mb-3">
+                    <i class="fas fa-info-circle"></i>
+                    Thông tin công ty hiện tại. Bạn có thể cập nhật thông tin này.
+                </div>
+            @else
+                <div class="alert alert-warning mb-3">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Bạn chưa có thông tin công ty. Vui lòng nhập thông tin công ty.
+                </div>
+            @endif
+            
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="form-label">Tên công ty *</label>
-                        <input type="text" class="form-control" name="company[name]" required value="{{ old('company.name', $company->name) }}">
+                        <input type="text" class="form-control" name="company[name]" required value="{{ old('company.name', $company->name ?? '') }}">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="form-label">Website</label>
-                        <input type="url" class="form-control" name="company[website]" value="{{ old('company.website', $company->website) }}">
+                        <input type="url" class="form-control" name="company[website]" value="{{ old('company.website', $company->website ?? '') }}">
                     </div>
                 </div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Mô tả công ty</label>
-                <textarea class="form-control" name="company[description]" rows="4">{{ old('company.description', $company->description) }}</textarea>
+                <textarea class="form-control" name="company[description]" rows="4">{{ old('company.description', $company->description ?? '') }}</textarea>
             </div>
 
             <div class="mb-3">
@@ -326,7 +338,6 @@ jobFormAPI.init();
                 @endif
             </div>
         </div>
-        @endif
 
         <div class="form-actions">
             <button type="submit" class="btn btn--primary">
