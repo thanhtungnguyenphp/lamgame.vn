@@ -203,12 +203,24 @@ Route::get('/test-auth', function() {
 
 Route::get('/test-controller', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'test']);
 
-// Job Dashboard Routes
+// Admin Job Management Routes
+require __DIR__.'/admin.php';
+
+// Legacy Redirects
+require __DIR__.'/redirects.php';
+
+// Legacy Job Dashboard Routes (Deprecated - will be removed)
 require __DIR__.'/job-dashboard.php';
 
-// Test route without auth
-Route::get('/job-dashboard-test', function() {
-    return view('job-dashboard.index');
-});
-
 Route::get('/test-companies', function() { return 'Companies route works!'; });
+
+// Admin dashboard routes
+Route::get('/admin/dashboard', [\Webkul\Admin\Http\Controllers\DashboardController::class, 'index'])
+    ->name('admin.dashboard.index');
+Route::redirect('/admin', '/admin/dashboard')->name('admin.dashboard');
+
+// Admin applications route
+Route::get('/admin/applications', function() { return view('admin.applications.index'); })->name('admin.applications.index');
+
+// Admin settings route
+Route::get('/admin/settings', function() { return view('admin.settings.index'); })->name('admin.settings');

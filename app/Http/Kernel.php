@@ -66,5 +66,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'job.auth' => \App\Http\Middleware\JobAuth::class,
+        'admin' => \Webkul\User\Http\Middleware\Bouncer::class,
+        'customer' => \Webkul\Customer\Http\Middleware\RedirectIfNotCustomer::class,
     ];
 }
