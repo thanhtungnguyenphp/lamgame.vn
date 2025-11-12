@@ -162,8 +162,19 @@
                         <div id="jobs-container">
                         @forelse($jobs as $index => $job)
                             @php
-                                $salaryFormatted = number_format($job->price / 1000000, 1) . ' triệu';
+                                // Get salary from attributes or use default
+                                $salaryFormatted = $job->attributes['salary_range'] ?? 'Thỏa thuận';
+                                
+                                // Get job location
+                                $location = $job->attributes['job_location'] ?? 'Việt Nam';
+                                
+                                // Get job type
+                                $jobType = $job->attributes['job_type'] ?? 'Full-time';
+                                
+                                // Posted time
                                 $postedAgo = \Carbon\Carbon::parse($job->created_at)->diffForHumans();
+                                
+                                // Featured flag
                                 $isFeatured = $index < 2; // First 2 jobs are featured
                             @endphp
                             <div class="job-item {{ $isFeatured ? 'featured' : '' }}">
@@ -191,8 +202,8 @@
                                             <span class="posted"><i class="fa fa-clock-o"></i> {{ $postedAgo }}</span>
                                         </div>
                                         <div class="job-meta-secondary">
-                                            <span class="location"><i class="fa fa-map-marker"></i> VN</span>
-                                            <span class="type">Full-time</span>
+                                            <span class="location"><i class="fa fa-map-marker"></i> {{ $location }}</span>
+                                            <span class="type"><i class="fa fa-briefcase"></i> {{ $jobType }}</span>
                                         </div>
                                     </div>
                                     <div class="job-description">
