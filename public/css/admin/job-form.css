@@ -1,0 +1,62 @@
+/* Job Form Styling */
+.job-form-section {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.job-form-section h3 {
+    color: #1f2937;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+/* Multi-select containers */
+#required_skills_container,
+#job_benefits_container {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 0.75rem;
+    background: #f9fafb;
+}
+
+#required_skills_container .flex,
+#job_benefits_container .flex {
+    margin-bottom: 0.5rem;
+}
+
+#required_skills_container .flex:last-child,
+#job_benefits_container .flex:last-child {
+    margin-bottom: 0;
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #3b82f6;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+/* Loading state */
+.loading-options {
+    color: #6b7280;
+    font-style: italic;
+    padding: 0.5rem;
+}
+
+/* Error state */
+.error-loading {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}

@@ -4,6 +4,7 @@
 
 @push('styles')
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="{{ asset('css/admin/job-form.css') }}" rel="stylesheet">
 <style>
 .form-section {
     background: white;
@@ -47,6 +48,150 @@
     <form method="POST" action="{{ route('admin.jobs.update', $job->id) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
+        
+        <!-- Job Information -->
+        <div class="form-section">
+            <h5><i class="fas fa-briefcase"></i> Thông tin Job</h5>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="title">Tiêu đề Job *</label>
+                        <input type="text" name="title" id="title" class="form-control" 
+                               value="{{ old('title', $job->title) }}" required>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="job_type">Loại Job *</label>
+                        <select name="job_type" id="job_type" class="form-control" required>
+                            <option value="">Chọn loại job</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="experience_level">Cấp độ kinh nghiệm *</label>
+                        <select name="experience_level" id="experience_level" class="form-control" required>
+                            <option value="">Chọn cấp độ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="job_location">Địa điểm làm việc *</label>
+                        <select name="job_location" id="job_location" class="form-control" required>
+                            <option value="">Chọn địa điểm</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="short_description">Mô tả ngắn *</label>
+                        <textarea name="short_description" id="short_description" class="form-control" rows="3" required>{{ old('short_description', $job->short_description) }}</textarea>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="description">Mô tả chi tiết *</label>
+                        <textarea name="description" id="description" class="form-control" rows="8" required>{{ old('description', $job->description) }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Salary & Benefits -->
+        <div class="form-section">
+            <h5><i class="fas fa-dollar-sign"></i> Lương & Phúc lợi</h5>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="salary_range">Mức lương</label>
+                        <select name="salary_range" id="salary_range" class="form-control">
+                            <option value="">Chọn mức lương</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Kỹ năng yêu cầu</label>
+                        <div id="required_skills_container">
+                            <!-- Checkboxes sẽ được tạo từ API -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Phúc lợi</label>
+                        <div id="job_benefits_container">
+                            <!-- Checkboxes sẽ được tạo từ API -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="form-section">
+            <h5><i class="fas fa-envelope"></i> Thông tin liên hệ</h5>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="contact_email">Email liên hệ *</label>
+                        <input type="email" name="contact_email" id="contact_email" class="form-control" 
+                               value="{{ old('contact_email', $job->contact_email) }}" required>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="contact_phone">Số điện thoại</label>
+                        <input type="text" name="contact_phone" id="contact_phone" class="form-control" 
+                               value="{{ old('contact_phone', $job->contact_phone) }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <button type="submit" class="btn btn--primary">
+                <i class="fas fa-save"></i>
+                Cập Nhật Job
+            </button>
+            <a href="{{ route('admin.jobs.index') }}" class="btn btn--secondary">
+                Hủy bỏ
+            </a>
+        </div>
+    </form>
+</div>
+
+<script src="{{ asset('js/admin/job-form-api.js') }}"></script>
+<script>
+// Initialize for edit form with current job data
+const currentJob = @json($job);
+const jobFormAPI = new JobFormAPI({
+    currentValues: {
+        job_type: currentJob.job_type,
+        experience_level: currentJob.experience_level,
+        job_location: currentJob.job_location,
+        salary_range: currentJob.salary_range,
+        required_skills: currentJob.required_skills || [],
+        job_benefits: currentJob.job_benefits || []
+    }
+});
+jobFormAPI.init();
+</script>
+@endsection
         
         <!-- Thông tin cơ bản -->
         <div class="form-section">
