@@ -1,11 +1,10 @@
-@php
-    $company = $company ?? null;
-@endphp
-
 @extends('layouts.job-admin')
 
 @section('title', 'Sửa Job')
-@section('page-title', 'Sửa Job: {{ $job->name }}')
+
+@section('page-title')
+    Sửa Job: {{ $job->name }}
+@endsection
 
 @push('styles')
 <link href="{{ asset('css/admin/job-form.css') }}" rel="stylesheet">
