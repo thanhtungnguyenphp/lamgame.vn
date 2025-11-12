@@ -3,6 +3,10 @@
 @section('title', 'Đăng Job Mới')
 @section('page-title', 'Đăng Job Mới')
 
+@push('styles')
+<link href="{{ asset('css/admin/job-form.css') }}" rel="stylesheet">
+@endpush
+
 @section('content')
 <form method="POST" action="{{ route('admin.jobs.store') }}" enctype="multipart/form-data" class="space-y-8">
     @csrf
@@ -28,10 +32,6 @@
                         <select name="job_type" id="job_type" required 
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
                             <option value="">Chọn loại job</option>
-                            <option value="full-time" {{ old('job_type') == 'full-time' ? 'selected' : '' }}>Full-time</option>
-                            <option value="part-time" {{ old('job_type') == 'part-time' ? 'selected' : '' }}>Part-time</option>
-                            <option value="contract" {{ old('job_type') == 'contract' ? 'selected' : '' }}>Contract</option>
-                            <option value="freelance" {{ old('job_type') == 'freelance' ? 'selected' : '' }}>Freelance</option>
                         </select>
                     </div>
                 </div>
@@ -42,10 +42,6 @@
                         <select name="experience_level" id="experience_level" required 
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
                             <option value="">Chọn cấp độ</option>
-                            <option value="intern" {{ old('experience_level') == 'intern' ? 'selected' : '' }}>Thực tập sinh</option>
-                            <option value="junior" {{ old('experience_level') == 'junior' ? 'selected' : '' }}>Junior (0-2 năm)</option>
-                            <option value="middle" {{ old('experience_level') == 'middle' ? 'selected' : '' }}>Middle (2-5 năm)</option>
-                            <option value="senior" {{ old('experience_level') == 'senior' ? 'selected' : '' }}>Senior (5+ năm)</option>
                         </select>
                     </div>
                 </div>
@@ -53,9 +49,50 @@
                 <div>
                     <label for="job_location" class="block text-sm font-medium leading-6 text-gray-900">Địa điểm làm việc *</label>
                     <div class="mt-2">
-                        <input type="text" name="job_location" id="job_location" required 
-                               value="{{ old('job_location') }}"
-                               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                        <select name="job_location" id="job_location" required 
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                            <option value="">Chọn địa điểm</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="application_method" class="block text-sm font-medium leading-6 text-gray-900">Phương thức ứng tuyển</label>
+                    <div class="mt-2">
+                        <select name="application_method" id="application_method" 
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                            <option value="">Chọn phương thức</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="education_level" class="block text-sm font-medium leading-6 text-gray-900">Trình độ học vấn</label>
+                    <div class="mt-2">
+                        <select name="education_level" id="education_level" 
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                            <option value="">Chọn trình độ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="english_level" class="block text-sm font-medium leading-6 text-gray-900">Trình độ tiếng Anh</label>
+                    <div class="mt-2">
+                        <select name="english_level" id="english_level" 
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                            <option value="">Chọn trình độ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="company_size" class="block text-sm font-medium leading-6 text-gray-900">Quy mô công ty</label>
+                    <div class="mt-2">
+                        <select name="company_size" id="company_size" 
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                            <option value="">Chọn quy mô</option>
+                        </select>
                     </div>
                 </div>
 
@@ -87,27 +124,24 @@
                 <div>
                     <label for="salary_range" class="block text-sm font-medium leading-6 text-gray-900">Mức lương</label>
                     <div class="mt-2">
-                        <input type="text" name="salary_range" id="salary_range" 
-                               value="{{ old('salary_range') }}" placeholder="VD: 15-25 triệu"
-                               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                        <select name="salary_range" id="salary_range" 
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                            <option value="">Chọn mức lương</option>
+                        </select>
                     </div>
                 </div>
 
                 <div>
-                    <label for="required_skills" class="block text-sm font-medium leading-6 text-gray-900">Kỹ năng yêu cầu</label>
-                    <div class="mt-2">
-                        <input type="text" name="required_skills" id="required_skills" 
-                               value="{{ old('required_skills') }}" placeholder="VD: PHP, Laravel, MySQL"
-                               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                    <label class="block text-sm font-medium leading-6 text-gray-900">Kỹ năng yêu cầu</label>
+                    <div class="mt-2" id="required_skills_container">
+                        <!-- Checkboxes sẽ được tạo từ API -->
                     </div>
                 </div>
 
                 <div class="sm:col-span-2">
-                    <label for="job_benefits" class="block text-sm font-medium leading-6 text-gray-900">Phúc lợi</label>
-                    <div class="mt-2">
-                        <textarea name="job_benefits" id="job_benefits" rows="3" 
-                                  placeholder="VD: Bảo hiểm, thưởng tháng 13, du lịch..."
-                                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">{{ old('job_benefits') }}</textarea>
+                    <label class="block text-sm font-medium leading-6 text-gray-900">Phúc lợi</label>
+                    <div class="mt-2" id="job_benefits_container">
+                        <!-- Checkboxes sẽ được tạo từ API -->
                     </div>
                 </div>
             </div>
@@ -202,3 +236,140 @@
     </div>
 </form>
 @endsection
+
+@push('scripts')
+<script>
+console.log('Script loaded');
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, starting API call');
+    
+    fetch('/api/jobs/options/form-data', {
+        method: 'GET',
+        headers: { 
+            'Authorization': 'Bearer null',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('API Response:', data);
+        
+        const attributes = data.data.attributes;
+        
+        // Populate job_type
+        const jobTypeSelect = document.getElementById('job_type');
+        if (jobTypeSelect) {
+            const placeholder = jobTypeSelect.querySelector('option[value=""]');
+            jobTypeSelect.innerHTML = '';
+            if (placeholder) jobTypeSelect.appendChild(placeholder);
+            
+            attributes.job_type.options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option.id;
+                opt.textContent = option.value;
+                jobTypeSelect.appendChild(opt);
+            });
+            console.log('Job type populated');
+        }
+        
+        // Populate experience_level
+        const expSelect = document.getElementById('experience_level');
+        if (expSelect) {
+            const placeholder = expSelect.querySelector('option[value=""]');
+            expSelect.innerHTML = '';
+            if (placeholder) expSelect.appendChild(placeholder);
+            
+            attributes.experience_level.options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option.id;
+                opt.textContent = option.value;
+                expSelect.appendChild(opt);
+            });
+            console.log('Experience level populated');
+        }
+        
+        // Populate job_location
+        const locSelect = document.getElementById('job_location');
+        if (locSelect) {
+            const placeholder = locSelect.querySelector('option[value=""]');
+            locSelect.innerHTML = '';
+            if (placeholder) locSelect.appendChild(placeholder);
+            
+            attributes.job_location.options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option.id;
+                opt.textContent = option.value;
+                locSelect.appendChild(opt);
+            });
+            console.log('Job location populated');
+        }
+        
+        // Populate salary_range
+        const salarySelect = document.getElementById('salary_range');
+        if (salarySelect) {
+            const placeholder = salarySelect.querySelector('option[value=""]');
+            salarySelect.innerHTML = '';
+            if (placeholder) salarySelect.appendChild(placeholder);
+            
+            attributes.salary_range.options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option.id;
+                opt.textContent = option.value;
+                salarySelect.appendChild(opt);
+            });
+            console.log('Salary range populated');
+        }
+        
+        // Populate required_skills checkboxes
+        const skillsContainer = document.getElementById('required_skills_container');
+        if (skillsContainer) {
+            skillsContainer.innerHTML = '';
+            attributes.required_skills.options.forEach(option => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'flex items-center mb-2';
+                wrapper.innerHTML = `
+                    <input type="checkbox" name="required_skills[]" value="${option.id}" 
+                           id="skill_${option.id}" class="h-4 w-4 text-primary-600 border-gray-300 rounded">
+                    <label for="skill_${option.id}" class="ml-2 text-sm text-gray-900">
+                        ${option.value}
+                    </label>
+                `;
+                skillsContainer.appendChild(wrapper);
+            });
+            console.log('Skills populated');
+        }
+        
+        // Populate job_benefits checkboxes
+        const benefitsContainer = document.getElementById('job_benefits_container');
+        if (benefitsContainer) {
+            benefitsContainer.innerHTML = '';
+            attributes.job_benefits.options.forEach(option => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'flex items-center mb-2';
+                wrapper.innerHTML = `
+                    <input type="checkbox" name="job_benefits[]" value="${option.id}" 
+                           id="benefit_${option.id}" class="h-4 w-4 text-primary-600 border-gray-300 rounded">
+                    <label for="benefit_${option.id}" class="ml-2 text-sm text-gray-900">
+                        ${option.value}
+                    </label>
+                `;
+                benefitsContainer.appendChild(wrapper);
+            });
+            console.log('Benefits populated');
+        }
+        
+        console.log('All fields populated successfully');
+    })
+    .catch(error => {
+        console.error('Error loading form data:', error);
+    });
+});
+</script>
+@endpush
