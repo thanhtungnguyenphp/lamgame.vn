@@ -194,13 +194,13 @@
                                             <div class="company-name">
                                                 <span>{{ $job->company_name }}</span>
                                             </div>
+                                            <div class="job-meta-primary">
+                                                <span class="salary highlight"><i class="fa fa-money"></i> {{ $salaryFormatted }}</span>
+                                                <span class="posted"><i class="fa fa-clock-o"></i> {{ $postedAgo }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="job-meta">
-                                        <div class="job-meta-primary">
-                                            <span class="salary highlight"><i class="fa fa-money"></i> {{ $salaryFormatted }}</span>
-                                            <span class="posted"><i class="fa fa-clock-o"></i> {{ $postedAgo }}</span>
-                                        </div>
                                         <div class="job-meta-secondary">
                                             <span class="location"><i class="fa fa-map-marker"></i> {{ $location }}</span>
                                             <span class="type"><i class="fa fa-briefcase"></i> {{ $jobType }}</span>
@@ -1485,22 +1485,11 @@
         .company-name {
             color: #6a4c93;
             font-weight: 500;
-            margin-bottom: 0;
+            margin-bottom: 0.5rem;
             font-size: 0.9rem;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-        }
-        
-        .job-meta {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid #f0f0f0;
         }
         
         .job-meta-primary {
@@ -1508,13 +1497,26 @@
             gap: 1rem;
             align-items: center;
             font-weight: 500;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+        }
+        
+        .job-meta {
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f0f0f0;
         }
         
         .job-meta-secondary {
             display: flex;
             gap: 1rem;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #888;
+            align-items: center;
         }
         
         .job-meta span {
@@ -1524,7 +1526,8 @@
             white-space: nowrap;
         }
         
-        .job-meta i {
+        .job-meta i,
+        .job-meta-primary i {
             color: #6a4c93;
             font-size: 0.8rem;
             flex-shrink: 0;
