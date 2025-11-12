@@ -196,20 +196,77 @@ class JobController extends Controller
      */
     public function update(Request $request, $id)
     {
+        \Log::info('Update job started', [
+            'job_id' => $id,
+            'request_data' => $request->all()
+        ]);
+        
+        // Remove empty company_id if exists
+        if ($request->has('company_id') && empty($request->company_id)) {
+            $request->request->remove('company_id');
+        }
+        
         $request->validate([
             'title' => 'required|string|max:255',
-            'company_id' => 'required|exists:companies,id',
             'description' => 'required|string',
+            'short_description' => 'nullable|string',
+            'job_type' => 'required',
+            'experience_level' => 'required',
+            'job_location' => 'required',
+            'contact_email' => 'required|email',
+            'company.name' => 'required_if:company,array|string|max:255',
+        ], [
+            'title.required' => 'Tiêu đề job là bắt buộc',
+            'description.required' => 'Mô tả chi tiết là bắt buộc',
+            'contact_email.required' => 'Email liên hệ là bắt buộc',
+            'contact_email.email' => 'Email liên hệ không hợp lệ',
+            'company.name.required_if' => 'Tên công ty là bắt buộc',
         ]);
 
         try {
             DB::beginTransaction();
+            
+            $admin = auth()->guard('admin')->user();
+            $companyId = null;
+            
+            // Handle company data
+            if ($request->has('company')) {
+                $companyData = $request->company;
+                
+                // Handle logo upload
+                if ($request->hasFile('company_logo')) {
+                    $file = $request->file('company_logo');
+                    $filename = 'company_logo_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $path = $file->storeAs('company-logos', $filename, 'public');
+                    if ($path) {
+                        $companyData['logo'] = $path;
+                    }
+                }
+                
+                if ($admin->company_id) {
+                    // Update existing company
+                    $company = Company::find($admin->company_id);
+                    if ($company) {
+                        $company->update($companyData);
+                        $companyId = $company->id;
+                    }
+                } else {
+                    // Create new company
+                    $companyData['created_by_admin_id'] = $admin->id;
+                    $company = Company::create($companyData);
+                    $companyId = $company->id;
+                    $admin->update(['company_id' => $company->id]);
+                }
+            } else if ($admin->company_id) {
+                $companyId = $admin->company_id;
+            }
 
             // Update product
-            Product::where('id', $id)->update([
-                'company_id' => $request->company_id,
-                'updated_at' => now()
-            ]);
+            $updateData = ['updated_at' => now()];
+            if ($companyId) {
+                $updateData['company_id'] = $companyId;
+            }
+            Product::where('id', $id)->update($updateData);
 
             // Update product flat
             DB::table('product_flat')
@@ -223,15 +280,22 @@ class JobController extends Controller
 
             // Update job attributes
             $this->updateJobAttributes($id, $request);
+            
+            \Log::info('Job updated successfully', ['job_id' => $id]);
 
             DB::commit();
 
-            session()->flash('success', trans('job_management::app.admin.jobs.update-success'));
+            session()->flash('success', 'Job đã được cập nhật thành công!');
             return redirect()->route('admin.jobs.index');
 
         } catch (\Exception $e) {
             DB::rollback();
-            session()->flash('error', trans('job_management::app.admin.jobs.update-error'));
+            \Log::error('Update job failed', [
+                'job_id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            session()->flash('error', 'Lỗi: ' . $e->getMessage());
             return back()->withInput();
         }
     }
@@ -361,8 +425,8 @@ class JobController extends Controller
                     'product_id' => $productId,
                     'attribute_id' => $attributeId,
                     'text_value' => $value,
-                    'created_at' => now(),
-                    'updated_at' => now()
+                    'locale' => 'vi',
+                    'channel' => 'default'
                 ]);
             }
         }
