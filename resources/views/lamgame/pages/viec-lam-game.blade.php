@@ -210,16 +210,51 @@
                                         <div class="job-desc-content">{!! $job->processed_description !!}</div>
                                     </div>
                                     <div class="job-tags">
-                                        @if(isset($job->attributes['job_type']))
-                                            <span class="tag">{{ $job->attributes['job_type'] }}</span>
-                                        @endif
-                                        @if(isset($job->attributes['experience_level']))
-                                            <span class="tag">{{ $job->attributes['experience_level'] }}</span>
-                                        @endif
-                                        @if($job->category_name)
-                                            <span class="tag">{{ $job->category_name }}</span>
-                                        @endif
-                                        <span class="tag">Game Development</span>
+                                        @php
+                                            $tags = [];
+                                            
+                                            // Add experience level
+                                            if (isset($job->attributes['experience_level'])) {
+                                                $tags[] = ['text' => $job->attributes['experience_level'], 'type' => 'level'];
+                                            }
+                                            
+                                            // Add required skills (comma-separated)
+                                            if (isset($job->attributes['required_skills']) && !empty($job->attributes['required_skills'])) {
+                                                $skills = explode(',', $job->attributes['required_skills']);
+                                                foreach (array_slice($skills, 0, 3) as $skill) { // Limit to 3 skills
+                                                    $tags[] = ['text' => trim($skill), 'type' => 'skill'];
+                                                }
+                                            }
+                                            
+                                            // Add job benefits (comma-separated)
+                                            if (isset($job->attributes['job_benefits']) && !empty($job->attributes['job_benefits'])) {
+                                                $benefits = explode(',', $job->attributes['job_benefits']);
+                                                foreach (array_slice($benefits, 0, 2) as $benefit) { // Limit to 2 benefits
+                                                    $tags[] = ['text' => trim($benefit), 'type' => 'benefit'];
+                                                }
+                                            }
+                                            
+                                            // Add category if available
+                                            if ($job->category_name) {
+                                                $tags[] = ['text' => $job->category_name, 'type' => 'category'];
+                                            }
+                                            
+                                            // Limit total tags to 5
+                                            $tags = array_slice($tags, 0, 5);
+                                        @endphp
+                                        
+                                        @foreach($tags as $tag)
+                                            <span class="tag tag-{{ $tag['type'] }}">
+                                                @if($tag['type'] === 'skill')
+                                                    <i class="fa fa-code"></i>
+                                                @elseif($tag['type'] === 'benefit')
+                                                    <i class="fa fa-gift"></i>
+                                                @elseif($tag['type'] === 'level')
+                                                    <i class="fa fa-star"></i>
+                                                @endif
+                                                {{ $tag['text'] }}
+                                            </span>
+                                        @endforeach
                                     </div>
                                     <div class="job-actions">
                                         <a href="{{ route('lamgame.job.detail', $job->url_key) }}" class="btn btn-detail">
@@ -1556,6 +1591,56 @@
             border-radius: 20px;
             font-size: 0.8rem;
             border: 1px solid #e9ecef;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: all 0.3s ease;
+        }
+        
+        .tag i {
+            font-size: 0.75rem;
+        }
+        
+        .tag:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* Tag type colors */
+        .tag-skill {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border-color: rgba(52, 152, 219, 0.3);
+        }
+        
+        .tag-skill i {
+            color: #3498db;
+        }
+        
+        .tag-benefit {
+            background: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
+            border-color: rgba(46, 204, 113, 0.3);
+        }
+        
+        .tag-benefit i {
+            color: #27ae60;
+        }
+        
+        .tag-level {
+            background: rgba(241, 196, 15, 0.1);
+            color: #f39c12;
+            border-color: rgba(241, 196, 15, 0.3);
+        }
+        
+        .tag-level i {
+            color: #f39c12;
+        }
+        
+        .tag-category {
+            background: rgba(155, 89, 182, 0.1);
+            color: #9b59b6;
+            border-color: rgba(155, 89, 182, 0.3);
         }
         
         .job-actions {
