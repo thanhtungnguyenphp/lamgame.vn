@@ -26,7 +26,7 @@
 
         <div class="card">
             <div class="card-body">
-                <form method="POST" action="{{ route('job.dashboard.update', $job->id) }}" enctype="multipart/form-data">>
+                <form method="POST" action="{{ route('job.dashboard.update', $job->id) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     
