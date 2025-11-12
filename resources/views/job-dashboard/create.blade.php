@@ -26,7 +26,7 @@
 
         <div class="card">
             <div class="card-body">
-                <form method="POST" action="{{ route('job.dashboard.store') }}" enctype="multipart/form-data">>
+                <form method="POST" action="{{ route('job.dashboard.store') }}" enctype="multipart/form-data">
                     @csrf
                     
                     <!-- Thông tin cơ bản -->
@@ -345,7 +345,12 @@
     });
 
     function loadCompanyInfo() {
+        console.log('loadCompanyInfo called');
+        console.log('Company section exists:', $('#company-section').length);
+        console.log('Company section visible:', $('#company-section').is(':visible'));
+        
         @if(isset($company) && $company)
+            console.log('Has existing company');
             // Fill company form with existing data
             const company = @json($company);
             $('#company_name').val(company.name || '');
@@ -372,6 +377,7 @@
                 </div>
             `);
         @else
+            console.log('No existing company - showing form');
             // Add message for new company
             $('#company-section').prepend(`
                 <div class="alert alert-warning">
@@ -379,6 +385,10 @@
                     Bạn chưa có thông tin công ty. Vui lòng nhập thông tin công ty để đăng job.
                 </div>
             `);
+            
+            // Ensure section is visible
+            $('#company-section').show().css('display', 'block');
+            console.log('After show - Company section visible:', $('#company-section').is(':visible'));
         @endif
     }
 
