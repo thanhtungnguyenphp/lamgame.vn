@@ -172,9 +172,11 @@
                             <div class="job-item {{ $isFeatured ? 'featured' : '' }}">
                                 <div class="job-content">
                                     <div class="job-header">
+                                        @if($job->thumbnail_url && !str_contains($job->thumbnail_url, 'placeholder'))
                                         <div class="job-thumbnail">
                                             <img src="{{ $job->thumbnail_url }}" alt="{{ $jobTitle }} at {{ $companyName }}" class="job-thumbnail-img">
                                         </div>
+                                        @endif
                                         <div class="job-info">
                                             <h3><a href="{{ route('lamgame.job.detail', $job->url_key) }}" class="job-title" title="{{ $jobTitle }}">{{ $jobTitle }}</a></h3>
                                             <div class="company-name">{{ $companyName }}</div>
@@ -244,7 +246,7 @@
                 </div>
 
                 <!-- Sidebar -->
-                <div class="col-lg-4">
+                <div class="col-lg-4 sidebar-column">
                     <div class="sidebar">
                         <!-- Career Tips -->
                         <div class="sidebar-block">
@@ -1756,6 +1758,20 @@
 
         /* Mobile-first responsive design */
         @media (max-width: 768px) {
+            /* Hide sidebar on mobile */
+            .sidebar-column {
+                display: none;
+            }
+            
+            /* Hide job thumbnail and company name on mobile */
+            .job-thumbnail {
+                display: none !important;
+            }
+            
+            .company-name {
+                display: none !important;
+            }
+            
             .job-search-section {
                 padding: 1.5rem 0;
             }
@@ -1870,19 +1886,10 @@
                 gap: 0.5rem;
             }
             
-            .job-thumbnail-img {
-                width: 50px;
-                height: 38px;
-            }
-            
             .job-title {
                 font-size: 0.95rem;
                 margin-bottom: 0.1rem;
                 -webkit-line-clamp: 2;
-            }
-            
-            .company-name {
-                font-size: 0.8rem;
             }
             
             .job-meta {
@@ -2212,26 +2219,11 @@
                 margin-bottom: 0.75rem;
             }
             
-            .job-thumbnail {
-                flex-shrink: 0;
-            }
-            
-            .job-thumbnail-img {
-                width: 60px;
-                height: 45px;
-                border-radius: 8px;
-            }
-            
             .job-title {
                 font-size: 1rem;
                 line-height: 1.4;
                 margin-bottom: 0.15rem;
                 -webkit-line-clamp: 2;
-            }
-            
-            .company-name {
-                font-size: 0.85rem;
-                margin-bottom: 0;
             }
             
             .job-meta {
