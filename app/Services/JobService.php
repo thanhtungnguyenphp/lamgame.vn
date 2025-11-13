@@ -27,14 +27,44 @@ class JobService
     {
         $this->flatIndexer = $flatIndexer;
         $this->defaultChannel = Channel::first();
-        $this->defaultLocale = Locale::where('code', 'vi')->first();
+        $this->defaultLocale = Locale::where('code', 'vi')->first() ?? Locale::first();
         
-        // Tìm job category (Việc Làm)
+        // Tìm hoặc tạo job category (Việc Làm)
+        $this->jobCategoryId = $this->getOrCreateJobCategory();
+    }
+
+    /**
+     * Lấy hoặc tạo job category "Việc Làm"
+     */
+    protected function getOrCreateJobCategory(): int
+    {
         $jobCategory = Category::whereHas('translations', function ($query) {
             $query->where('slug', 'viec-lam');
         })->first();
         
-        $this->jobCategoryId = $jobCategory ? $jobCategory->id : 102; // Fallback to ID 102
+        if (!$jobCategory) {
+            // Tạo category "Việc Làm" nếu chưa tồn tại
+            $jobCategory = Category::create([
+                'position' => 1,
+                'status' => 1,
+                'display_mode' => 'products_and_description',
+                'is_filterable' => 1,
+                'parent_id' => 1, // Root category
+            ]);
+            
+            // Tạo translation
+            $jobCategory->translations()->create([
+                'locale' => $this->defaultLocale->code,
+                'name' => 'Việc Làm',
+                'slug' => 'viec-lam',
+                'description' => 'Danh mục việc làm',
+                'meta_title' => 'Việc Làm',
+                'meta_description' => 'Tìm kiếm và ứng tuyển việc làm',
+                'meta_keywords' => 'việc làm, tuyển dụng, job',
+            ]);
+        }
+        
+        return $jobCategory->id;
     }
 
     /**
@@ -43,14 +73,15 @@ class JobService
     public function createJobPosting(array $data): Product
     {
         return DB::transaction(function () use ($data) {
-            // 1. Tạo product
+            // 1. Tạo product với type 'simple' (đúng theo Bagisto)
             $product = $this->createProduct($data);
             
             // 2. Lưu attributes
             $this->saveJobAttributes($product->id, $data);
             
-            // 3. Gán categories
-            $this->assignCategories($product->id, $data['categories'] ?? [$this->jobCategoryId]);
+            // 3. Gán categories - luôn bao gồm job category
+            $categories = $data['categories'] ?? [];
+            $this->assignCategories($product->id, $categories);
             
             // 4. Gán default channel
             $this->assignDefaultChannel($product->id);
@@ -117,7 +148,7 @@ class JobService
         
         $productData = [
             'sku' => $sku,
-            'type' => 'simple',
+            'type' => 'simple', // Sử dụng 'simple' vì Bagisto không có product type 'job'
             'attribute_family_id' => 1, // Default attribute family
             'parent_id' => null,
             'additional' => null,
@@ -285,19 +316,98 @@ class JobService
     }
 
     /**
-     * Gán categories cho product
+     * Gán categories cho product - luôn bao gồm job category
      */
     protected function assignCategories(int $productId, array $categoryIds): void
     {
-        $data = [];
-        foreach ($categoryIds as $categoryId) {
-            $data[] = [
-                'product_id' => $productId,
-                'category_id' => $categoryId,
-            ];
+        // Đảm bảo job category luôn được bao gồm
+        if (!in_array($this->jobCategoryId, $categoryIds)) {
+            $categoryIds[] = $this->jobCategoryId;
         }
         
-        DB::table('product_categories')->insert($data);
+        // Loại bỏ duplicate và invalid categories
+        $categoryIds = array_unique(array_filter($categoryIds));
+        
+        $data = [];
+        foreach ($categoryIds as $categoryId) {
+            // Kiểm tra category tồn tại
+            if (Category::find($categoryId)) {
+                $data[] = [
+                    'product_id' => $productId,
+                    'category_id' => $categoryId,
+                ];
+            }
+        }
+        
+        if (!empty($data)) {
+        /**
+     * Cập nhật categories cho product - luôn bao gồm job category
+     */
+    protected function updateCategories(int $productId, array $categoryIds): void
+    {
+        // Đảm bảo job category luôn được bao gồm
+        if (!in_array($this->jobCategoryId, $categoryIds)) {
+            $categoryIds[] = $this->jobCategoryId;
+        }
+        
+        // Loại bỏ duplicate và invalid categories
+        $categoryIds = array_unique(array_filter($categoryIds));
+        
+        // Xóa categories cũ
+        DB::table('product_categories')->where('product_id', $productId)->delete();
+        
+        // Thêm categories mới
+        $data = [];
+        foreach ($categoryIds as $categoryId) {
+            // Kiểm tra category tồn tại
+            if (Category::find($categoryId)) {
+                $data[] = [
+                    'product_id' => $productId,
+                    'category_id' => $categoryId,
+                ];
+            }
+        }
+        
+    /**
+     * Validate và đảm bảo product thuộc job category
+     */
+    public function validateJobCategory(Product $product): bool
+    {
+        $hasJobCategory = $product->categories()
+            ->whereHas('translations', function ($query) {
+                $query->where('slug', 'viec-lam');
+            })
+            ->exists();
+            
+        if (!$hasJobCategory) {
+            // Tự động thêm job category nếu thiếu
+            $this->assignCategories($product->id, [$this->jobCategoryId]);
+            return false; // Trả về false để báo hiệu đã phải sửa
+        }
+        
+        return true;
+    }
+
+    /**
+     * Lấy tất cả jobs (chỉ products thuộc category "Việc Làm")
+     */
+    public function getAllJobs(array $filters = [], int $perPage = 15)
+    {
+        $query = Product::query()
+            ->whereHas('categories', function ($q) {
+                $q->whereHas('translations', function ($subQuery) {
+                    $subQuery->where('slug', 'viec-lam');
+                });
+            })
+            ->with(['attribute_values.attribute', 'categories.translations']);
+
+        // Apply filters
+        $query = $this->jobFilterService->applyFilters($query, $filters);
+
+        return $query->paginate($perPage);
+    }
+        }
+    }
     }
 
     /**

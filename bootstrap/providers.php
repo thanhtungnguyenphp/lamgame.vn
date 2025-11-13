@@ -47,4 +47,5 @@ return [
     Webkul\Menu\Providers\MenuServiceProvider::class,
     Webkul\JobManagement\Providers\JobManagementServiceProvider::class,
     LamGame\Banner\Providers\BannerServiceProvider::class,
+    App\Providers\JobManagementServiceProvider::class,
 ];

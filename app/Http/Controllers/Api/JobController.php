@@ -119,12 +119,18 @@ class JobController extends Controller
             // Remove company data from job data
             unset($validatedData['company']);
             
+            // Đảm bảo job được tạo với đúng cấu trúc
+            // Job sẽ được tạo với type 'simple' và luôn thuộc category "Việc Làm"
             $job = $this->jobService->createJobPosting($validatedData);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Job posting created successfully',
                 'data' => new JobResource($job),
+                'meta' => [
+                    'type' => 'simple', // Job được tạo với type 'simple' (đúng theo Bagisto)
+                    'category' => 'Việc Làm', // Job luôn thuộc category "Việc Làm"
+                ]
             ], Response::HTTP_CREATED);
 
         } catch (\Exception $e) {
