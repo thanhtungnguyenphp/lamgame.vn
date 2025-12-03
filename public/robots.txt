@@ -1,2 +1,15 @@
 User-agent: *
-Disallow:
+Disallow: /auth/
+Disallow: /index.php/
+Disallow: /*?page=2$
+Disallow: /*?page=3$
+Disallow: /*?page=4$
+Disallow: /*?page=5$
+Disallow: /*?page=6$
+Disallow: /*?page=7$
+Disallow: /*?page=8$
+Disallow: /*?page=9$
+Disallow: /*?page=10$
+Allow: /
+
+Sitemap: https://lamgame.vn/sitemap.xml
