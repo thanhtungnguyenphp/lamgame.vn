@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\SeoMetaRobots;
 use App\Http\Middleware\TrustProxies;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Cookie\Middleware\EncryptCookies as BaseEncryptCookies;
@@ -40,6 +41,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(TrustProxies::class);
         $middleware->append(SecureHeaders::class);
         $middleware->append(CanInstall::class);
+        $middleware->append(SeoMetaRobots::class);
 
         /**
          * Add the overridden middleware at the end of the list.
