@@ -275,6 +275,9 @@ class JobController extends Controller
                 ->update($productUpdateData);
 
             DB::table('product_attribute_values')->where('product_id', $id)->delete();
+            DB::table('job_skills')->where('product_id', $id)->delete();
+            DB::table('job_benefits')->where('product_id', $id)->delete();
+            
             $this->saveJobAttributes($id, $request);
             
             DB::commit();
@@ -297,6 +300,8 @@ class JobController extends Controller
             DB::beginTransaction();
             
             DB::table('product_attribute_values')->where('product_id', $id)->delete();
+            DB::table('job_skills')->where('product_id', $id)->delete();
+            DB::table('job_benefits')->where('product_id', $id)->delete();
             DB::table('product_flat')->where('product_id', $id)->delete();
             
             $deleted = DB::table('products')
@@ -324,8 +329,6 @@ class JobController extends Controller
             41 => $request->experience_level,
             42 => $request->salary_range,
             43 => $request->job_location,
-            45 => is_array($request->required_skills) ? implode(',', $request->required_skills) : $request->required_skills,
-            48 => is_array($request->job_benefits) ? implode(',', $request->job_benefits) : $request->job_benefits,
             50 => $request->contact_email,
             51 => $request->contact_phone
         ];
@@ -338,6 +341,34 @@ class JobController extends Controller
                     'text_value' => $value
                 ]);
             }
+        }
+        
+        // Save skills using pivot table
+        if ($request->has('required_skills') && is_array($request->required_skills)) {
+            $skillsData = array_map(function($skillId) use ($productId) {
+                return [
+                    'product_id' => $productId,
+                    'skill_option_id' => $skillId,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ];
+            }, $request->required_skills);
+            
+            DB::table('job_skills')->insert($skillsData);
+        }
+        
+        // Save benefits using pivot table
+        if ($request->has('job_benefits') && is_array($request->job_benefits)) {
+            $benefitsData = array_map(function($benefitId) use ($productId) {
+                return [
+                    'product_id' => $productId,
+                    'benefit_option_id' => $benefitId,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ];
+            }, $request->job_benefits);
+            
+            DB::table('job_benefits')->insert($benefitsData);
         }
     }
 
@@ -393,6 +424,19 @@ class JobController extends Controller
 
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             if (!in_array($file->getMimeType(), $allowedTypes)) {
+                return null;
+            }
+            
+            // Magic bytes validation
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $file->getRealPath());
+            finfo_close($finfo);
+            
+            if (!in_array($mimeType, $allowedTypes)) {
+                \Log::warning('File mime type mismatch', [
+                    'reported' => $file->getMimeType(),
+                    'actual' => $mimeType
+                ]);
                 return null;
             }
 
