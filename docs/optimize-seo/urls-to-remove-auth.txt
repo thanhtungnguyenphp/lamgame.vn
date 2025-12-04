@@ -1,0 +1,3 @@
+https://lamgame.vn/index.php/auth/forgot-password
+https://lamgame.vn/index.php/auth/login
+https://lamgame.vn/index.php/auth/register

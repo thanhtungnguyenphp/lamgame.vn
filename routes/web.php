@@ -209,9 +209,6 @@ require __DIR__.'/admin.php';
 // Legacy Redirects
 require __DIR__.'/redirects.php';
 
-// Legacy Job Dashboard Routes (Deprecated - will be removed)
-require __DIR__.'/job-dashboard.php';
-
 Route::get('/test-companies', function() { return 'Companies route works!'; });
 
 // Admin dashboard routes

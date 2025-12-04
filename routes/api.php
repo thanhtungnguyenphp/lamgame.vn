@@ -33,9 +33,6 @@ Route::get('/company-logo/{filename}', function($filename) {
 })->where('filename', '[A-Za-z0-9\-_\.]+');
 use App\Http\Controllers\Api\JobFileParserController;
 
-// Include recruitment dashboard routes
-require __DIR__.'/api/recruitment.php';
-
 // AI Job Description Routes
 Route::middleware('auth:sanctum')->prefix('ai')->group(function () {
     Route::post('job-description/optimize', [AiJobDescriptionController::class, 'optimize']);
@@ -114,8 +111,7 @@ Route::prefix('jobs')->name('api.jobs.')->middleware('throttle:60,1')->group(fun
     Route::get('/company/info', [JobController::class, 'getCompanyInfo'])->name('company.info');
     Route::post('/company/save', [JobController::class, 'saveCompanyInfo'])->name('company.save');
     
-    // Protected endpoints (auth required) - uncomment when auth is implemented
-    /*
+    // Protected endpoints (auth required)
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [\App\Http\Controllers\Api\JobController::class, 'store'])->name('store');
         Route::put('/{id}', [\App\Http\Controllers\Api\JobController::class, 'update'])->name('update')->where('id', '[0-9]+');
@@ -124,15 +120,6 @@ Route::prefix('jobs')->name('api.jobs.')->middleware('throttle:60,1')->group(fun
         Route::post('/{id}/publish', [\App\Http\Controllers\Api\JobController::class, 'publish'])->name('publish')->where('id', '[0-9]+');
         Route::post('/{id}/unpublish', [\App\Http\Controllers\Api\JobController::class, 'unpublish'])->name('unpublish')->where('id', '[0-9]+');
     });
-    */
-    
-    // Temporary: Allow all endpoints without auth for testing
-    Route::post('/', [\App\Http\Controllers\Api\JobController::class, 'store'])->name('store');
-    Route::put('/{id}', [\App\Http\Controllers\Api\JobController::class, 'update'])->name('update')->where('id', '[0-9]+');
-    Route::delete('/{id}', [\App\Http\Controllers\Api\JobController::class, 'destroy'])->name('destroy')->where('id', '[0-9]+');
-    Route::post('/bulk', [\App\Http\Controllers\Api\JobController::class, 'bulkStore'])->name('bulk-store');
-    Route::post('/{id}/publish', [\App\Http\Controllers\Api\JobController::class, 'publish'])->name('publish')->where('id', '[0-9]+');
-    Route::post('/{id}/unpublish', [\App\Http\Controllers\Api\JobController::class, 'unpublish'])->name('unpublish')->where('id', '[0-9]+');
 });
 
 /*
