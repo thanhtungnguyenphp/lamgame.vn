@@ -269,28 +269,26 @@
 
 @push('scripts')
 <script>
-console.log('Script loaded');
-
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, starting API call');
+    const form = document.querySelector('form');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    // Disable form until options loaded
+    disableForm(true);
     
     fetch('/api/jobs/options/form-data', {
         method: 'GET',
         headers: { 
-            'Authorization': 'Bearer null',
             'Accept': 'application/json'
         }
     })
     .then(response => {
-        console.log('Response status:', response.status);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
-        console.log('API Response:', data);
-        
         const attributes = data.data.attributes;
         
         // Populate job_type
@@ -306,7 +304,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 opt.textContent = option.value;
                 jobTypeSelect.appendChild(opt);
             });
-            console.log('Job type populated');
         }
         
         // Populate experience_level
@@ -322,7 +319,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 opt.textContent = option.value;
                 expSelect.appendChild(opt);
             });
-            console.log('Experience level populated');
         }
         
         // Populate job_location
@@ -338,7 +334,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 opt.textContent = option.value;
                 locSelect.appendChild(opt);
             });
-            console.log('Job location populated');
         }
         
         // Populate salary_range
@@ -354,7 +349,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 opt.textContent = option.value;
                 salarySelect.appendChild(opt);
             });
-            console.log('Salary range populated');
         }
         
         // Populate required_skills checkboxes
@@ -373,7 +367,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 skillsContainer.appendChild(wrapper);
             });
-            console.log('Skills populated');
         }
         
         // Populate job_benefits checkboxes
@@ -392,14 +385,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 benefitsContainer.appendChild(wrapper);
             });
-            console.log('Benefits populated');
         }
         
-        console.log('All fields populated successfully');
+        // Enable form after loading
+        disableForm(false);
     })
     .catch(error => {
         console.error('Error loading form data:', error);
+        showError('Không thể tải dữ liệu form. Vui lòng tải lại trang.');
+        disableForm(false);
     });
+    
+    function disableForm(disabled) {
+        const inputs = form.querySelectorAll('input:not([type="hidden"]), select, textarea, button');
+        inputs.forEach(input => input.disabled = disabled);
+        
+        if (disabled) {
+            submitBtn.innerHTML = '<span class="inline-block animate-spin mr-2">⏳</span> Đang tải...';
+        } else {
+            submitBtn.textContent = 'Đăng Job';
+        }
+    }
+    
+    function showError(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'fixed top-4 right-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg shadow-lg z-50';
+        errorDiv.innerHTML = `
+            <div class="flex items-center">
+                <svg class="h-5 w-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                <span>${message}</span>
+            </div>
+        `;
+        document.body.appendChild(errorDiv);
+        setTimeout(() => errorDiv.remove(), 5000);
+    }
 });
 </script>
 @endpush
