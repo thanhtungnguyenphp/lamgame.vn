@@ -209,15 +209,67 @@ require __DIR__.'/admin.php';
 // Legacy Redirects
 require __DIR__.'/redirects.php';
 
+// Debug route - REMOVE IN PRODUCTION
+Route::get('/debug-jobs', function() {
+    if (!app()->environment('local')) {
+        abort(404);
+    }
+    
+    $currentAdminId = Auth::guard('admin')->id() ?? 1;
+    
+    // Admin query
+    $adminJobs = DB::table('products')
+        ->leftJoin('product_flat', function($join) {
+            $join->on('products.id', '=', 'product_flat.product_id')
+                 ->where('product_flat.locale', '=', 'vi');
+        })
+        ->select('products.id', 'products.sku', 'products.type', 'products.created_by_admin_id', 
+                 'product_flat.name', 'product_flat.status', 'product_flat.visible_individually')
+        ->where('products.sku', 'LIKE', 'JOB_%')
+        ->where('products.created_by_admin_id', $currentAdminId)
+        ->get();
+    
+    // Frontend query
+    $frontendJobs = DB::table('products as p')
+        ->leftJoin('product_flat as pf', function($join) {
+            $join->on('p.id', '=', 'pf.product_id')
+                 ->where('pf.locale', '=', 'vi');
+        })
+        ->select('p.id', 'p.sku', 'p.type', 'p.created_by_admin_id', 
+                 'pf.name', 'pf.status', 'pf.visible_individually')
+        ->where('p.type', 'job')
+        ->where('p.sku', 'LIKE', 'JOB_%')
+        ->where('pf.status', 1)
+        ->where('pf.visible_individually', 1)
+        ->get();
+    
+    // All jobs (no filter)
+    $allJobs = DB::table('products as p')
+        ->leftJoin('product_flat as pf', function($join) {
+            $join->on('p.id', '=', 'pf.product_id')
+                 ->where('pf.locale', '=', 'vi');
+        })
+        ->select('p.id', 'p.sku', 'p.type', 'p.created_by_admin_id', 
+                 'pf.name', 'pf.status', 'pf.visible_individually')
+        ->where(function($q) {
+            $q->where('p.sku', 'LIKE', 'JOB_%')
+              ->orWhere('p.type', 'job');
+        })
+        ->get();
+    
+    return response()->json([
+        'current_admin_id' => $currentAdminId,
+        'admin_jobs_count' => $adminJobs->count(),
+        'admin_jobs' => $adminJobs,
+        'frontend_jobs_count' => $frontendJobs->count(),
+        'frontend_jobs' => $frontendJobs,
+        'all_jobs_count' => $allJobs->count(),
+        'all_jobs' => $allJobs,
+        'difference' => [
+            'in_frontend_not_admin' => $frontendJobs->pluck('id')->diff($adminJobs->pluck('id'))->values(),
+            'in_admin_not_frontend' => $adminJobs->pluck('id')->diff($frontendJobs->pluck('id'))->values(),
+        ]
+    ], 200, [], JSON_PRETTY_PRINT);
+});
+
 Route::get('/test-companies', function() { return 'Companies route works!'; });
-
-// Admin dashboard routes
-Route::get('/admin/dashboard', [\Webkul\Admin\Http\Controllers\DashboardController::class, 'index'])
-    ->name('admin.dashboard.index');
-Route::redirect('/admin', '/admin/dashboard')->name('admin.dashboard');
-
-// Admin applications route
-Route::get('/admin/applications', function() { return view('admin.applications.index'); })->name('admin.applications.index');
-
-// Admin settings route
-Route::get('/admin/settings', function() { return view('admin.settings.index'); })->name('admin.settings');

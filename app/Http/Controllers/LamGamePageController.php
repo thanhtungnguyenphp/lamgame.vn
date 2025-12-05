@@ -271,6 +271,7 @@ class LamGamePageController extends Controller
                      ->where('pi.type', '=', 'images')
                      ->whereRaw('pi.id = (SELECT MIN(id) FROM product_images WHERE product_id = p.id AND type = "images")');
             })
+            ->where('p.type', 'job')
             ->where('p.sku', 'LIKE', 'JOB_%')
             ->where('pf.status', 1)
             ->where('pf.visible_individually', 1)
@@ -372,6 +373,7 @@ class LamGamePageController extends Controller
                 $join->on('p.id', '=', 'pf.product_id')
                      ->where('pf.locale', '=', 'vi');
             })
+            ->where('p.type', 'job')
             ->where('p.sku', 'LIKE', 'JOB_%')
             ->where('pf.status', 1)
             ->where('pf.visible_individually', 1)
@@ -384,6 +386,7 @@ class LamGamePageController extends Controller
                 $join->on('p.id', '=', 'pf.product_id')
                      ->where('pf.locale', '=', 'vi');
             })
+            ->where('p.type', 'job')
             ->where('p.sku', 'LIKE', 'JOB_%')
             ->where('pf.status', 1)
             ->where('c.status', 1)
@@ -584,6 +587,7 @@ class LamGamePageController extends Controller
                      ->whereRaw('pi.id = (SELECT MIN(id) FROM product_images WHERE product_id = p.id AND type = "images")');
             })
             ->where('pf.url_key', $slug)
+            ->where('p.type', 'job')
             ->where('p.sku', 'LIKE', 'JOB_%')
             ->where('pf.status', 1)
             ->where('pf.visible_individually', 1)
@@ -666,6 +670,7 @@ class LamGamePageController extends Controller
                 $join->on('p.id', '=', 'pf.product_id')
                      ->where('pf.locale', '=', 'vi');
             })
+            ->where('p.type', 'job')
             ->where('p.sku', 'LIKE', 'JOB_%')
             ->where('pf.url_key', '!=', $slug)
             ->where('pf.status', 1)

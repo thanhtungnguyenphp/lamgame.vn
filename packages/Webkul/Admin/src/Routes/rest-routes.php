@@ -12,14 +12,8 @@ use Webkul\Admin\Http\Controllers\User\SessionController;
 /**
  * Dashboard routes.
  */
-Route::controller(DashboardController::class)->prefix('dashboard')->group(function () {
-    Route::get('', 'index')->name('admin.dashboard.index');
-    
-    Route::get('stats', 'stats')->name('admin.dashboard.stats');
-});
-
-// Backward compatibility alias
-Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard.index');
+Route::get('dashboard/stats', [DashboardController::class, 'stats'])->name('admin.dashboard.stats');
 
 /**
  * Datagrid routes.

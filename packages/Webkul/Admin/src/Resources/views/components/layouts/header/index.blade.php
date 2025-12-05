@@ -12,20 +12,12 @@
         </i>
 
         <!-- Logo -->
-        <a href="{{ route('admin.dashboard.index') }}">
-            @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
-                <img
-                    class="h-10"
-                    src="{{ Storage::url($logo) }}"
-                    alt="{{ config('app.name') }}"
-                />
-            @else
-                <img
-                    src="{{ request()->cookie('dark_mode') ? bagisto_asset('images/dark-logo.svg') : bagisto_asset('images/logo.svg') }}"
-                    id="logo-image"
-                    alt="{{ config('app.name') }}"
-                />
-            @endif
+        <a href="{{ route('admin.dashboard.index') }}" class="flex items-center">
+            <img 
+                src="{{ asset('assets/logos/png/logo-horizontal-80.png') }}" 
+                alt="{{ config('app.name') }}"
+                class="h-10 w-auto"
+            />
         </a>
 
         <!-- Mega Search Bar Vue Component -->
@@ -145,19 +137,11 @@
     <!-- Drawer Header -->
     <x-slot:header>
         <div class="flex items-center justify-between">
-            @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
-                <img
-                    class="h-10"
-                    src="{{ Storage::url($logo) }}"
-                    alt="{{ config('app.name') }}"
-                />
-            @else
-                <img
-                    src="{{ request()->cookie('dark_mode') ? bagisto_asset('images/dark-logo.svg') : bagisto_asset('images/logo.svg') }}"
-                    id="logo-image"
-                    alt="{{ config('app.name') }}"
-                />
-            @endif
+            <img 
+                src="{{ asset('assets/logos/png/logo-horizontal-80.png') }}" 
+                alt="{{ config('app.name') }}"
+                class="h-10 w-auto"
+            />
         </div>
     </x-slot>
 

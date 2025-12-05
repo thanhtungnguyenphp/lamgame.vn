@@ -66,8 +66,20 @@
     @else
         <link
             type="image/x-icon"
-            href="{{ bagisto_asset('images/favicon.ico') }}"
+            href="{{ asset('assets/logos/favicon/favicon.ico') }}"
             rel="shortcut icon"
+            sizes="16x16"
+        />
+        <link
+            type="image/png"
+            href="{{ asset('assets/logos/favicon/favicon-32x32.png') }}"
+            rel="icon"
+            sizes="32x32"
+        />
+        <link
+            type="image/png"
+            href="{{ asset('assets/logos/favicon/favicon-16x16.png') }}"
+            rel="icon"
             sizes="16x16"
         />
     @endif

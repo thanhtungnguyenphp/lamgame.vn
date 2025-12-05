@@ -18,6 +18,10 @@ class Controller extends BaseController
      */
     public function redirectToLogin()
     {
+        if (auth()->guard('admin')->check()) {
+            return redirect(config('app.admin_url') . '/dashboard');
+        }
+        
         return redirect()->route('admin.session.create');
     }
 }

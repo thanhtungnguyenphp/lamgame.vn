@@ -10,12 +10,6 @@ require 'auth-routes.php';
 
 Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
     /**
-     * Dashboard routes.
-     */
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard.index');
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-
-    /**
      * Sales routes.
      */
     require 'sales-routes.php';
