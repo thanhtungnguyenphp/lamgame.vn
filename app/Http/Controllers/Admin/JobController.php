@@ -99,7 +99,11 @@ class JobController extends Controller
             
             $productId = DB::table('products')->insertGetId($productData);
             
-            DB::table('product_flat')->insert([
+            if (!$productId) {
+                throw new \Exception('Failed to create job product');
+            }
+            
+            $flatInserted = DB::table('product_flat')->insert([
                 'product_id' => $productId,
                 'sku' => $sku,
                 'type' => 'job',
@@ -116,6 +120,10 @@ class JobController extends Controller
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
+            
+            if (!$flatInserted) {
+                throw new \Exception('Failed to create job product_flat record');
+            }
 
             $this->saveJobAttributes($productId, $request);
             
@@ -377,14 +385,29 @@ class JobController extends Controller
         $userId = Auth::guard('admin')->id();
         
         $totalJobs = DB::table('products')
-            ->where('type', 'job')
-            ->where('created_by_admin_id', $userId)
+            ->join('product_flat', function($join) {
+                $join->on('products.id', '=', 'product_flat.product_id')
+                     ->where('product_flat.locale', '=', 'vi');
+            })
+            ->where('products.sku', 'LIKE', 'JOB_%')
+            ->where('products.created_by_admin_id', $userId)
+            ->count();
+        
+        $publishedJobs = DB::table('products')
+            ->join('product_flat', function($join) {
+                $join->on('products.id', '=', 'product_flat.product_id')
+                     ->where('product_flat.locale', '=', 'vi');
+            })
+            ->where('products.sku', 'LIKE', 'JOB_%')
+            ->where('products.created_by_admin_id', $userId)
+            ->where('product_flat.status', 1)
+            ->where('product_flat.visible_individually', 1)
             ->count();
         
         return [
             'total_jobs' => $totalJobs,
-            'active_jobs' => $totalJobs,
-            'pending_jobs' => 0,
+            'active_jobs' => $publishedJobs,
+            'pending_jobs' => $totalJobs - $publishedJobs,
             'total_applications' => 0
         ];
     }
@@ -394,10 +417,13 @@ class JobController extends Controller
         $userId = Auth::guard('admin')->id();
         
         $jobs = DB::table('products')
-            ->leftJoin('product_flat', 'products.id', '=', 'product_flat.product_id')
+            ->join('product_flat', function($join) {
+                $join->on('products.id', '=', 'product_flat.product_id')
+                     ->where('product_flat.locale', '=', 'vi');
+            })
             ->leftJoin('companies', 'products.company_id', '=', 'companies.id')
-            ->select('products.*', 'product_flat.name as title', 'product_flat.description', 'companies.name as company_name')
-            ->where('products.type', 'job')
+            ->select('products.*', 'product_flat.name as title', 'product_flat.description', 'companies.name as company_name', 'product_flat.status as publish_status', 'product_flat.visible_individually')
+            ->where('products.sku', 'LIKE', 'JOB_%')
             ->where('products.created_by_admin_id', $userId)
             ->orderBy('products.created_at', 'desc')
             ->paginate(10, ['*'], 'page', $page);
@@ -406,7 +432,7 @@ class JobController extends Controller
             if (!$job->title) {
                 $job->title = 'Job #' . $job->id;
             }
-            $job->status = 'active';
+            $job->status = $job->publish_status == 1 ? 'published' : 'draft';
             $job->location = 'N/A';
             $job->applications_count = 0;
             return $job;

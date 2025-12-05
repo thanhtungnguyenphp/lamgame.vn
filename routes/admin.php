@@ -6,11 +6,6 @@ use App\Http\Controllers\Admin\CompanyController;
 
 Route::middleware(['web', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     
-    // Dashboard
-    Route::get('/', function() {
-        return view('admin.dashboard.index');
-    })->name('dashboard.index');
-    
     // Jobs Management
     Route::resource('jobs', JobController::class);
     
