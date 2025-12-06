@@ -871,4 +871,89 @@ return [
         'route' => 'admin.configuration.index',
         'sort'  => 9,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Jobs Management
+    |--------------------------------------------------------------------------
+    |
+    | All ACLs related to jobs will be placed here.
+    |
+    */
+    [
+        'key'   => 'jobs',
+        'name'  => 'Jobs Management',
+        'route' => 'admin.jobs.index',
+        'sort'  => 10,
+    ], [
+        'key'   => 'jobs.view',
+        'name'  => 'View Jobs',
+        'route' => 'admin.jobs.index',
+        'sort'  => 1,
+    ], [
+        'key'   => 'jobs.create',
+        'name'  => 'Create Job',
+        'route' => 'admin.jobs.create',
+        'sort'  => 2,
+    ], [
+        'key'   => 'jobs.edit',
+        'name'  => 'Edit Job',
+        'route' => 'admin.jobs.edit',
+        'sort'  => 3,
+    ], [
+        'key'   => 'jobs.delete',
+        'name'  => 'Delete Job',
+        'route' => 'admin.jobs.destroy',
+        'sort'  => 4,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Forum Management
+    |--------------------------------------------------------------------------
+    |
+    | All ACLs related to forum will be placed here.
+    |
+    */
+    [
+        'key'   => 'forum',
+        'name'  => 'Forum Management',
+        'route' => 'admin.forum.posts.index',
+        'sort'  => 11,
+    ], [
+        'key'   => 'forum.posts',
+        'name'  => 'Forum Posts',
+        'route' => 'admin.forum.posts.index',
+        'sort'  => 1,
+    ], [
+        'key'   => 'forum.posts.edit',
+        'name'  => 'Edit Post',
+        'route' => 'admin.forum.posts.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'forum.posts.delete',
+        'name'  => 'Delete Post',
+        'route' => 'admin.forum.posts.destroy',
+        'sort'  => 3,
+    ], [
+        'key'   => 'forum.categories',
+        'name'  => 'Forum Categories',
+        'route' => 'admin.forum.categories.index',
+        'sort'  => 4,
+    ], [
+        'key'   => 'forum.categories.create',
+        'name'  => 'Create Category',
+        'route' => 'admin.forum.categories.create',
+        'sort'  => 5,
+    ], [
+        'key'   => 'forum.categories.edit',
+        'name'  => 'Edit Category',
+        'route' => 'admin.forum.categories.edit',
+        'sort'  => 6,
+    ], [
+        'key'   => 'forum.categories.delete',
+        'name'  => 'Delete Category',
+        'route' => 'admin.forum.categories.destroy',
+        'sort'  => 7,
+    ],
 ];
