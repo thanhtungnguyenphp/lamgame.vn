@@ -124,25 +124,14 @@ Route::prefix('jobs')->name('api.jobs.')->middleware('throttle:60,1')->group(fun
 
 /*
 |--------------------------------------------------------------------------
-| Job Options & Filter API Routes (Public)
+| Job Options API Routes (Public)
 |--------------------------------------------------------------------------
 */
 Route::prefix('jobs/options')->name('api.jobs.options.')->middleware('throttle:120,1')->group(function () {
-    // Get all filter options for search/filter forms
-    Route::get('/filter-options', [JobOptionsController::class, 'getFilterOptions'])->name('filter-options');
-    
-    // Get job form data (combined endpoint for job creation forms)
+    // Main API - Get all job form data (attributes, categories, skills, benefits)
     Route::get('/form-data', [JobOptionsController::class, 'getJobFormData'])->name('form-data');
     
-    // Individual option endpoints
-    Route::get('/skills', [JobOptionsController::class, 'getSkills'])->name('skills');
-    Route::get('/companies', [JobOptionsController::class, 'getCompanies'])->name('companies');
-    Route::get('/benefits', [JobOptionsController::class, 'getBenefits'])->name('benefits');
-    Route::get('/salary-ranges', [JobOptionsController::class, 'getSalaryRanges'])->name('salary-ranges');
-    Route::get('/industries', [JobOptionsController::class, 'getIndustries'])->name('industries');
-    Route::get('/popular-keywords', [JobOptionsController::class, 'getPopularKeywords'])->name('popular-keywords');
-    
-    // Search across multiple option types
+    // Search options with autocomplete (skills, companies, benefits)
     Route::get('/search', [JobOptionsController::class, 'searchOptions'])->name('search');
 });
 
