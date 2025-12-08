@@ -26,28 +26,7 @@ class JobFilterService
         $this->jobCategoryId = $jobCategory ? $jobCategory->id : 102;
     }
 
-    /**
-     * Get all filter options for job search/filter forms
-     * 
-     * @return array
-     */
-    public function getAllFilterOptions(): array
-    {
-        return Cache::remember('job_filter_options', $this->cacheTime, function () {
-            return [
-                'job_types' => $this->getAttributeOptions('job_type'),
-                'experience_levels' => $this->getAttributeOptions('experience_level'),
-                'salary_ranges' => $this->getAttributeOptions('salary_range'),
-                'education_levels' => $this->getAttributeOptions('education_level'),
-                'english_levels' => $this->getAttributeOptions('english_level'),
-                'company_sizes' => $this->getAttributeOptions('company_size'),
-                'application_methods' => $this->getAttributeOptions('application_method'),
-                'categories' => $this->getJobCategories(),
-                'popular_skills' => $this->getSkills(null, null, 20),
-                'common_benefits' => $this->getBenefits(null, 15),
-            ];
-        });
-    }
+
 
     /**
      * Get job attributes formatted for forms
@@ -277,70 +256,6 @@ class JobFilterService
             
             return array_slice(array_unique($existingBenefits, SORT_REGULAR), 0, $limit);
         });
-    }
-
-    /**
-     * Get salary ranges with statistics
-     * 
-     * @return array
-     */
-    public function getSalaryRangesWithStats(): array
-    {
-        return Cache::remember('salary_ranges_stats', $this->cacheTime, function () {
-            $salaryRanges = $this->getAttributeOptions('salary_range');
-            
-            // Add job count for each salary range
-            foreach ($salaryRanges as &$range) {
-                $range['job_count'] = $this->getJobCountForAttributeOption('salary_range', $range['id']);
-            }
-            
-            return $salaryRanges;
-        });
-    }
-
-    /**
-     * Get industries/categories with job counts
-     * 
-     * @return array
-     */
-    public function getIndustriesWithJobCounts(): array
-    {
-        return $this->getJobCategories();
-    }
-
-    /**
-     * Get popular job search keywords
-     * 
-     * @return array
-     */
-    public function getPopularKeywords(): array
-    {
-        return Cache::remember('popular_job_keywords', $this->cacheTime * 2, function () {
-            // This would ideally come from search logs
-            // For now, return predefined popular keywords
-            return [
-                ['keyword' => 'PHP', 'count' => 150],
-                ['keyword' => 'Laravel', 'count' => 120],
-                ['keyword' => 'JavaScript', 'count' => 200],
-                ['keyword' => 'React', 'count' => 180],
-                ['keyword' => 'Marketing', 'count' => 90],
-                ['keyword' => 'Designer', 'count' => 75],
-                ['keyword' => 'Manager', 'count' => 60],
-                ['keyword' => 'Sales', 'count' => 85],
-                ['keyword' => 'Python', 'count' => 110],
-                ['keyword' => 'Mobile App', 'count' => 95],
-            ];
-        });
-    }
-
-    /**
-     * Get application methods
-     * 
-     * @return array
-     */
-    public function getApplicationMethods(): array
-    {
-        return $this->getAttributeOptions('application_method');
     }
 
     /**

@@ -2,13 +2,17 @@
 
 ## Tổng quan
 
-API này cung cấp các endpoint để load các options/thuộc tính của job dùng cho form tạo và chỉnh sửa job tại màn hình `/admin/jobs/create`.
+API này cung cấp endpoint chính để load tất cả options/thuộc tính của job dùng cho form tạo và chỉnh sửa job tại màn hình `/admin/jobs/create`.
 
 **Base URL**: `/api/jobs/options`
 
 **Rate Limit**: 120 requests/phút
 
 **Authentication**: Không yêu cầu (Public API)
+
+**Số lượng API**: 2 endpoints
+- `/form-data` - API chính load tất cả options
+- `/search` - API tìm kiếm với autocomplete
 
 ---
 
@@ -380,293 +384,7 @@ GET /api/jobs/options/form-data
 
 ---
 
-## 2. API Lấy Tất Cả Filter Options
-
-### Endpoint: GET `/api/jobs/options/filter-options`
-
-Lấy tất cả các options dùng cho filter và search.
-
-#### Request
-
-```http
-GET /api/jobs/options/filter-options
-```
-
-#### Response Success (200)
-
-```json
-{
-  "success": true,
-  "message": "Filter options retrieved successfully",
-  "data": {
-    "job_types": [...],
-    "experience_levels": [...],
-    "salary_ranges": [...],
-    "education_levels": [...],
-    "english_levels": [...],
-    "company_sizes": [...],
-    "application_methods": [...],
-    "categories": [...],
-    "popular_skills": [...],
-    "common_benefits": [...]
-  }
-}
-```
-
----
-
-## 3. API Lấy Kỹ Năng (Skills)
-
-### Endpoint: GET `/api/jobs/options/skills`
-
-Lấy danh sách kỹ năng với khả năng search và filter theo category.
-
-#### Request
-
-```http
-GET /api/jobs/options/skills?search=php&category=IT&limit=20
-```
-
-#### Query Parameters
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| search | string | No | null | Từ khóa tìm kiếm kỹ năng |
-| category | string | No | null | Lọc theo category (IT, Marketing, Design) |
-| limit | integer | No | 50 | Số lượng kết quả (max: 100) |
-
-#### Response Success (200)
-
-```json
-{
-  "success": true,
-  "message": "Skills retrieved successfully",
-  "data": [
-    {
-      "value": "PHP",
-      "count": 35
-    },
-    {
-      "value": "Laravel",
-      "count": 30
-    },
-    {
-      "value": "JavaScript",
-      "count": 42
-    }
-  ],
-  "total": 3
-}
-```
-
----
-
-## 4. API Lấy Danh Sách Công Ty
-
-### Endpoint: GET `/api/jobs/options/companies`
-
-Lấy danh sách công ty đã đăng job.
-
-#### Request
-
-```http
-GET /api/jobs/options/companies?search=tech&limit=20
-```
-
-#### Query Parameters
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| search | string | No | null | Từ khóa tìm kiếm công ty |
-| limit | integer | No | 50 | Số lượng kết quả (max: 100) |
-
-#### Response Success (200)
-
-```json
-{
-  "success": true,
-  "message": "Companies retrieved successfully",
-  "data": [
-    {
-      "value": "FPT Software",
-      "job_count": 15
-    },
-    {
-      "value": "VNG Corporation",
-      "job_count": 12
-    }
-  ],
-  "total": 2
-}
-```
-
----
-
-## 5. API Lấy Phúc Lợi (Benefits)
-
-### Endpoint: GET `/api/jobs/options/benefits`
-
-Lấy danh sách phúc lợi phổ biến.
-
-#### Request
-
-```http
-GET /api/jobs/options/benefits?search=bảo hiểm&limit=20
-```
-
-#### Query Parameters
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| search | string | No | null | Từ khóa tìm kiếm phúc lợi |
-| limit | integer | No | 50 | Số lượng kết quả (max: 100) |
-
-#### Response Success (200)
-
-```json
-{
-  "success": true,
-  "message": "Benefits retrieved successfully",
-  "data": [
-    {
-      "value": "Bảo hiểm sức khỏe",
-      "count": 50
-    },
-    {
-      "value": "Bảo hiểm xã hội",
-      "count": 48
-    },
-    {
-      "value": "Thưởng tháng 13",
-      "count": 45
-    }
-  ],
-  "total": 3
-}
-```
-
----
-
-## 6. API Lấy Mức Lương Với Thống Kê
-
-### Endpoint: GET `/api/jobs/options/salary-ranges`
-
-Lấy danh sách mức lương kèm số lượng job.
-
-#### Request
-
-```http
-GET /api/jobs/options/salary-ranges
-```
-
-#### Response Success (200)
-
-```json
-{
-  "success": true,
-  "message": "Salary ranges retrieved successfully",
-  "data": [
-    {
-      "id": 31,
-      "value": "Dưới 10 triệu",
-      "sort_order": 1,
-      "job_count": 12
-    },
-    {
-      "id": 32,
-      "value": "10-15 triệu",
-      "sort_order": 2,
-      "job_count": 25
-    },
-    {
-      "id": 33,
-      "value": "15-20 triệu",
-      "sort_order": 3,
-      "job_count": 35
-    }
-  ]
-}
-```
-
----
-
-## 7. API Lấy Ngành Nghề/Categories
-
-### Endpoint: GET `/api/jobs/options/industries`
-
-Lấy danh sách ngành nghề kèm số lượng job.
-
-#### Request
-
-```http
-GET /api/jobs/options/industries
-```
-
-#### Response Success (200)
-
-```json
-{
-  "success": true,
-  "message": "Industries retrieved successfully",
-  "data": [
-    {
-      "id": 103,
-      "name": "Công nghệ thông tin",
-      "slug": "cong-nghe-thong-tin",
-      "job_count": 45,
-      "position": 1
-    },
-    {
-      "id": 104,
-      "name": "Marketing",
-      "slug": "marketing",
-      "job_count": 23,
-      "position": 2
-    }
-  ]
-}
-```
-
----
-
-## 8. API Lấy Từ Khóa Phổ Biến
-
-### Endpoint: GET `/api/jobs/options/popular-keywords`
-
-Lấy danh sách từ khóa tìm kiếm phổ biến.
-
-#### Request
-
-```http
-GET /api/jobs/options/popular-keywords
-```
-
-#### Response Success (200)
-
-```json
-{
-  "success": true,
-  "message": "Popular keywords retrieved successfully",
-  "data": [
-    {
-      "keyword": "PHP",
-      "count": 150
-    },
-    {
-      "keyword": "Laravel",
-      "count": 120
-    },
-    {
-      "keyword": "JavaScript",
-      "count": 200
-    }
-  ]
-}
-```
-
----
-
-## 9. API Tìm Kiếm Đa Dạng Options
+## 2. API Tìm Kiếm Options (Autocomplete)
 
 ### Endpoint: GET `/api/jobs/options/search`
 
@@ -851,6 +569,7 @@ async function initJobForm() {
       populateSelect('english_level', attributes.english_level.options);
       populateSelect('company_size', attributes.company_size.options);
       populateSelect('application_method', attributes.application_method.options);
+      populateSelect('salary_range', attributes.salary_range.options);
       
       // Initialize autocomplete for skills
       initSkillsAutocomplete(popular_skills);
@@ -866,17 +585,24 @@ async function initJobForm() {
   }
 }
 
-// Search skills với debounce
-let skillSearchTimeout;
-async function searchSkills(query) {
-  clearTimeout(skillSearchTimeout);
+// Search với autocomplete
+let searchTimeout;
+async function searchOptions(query, types = ['skills', 'benefits']) {
+  clearTimeout(searchTimeout);
   
-  skillSearchTimeout = setTimeout(async () => {
-    const response = await fetch(`/api/jobs/options/skills?search=${query}&limit=20`);
+  searchTimeout = setTimeout(async () => {
+    const params = new URLSearchParams({
+      query: query,
+      limit: 20
+    });
+    
+    types.forEach(type => params.append('types[]', type));
+    
+    const response = await fetch(`/api/jobs/options/search?${params}`);
     const result = await response.json();
     
     if (result.success) {
-      updateSkillsSuggestions(result.data);
+      updateSuggestions(result.data);
     }
   }, 300);
 }
@@ -886,10 +612,10 @@ async function searchSkills(query) {
 
 ## Performance Considerations
 
-1. **Sử dụng API tổng hợp `/form-data`** thay vì gọi nhiều API riêng lẻ
-2. **Cache được enable** cho tất cả endpoints
+1. **Chỉ sử dụng 1 API call** - `/form-data` load tất cả options trong 1 request
+2. **Cache được enable** - Tất cả data được cache 1 giờ
 3. **Rate limiting**: 120 requests/phút
-4. **Lazy loading**: Chỉ load skills/benefits khi user tương tác
+4. **Lazy search**: Sử dụng `/search` API khi cần autocomplete
 5. **Debounce search**: Delay 300ms trước khi gọi API search
 
 ---
@@ -904,6 +630,21 @@ async function searchSkills(query) {
 ---
 
 ## Changelog
+
+### Version 2.0.0 (2025-12-08)
+- **BREAKING CHANGE**: Dọn dẹp và xóa các API trùng lặp
+- Chỉ giữ lại 2 endpoints chính:
+  - `/form-data` - API chính load tất cả options
+  - `/search` - API tìm kiếm với autocomplete
+- Xóa các endpoints không cần thiết:
+  - `/filter-options`
+  - `/skills`
+  - `/companies`
+  - `/benefits`
+  - `/salary-ranges`
+  - `/industries`
+  - `/popular-keywords`
+- Tối ưu performance và giảm confusion
 
 ### Version 1.0.0 (2025-12-08)
 - Initial API documentation
