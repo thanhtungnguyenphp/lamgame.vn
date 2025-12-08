@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('job_skills', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('skill_option_id');
+            $table->unsignedInteger('product_id');
+            $table->unsignedInteger('skill_option_id');
             $table->timestamps();
             
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
@@ -21,8 +21,8 @@ return new class extends Migration
 
         Schema::create('job_benefits', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('benefit_option_id');
+            $table->unsignedInteger('product_id');
+            $table->unsignedInteger('benefit_option_id');
             $table->timestamps();
             
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
