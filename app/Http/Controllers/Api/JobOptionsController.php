@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\JobOptionsResource;
 use App\Services\JobFilterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,201 +18,7 @@ class JobOptionsController extends Controller
     }
 
     /**
-     * Get all filter options for job search/create forms
-     * 
-     * @return JsonResponse
-     */
-    public function getFilterOptions(): JsonResponse
-    {
-        try {
-            $options = $this->jobFilterService->getAllFilterOptions();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Filter options retrieved successfully',
-                'data' => $options,
-            ], Response::HTTP_OK);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve filter options',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
-
-    /**
-     * Get skills for job posting
-     * 
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function getSkills(Request $request): JsonResponse
-    {
-        try {
-            $search = $request->get('search');
-            $category = $request->get('category'); // IT, Marketing, etc.
-            $limit = min($request->get('limit', 50), 100);
-            
-            $skills = $this->jobFilterService->getSkills($search, $category, $limit);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Skills retrieved successfully',
-                'data' => $skills,
-                'total' => count($skills),
-            ], Response::HTTP_OK);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve skills',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Get companies that have posted jobs
-     * 
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function getCompanies(Request $request): JsonResponse
-    {
-        try {
-            $search = $request->get('search');
-            $limit = min($request->get('limit', 50), 100);
-            
-            $companies = $this->jobFilterService->getCompanies($search, $limit);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Companies retrieved successfully',
-                'data' => $companies,
-                'total' => count($companies),
-            ], Response::HTTP_OK);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve companies',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Get job benefits options
-     * 
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function getBenefits(Request $request): JsonResponse
-    {
-        try {
-            $search = $request->get('search');
-            $limit = min($request->get('limit', 50), 100);
-            
-            $benefits = $this->jobFilterService->getBenefits($search, $limit);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Benefits retrieved successfully',
-                'data' => $benefits,
-                'total' => count($benefits),
-            ], Response::HTTP_OK);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve benefits',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Get salary ranges with statistics
-     * 
-     * @return JsonResponse
-     */
-    public function getSalaryRanges(): JsonResponse
-    {
-        try {
-            $salaryRanges = $this->jobFilterService->getSalaryRangesWithStats();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Salary ranges retrieved successfully',
-                'data' => $salaryRanges,
-            ], Response::HTTP_OK);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve salary ranges',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Get job industries/categories with job counts
-     * 
-     * @return JsonResponse
-     */
-    public function getIndustries(): JsonResponse
-    {
-        try {
-            $industries = $this->jobFilterService->getIndustriesWithJobCounts();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Industries retrieved successfully',
-                'data' => $industries,
-            ], Response::HTTP_OK);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve industries',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Get popular job searches/keywords
-     * 
-     * @return JsonResponse
-     */
-    public function getPopularKeywords(): JsonResponse
-    {
-        try {
-            $keywords = $this->jobFilterService->getPopularKeywords();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Popular keywords retrieved successfully',
-                'data' => $keywords,
-            ], Response::HTTP_OK);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve popular keywords',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Get job posting form template data
-     * This combines multiple APIs into one for form initialization
+     * Get job posting form data - Main API for job options and attributes
      * 
      * @return JsonResponse
      */
@@ -225,7 +30,6 @@ class JobOptionsController extends Controller
                 'categories' => $this->jobFilterService->getJobCategories(),
                 'popular_skills' => $this->jobFilterService->getSkills(null, null, 30),
                 'common_benefits' => $this->jobFilterService->getBenefits(null, 20),
-                'application_methods' => $this->jobFilterService->getApplicationMethods(),
             ];
 
             return response()->json([
@@ -244,7 +48,7 @@ class JobOptionsController extends Controller
     }
 
     /**
-     * Search across multiple option types
+     * Search options (skills, companies, benefits) with autocomplete
      * 
      * @param Request $request
      * @return JsonResponse
