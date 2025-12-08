@@ -55,147 +55,132 @@
     <div class="main-content">
         <div class="container">
             <div class="content-wrapper">
-                <!-- Job Header Card -->
-                <div class="job-header-card">
-                    <div class="job-header-content">
-                        <div class="company-logo">
-                            <div class="logo-placeholder">
-                                {{ strtoupper(substr($companyName, 0, 2)) }}
-                            </div>
-                        </div>
-                        <div class="job-info">
-                            <h1 class="job-title">{{ $jobTitle }}</h1>
-                            <div class="company-name">{{ $companyName }}</div>
-                            <div class="job-meta">
-                                <div class="meta-item">
-                                    <i class="fa fa-map-marker"></i>
-                                    <span>{{ $job->attributes['job_location'] ?? 'Việt Nam' }}</span>
-                                </div>
-                                <div class="meta-item">
-                                    <i class="fa fa-money"></i>
-                                    <span>{{ $salaryFormatted }}</span>
-                                </div>
-                                <div class="meta-item">
-                                    <i class="fa fa-clock-o"></i>
-                                    <span>{{ $job->attributes['job_type'] ?? 'Full-time' }}</span>
-                                </div>
-                                <div class="meta-item">
-                                    <i class="fa fa-calendar"></i>
-                                    <span>{{ $postedAgo }}</span>
+                <!-- Main Column -->
+                <div class="main-column">
+                    <!-- Job Header Card -->
+                    <div class="job-header-card">
+                        <div class="job-header-content">
+                            <div class="job-info">
+                                <h1 class="job-title">{{ $jobTitle }}</h1>
+                                <div class="company-name">{{ $companyName }}</div>
+                                <div class="job-meta">
+                                    <div class="meta-item">
+                                        <i class="fa fa-map-marker"></i>
+                                        <span>{{ $job->attributes['job_location'] ?? 'Việt Nam' }}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fa fa-money"></i>
+                                        <span>{{ $salaryFormatted }}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fa fa-clock-o"></i>
+                                        <span>{{ $job->attributes['job_type'] ?? 'Full-time' }}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fa fa-calendar"></i>
+                                        <span>{{ $postedAgo }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <button class="btn-apply" onclick="openApplyModal()">
+                                <i class="fa fa-paper-plane"></i>
+                                <span>Ứng tuyển ngay</span>
+                            </button>
+                            <button class="btn-save" onclick="toggleSaveJob(this)">
+                                <i class="fa fa-heart-o"></i>
+                                <span>Lưu việc làm</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="action-buttons">
-                        <button class="btn-apply" onclick="openApplyModal()">
-                            <i class="fa fa-paper-plane"></i>
-                            <span>Ứng tuyển ngay</span>
-                        </button>
-                        <button class="btn-save" onclick="toggleSaveJob(this)">
-                            <i class="fa fa-heart-o"></i>
-                            <span>Lưu việc làm</span>
-                        </button>
-                    </div>
-                </div>
+                    <!-- Main Content Sections -->
+                    <div class="content-sections">
+                        <!-- Job Description -->
+                        <div class="content-section">
+                            <h2 class="section-title">Mô tả công việc</h2>
+                            <div class="section-content">
+                                @if($job->description)
+                                    {!! nl2br($job->description) !!}
+                                @else
+                                    <p>Thông tin mô tả công việc sẽ được cập nhật sớm.</p>
+                                @endif
+                            </div>
+                        </div>
 
-                <!-- Company Info -->
-                <div class="company-info">
-                    <div class="company-logo-large">
-                        @if(isset($companyInfo['logo_url']) && $companyInfo['logo_url'])
-                            <img src="{{ $companyInfo['logo_url'] }}" alt="{{ $companyInfo['name'] }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 12px;">
-                        @else
-                            {{ strtoupper(substr($companyInfo['name'], 0, 2)) }}
+                        <!-- Job Requirements -->
+                        @if($job->short_description)
+                        <div class="content-section">
+                            <h2 class="section-title">Yêu cầu công việc</h2>
+                            <div class="section-content">
+                                {!! $job->processed_description !!}
+                            </div>
+                        </div>
+                        @endif
+
+                        <!-- Skills -->
+                        @if(isset($job->attributes['required_skills']) && !empty($job->attributes['required_skills']))
+                        <div class="content-section">
+                            <h2 class="section-title">Kỹ năng yêu cầu</h2>
+                            <div class="section-content">
+                                <div class="skills-list">
+                                    @php
+                                        $skills = explode(',', $job->attributes['required_skills']);
+                                    @endphp
+                                    @foreach($skills as $skill)
+                                        <span class="skill-tag">{{ trim($skill) }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
+                        <!-- Benefits -->
+                        @if(isset($job->attributes['job_benefits']) && !empty($job->attributes['job_benefits']))
+                        <div class="content-section">
+                            <h2 class="section-title">Quyền lợi</h2>
+                            <div class="section-content">
+                                <div class="benefits-list">
+                                    @php
+                                        $benefits = explode(',', $job->attributes['job_benefits']);
+                                    @endphp
+                                    @foreach($benefits as $benefit)
+                                        <div class="benefit-item">
+                                            <i class="fa fa-check-circle"></i>
+                                            <span>{{ trim($benefit) }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
+                        <!-- Additional Info -->
+                        @if(isset($job->attributes['skills_required']) || $job->application_deadline)
+                        <div class="content-section">
+                            <h2 class="section-title">Thông tin thêm</h2>
+                            <div class="section-content">
+                                <div class="info-grid">
+                                    @if(isset($job->attributes['skills_required']))
+                                    <div class="info-item">
+                                        <div class="info-label">Kỹ năng yêu cầu</div>
+                                        <div class="info-value">{{ $job->attributes['skills_required'] }}</div>
+                                    </div>
+                                    @endif
+                                    @if($job->application_deadline)
+                                    <div class="info-item">
+                                        <div class="info-label">Hạn ứng tuyển</div>
+                                        <div class="info-value">{{ \Carbon\Carbon::parse($job->application_deadline)->format('d/m/Y') }}</div>
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                         @endif
                     </div>
-                    <h4 class="company-name-large">{{ $companyInfo['name'] }}</h4>
-                    <p class="company-desc">{!! nl2br(e($companyInfo['description'])) !!}</p>
-                </div>
-
-                <!-- Main Content Sections -->
-                <div class="content-sections">
-                    <!-- Job Description -->
-                    <div class="content-section">
-                        <h2 class="section-title">Mô tả công việc</h2>
-                        <div class="section-content">
-                            @if($job->description)
-                                {!! nl2br($job->description) !!}
-                            @else
-                                <p>Thông tin mô tả công việc sẽ được cập nhật sớm.</p>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Job Requirements -->
-                    @if($job->short_description)
-                    <div class="content-section">
-                        <h2 class="section-title">Yêu cầu công việc</h2>
-                        <div class="section-content">
-                            {!! $job->processed_description !!}
-                        </div>
-                    </div>
-                    @endif
-
-                    <!-- Skills -->
-                    @if(isset($job->attributes['required_skills']) && !empty($job->attributes['required_skills']))
-                    <div class="content-section">
-                        <h2 class="section-title">Kỹ năng yêu cầu</h2>
-                        <div class="section-content">
-                            <div class="skills-list">
-                                @php
-                                    $skills = explode(',', $job->attributes['required_skills']);
-                                @endphp
-                                @foreach($skills as $skill)
-                                    <span class="skill-tag">{{ trim($skill) }}</span>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-
-                    <!-- Benefits -->
-                    @if(isset($job->attributes['job_benefits']) && !empty($job->attributes['job_benefits']))
-                    <div class="content-section">
-                        <h2 class="section-title">Quyền lợi</h2>
-                        <div class="section-content">
-                            <div class="benefits-list">
-                                @php
-                                    $benefits = explode(',', $job->attributes['job_benefits']);
-                                @endphp
-                                @foreach($benefits as $benefit)
-                                    <div class="benefit-item">
-                                        <i class="fa fa-check-circle"></i>
-                                        <span>{{ trim($benefit) }}</span>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-
-                    <!-- Additional Info -->
-                    @if(isset($job->attributes['skills_required']) || $job->application_deadline)
-                    <div class="content-section">
-                        <h2 class="section-title">Thông tin thêm</h2>
-                        <div class="section-content">
-                            <div class="info-grid">
-                                @if(isset($job->attributes['skills_required']))
-                                <div class="info-item">
-                                    <div class="info-label">Kỹ năng yêu cầu</div>
-                                    <div class="info-value">{{ $job->attributes['skills_required'] }}</div>
-                                </div>
-                                @endif
-                                @if($job->application_deadline)
-                                <div class="info-item">
-                                    <div class="info-label">Hạn ứng tuyển</div>
-                                    <div class="info-value">{{ \Carbon\Carbon::parse($job->application_deadline)->format('d/m/Y') }}</div>
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                    @endif
                 </div>
 
                 <!-- Sidebar -->
@@ -411,6 +396,12 @@
             grid-template-columns: 1fr;
         }
 
+        .main-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
         /* Job Header Card */
         .job-header-card {
             background: white;
@@ -426,23 +417,6 @@
             align-items: flex-start;
             gap: 1rem;
             margin-bottom: 1.5rem;
-        }
-
-        .company-logo {
-            flex-shrink: 0;
-        }
-
-        .logo-placeholder {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.2rem;
         }
 
         .job-info {
@@ -537,66 +511,6 @@
             background: #667eea;
             color: white;
             border-color: #667eea;
-        }
-
-        /* Company Info */
-        .company-info {
-            background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin: 0 0 1.5rem 0;
-            text-align: center;
-        }
-
-        .company-logo-large {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.2rem;
-            margin: 0 auto 1rem auto;
-        }
-
-        .company-name-large {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin: 0 0 0.75rem 0;
-        }
-
-        .company-desc {
-            color: #6b7280;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin: 0 0 1rem 0;
-        }
-
-        .company-stats {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat-number {
-            display: block;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #667eea;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: #6b7280;
-            font-weight: 500;
         }
 
         /* Job Tags */
@@ -734,39 +648,6 @@
             border-bottom: 2px solid #f8f9fa;
         }
 
-        /* Company Info */
-        .company-info {
-            text-align: center;
-        }
-
-        .company-logo-large {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.5rem;
-            margin: 0 auto 1rem auto;
-        }
-
-        .company-name-large {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin: 0 0 0.75rem 0;
-        }
-
-        .company-desc {
-            color: #6b7280;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin: 0 0 1.5rem 0;
-        }
-
         .company-stats {
             display: flex;
             justify-content: space-around;
@@ -892,13 +773,6 @@
             margin-bottom: 2rem;
             padding-bottom: 2rem;
             border-bottom: 2px solid #f8f9fa;
-        }
-
-        .company-logo img {
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            object-fit: cover;
         }
 
         .job-info {
@@ -1086,30 +960,6 @@
             border-bottom: 2px solid #667eea;
         }
 
-        /* Company Info */
-        .company-info {
-            text-align: center;
-        }
-
-        .company-logo-large img {
-            width: 100px;
-            height: 100px;
-            border-radius: 15px;
-            margin-bottom: 1rem;
-        }
-
-        .company-info h4 {
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .company-info p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-
         .company-stats {
             display: flex;
             justify-content: space-around;
@@ -1250,6 +1100,10 @@
             .content-wrapper {
                 grid-template-columns: 2fr 1fr;
                 gap: 3rem;
+            }
+
+            .main-column {
+                min-width: 0;
             }
 
             .job-header-content {
