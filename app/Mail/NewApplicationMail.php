@@ -38,10 +38,6 @@ class NewApplicationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address(
-                config('mail.from.address'),
-                config('mail.from.name', 'Làm Game')
-            ),
             replyTo: [
                 new Address(
                     $this->application->applicant_email,
@@ -49,13 +45,6 @@ class NewApplicationMail extends Mailable
                 )
             ],
             subject: "🎯 Ứng viên mới: {$this->application->applicant_name} - {$this->jobData['title']}",
-            tags: ['job-application', 'employer-notification', 'new-candidate'],
-            metadata: [
-                'application_id' => $this->application->id,
-                'job_id' => $this->job->id,
-                'application_code' => $this->application->application_code,
-                'applicant_email' => $this->application->applicant_email,
-            ],
         );
     }
 
@@ -65,18 +54,8 @@ class NewApplicationMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            html: 'emails.job-application.employer-new-application',
+            markdown: 'emails.job-application.employer-new-application',
             text: 'emails.job-application.employer-new-application-text',
-            with: [
-                'application' => $this->application,
-                'job' => $this->job,
-                'jobData' => $this->jobData,
-                'applicantData' => $this->applicantData,
-                'applicationCode' => $this->application->application_code,
-                'appliedAt' => $this->application->applied_at,
-                'quickActions' => $this->getQuickActions(),
-                'applicationStats' => $this->getApplicationStats(),
-            ],
         );
     }
 
@@ -230,26 +209,5 @@ class NewApplicationMail extends Mailable
     public function attachments(): array
     {
         return [];
-    }
-
-    /**
-     * Build the message (for backward compatibility)
-     */
-    public function build()
-    {
-        return $this->subject("🎯 Ứng viên mới: {$this->application->applicant_name} - {$this->jobData['title']}")
-                    ->html('emails.job-application.employer-new-application')
-                    ->text('emails.job-application.employer-new-application-text')
-                    ->replyTo($this->application->applicant_email, $this->application->applicant_name)
-                    ->with([
-                        'application' => $this->application,
-                        'job' => $this->job,
-                        'jobData' => $this->jobData,
-                        'applicantData' => $this->applicantData,
-                        'applicationCode' => $this->application->application_code,
-                        'appliedAt' => $this->application->applied_at,
-                        'quickActions' => $this->getQuickActions(),
-                        'applicationStats' => $this->getApplicationStats(),
-                    ]);
     }
 }
