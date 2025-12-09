@@ -36,12 +36,8 @@ class JobApplicationController extends Controller
     public function apply(int $jobId, JobApplicationRequest $request): JsonResponse
     {
         try {
-            // Verify job exists and is active
-            $job = Product::whereHas('categories', function ($query) {
-                $query->whereHas('translations', function ($subQuery) {
-                    $subQuery->where('slug', 'viec-lam');
-                });
-            })->findOrFail($jobId);
+            // Verify job exists
+            $job = Product::findOrFail($jobId);
 
             // Check if user already applied for this job
             $existingApplication = $this->jobApplicationService->checkExistingApplication(

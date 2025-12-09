@@ -35,17 +35,7 @@ class ApplicationReceivedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address(
-                config('mail.from.address'),
-                config('mail.from.name', 'Làm Game')
-            ),
             subject: "✅ Đã nhận hồ sơ ứng tuyển - {$this->jobData['title']}",
-            tags: ['job-application', 'applicant-notification'],
-            metadata: [
-                'application_id' => $this->application->id,
-                'job_id' => $this->job->id,
-                'application_code' => $this->application->application_code,
-            ],
         );
     }
 
@@ -55,19 +45,8 @@ class ApplicationReceivedMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            html: 'emails.job-application.applicant-received',
+            markdown: 'emails.job-application.applicant-received',
             text: 'emails.job-application.applicant-received-text',
-            with: [
-                'application' => $this->application,
-                'job' => $this->job,
-                'jobData' => $this->jobData,
-                'applicantName' => $this->application->applicant_name,
-                'companyName' => $this->jobData['company'],
-                'jobTitle' => $this->jobData['title'],
-                'applicationCode' => $this->application->application_code,
-                'appliedAt' => $this->application->applied_at,
-                'nextSteps' => $this->getNextSteps(),
-            ],
         );
     }
 
@@ -148,34 +127,5 @@ class ApplicationReceivedMail extends Mailable
     public function attachments(): array
     {
         return [];
-    }
-
-    /**
-     * Build the message (for backward compatibility)
-     */
-    public function build()
-    {
-        // Debug logging
-        \Log::info('Building ApplicationReceivedMail', [
-            'application_id' => $this->application->id,
-            'applicant_name' => $this->application->applicant_name,
-            'job_title' => $this->jobData['title'],
-            'application_code' => $this->application->application_code,
-        ]);
-        
-        return $this->subject("✅ Đã nhận hồ sơ ứng tuyển - {$this->jobData['title']}")
-                    ->view('emails.job-application.applicant-received')
-                    ->text('emails.job-application.applicant-received-text')
-                    ->with([
-                        'application' => $this->application,
-                        'job' => $this->job,
-                        'jobData' => $this->jobData,
-                        'applicantName' => $this->application->applicant_name,
-                        'companyName' => $this->jobData['company'] ?: 'Làm Game',
-                        'jobTitle' => $this->jobData['title'],
-                        'applicationCode' => $this->application->application_code,
-                        'appliedAt' => $this->application->applied_at,
-                        'nextSteps' => $this->getNextSteps(),
-                    ]);
     }
 }
