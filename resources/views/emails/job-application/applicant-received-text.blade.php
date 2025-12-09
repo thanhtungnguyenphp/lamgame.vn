@@ -1,50 +1,51 @@
-XÁC NHẬN NHẬN HỒ SƠ ỨNG TUYỂN
-=====================================
+Xin chào {{ $applicantName }}!
 
-Xin chào {{ $applicantName }},
+Chúng tôi đã nhận được hồ sơ ứng tuyển của bạn cho vị trí {{ $jobTitle }} tại {{ $companyName ?: 'LAMGAME' }}.
 
-Chúng tôi đã nhận được hồ sơ ứng tuyển của bạn và rất vui mừng về sự quan tâm của bạn đến vị trí việc làm tại {{ $companyName }}.
-
-THÔNG TIN ỨNG TUYỂN:
---------------------
-Vị trí: {{ $jobTitle }}
-Công ty: {{ $companyName }}
-Mức lương: {{ $jobData['salary'] }}
-Địa điểm: {{ $jobData['location'] }}
-Thời gian ứng tuyển: {{ $appliedAt->format('d/m/Y H:i') }}
-
-@if($applicationCode)
+========================================
 MÃ ĐƠN ỨNG TUYỂN: {{ $applicationCode }}
-Vui lòng lưu mã này để tra cứu trạng thái đơn ứng tuyển.
+THỜI GIAN NỘP: {{ $appliedAt->format('d/m/Y H:i') }}
+VỊ TRÍ: {{ $jobTitle }}
+========================================
+
+✅ HỒ SƠ CỦA BẠN ĐÃ ĐƯỢC GỬI THÀNH CÔNG
+
+Chúng tôi xác nhận đã nhận được:
+- Thông tin cá nhân
+- CV/Resume
+@if($application->cover_letter)
+- Thư giới thiệu
 @endif
 
-CÁC BƯỚC TIẾP THEO:
-------------------
-Thời gian xem xét: {{ $nextSteps['review_time'] }}
+📋 CÁC BƯỚC TIẾP THEO
 
-Quy trình:
-@foreach($nextSteps['what_happens_next'] as $step)
-- {{ $step }}
-@endforeach
+1. Xem xét hồ sơ - Đội ngũ tuyển dụng sẽ xem xét hồ sơ của bạn trong vòng {{ $nextSteps['review_time'] }}
 
-Cách liên hệ: Chúng tôi sẽ liên hệ với bạn qua {{ $nextSteps['contact_method'] }}
+2. Liên hệ phỏng vấn - Nếu hồ sơ phù hợp, chúng tôi sẽ liên hệ qua {{ $nextSteps['contact_method'] }}
 
-LỜI KHUYÊN TRONG THỜI GIAN CHỜ:
--------------------------------
+3. Thông báo kết quả - Bạn sẽ nhận được email thông báo về kết quả
+
+💡 LỜI KHUYÊN
+
 @foreach($nextSteps['tips'] as $tip)
 - {{ $tip }}
 @endforeach
 
-CẦN HỖ TRỢ?
------------
-Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua:
-Email: {{ config('mail.contact.address', config('mail.from.address')) }}
+========================================
+
+LƯU Ý QUAN TRỌNG:
+- Vui lòng kiểm tra email thường xuyên (kể cả thư mục spam)
+- Giữ điện thoại liên lạc để chúng tôi có thể liên hệ
+- Mã đơn ứng tuyển của bạn: {{ $applicationCode }}
+
+Xem thêm việc làm khác: {{ config('app.url') }}/viec-lam
+
+Chúc bạn may mắn!
+
+Trân trọng,
+{{ $companyName ?: 'LAMGAME' }}
+Đội ngũ Tuyển dụng
 
 ---
-{{ config('mail.from.name', 'Làm Game') }}
-Nền tảng việc làm cho ngành Game Development tại Việt Nam
-{{ config('app.url') }}
-
-© {{ date('Y') }} {{ config('mail.from.name', 'Làm Game') }}. All rights reserved.
-
-Email này được gửi tự động từ hệ thống. Vui lòng không phản hồi trực tiếp email này.
+Email này được gửi tự động. Vui lòng không trả lời email này.
+Nếu có thắc mắc, vui lòng liên hệ: {{ config('mail.from.address') }}

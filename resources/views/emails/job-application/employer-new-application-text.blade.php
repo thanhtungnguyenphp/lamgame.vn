@@ -1,70 +1,76 @@
-ỨNG VIÊN MỚI - {{ strtoupper($applicantData['name']) }}
-===============================================
+🎯 ỨNG VIÊN MỚI ỨNG TUYỂN
 
-🎯 VỊ TRÍ: {{ $jobData['title'] }}
 @if($applicationStats['is_first_application'])
-⭐ ỨNG VIÊN ĐẦU TIÊN CHO VỊ TRÍ NÀY!
+========================================
+🎉 ĐÂY LÀ ỨNG VIÊN ĐẦU TIÊN cho vị trí này!
+========================================
 @endif
 
-THÔNG TIN ỨNG VIÊN:
--------------------
-Tên: {{ $applicantData['name'] }}
-Email: {{ $applicantData['email'] }}
-Điện thoại: {{ $applicantData['phone'] }}
-Kinh nghiệm: {{ $applicantData['experience_level'] }}
-CV: {{ $applicantData['has_cv'] ? ($applicantData['cv_filename'] ?? 'Đã upload') : 'Chưa upload' }}
-Mã đơn: {{ $applicationCode }}
-Thời gian: {{ $appliedAt->format('d/m/Y H:i') }}
-
-THÔNG TIN CÔNG VIỆC:
---------------------
-Vị trí: {{ $jobData['title'] }}
+THÔNG TIN VỊ TRÍ
+----------------------------------------
+{{ $jobData['title'] }}
+@if($jobData['company'])
 Công ty: {{ $jobData['company'] }}
+@endif
 Mức lương: {{ $jobData['salary'] }}
 Địa điểm: {{ $jobData['location'] }}
 Loại hình: {{ $jobData['job_type'] }}
 
-THỐNG KÊ ỨNG TUYỂN:
-------------------
-- Tổng ứng viên: {{ $applicationStats['total'] }}
-- Ứng viên hôm nay: {{ $applicationStats['today'] }}  
-- Đang chờ duyệt: {{ $applicationStats['pending'] }}
+========================================
 
-@if($applicationStats['is_first_application'])
-🎉 Đây là ứng viên đầu tiên cho vị trí này!
-@else
-📈 Có tổng cộng {{ $applicationStats['total'] }} ứng viên đã ứng tuyển vị trí này.
-@endif
+👤 THÔNG TIN ỨNG VIÊN
+----------------------------------------
+Họ tên: {{ $applicantData['name'] }}
+Email: {{ $applicantData['email'] }}
+Điện thoại: {{ $applicantData['phone'] ?: 'Chưa cung cấp' }}
+Kinh nghiệm: {{ $applicantData['experience_level'] }}
+Mã đơn: {{ $applicationCode }}
+Thời gian nộp: {{ $appliedAt->format('d/m/Y H:i') }}
 
-@if($applicantData['cover_letter'])
-THƯ GIỚI THIỆU:
---------------
-{{ $applicantData['cover_letter'] }}
-@endif
-
-HÀNH ĐỘNG NHANH:
-----------------
-👁 Xem chi tiết: {{ $quickActions['view_application'] }}
 @if($applicantData['has_cv'])
-📄 Tải CV: {{ $quickActions['download_cv'] }}
+📄 CV/RESUME
+File: {{ $applicantData['cv_filename'] }}
+Tải xuống: {{ $quickActions['download_cv'] }}
 @endif
-📧 Gửi email: {{ $quickActions['contact_applicant'] }}
-📞 Gọi điện: {{ $quickActions['call_applicant'] }}
-✅ Shortlist: {{ $quickActions['shortlist'] }}
-❌ Từ chối: {{ $quickActions['reject'] }}
 
-QUẢN LÝ:
---------
-🏛 Admin Panel: {{ $quickActions['view_application'] }}
+@if($application->cover_letter)
+✉️ THƯ GIỚI THIỆU
+----------------------------------------
+{{ Str::limit($application->cover_letter, 300) }}
+@if(strlen($application->cover_letter) > 300)
+[Xem đầy đủ trong hệ thống]
+@endif
+@endif
 
-LỚI CHÚ:
---------
-- Bạn có thể trả lời trực tiếp email này để liên hệ với ứng viên
-- Email được gửi tự động khi có ứng viên mới ứng tuyển
-- Các action link phía trên sẽ đưa bạn đến admin panel để xử lý
+========================================
+
+⚡ HÀNH ĐỘNG NHANH
+
+Xem chi tiết đơn ứng tuyển:
+{{ $quickActions['view_application'] }}
+
+LIÊN HỆ ỨNG VIÊN:
+- Email: {{ $applicantData['email'] }}
+- Điện thoại: {{ $applicantData['phone'] }}
+
+CẬP NHẬT TRẠNG THÁI:
+- Lọt vòng: {{ $quickActions['shortlist'] }}
+- Từ chối: {{ $quickActions['reject'] }}
+
+========================================
+
+📊 THỐNG KÊ ỨNG TUYỂN
+----------------------------------------
+Tổng đơn: {{ $applicationStats['total'] }}
+Hôm nay: {{ $applicationStats['today'] }}
+Chờ xử lý: {{ $applicationStats['pending'] }}
+
+========================================
+
+Trân trọng,
+LAMGAME
+Hệ thống Tuyển dụng
 
 ---
-{{ config('mail.from.name', 'Làm Game') }} - Hệ thống tuyển dụng
-{{ config('app.url') }}
-
-© {{ date('Y') }} {{ config('mail.from.name', 'Làm Game') }}. All rights reserved.
+Email này được gửi tự động khi có ứng viên mới.
+Bạn có thể trả lời trực tiếp email này để liên hệ với ứng viên.
