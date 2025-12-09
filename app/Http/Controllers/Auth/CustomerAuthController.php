@@ -161,12 +161,12 @@ class CustomerAuthController extends Controller
         // Create the customer (not verified yet)
         $customer = $this->createCustomer($request->all());
 
-        // Generate verification URL
-        $verificationUrl = URL::temporarySignedRoute(
-            'auth.verify',
-            now()->addHours(24),
-            ['id' => $customer->id, 'hash' => sha1($customer->email)]
-        );
+        // Generate verification URL (simple, no signature)
+        $verificationUrl = route('auth.verify', [
+            'id' => $customer->id,
+            'hash' => sha1($customer->email),
+            'expires' => now()->addHours(24)->timestamp
+        ]);
 
         // Send verification email
         try {
@@ -235,18 +235,18 @@ class CustomerAuthController extends Controller
      */
     public function verifyEmail(Request $request, $id)
     {
-        // Validate signature
-        if (!$request->hasValidSignature()) {
-            return redirect(route('auth.login'))
-                ->withErrors(['email' => 'Link xác thực không hợp lệ hoặc đã hết hạn.']);
-        }
-
         $customer = Customer::findOrFail($id);
 
         // Check if hash matches
         if (sha1($customer->email) !== $request->hash) {
             return redirect(route('auth.login'))
                 ->withErrors(['email' => 'Link xác thực không hợp lệ.']);
+        }
+
+        // Check expiration (24 hours)
+        if ($request->has('expires') && now()->timestamp > $request->expires) {
+            return redirect(route('auth.login'))
+                ->withErrors(['email' => 'Link xác thực đã hết hạn.']);
         }
 
         // Check if already verified
