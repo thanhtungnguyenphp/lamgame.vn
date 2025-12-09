@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\VerificationMail;
 use App\Mail\WelcomeMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Webkul\Customer\Models\Customer;
@@ -49,6 +51,22 @@ class CustomerAuthController extends Controller
     public function login(Request $request)
     {
         $this->validateLogin($request);
+
+        // Check if customer exists and is verified
+        $customer = Customer::where('email', $request->email)->first();
+        
+        if ($customer && !$customer->is_verified) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tài khoản chưa được xác thực. Vui lòng kiểm tra email.'
+                ], 422);
+            }
+
+            return back()->withErrors([
+                'email' => 'Tài khoản chưa được xác thực. Vui lòng kiểm tra email.',
+            ])->withInput();
+        }
 
         // Attempt to log the user in
         if (Auth::guard('customer')->attempt(
@@ -140,30 +158,32 @@ class CustomerAuthController extends Controller
             return back()->withErrors(['email' => 'Email này đã được đăng ký.'])->withInput();
         }
 
-        // Create the customer
+        // Create the customer (not verified yet)
         $customer = $this->createCustomer($request->all());
 
-        // Send welcome email
-        try {
-            Mail::to($customer->email)->send(new WelcomeMail($customer));
-        } catch (\Exception $e) {
-            // Log the error but don't prevent registration
-            \Log::error('Failed to send welcome email: ' . $e->getMessage());
-        }
+        // Generate verification URL
+        $verificationUrl = URL::temporarySignedRoute(
+            'auth.verify',
+            now()->addHours(24),
+            ['id' => $customer->id, 'hash' => sha1($customer->email)]
+        );
 
-        // Log the user in
-        Auth::guard('customer')->login($customer);
+        // Send verification email
+        try {
+            Mail::to($customer->email)->send(new VerificationMail($customer, $verificationUrl));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send verification email: ' . $e->getMessage());
+        }
 
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Đăng ký thành công! Chào mừng bạn đến với LAMGAME.',
-                'redirect_url' => route('home')
+                'message' => 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.',
             ]);
         }
 
-        return redirect(route('home'))
-                        ->with('success', 'Đăng ký thành công! Chào mừng bạn đến với LAMGAME.');
+        return redirect(route('auth.login'))
+                        ->with('success', 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.');
     }
 
     /**
@@ -204,10 +224,55 @@ class CustomerAuthController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'channel_id' => core()->getCurrentChannel()->id,
-            'customer_group_id' => $defaultGroup ? $defaultGroup->id : 2, // fallback to ID 2 if not found
-            'is_verified' => 1, // Set as verified by default
-            'status' => 1, // Set as active
+            'customer_group_id' => $defaultGroup ? $defaultGroup->id : 2,
+            'is_verified' => 0, // Not verified yet
+            'status' => 0, // Inactive until verified
         ]);
+    }
+
+    /**
+     * Verify email address
+     */
+    public function verifyEmail(Request $request, $id)
+    {
+        // Validate signature
+        if (!$request->hasValidSignature()) {
+            return redirect(route('auth.login'))
+                ->withErrors(['email' => 'Link xác thực không hợp lệ hoặc đã hết hạn.']);
+        }
+
+        $customer = Customer::findOrFail($id);
+
+        // Check if hash matches
+        if (sha1($customer->email) !== $request->hash) {
+            return redirect(route('auth.login'))
+                ->withErrors(['email' => 'Link xác thực không hợp lệ.']);
+        }
+
+        // Check if already verified
+        if ($customer->is_verified) {
+            return redirect(route('auth.login'))
+                ->with('info', 'Tài khoản đã được xác thực trước đó.');
+        }
+
+        // Activate account
+        $customer->update([
+            'is_verified' => 1,
+            'status' => 1,
+        ]);
+
+        // Send welcome email
+        try {
+            Mail::to($customer->email)->send(new WelcomeMail($customer));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send welcome email: ' . $e->getMessage());
+        }
+
+        // Auto login
+        Auth::guard('customer')->login($customer);
+
+        return redirect(route('home'))
+            ->with('success', 'Xác thực thành công! Chào mừng bạn đến với LAMGAME.');
     }
 
     /**

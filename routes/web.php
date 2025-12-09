@@ -172,6 +172,9 @@ Route::prefix('auth')->name('auth.')->group(function () {
         Route::get('/register', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showRegisterForm'])->name('register');
         Route::post('/register', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'register']);
         
+        // Email verification route
+        Route::get('/verify/{id}/{hash}', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'verifyEmail'])->name('verify');
+        
         // Forgot password routes
         Route::get('/forgot-password', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showForgotPasswordForm'])->name('forgot-password');
         Route::post('/forgot-password', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'sendPasswordResetLink']);
