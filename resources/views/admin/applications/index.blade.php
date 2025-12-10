@@ -4,34 +4,128 @@
 
 @push('styles')
 <style>
+.applications-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.filter-section {
+    background: #ffffff;
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
+}
+
+.filter-section .form-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    align-items: flex-end;
+}
+
+.filter-row__field {
+    min-width: 220px;
+}
+
+.filter-row__actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-summary {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
 .applications-table {
-    background: white;
-    border-radius: 8px;
+    background: #ffffff;
+    border-radius: 0.75rem;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
 }
 
 .table-header {
     background: #f8fafc;
-    padding: 1rem 1.5rem;
+    padding: 0.75rem 1.25rem;
     border-bottom: 1px solid #e5e7eb;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.filter-section {
-    background: white;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.table-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.table-responsive {
+    width: 100%;
+}
+
+.applications-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.applications-table th,
+.applications-table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+.applications-table thead th {
+    background: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+    white-space: nowrap;
+}
+
+.applications-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.applications-table td.col-name {
+    font-weight: 500;
+}
+
+.applications-table td.col-email {
+    max-width: 260px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.applications-table td.col-job {
+    max-width: 220px;
+}
+
+.applications-table td.col-status {
+    white-space: nowrap;
+}
+
+.applications-table td.col-actions {
+    text-align: right;
+    white-space: nowrap;
 }
 
 .application-actions .btn {
     padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     margin-right: 0.25rem;
+}
+
+.application-actions .btn:last-child {
+    margin-right: 0;
 }
 
 .empty-state {
@@ -41,8 +135,10 @@
 }
 
 .status-badge {
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
     font-size: 0.75rem;
     font-weight: 500;
 }
@@ -52,11 +148,27 @@
 .status-contacted { background: #d1fae5; color: #065f46; }
 .status-rejected { background: #fee2e2; color: #991b1b; }
 .status-accepted { background: #dcfce7; color: #166534; }
+
+@media (max-width: 768px) {
+    .applications-page {
+        gap: 1rem;
+    }
+
+    .applications-table th,
+    .applications-table td {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .applications-table td.col-actions {
+        text-align: left;
+    }
+}
 </style>
 @endpush
 
 @section('admin-content')
-<div class="content">
+<div class="content applications-page">
     <div class="page-header">
         <div class="page-title">
             <h1>Quản Lý Ứng Viên</h1>
@@ -67,8 +179,8 @@
     <!-- Filter Section -->
     <div class="filter-section">
         <form method="GET" action="{{ route('admin.applications.index') }}">
-            <div class="row align-items-end">
-                <div class="col-md-4">
+            <div class="filter-row">
+                <div class="filter-row__field">
                     <label class="form-label">Lọc theo Job</label>
                     <select name="job_id" class="form-select">
                         <option value="">Tất cả Jobs</option>
@@ -79,9 +191,20 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="filter-row__actions">
                     <button type="submit" class="btn btn--primary">Lọc</button>
+                    @if(request('job_id'))
+                        <a href="{{ route('admin.applications.index') }}" class="btn btn--secondary">Bỏ lọc</a>
+                    @endif
                 </div>
+            </div>
+
+            <div class="filter-summary">
+                @if($jobId)
+                    Hiển thị {{ $applications->total() }} ứng viên cho job ID #{{ $jobId }}
+                @else
+                    Hiển thị {{ $applications->total() }} ứng viên cho tất cả jobs
+                @endif
             </div>
         </form>
     </div>
@@ -103,20 +226,20 @@
                             <th>Job Apply</th>
                             <th>Ngày Apply</th>
                             <th>Trạng Thái</th>
-                            <th>Thao Tác</th>
+                            <th style="text-align: right;">Thao Tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($applications as $application)
                         <tr>
-                            <td>
+                            <td class="col-name">
                                 <strong>{{ $application->applicant_name ?: 'N/A' }}</strong>
                             </td>
-                            <td>{{ $application->applicant_email ?: 'N/A' }}</td>
+                            <td class="col-email">{{ $application->applicant_email ?: 'N/A' }}</td>
                             <td>{{ $application->applicant_phone ?: 'N/A' }}</td>
-                            <td>{{ $application->job_title ?: 'Job #' . $application->job_id }}</td>
+                            <td class="col-job">{{ $application->job_title ?: 'Job #' . $application->job_id }}</td>
                             <td>{{ $application->applied_at ? date('d/m/Y H:i', strtotime($application->applied_at)) : 'N/A' }}</td>
-                            <td>
+                            <td class="col-status">
                                 @php
                                     $statusMap = [
                                         'pending' => ['label' => 'Chờ xử lý', 'class' => 'status-new'],
@@ -129,7 +252,7 @@
                                 @endphp
                                 <span class="status-badge {{ $status['class'] }}">{{ $status['label'] }}</span>
                             </td>
-                            <td>
+                            <td class="col-actions">
                                 <div class="application-actions">
                                     <a href="{{ route('admin.applications.show', $application->id) }}" 
                                        class="btn btn--info btn--sm" title="Xem chi tiết">
