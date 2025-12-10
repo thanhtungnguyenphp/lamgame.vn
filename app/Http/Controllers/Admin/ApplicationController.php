@@ -3,12 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\ApplicationActivityService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class ApplicationController extends Controller
 {
+    protected ApplicationActivityService $activityService;
+    
+    public function __construct(ApplicationActivityService $activityService)
+    {
+        $this->activityService = $activityService;
+    }
     public function index(Request $request)
     {
         $jobId = $request->get('job_id');
@@ -27,7 +34,13 @@ class ApplicationController extends Controller
                 ->withErrors(['error' => 'Ứng viên không tồn tại']);
         }
         
-        return view('admin.applications.show', compact('application'));
+        // Log viewed activity
+        $this->activityService->logViewed($id);
+        
+        // Get activities
+        $activities = $this->activityService->getActivities($id);
+        
+        return view('admin.applications.show', compact('application', 'activities'));
     }
 
     public function update(Request $request, $id)
@@ -38,6 +51,13 @@ class ApplicationController extends Controller
         ]);
 
         try {
+            // Get current application
+            $current = DB::table('job_applications')->where('id', $id)->first();
+            
+            if (!$current) {
+                throw new \Exception('Ứng viên không tồn tại');
+            }
+            
             $updated = DB::table('job_applications')
                 ->where('id', $id)
                 ->whereIn('job_id', function($query) {
@@ -54,6 +74,16 @@ class ApplicationController extends Controller
                 
             if (!$updated) {
                 throw new \Exception('Ứng viên không tồn tại hoặc bạn không có quyền cập nhật');
+            }
+            
+            // Log status change
+            if ($current->status !== $request->status) {
+                $this->activityService->logStatusChanged($id, $current->status, $request->status);
+            }
+            
+            // Log note change
+            if ($current->employer_notes !== $request->employer_notes) {
+                $this->activityService->logNoteChanged($id, $current->employer_notes, $request->employer_notes);
             }
             
             return redirect()->route('admin.applications.show', $id)
@@ -106,6 +136,9 @@ class ApplicationController extends Controller
         if (!file_exists($filePath)) {
             abort(404, 'File CV không tồn tại');
         }
+        
+        // Log CV downloaded
+        $this->activityService->logCVDownloaded($id);
         
         return response()->download($filePath);
     }
