@@ -56,6 +56,9 @@ class JobApplicationService
                 'applicant_name' => $data['applicant_name'],
                 'application_code' => $applicationCode,
             ]);
+            
+            // Log activity
+            app(ApplicationActivityService::class)->logCreated($application);
 
             return $application;
         });

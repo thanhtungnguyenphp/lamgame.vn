@@ -14,12 +14,14 @@
                 </svg>
                 Quay lại
             </a>
+
             @if($application->application_code)
                 <span class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700">
                     Mã đơn: <span class="ml-1 font-mono">{{ $application->application_code }}</span>
                 </span>
             @endif
         </div>
+
         <div class="text-right text-xs text-gray-500">
             Nộp đơn lúc
             <span class="font-medium">
@@ -40,6 +42,7 @@
                         Ứng tuyển vào: <span class="font-medium">{{ $application->job_title ?: 'Job #' . $application->job_id }}</span>
                     </p>
                 </div>
+
                 <div>
                     @php
                         $statusMap = [
@@ -64,11 +67,13 @@
                                 'class' => 'bg-green-50 text-green-700 ring-green-600/20',
                             ],
                         ];
+
                         $status = $statusMap[$application->status] ?? [
                             'label' => 'Mới',
                             'class' => 'bg-blue-50 text-blue-700 ring-blue-600/20',
                         ];
                     @endphp
+
                     <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset {{ $status['class'] }}">
                         {{ $status['label'] }}
                     </span>
@@ -76,6 +81,7 @@
             </div>
 
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <!-- Contact info -->
                 <div class="space-y-3">
                     <h3 class="text-sm font-semibold text-gray-900">Thông tin liên hệ</h3>
                     <dl class="space-y-2 text-sm text-gray-600">
@@ -91,6 +97,7 @@
                                 @endif
                             </dd>
                         </div>
+
                         <div>
                             <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Số điện thoại</dt>
                             <dd>
@@ -106,6 +113,7 @@
                     </dl>
                 </div>
 
+                <!-- Application info -->
                 <div class="space-y-3">
                     <h3 class="text-sm font-semibold text-gray-900">Thông tin ứng tuyển</h3>
                     <dl class="space-y-2 text-sm text-gray-600">
@@ -157,6 +165,7 @@
     <!-- Main content: cover letter, notes, CV & actions -->
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div class="space-y-6 lg:col-span-2">
+            <!-- Cover letter -->
             @if($application->cover_letter)
                 <div class="bg-white shadow-sm rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
@@ -168,9 +177,11 @@
                 </div>
             @endif
 
+            <!-- Status & notes form -->
             <div class="bg-white shadow-sm rounded-lg">
                 <div class="px-4 py-5 sm:p-6 space-y-4">
                     <h3 class="text-base font-semibold leading-6 text-gray-900">Cập nhật trạng thái & ghi chú</h3>
+
                     <form method="POST" action="{{ route('admin.applications.update', $application->id) }}" class="space-y-4">
                         @csrf
                         @method('PUT')
@@ -207,8 +218,40 @@
                     </form>
                 </div>
             </div>
+
+            <!-- Activity timeline -->
+            @if(isset($activities) && $activities->count() > 0)
+                <div class="bg-white shadow-sm rounded-lg">
+                    <div class="px-4 py-5 sm:p-6 space-y-4">
+                        <h3 class="text-base font-semibold leading-6 text-gray-900">Lịch sử hoạt động</h3>
+                        <ol class="relative border-l border-gray-200 ml-3 space-y-4">
+                            @foreach($activities as $activity)
+                                <li class="ml-4">
+                                    <div class="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full border border-white bg-primary-500"></div>
+                                    <div class="flex items-center justify-between text-xs text-gray-500">
+                                        <span class="font-medium text-gray-800">{{ $activity->description }}</span>
+                                        <span>{{ $activity->created_at->diffForHumans() }}</span>
+                                    </div>
+                                    <div class="mt-1 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                                        <span>{{ $activity->performed_by_name }}</span>
+                                        <span>{{ $activity->created_at->format('d/m/Y H:i') }}</span>
+                                    </div>
+                                    @if($activity->old_value && $activity->new_value)
+                                        <div class="mt-2 rounded-md bg-gray-50 px-2 py-1 text-xs">
+                                            <span class="line-through text-red-600 mr-1">{{ $activity->old_value }}</span>
+                                            →
+                                            <span class="ml-1 font-medium text-emerald-700">{{ $activity->new_value }}</span>
+                                        </div>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                </div>
+            @endif
         </div>
 
+        <!-- Right column: CV & quick actions -->
         <div class="space-y-6">
             @if($application->resume_file_path)
                 <div class="bg-white shadow-sm rounded-lg">
