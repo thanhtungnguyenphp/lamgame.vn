@@ -50,6 +50,8 @@
 .status-new { background: #dbeafe; color: #1e40af; }
 .status-reviewed { background: #fef3c7; color: #92400e; }
 .status-contacted { background: #d1fae5; color: #065f46; }
+.status-rejected { background: #fee2e2; color: #991b1b; }
+.status-accepted { background: #dcfce7; color: #166534; }
 </style>
 @endpush
 
@@ -108,14 +110,24 @@
                         @foreach($applications as $application)
                         <tr>
                             <td>
-                                <strong>{{ $application->full_name ?: 'N/A' }}</strong>
+                                <strong>{{ $application->applicant_name ?: 'N/A' }}</strong>
                             </td>
-                            <td>{{ $application->email ?: 'N/A' }}</td>
-                            <td>{{ $application->phone ?: 'N/A' }}</td>
+                            <td>{{ $application->applicant_email ?: 'N/A' }}</td>
+                            <td>{{ $application->applicant_phone ?: 'N/A' }}</td>
                             <td>{{ $application->job_title ?: 'Job #' . $application->job_id }}</td>
-                            <td>{{ $application->created_at ? date('d/m/Y H:i', strtotime($application->created_at)) : 'N/A' }}</td>
+                            <td>{{ $application->applied_at ? date('d/m/Y H:i', strtotime($application->applied_at)) : 'N/A' }}</td>
                             <td>
-                                <span class="status-badge status-new">Mới</span>
+                                @php
+                                    $statusMap = [
+                                        'pending' => ['label' => 'Chờ xử lý', 'class' => 'status-new'],
+                                        'reviewed' => ['label' => 'Đã xem', 'class' => 'status-reviewed'],
+                                        'shortlisted' => ['label' => 'Lọt vòng', 'class' => 'status-contacted'],
+                                        'rejected' => ['label' => 'Từ chối', 'class' => 'status-rejected'],
+                                        'accepted' => ['label' => 'Chấp nhận', 'class' => 'status-accepted'],
+                                    ];
+                                    $status = $statusMap[$application->status] ?? ['label' => 'Mới', 'class' => 'status-new'];
+                                @endphp
+                                <span class="status-badge {{ $status['class'] }}">{{ $status['label'] }}</span>
                             </td>
                             <td>
                                 <div class="application-actions">
@@ -123,8 +135,8 @@
                                        class="btn btn--info btn--sm" title="Xem chi tiết">
                                         <i class="icon-eye"></i>
                                     </a>
-                                    @if($application->cv_file)
-                                        <a href="{{ asset('storage/' . $application->cv_file) }}" 
+                                    @if($application->resume_file_path)
+                                        <a href="{{ route('admin.applications.download-cv', $application->id) }}" 
                                            target="_blank" 
                                            class="btn btn--secondary btn--sm" title="Xem CV">
                                             <i class="icon-file"></i>

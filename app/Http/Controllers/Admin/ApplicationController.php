@@ -55,6 +55,27 @@ class ApplicationController extends Controller
         }
     }
 
+    public function downloadCV($id)
+    {
+        $application = $this->getApplicationById($id);
+        
+        if (!$application) {
+            abort(404, 'Ứng viên không tồn tại');
+        }
+        
+        if (!$application->resume_file_path) {
+            abort(404, 'CV không tồn tại');
+        }
+        
+        $filePath = storage_path('app/private/' . $application->resume_file_path);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'File CV không tồn tại');
+        }
+        
+        return response()->download($filePath);
+    }
+
     private function getApplications($jobId = null)
     {
         $query = DB::table('job_applications')
