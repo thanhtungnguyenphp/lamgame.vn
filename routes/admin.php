@@ -10,6 +10,7 @@ Route::middleware(['web', 'admin'])->prefix('admin')->name('admin.')->group(func
     Route::resource('jobs', JobController::class);
     
     // Applications Management  
+    Route::get('applications/{id}/download-cv', [ApplicationController::class, 'downloadCV'])->name('applications.download-cv');
     Route::resource('applications', ApplicationController::class);
     
     // Companies Management
