@@ -404,11 +404,21 @@ class JobController extends Controller
             ->where('product_flat.visible_individually', 1)
             ->count();
         
+        // Count total applications for user's jobs
+        $totalApplications = DB::table('job_applications')
+            ->whereIn('job_id', function($query) use ($userId) {
+                $query->select('id')
+                      ->from('products')
+                      ->where('created_by_admin_id', $userId)
+                      ->where('sku', 'LIKE', 'JOB_%');
+            })
+            ->count();
+        
         return [
             'total_jobs' => $totalJobs,
             'active_jobs' => $publishedJobs,
             'pending_jobs' => $totalJobs - $publishedJobs,
-            'total_applications' => 0
+            'total_applications' => $totalApplications
         ];
     }
 
@@ -427,14 +437,22 @@ class JobController extends Controller
             ->where('products.created_by_admin_id', $userId)
             ->orderBy('products.created_at', 'desc')
             ->paginate(10, ['*'], 'page', $page);
+        
+        // Get applications count for all jobs in this page
+        $jobIds = collect($jobs->items())->pluck('id')->toArray();
+        $applicationsCounts = DB::table('job_applications')
+            ->select('job_id', DB::raw('COUNT(*) as count'))
+            ->whereIn('job_id', $jobIds)
+            ->groupBy('job_id')
+            ->pluck('count', 'job_id');
             
-        $jobs->getCollection()->transform(function($job) {
+        $jobs->getCollection()->transform(function($job) use ($applicationsCounts) {
             if (!$job->title) {
                 $job->title = 'Job #' . $job->id;
             }
             $job->status = $job->publish_status == 1 ? 'published' : 'draft';
             $job->location = 'N/A';
-            $job->applications_count = 0;
+            $job->applications_count = $applicationsCounts[$job->id] ?? 0;
             return $job;
         });
         
