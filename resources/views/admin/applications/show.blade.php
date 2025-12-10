@@ -4,7 +4,7 @@
 @section('page-title', 'Chi tiết Ứng viên')
 
 @section('content')
-<div class="space-y-6">
+<div class="max-w-5xl mx-auto space-y-6">
     <!-- Top bar: back + meta -->
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -168,16 +168,45 @@
                 </div>
             @endif
 
-            @if($application->employer_notes)
-                <div class="bg-white shadow-sm rounded-lg">
-                    <div class="px-4 py-5 sm:p-6">
-                        <h3 class="text-base font-semibold leading-6 text-gray-900 mb-2">Ghi chú nội bộ</h3>
-                        <div class="rounded-md border border-yellow-100 bg-yellow-50 px-3 py-2 text-sm text-gray-800 whitespace-pre-line">
-                            {{ $application->employer_notes }}
+            <div class="bg-white shadow-sm rounded-lg">
+                <div class="px-4 py-5 sm:p-6 space-y-4">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900">Cập nhật trạng thái & ghi chú</h3>
+                    <form method="POST" action="{{ route('admin.applications.update', $application->id) }}" class="space-y-4">
+                        @csrf
+                        @method('PUT')
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Trạng thái</label>
+                            <select name="status" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm">
+                                <option value="pending" {{ $application->status == 'pending' ? 'selected' : '' }}>Chờ xử lý</option>
+                                <option value="reviewed" {{ $application->status == 'reviewed' ? 'selected' : '' }}>Đã xem</option>
+                                <option value="shortlisted" {{ $application->status == 'shortlisted' ? 'selected' : '' }}>Lọt vòng</option>
+                                <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Từ chối</option>
+                                <option value="accepted" {{ $application->status == 'accepted' ? 'selected' : '' }}>Chấp nhận</option>
+                            </select>
                         </div>
-                    </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Ghi chú nội bộ</label>
+                            <textarea name="employer_notes" rows="4"
+                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+                                      placeholder="Nhập ghi chú về ứng viên (chỉ admin thấy)...">{{ $application->employer_notes }}</textarea>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                    class="inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
+                                <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75A2.25 2.25 0 0014.25 4.5h-4.5A2.25 2.25 0 007.5 6.75v10.5A2.25 2.25 0 009.75 19.5h4.5a2.25 2.25 0 002.25-2.25V13.5" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15l3-3m0 0l-3-3m3 3H9" />
+                                </svg>
+                                Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            @endif
+            </div>
         </div>
 
         <div class="space-y-6">
