@@ -30,6 +30,40 @@ class ApplicationController extends Controller
         return view('admin.applications.show', compact('application'));
     }
 
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,reviewed,shortlisted,rejected,accepted',
+            'employer_notes' => 'nullable|string|max:2000',
+        ]);
+
+        try {
+            $updated = DB::table('job_applications')
+                ->where('id', $id)
+                ->whereIn('job_id', function($query) {
+                    $query->select('id')
+                          ->from('products')
+                          ->where('created_by_admin_id', Auth::guard('admin')->id())
+                          ->where('type', 'job');
+                })
+                ->update([
+                    'status' => $request->status,
+                    'employer_notes' => $request->employer_notes,
+                    'updated_at' => now(),
+                ]);
+                
+            if (!$updated) {
+                throw new \Exception('Ứng viên không tồn tại hoặc bạn không có quyền cập nhật');
+            }
+            
+            return redirect()->route('admin.applications.show', $id)
+                ->with('success', 'Đã cập nhật trạng thái và ghi chú thành công!');
+            
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Lỗi: ' . $e->getMessage()]);
+        }
+    }
+
     public function destroy($id)
     {
         try {
