@@ -18,6 +18,12 @@ class ApplicationReceivedMail extends Mailable
     public JobApplication $application;
     public Product $job;
     public array $jobData;
+    public string $applicantName;
+    public string $companyName;
+    public string $jobTitle;
+    public string $applicationCode;
+    public $appliedAt;
+    public array $nextSteps;
 
     /**
      * Create a new message instance.
@@ -27,6 +33,12 @@ class ApplicationReceivedMail extends Mailable
         $this->application = $application;
         $this->job = $job;
         $this->jobData = $this->parseJobData();
+        $this->applicantName = $application->applicant_name;
+        $this->companyName = $this->jobData['company'] ?: 'LAMGAME';
+        $this->jobTitle = $this->jobData['title'];
+        $this->applicationCode = $application->application_code;
+        $this->appliedAt = $application->applied_at;
+        $this->nextSteps = $this->getNextSteps();
     }
 
     /**

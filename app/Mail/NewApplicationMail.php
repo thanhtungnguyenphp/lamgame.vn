@@ -20,6 +20,10 @@ class NewApplicationMail extends Mailable
     public Product $job;
     public array $jobData;
     public array $applicantData;
+    public string $applicationCode;
+    public $appliedAt;
+    public array $quickActions;
+    public array $applicationStats;
 
     /**
      * Create a new message instance.
@@ -30,6 +34,10 @@ class NewApplicationMail extends Mailable
         $this->job = $job;
         $this->jobData = $this->parseJobData();
         $this->applicantData = $this->parseApplicantData();
+        $this->applicationCode = $application->application_code;
+        $this->appliedAt = $application->applied_at;
+        $this->quickActions = $this->getQuickActions();
+        $this->applicationStats = $this->getApplicationStats();
     }
 
     /**
