@@ -14,7 +14,11 @@ export default defineConfig({
   plugins: [
     // App assets gốc của dự án (giữ nguyên)
     laravel({
-      input: ['resources/css/app.css', 'resources/js/app.js'],
+      input: [
+        'resources/css/app.css',
+        'resources/js/app.js',
+        'resources/js/job-form.js'
+      ],
       refresh: true,
       // dùng mặc định: hotFile => storage/framework/vite.hot
       // buildDirectory => build
