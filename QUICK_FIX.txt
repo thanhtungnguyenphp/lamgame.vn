@@ -1,0 +1,50 @@
+// QUICK FIX - Manually populate Tom Select
+// Copy và paste vào Browser Console nếu dropdown vẫn trống
+
+fetch('/api/jobs/options/form-data')
+  .then(r => r.json())
+  .then(data => {
+    const attrs = data.data.attributes;
+    
+    // Get Tom Select instances
+    const skillsSelect = document.querySelector('#required_skills').tomselect;
+    const benefitsSelect = document.querySelector('#job_benefits').tomselect;
+    
+    if (!skillsSelect || !benefitsSelect) {
+      console.error('❌ Tom Select not initialized!');
+      return;
+    }
+    
+    // Clear existing
+    skillsSelect.clear();
+    skillsSelect.clearOptions();
+    benefitsSelect.clear();
+    benefitsSelect.clearOptions();
+    
+    // Populate Skills
+    console.log('Populating skills...');
+    attrs.required_skills.options.forEach(opt => {
+      skillsSelect.addOption({
+        value: opt.id,
+        text: opt.value
+      });
+    });
+    skillsSelect.refreshOptions(false);
+    
+    // Populate Benefits
+    console.log('Populating benefits...');
+    attrs.job_benefits.options.forEach(opt => {
+      benefitsSelect.addOption({
+        value: opt.id,
+        text: opt.value
+      });
+    });
+    benefitsSelect.refreshOptions(false);
+    
+    console.log('✅ DONE!');
+    console.log('Skills options:', Object.keys(skillsSelect.options).length);
+    console.log('Benefits options:', Object.keys(benefitsSelect.options).length);
+    console.log('');
+    console.log('Try clicking dropdown now!');
+  })
+  .catch(e => console.error('Error:', e));

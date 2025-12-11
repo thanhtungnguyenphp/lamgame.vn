@@ -7,6 +7,10 @@
 <link href="{{ asset('css/admin/job-form.css') }}" rel="stylesheet">
 @endpush
 
+@push('scripts')
+@vite(['resources/js/job-form.js'])
+@endpush
+
 @section('content')
 <form method="POST" action="{{ route('admin.jobs.store') }}" enctype="multipart/form-data" class="space-y-8">
     @csrf
@@ -132,16 +136,30 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium leading-6 text-gray-900">Kỹ năng yêu cầu</label>
-                    <div class="mt-2" id="required_skills_container">
-                        <!-- Checkboxes sẽ được tạo từ API -->
+                    <label for="required_skills" class="block text-sm font-medium leading-6 text-gray-900">Kỹ năng yêu cầu</label>
+                    <div class="mt-2">
+                        <select id="required_skills" name="required_skills[]" multiple>
+                            <!-- Options will be loaded via API -->
+                        </select>
+                        <p class="mt-1 text-xs text-gray-500" id="skills_count" 
+                           data-empty-text="Chưa chọn kỹ năng nào" 
+                           data-suffix="kỹ năng đã chọn">
+                            Chưa chọn kỹ năng nào
+                        </p>
                     </div>
                 </div>
 
                 <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium leading-6 text-gray-900">Phúc lợi</label>
-                    <div class="mt-2" id="job_benefits_container">
-                        <!-- Checkboxes sẽ được tạo từ API -->
+                    <label for="job_benefits" class="block text-sm font-medium leading-6 text-gray-900">Phúc lợi</label>
+                    <div class="mt-2">
+                        <select id="job_benefits" name="job_benefits[]" multiple>
+                            <!-- Options will be loaded via API -->
+                        </select>
+                        <p class="mt-1 text-xs text-gray-500" id="benefits_count" 
+                           data-empty-text="Chưa chọn phúc lợi nào" 
+                           data-suffix="phúc lợi đã chọn">
+                            Chưa chọn phúc lợi nào
+                        </p>
                     </div>
                 </div>
             </div>
@@ -267,139 +285,3 @@
 </form>
 @endsection
 
-@push('scripts')
-<script>
-console.log('Script loaded');
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, starting API call');
-    
-    fetch('/api/jobs/options/form-data', {
-        method: 'GET',
-        headers: { 
-            'Authorization': 'Bearer null',
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => {
-        console.log('Response status:', response.status);
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('API Response:', data);
-        
-        const attributes = data.data.attributes;
-        
-        // Populate job_type
-        const jobTypeSelect = document.getElementById('job_type');
-        if (jobTypeSelect) {
-            const placeholder = jobTypeSelect.querySelector('option[value=""]');
-            jobTypeSelect.innerHTML = '';
-            if (placeholder) jobTypeSelect.appendChild(placeholder);
-            
-            attributes.job_type.options.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option.id;
-                opt.textContent = option.value;
-                jobTypeSelect.appendChild(opt);
-            });
-            console.log('Job type populated');
-        }
-        
-        // Populate experience_level
-        const expSelect = document.getElementById('experience_level');
-        if (expSelect) {
-            const placeholder = expSelect.querySelector('option[value=""]');
-            expSelect.innerHTML = '';
-            if (placeholder) expSelect.appendChild(placeholder);
-            
-            attributes.experience_level.options.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option.id;
-                opt.textContent = option.value;
-                expSelect.appendChild(opt);
-            });
-            console.log('Experience level populated');
-        }
-        
-        // Populate job_location
-        const locSelect = document.getElementById('job_location');
-        if (locSelect) {
-            const placeholder = locSelect.querySelector('option[value=""]');
-            locSelect.innerHTML = '';
-            if (placeholder) locSelect.appendChild(placeholder);
-            
-            attributes.job_location.options.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option.id;
-                opt.textContent = option.value;
-                locSelect.appendChild(opt);
-            });
-            console.log('Job location populated');
-        }
-        
-        // Populate salary_range
-        const salarySelect = document.getElementById('salary_range');
-        if (salarySelect) {
-            const placeholder = salarySelect.querySelector('option[value=""]');
-            salarySelect.innerHTML = '';
-            if (placeholder) salarySelect.appendChild(placeholder);
-            
-            attributes.salary_range.options.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option.id;
-                opt.textContent = option.value;
-                salarySelect.appendChild(opt);
-            });
-            console.log('Salary range populated');
-        }
-        
-        // Populate required_skills checkboxes
-        const skillsContainer = document.getElementById('required_skills_container');
-        if (skillsContainer) {
-            skillsContainer.innerHTML = '';
-            attributes.required_skills.options.forEach(option => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'flex items-center mb-2';
-                wrapper.innerHTML = `
-                    <input type="checkbox" name="required_skills[]" value="${option.id}" 
-                           id="skill_${option.id}" class="h-4 w-4 text-primary-600 border-gray-300 rounded">
-                    <label for="skill_${option.id}" class="ml-2 text-sm text-gray-900">
-                        ${option.value}
-                    </label>
-                `;
-                skillsContainer.appendChild(wrapper);
-            });
-            console.log('Skills populated');
-        }
-        
-        // Populate job_benefits checkboxes
-        const benefitsContainer = document.getElementById('job_benefits_container');
-        if (benefitsContainer) {
-            benefitsContainer.innerHTML = '';
-            attributes.job_benefits.options.forEach(option => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'flex items-center mb-2';
-                wrapper.innerHTML = `
-                    <input type="checkbox" name="job_benefits[]" value="${option.id}" 
-                           id="benefit_${option.id}" class="h-4 w-4 text-primary-600 border-gray-300 rounded">
-                    <label for="benefit_${option.id}" class="ml-2 text-sm text-gray-900">
-                        ${option.value}
-                    </label>
-                `;
-                benefitsContainer.appendChild(wrapper);
-            });
-            console.log('Benefits populated');
-        }
-        
-        console.log('All fields populated successfully');
-    })
-    .catch(error => {
-        console.error('Error loading form data:', error);
-    });
-});
-</script>
-@endpush
