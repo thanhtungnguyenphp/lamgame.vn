@@ -14,6 +14,7 @@ export function initMultiSelect(selector, options = {}) {
         closeAfterSelect: false,
         hideSelected: false,
         controlInput: null,
+        dropdownParent: 'body',
         
         // Tailwind-styled render functions
         render: {
