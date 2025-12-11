@@ -1,0 +1,206 @@
+/* Tom Select Custom Theme - Tailwind-based */
+
+/* Import Tom Select base styles */
+@import './tom-select.bootstrap5.css';
+
+/* Wrapper */
+.ts-wrapper {
+    width: 100%;
+}
+
+/* Main control input area */
+.ts-control {
+    min-height: 42px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid rgb(209 213 219);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    background-color: white;
+    transition: all 0.15s ease-in-out;
+}
+
+.ts-control:focus-within,
+.ts-wrapper.focus .ts-control {
+    outline: none;
+    border-color: transparent;
+    box-shadow: 0 0 0 2px rgb(59 130 246 / 0.5);
+    ring: 2px;
+    ring-color: rgb(59 130 246);
+}
+
+/* Selected items (tags) */
+.ts-control > .item {
+    display: inline-flex;
+    align-items: center;
+    background-color: rgb(239 246 255);
+    color: rgb(29 78 216);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    border: none;
+}
+
+/* Remove button on tags */
+.ts-control > .item .remove {
+    margin-left: 0.5rem;
+    color: rgb(59 130 246);
+    font-weight: bold;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1rem;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+}
+
+.ts-control > .item .remove:hover {
+    color: rgb(29 78 216);
+    opacity: 1;
+}
+
+/* Input field inside control */
+.ts-input {
+    font-size: 0.875rem;
+    color: rgb(17 24 39);
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-width: 120px;
+}
+
+.ts-input::placeholder {
+    color: rgb(156 163 175);
+}
+
+/* Dropdown container */
+.ts-dropdown {
+    border-radius: 0.375rem;
+    border: 1px solid rgb(229 231 235);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    margin-top: 0.25rem;
+    max-height: 16rem;
+    overflow-y: auto;
+    background-color: white;
+    z-index: 50;
+}
+
+/* Dropdown content wrapper */
+.ts-dropdown-content {
+    padding: 0.25rem 0;
+}
+
+/* Dropdown options */
+.ts-dropdown .option {
+    padding: 0;
+    cursor: pointer;
+}
+
+.ts-dropdown .option:hover,
+.ts-dropdown .option.active {
+    background-color: rgb(249 250 251);
+}
+
+.ts-dropdown .option.selected {
+    background-color: rgb(239 246 255);
+}
+
+/* Loading state */
+.ts-wrapper.loading .ts-control {
+    opacity: 0.6;
+}
+
+.ts-wrapper.loading .ts-control::after {
+    content: '⏳';
+    margin-left: 0.5rem;
+}
+
+/* Disabled state */
+.ts-wrapper.disabled .ts-control,
+.ts-wrapper.disabled .ts-control * {
+    cursor: not-allowed !important;
+    opacity: 0.5;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .ts-control > .item {
+        font-size: 0.75rem;
+        padding: 0.125rem 0.5rem;
+        margin-right: 0.25rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .ts-dropdown {
+        max-height: 12rem;
+    }
+    
+    .ts-input {
+        min-width: 80px;
+    }
+}
+
+/* Checkbox plugin styles */
+.ts-dropdown .optgroup-header {
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: rgb(107 114 128);
+    padding: 0.5rem 0.75rem;
+    background-color: rgb(249 250 251);
+}
+
+/* Focus visible for accessibility */
+.ts-control:focus-visible,
+.ts-dropdown .option:focus-visible {
+    outline: 2px solid rgb(59 130 246);
+    outline-offset: 2px;
+}
+
+/* Scrollbar styling for dropdown */
+.ts-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.ts-dropdown::-webkit-scrollbar-track {
+    background: rgb(243 244 246);
+}
+
+.ts-dropdown::-webkit-scrollbar-thumb {
+    background: rgb(209 213 219);
+    border-radius: 3px;
+}
+
+.ts-dropdown::-webkit-scrollbar-thumb:hover {
+    background: rgb(156 163 175);
+}
+
+/* Animation for dropdown */
+.ts-dropdown {
+    animation: slideDown 0.15s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Empty state */
+.ts-dropdown .no-results {
+    padding: 0.75rem;
+    text-align: center;
+    color: rgb(107 114 128);
+    font-size: 0.875rem;
+}
