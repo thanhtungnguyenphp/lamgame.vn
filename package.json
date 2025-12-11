@@ -17,6 +17,7 @@
     "vite": "^5.0.0"
   },
   "dependencies": {
-    "alpinejs": "^3.4.2"
+    "alpinejs": "^3.4.2",
+    "tom-select": "^2.4.3"
   }
 }
