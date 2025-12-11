@@ -13,26 +13,26 @@ export function initMultiSelect(selector, options = {}) {
         maxItems: null,
         closeAfterSelect: false,
         hideSelected: false,
+        controlInput: null,
         
         // Tailwind-styled render functions
         render: {
             option: function(data, escape) {
                 return `
-                    <div class="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors">
+                    <div class="flex items-center gap-2 py-2 px-3">
                         <span class="flex-1 text-sm text-gray-900">${escape(data.text)}</span>
-                        ${data.selected ? '<svg class="w-4 h-4 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>' : ''}
                     </div>
                 `;
             },
             item: function(data, escape) {
                 return `
-                    <div class="inline-flex items-center bg-primary-50 text-primary-700 text-sm font-medium px-3 py-1 rounded-full">
-                        ${escape(data.text)}
+                    <div data-value="${escape(data.value)}">
+                        <span>${escape(data.text)}</span>
                     </div>
                 `;
             },
             no_results: function() {
-                return '<div class="px-3 py-2 text-sm text-gray-500 text-center">Không tìm thấy kết quả</div>';
+                return '<div class="px-3 py-3 text-sm text-gray-500 text-center">Không tìm thấy kết quả</div>';
             }
         },
         
