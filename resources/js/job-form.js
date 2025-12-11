@@ -1,5 +1,6 @@
 import TomSelect from 'tom-select';
 import 'tom-select/dist/css/tom-select.bootstrap5.css';
+import '../css/tom-select-custom.css';
 import { initMultiSelect, updateCounter, populateOptions } from './components/multiselect.js';
 
 // Make functions available globally for inline scripts or export for module usage
