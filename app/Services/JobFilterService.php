@@ -148,17 +148,56 @@ class JobFilterService
         $cacheKey = "job_skills_" . md5($search . $category . $limit);
         
         return Cache::remember($cacheKey, $this->cacheTime / 2, function () use ($search, $category, $limit) {
-            // Get skills from existing job postings
-            $existingSkills = $this->getMultiSelectAttributeValues('required_skills', $search, $limit);
+            // Get ALL skills from attribute_options first
+            $allSkills = $this->getAllSkillsFromAttribute($search);
             
-            // Add predefined popular skills if needed
-            if (count($existingSkills) < $limit) {
-                $popularSkills = $this->getPopularSkills($search, $category, $limit - count($existingSkills));
-                $existingSkills = array_merge($existingSkills, $popularSkills);
+            // Get usage count from existing jobs
+            $existingSkills = $this->getMultiSelectAttributeValues('required_skills', $search, 100);
+            $usageMap = [];
+            foreach ($existingSkills as $skill) {
+                $usageMap[$skill['id']] = $skill['count'] ?? 0;
             }
             
-            return array_slice(array_unique($existingSkills, SORT_REGULAR), 0, $limit);
+            // Add usage count to all skills
+            foreach ($allSkills as &$skill) {
+                $skill['count'] = $usageMap[$skill['id']] ?? 0;
+            }
+            
+            // Sort by usage count (most used first)
+            usort($allSkills, function($a, $b) {
+                return $b['count'] - $a['count'];
+            });
+            
+            return array_slice($allSkills, 0, $limit);
         });
+    }
+    
+    /**
+     * Get all skills from attribute_options
+     */
+    protected function getAllSkillsFromAttribute(?string $search = null): array
+    {
+        $query = AttributeOption::whereHas('attribute', function ($q) {
+            $q->where('code', 'required_skills');
+        })->with(['translations' => function($q) {
+            $q->where('locale', 'vi');
+        }]);
+        
+        if ($search) {
+            $query->whereHas('translations', function ($q) use ($search) {
+                $q->where('locale', 'vi')
+                  ->where('label', 'like', '%' . $search . '%');
+            });
+        }
+        
+        return $query->get()->map(function ($option) {
+            $translation = $option->translations->first();
+            return [
+                'id' => $option->id,
+                'value' => $translation ? $translation->label : $option->admin_name,
+                'count' => 0
+            ];
+        })->toArray();
     }
 
     /**
@@ -246,16 +285,56 @@ class JobFilterService
         $cacheKey = "job_benefits_" . md5($search . $limit);
         
         return Cache::remember($cacheKey, $this->cacheTime / 2, function () use ($search, $limit) {
-            $existingBenefits = $this->getMultiSelectAttributeValues('job_benefits', $search, $limit);
+            // Get ALL benefits from attribute_options first
+            $allBenefits = $this->getAllBenefitsFromAttribute($search);
             
-            // Add common benefits if needed
-            if (count($existingBenefits) < $limit) {
-                $commonBenefits = $this->getCommonBenefits($search, $limit - count($existingBenefits));
-                $existingBenefits = array_merge($existingBenefits, $commonBenefits);
+            // Get usage count from existing jobs
+            $existingBenefits = $this->getMultiSelectAttributeValues('job_benefits', $search, 100);
+            $usageMap = [];
+            foreach ($existingBenefits as $benefit) {
+                $usageMap[$benefit['id']] = $benefit['count'] ?? 0;
             }
             
-            return array_slice(array_unique($existingBenefits, SORT_REGULAR), 0, $limit);
+            // Add usage count to all benefits
+            foreach ($allBenefits as &$benefit) {
+                $benefit['count'] = $usageMap[$benefit['id']] ?? 0;
+            }
+            
+            // Sort by usage count (most used first)
+            usort($allBenefits, function($a, $b) {
+                return $b['count'] - $a['count'];
+            });
+            
+            return array_slice($allBenefits, 0, $limit);
         });
+    }
+    
+    /**
+     * Get all benefits from attribute_options
+     */
+    protected function getAllBenefitsFromAttribute(?string $search = null): array
+    {
+        $query = AttributeOption::whereHas('attribute', function ($q) {
+            $q->where('code', 'job_benefits');
+        })->with(['translations' => function($q) {
+            $q->where('locale', 'vi');
+        }]);
+        
+        if ($search) {
+            $query->whereHas('translations', function ($q) use ($search) {
+                $q->where('locale', 'vi')
+                  ->where('label', 'like', '%' . $search . '%');
+            });
+        }
+        
+        return $query->get()->map(function ($option) {
+            $translation = $option->translations->first();
+            return [
+                'id' => $option->id,
+                'value' => $translation ? $translation->label : $option->admin_name,
+                'count' => 0
+            ];
+        })->toArray();
     }
 
     /**
