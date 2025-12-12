@@ -163,12 +163,19 @@ class JobController extends Controller
             ->whereIn('attribute_id', [40, 41, 42, 43, 44, 45, 46, 47, 48, 49])
             ->pluck('text_value', 'attribute_id');
 
+        // Convert single-value attributes to integers
+        foreach ([40, 41, 42, 43, 44, 46, 47, 49] as $attrId) {
+            if (isset($attributes[$attrId]) && is_numeric($attributes[$attrId])) {
+                $attributes[$attrId] = (int) $attributes[$attrId];
+            }
+        }
+
         // Get skills and benefits
         $skillsValue = $attributes[45] ?? '';
         $benefitsValue = $attributes[48] ?? '';
         
-        $skills = $skillsValue ? explode(',', $skillsValue) : [];
-        $benefits = $benefitsValue ? explode(',', $benefitsValue) : [];
+        $skills = $skillsValue ? array_map('intval', explode(',', $skillsValue)) : [];
+        $benefits = $benefitsValue ? array_map('intval', explode(',', $benefitsValue)) : [];
 
         $company = null;
         
