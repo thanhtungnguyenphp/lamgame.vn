@@ -6,6 +6,10 @@
 @push('meta')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="job-id" content="{{ $job->id }}">
+    
+    <!-- Highlight Cards CSS -->
+    <link rel="stylesheet" href="{{ asset('css/job-detail-highlight.css') }}">
+    
     <!-- Customer data for auto-fill -->
     @if($isLoggedIn)
     <script>
@@ -97,6 +101,73 @@
                         </div>
                     </div>
 
+                    <!-- Skills & Benefits Highlight (New Position) -->
+                    @if(isset($job->attributes['required_skills']) && !empty($job->attributes['required_skills']))
+                    @php
+                        $skills = array_map('trim', explode(',', $job->attributes['required_skills']));
+                    @endphp
+                    <div class="skills-highlight-card">
+                        <div class="card-header">
+                            <span class="icon">🎯</span>
+                            <h3 class="card-title">Kỹ năng yêu cầu</h3>
+                        </div>
+                        <div class="skills-grid">
+                            @foreach(array_slice($skills, 0, 6) as $skill)
+                                <span class="skill-pill">{{ $skill }}</span>
+                            @endforeach
+                            @if(count($skills) > 6)
+                                <button class="show-more-btn" onclick="toggleSkills(this)">
+                                    +{{ count($skills) - 6 }} more
+                                </button>
+                            @endif
+                        </div>
+                        @if(count($skills) > 6)
+                        <div class="skills-grid-hidden" style="display: none;">
+                            @foreach(array_slice($skills, 6) as $skill)
+                                <span class="skill-pill">{{ $skill }}</span>
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
+                    @endif
+
+                    @if(isset($job->attributes['job_benefits']) && !empty($job->attributes['job_benefits']))
+                    @php
+                        $benefits = array_map('trim', explode(',', $job->attributes['job_benefits']));
+                    @endphp
+                    <div class="benefits-highlight-card">
+                        <div class="card-header">
+                            <span class="icon">🎁</span>
+                            <h3 class="card-title">Phúc lợi nổi bật</h3>
+                        </div>
+                        <div class="benefits-grid">
+                            @foreach(array_slice($benefits, 0, 6) as $benefit)
+                                <div class="benefit-item-compact">
+                                    <svg class="check-icon" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>{{ $benefit }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                        @if(count($benefits) > 6)
+                        <button class="show-all-btn" onclick="toggleBenefits(this)">
+                            Xem tất cả phúc lợi →
+                        </button>
+                        <div class="benefits-grid-hidden" style="display: none;">
+                            @foreach(array_slice($benefits, 6) as $benefit)
+                                <div class="benefit-item-compact">
+                                    <svg class="check-icon" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span>{{ $benefit }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                        @endif
+                    </div>
+                    @endif
+
                     <!-- Main Content Sections -->
                     <div class="content-sections">
                         <!-- Job Description -->
@@ -110,43 +181,6 @@
                                 @endif
                             </div>
                         </div>
-
-                        <!-- Skills -->
-                        @if(isset($job->attributes['required_skills']) && !empty($job->attributes['required_skills']))
-                        <div class="content-section">
-                            <h2 class="section-title">Kỹ năng yêu cầu</h2>
-                            <div class="section-content">
-                                <div class="skills-list">
-                                    @php
-                                        $skills = explode(',', $job->attributes['required_skills']);
-                                    @endphp
-                                    @foreach($skills as $skill)
-                                        <span class="skill-tag">{{ trim($skill) }}</span>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-
-                        <!-- Benefits -->
-                        @if(isset($job->attributes['job_benefits']) && !empty($job->attributes['job_benefits']))
-                        <div class="content-section">
-                            <h2 class="section-title">Quyền lợi</h2>
-                            <div class="section-content">
-                                <div class="benefits-list">
-                                    @php
-                                        $benefits = explode(',', $job->attributes['job_benefits']);
-                                    @endphp
-                                    @foreach($benefits as $benefit)
-                                        <div class="benefit-item">
-                                            <i class="fa fa-check-circle"></i>
-                                            <span>{{ trim($benefit) }}</span>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                        @endif
 
                         <!-- Additional Info -->
                     </div>
@@ -1630,6 +1664,7 @@
     @endpush
 
     @push('scripts')
+    <script src="{{ asset('js/job-detail-highlight.js') }}"></script>
     <script>
         // REMOVED DUPLICATE SCRIPT - Form submission is handled by job-detail-modal.js
         // This fixes the duplicate submission issue
