@@ -494,9 +494,6 @@ class JobFilterService
             
             if ($option) {
                 $skillsWithIds[] = ['id' => $option->id, 'value' => $skillName];
-            } else {
-                // If not found, use name as both id and value (will be created later)
-                $skillsWithIds[] = ['id' => $skillName, 'value' => $skillName];
             }
         }
 
@@ -536,9 +533,6 @@ class JobFilterService
             
             if ($option) {
                 $benefitsWithIds[] = ['id' => $option->id, 'value' => $benefitName];
-            } else {
-                // If not found, use name as both id and value
-                $benefitsWithIds[] = ['id' => $benefitName, 'value' => $benefitName];
             }
         }
 
