@@ -363,7 +363,9 @@ class JobFilterService
      */
     protected function getMultiSelectAttributeValues(string $attributeCode, ?string $search = null, int $limit = 50): array
     {
-        $values = ProductAttributeValue::whereHas('product.categories', function ($q) {
+        $optionsMap = [];
+        
+        ProductAttributeValue::whereHas('product.categories', function ($q) {
                 $q->where('category_id', $this->jobCategoryId);
             })
             ->whereHas('attribute', function ($q) use ($attributeCode) {
@@ -372,10 +374,8 @@ class JobFilterService
             ->whereNotNull('text_value')
             ->where('text_value', '!=', '')
             ->pluck('text_value')
-            ->flatMap(function ($value) {
-                // Split comma-separated option IDs and convert to labels
+            ->each(function ($value) use (&$optionsMap) {
                 $optionIds = explode(',', $value);
-                $labels = [];
                 
                 foreach ($optionIds as $optionId) {
                     if (is_numeric($optionId)) {
@@ -384,30 +384,26 @@ class JobFilterService
                             $translation = $option->translations()->where('locale', 'vi')->first();
                             $label = $translation?->label ?? $option->admin_name;
                             if ($label) {
-                                $labels[] = $label;
+                                $key = $optionId;
+                                if (!isset($optionsMap[$key])) {
+                                    $optionsMap[$key] = ['id' => $optionId, 'value' => $label, 'count' => 0];
+                                }
+                                $optionsMap[$key]['count']++;
                             }
                         }
                     }
                 }
-                
-                return $labels;
-            })
-            ->filter()
-            ->countBy()
-            ->sortDesc();
+            });
+
+        $values = collect($optionsMap)->sortByDesc('count');
 
         if ($search) {
-            $values = $values->filter(function ($count, $value) use ($search) {
-                return stripos($value, $search) !== false;
+            $values = $values->filter(function ($item) use ($search) {
+                return stripos($item['value'], $search) !== false;
             });
         }
 
-        return $values->take($limit)
-            ->map(function ($count, $value) {
-                return ['value' => $value, 'count' => $count];
-            })
-            ->values()
-            ->toArray();
+        return $values->take($limit)->values()->toArray();
     }
 
     /**
@@ -489,9 +485,22 @@ class JobFilterService
             });
         }
 
-        return array_slice(array_map(function ($skill) {
-            return ['value' => $skill];
-        }, array_values($allSkills)), 0, $limit);
+        // Map skill names to IDs from database
+        $skillsWithIds = [];
+        foreach (array_slice(array_values($allSkills), 0, $limit) as $skillName) {
+            $option = AttributeOption::whereHas('translations', function ($q) use ($skillName) {
+                $q->where('label', $skillName)->where('locale', 'vi');
+            })->first();
+            
+            if ($option) {
+                $skillsWithIds[] = ['id' => $option->id, 'value' => $skillName];
+            } else {
+                // If not found, use name as both id and value (will be created later)
+                $skillsWithIds[] = ['id' => $skillName, 'value' => $skillName];
+            }
+        }
+
+        return $skillsWithIds;
     }
 
     /**
@@ -518,9 +527,22 @@ class JobFilterService
             });
         }
 
-        return array_slice(array_map(function ($benefit) {
-            return ['value' => $benefit];
-        }, array_values($benefits)), 0, $limit);
+        // Map benefit names to IDs from database
+        $benefitsWithIds = [];
+        foreach (array_slice(array_values($benefits), 0, $limit) as $benefitName) {
+            $option = AttributeOption::whereHas('translations', function ($q) use ($benefitName) {
+                $q->where('label', $benefitName)->where('locale', 'vi');
+            })->first();
+            
+            if ($option) {
+                $benefitsWithIds[] = ['id' => $option->id, 'value' => $benefitName];
+            } else {
+                // If not found, use name as both id and value
+                $benefitsWithIds[] = ['id' => $benefitName, 'value' => $benefitName];
+            }
+        }
+
+        return $benefitsWithIds;
     }
 
     /**
