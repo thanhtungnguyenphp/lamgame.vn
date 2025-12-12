@@ -427,8 +427,12 @@ class JobController extends Controller
             41 => $request->experience_level,
             42 => $request->salary_range,
             43 => $request->job_location,
+            44 => $request->education_level,
             45 => is_array($request->required_skills) ? implode(',', $request->required_skills) : $request->required_skills,
+            46 => $request->application_method,
+            47 => $request->english_level,
             48 => is_array($request->job_benefits) ? implode(',', $request->job_benefits) : $request->job_benefits,
+            49 => $request->company_size,
             50 => $request->contact_email,
             51 => $request->contact_phone
         ];
@@ -454,7 +458,7 @@ class JobController extends Controller
         // Delete existing attributes
         DB::table('product_attribute_values')
             ->where('product_id', $productId)
-            ->whereIn('attribute_id', [40, 41, 42, 43, 45, 48, 50, 51])
+            ->whereIn('attribute_id', [40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51])
             ->delete();
 
         // Save new attributes

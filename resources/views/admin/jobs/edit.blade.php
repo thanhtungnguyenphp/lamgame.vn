@@ -198,19 +198,6 @@
         <div class="px-4 py-5 sm:p-6">
             <h3 class="text-base font-semibold leading-6 text-gray-900 mb-4">Thông tin công ty</h3>
             
-            {{-- DEBUG INFO --}}
-            <div class="mb-4 p-3 bg-gray-100 rounded text-xs">
-                <strong>Debug Info:</strong><br>
-                @if(isset($company) && $company)
-                    Company object: EXISTS<br>
-                    Company ID: {{ $company->id }}<br>
-                    Company Name: {{ $company->name }}<br>
-                    Company Website: {{ $company->website ?? 'N/A' }}<br>
-                @else
-                    Company object: NULL<br>
-                @endif
-            </div>
-            
             @if(isset($company) && $company)
                 <div class="mb-4 rounded-md bg-blue-50 p-4">
                     <div class="flex">
