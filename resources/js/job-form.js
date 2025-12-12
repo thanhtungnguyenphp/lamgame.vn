@@ -68,20 +68,23 @@ document.addEventListener('DOMContentLoaded', function() {
             populateOptions(skillsSelect, popular_skills || []);
             populateOptions(benefitsSelect, common_benefits || []);
             
-            // Pre-select existing values in edit mode
+            // Pre-select existing values in edit mode (after options loaded)
             if (isEditMode) {
                 console.log('Edit mode detected:', window.existingJobData);
                 
-                if (window.existingJobData.skills && window.existingJobData.skills.length > 0) {
-                    console.log('Setting skills:', window.existingJobData.skills);
-                    skillsSelect.setValue(window.existingJobData.skills);
-                    updateCounter(skillsSelect, 'skills_count');
-                }
-                if (window.existingJobData.benefits && window.existingJobData.benefits.length > 0) {
-                    console.log('Setting benefits:', window.existingJobData.benefits);
-                    benefitsSelect.setValue(window.existingJobData.benefits);
-                    updateCounter(benefitsSelect, 'benefits_count');
-                }
+                // Use setTimeout to ensure options are fully rendered
+                setTimeout(() => {
+                    if (window.existingJobData.skills && window.existingJobData.skills.length > 0) {
+                        console.log('Setting skills:', window.existingJobData.skills);
+                        skillsSelect.setValue(window.existingJobData.skills);
+                        updateCounter(skillsSelect, 'skills_count');
+                    }
+                    if (window.existingJobData.benefits && window.existingJobData.benefits.length > 0) {
+                        console.log('Setting benefits:', window.existingJobData.benefits);
+                        benefitsSelect.setValue(window.existingJobData.benefits);
+                        updateCounter(benefitsSelect, 'benefits_count');
+                    }
+                }, 100);
             }
             
             // Enable form after loading
