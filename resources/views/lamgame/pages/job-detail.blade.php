@@ -170,10 +170,18 @@
                                         <div class="info-value">{{ $job->attributes['skills_required'] }}</div>
                                     </div>
                                     @endif
-                                    @if($job->application_deadline)
+                                    @php
+                                        try {
+                                            $deadline = \Carbon\Carbon::parse($job->application_deadline);
+                                            $isValidDate = true;
+                                        } catch (\Exception $e) {
+                                            $isValidDate = false;
+                                        }
+                                    @endphp
+                                    @if($job->application_deadline && $isValidDate)
                                     <div class="info-item">
                                         <div class="info-label">Hạn ứng tuyển</div>
-                                        <div class="info-value">{{ \Carbon\Carbon::parse($job->application_deadline)->format('d/m/Y') }}</div>
+                                        <div class="info-value">{{ $deadline->format('d/m/Y') }}</div>
                                     </div>
                                     @endif
                                 </div>
