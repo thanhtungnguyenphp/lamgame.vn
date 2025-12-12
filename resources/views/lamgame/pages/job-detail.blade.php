@@ -111,16 +111,6 @@
                             </div>
                         </div>
 
-                        <!-- Job Requirements -->
-                        @if($job->short_description)
-                        <div class="content-section">
-                            <h2 class="section-title">Yêu cầu công việc</h2>
-                            <div class="section-content">
-                                {!! $job->processed_description !!}
-                            </div>
-                        </div>
-                        @endif
-
                         <!-- Skills -->
                         @if(isset($job->attributes['required_skills']) && !empty($job->attributes['required_skills']))
                         <div class="content-section">
@@ -159,35 +149,6 @@
                         @endif
 
                         <!-- Additional Info -->
-                        @if(isset($job->attributes['skills_required']) || $job->application_deadline)
-                        <div class="content-section">
-                            <h2 class="section-title">Thông tin thêm</h2>
-                            <div class="section-content">
-                                <div class="info-grid">
-                                    @if(isset($job->attributes['skills_required']))
-                                    <div class="info-item">
-                                        <div class="info-label">Kỹ năng yêu cầu</div>
-                                        <div class="info-value">{{ $job->attributes['skills_required'] }}</div>
-                                    </div>
-                                    @endif
-                                    @php
-                                        try {
-                                            $deadline = \Carbon\Carbon::parse($job->application_deadline);
-                                            $isValidDate = true;
-                                        } catch (\Exception $e) {
-                                            $isValidDate = false;
-                                        }
-                                    @endphp
-                                    @if($job->application_deadline && $isValidDate)
-                                    <div class="info-item">
-                                        <div class="info-label">Hạn ứng tuyển</div>
-                                        <div class="info-value">{{ $deadline->format('d/m/Y') }}</div>
-                                    </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                        @endif
                     </div>
                 </div>
 
