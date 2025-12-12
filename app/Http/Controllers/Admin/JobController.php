@@ -160,8 +160,15 @@ class JobController extends Controller
 
         $attributes = DB::table('product_attribute_values')
             ->where('product_id', $id)
-            ->whereIn('attribute_id', [40, 41, 42, 43, 45, 48, 50, 51])
+            ->whereIn('attribute_id', [40, 41, 42, 43, 44, 45, 46, 47, 48, 49])
             ->pluck('text_value', 'attribute_id');
+
+        // Get skills and benefits
+        $skillsValue = $attributes[45] ?? '';
+        $benefitsValue = $attributes[48] ?? '';
+        
+        $skills = $skillsValue ? explode(',', $skillsValue) : [];
+        $benefits = $benefitsValue ? explode(',', $benefitsValue) : [];
 
         $company = null;
         
@@ -195,7 +202,7 @@ class JobController extends Controller
             }
         }
         
-        return view('admin.jobs.edit', compact('job', 'attributes', 'company'));
+        return view('admin.jobs.edit', compact('job', 'attributes', 'company', 'skills', 'benefits'));
     }
 
     public function update(Request $request, $id)
