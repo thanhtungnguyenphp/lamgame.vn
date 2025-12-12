@@ -136,16 +136,30 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium leading-6 text-gray-900">Kỹ năng yêu cầu</label>
-                    <div class="mt-2" id="required_skills_container">
-                        <!-- Checkboxes sẽ được tạo từ API -->
+                    <label for="required_skills" class="block text-sm font-medium leading-6 text-gray-900">Kỹ năng yêu cầu</label>
+                    <div class="mt-2">
+                        <select id="required_skills" name="required_skills[]" multiple>
+                            <!-- Options will be loaded via API -->
+                        </select>
+                        <p class="mt-1 text-xs text-gray-500" id="skills_count" 
+                           data-empty-text="Chưa chọn kỹ năng nào" 
+                           data-suffix="kỹ năng đã chọn">
+                            Chưa chọn kỹ năng nào
+                        </p>
                     </div>
                 </div>
 
                 <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium leading-6 text-gray-900">Phúc lợi</label>
-                    <div class="mt-2" id="job_benefits_container">
-                        <!-- Checkboxes sẽ được tạo từ API -->
+                    <label for="job_benefits" class="block text-sm font-medium leading-6 text-gray-900">Phúc lợi</label>
+                    <div class="mt-2">
+                        <select id="job_benefits" name="job_benefits[]" multiple>
+                            <!-- Options will be loaded via API -->
+                        </select>
+                        <p class="mt-1 text-xs text-gray-500" id="benefits_count" 
+                           data-empty-text="Chưa chọn phúc lợi nào" 
+                           data-suffix="phúc lợi đã chọn">
+                            Chưa chọn phúc lợi nào
+                        </p>
                     </div>
                 </div>
             </div>
@@ -184,6 +198,19 @@
         <div class="px-4 py-5 sm:p-6">
             <h3 class="text-base font-semibold leading-6 text-gray-900 mb-4">Thông tin công ty</h3>
             
+            {{-- DEBUG INFO --}}
+            <div class="mb-4 p-3 bg-gray-100 rounded text-xs">
+                <strong>Debug Info:</strong><br>
+                @if(isset($company) && $company)
+                    Company object: EXISTS<br>
+                    Company ID: {{ $company->id }}<br>
+                    Company Name: {{ $company->name }}<br>
+                    Company Website: {{ $company->website ?? 'N/A' }}<br>
+                @else
+                    Company object: NULL<br>
+                @endif
+            </div>
+            
             @if(isset($company) && $company)
                 <div class="mb-4 rounded-md bg-blue-50 p-4">
                     <div class="flex">
@@ -216,6 +243,17 @@
                 </div>
             @endif
             
+            @php
+                // Debug company data
+                if (isset($company) && $company) {
+                    \Log::info('Company loaded in view', [
+                        'id' => $company->id ?? 'N/A',
+                        'name' => $company->name ?? 'N/A',
+                        'website' => $company->website ?? 'N/A'
+                    ]);
+                }
+            @endphp
+            
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
                     <label for="company_name" class="block text-sm font-medium leading-6 text-gray-900">Tên công ty *</label>
@@ -223,6 +261,9 @@
                         <input type="text" name="company[name]" id="company_name" required 
                                value="{{ old('company.name', $company->name ?? '') }}"
                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+                        @if(isset($company) && $company)
+                            <small class="text-xs text-gray-500 mt-1">Current: {{ $company->name }}</small>
+                        @endif
                     </div>
                 </div>
 
@@ -272,160 +313,13 @@
 @endsection
 
 @push('scripts')
+@vite(['resources/js/job-form.js'])
 <script>
-console.log('Edit job script loaded');
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, starting API call');
-    
-    // Current job attributes
-    const savedValues = @json($attributes);
-    console.log('Saved attributes:', savedValues);
-    
-    fetch('/api/jobs/options/form-data', {
-        method: 'GET',
-        headers: { 
-            'Authorization': 'Bearer null',
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => {
-        console.log('Response status:', response.status);
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('API Response:', data);
-        
-        const attributes = data.data.attributes;
-        
-        // Populate job_type
-        const jobTypeSelect = document.getElementById('job_type');
-        if (jobTypeSelect) {
-            const placeholder = jobTypeSelect.querySelector('option[value=""]');
-            jobTypeSelect.innerHTML = '';
-            if (placeholder) jobTypeSelect.appendChild(placeholder);
-            
-            attributes.job_type.options.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option.id;
-                opt.textContent = option.value;
-                if (savedValues[40] == option.id) {
-                    opt.selected = true;
-                }
-                jobTypeSelect.appendChild(opt);
-            });
-            console.log('Job type populated, selected:', savedValues[40]);
-        }
-        
-        // Populate experience_level
-        const expSelect = document.getElementById('experience_level');
-        if (expSelect) {
-            const placeholder = expSelect.querySelector('option[value=""]');
-            expSelect.innerHTML = '';
-            if (placeholder) expSelect.appendChild(placeholder);
-            
-            attributes.experience_level.options.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option.id;
-                opt.textContent = option.value;
-                if (savedValues[41] == option.id) {
-                    opt.selected = true;
-                }
-                expSelect.appendChild(opt);
-            });
-            console.log('Experience level populated, selected:', savedValues[41]);
-        }
-        
-        // Populate job_location
-        const locSelect = document.getElementById('job_location');
-        if (locSelect) {
-            const placeholder = locSelect.querySelector('option[value=""]');
-            locSelect.innerHTML = '';
-            if (placeholder) locSelect.appendChild(placeholder);
-            
-            attributes.job_location.options.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option.id;
-                opt.textContent = option.value;
-                if (savedValues[43] == option.id) {
-                    opt.selected = true;
-                }
-                locSelect.appendChild(opt);
-            });
-            console.log('Job location populated, selected:', savedValues[43]);
-        }
-        
-        // Populate salary_range
-        const salarySelect = document.getElementById('salary_range');
-        if (salarySelect) {
-            const placeholder = salarySelect.querySelector('option[value=""]');
-            salarySelect.innerHTML = '';
-            if (placeholder) salarySelect.appendChild(placeholder);
-            
-            attributes.salary_range.options.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option.id;
-                opt.textContent = option.value;
-                if (savedValues[42] == option.id) {
-                    opt.selected = true;
-                }
-                salarySelect.appendChild(opt);
-            });
-            console.log('Salary range populated, selected:', savedValues[42]);
-        }
-        
-        // Populate required_skills checkboxes
-        const skillsContainer = document.getElementById('required_skills_container');
-        if (skillsContainer) {
-            skillsContainer.innerHTML = '';
-            const savedSkills = savedValues[45] ? savedValues[45].toString().split(',') : [];
-            
-            attributes.required_skills.options.forEach(option => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'flex items-center mb-2';
-                const checked = savedSkills.includes(option.id.toString()) ? 'checked' : '';
-                wrapper.innerHTML = `
-                    <input type="checkbox" name="required_skills[]" value="${option.id}" 
-                           id="skill_${option.id}" class="h-4 w-4 text-primary-600 border-gray-300 rounded" ${checked}>
-                    <label for="skill_${option.id}" class="ml-2 text-sm text-gray-900">
-                        ${option.value}
-                    </label>
-                `;
-                skillsContainer.appendChild(wrapper);
-            });
-            console.log('Skills populated, selected:', savedSkills);
-        }
-        
-        // Populate job_benefits checkboxes
-        const benefitsContainer = document.getElementById('job_benefits_container');
-        if (benefitsContainer) {
-            benefitsContainer.innerHTML = '';
-            const savedBenefits = savedValues[48] ? savedValues[48].toString().split(',') : [];
-            
-            attributes.job_benefits.options.forEach(option => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'flex items-center mb-2';
-                const checked = savedBenefits.includes(option.id.toString()) ? 'checked' : '';
-                wrapper.innerHTML = `
-                    <input type="checkbox" name="job_benefits[]" value="${option.id}" 
-                           id="benefit_${option.id}" class="h-4 w-4 text-primary-600 border-gray-300 rounded" ${checked}>
-                    <label for="benefit_${option.id}" class="ml-2 text-sm text-gray-900">
-                        ${option.value}
-                    </label>
-                `;
-                benefitsContainer.appendChild(wrapper);
-            });
-            console.log('Benefits populated, selected:', savedBenefits);
-        }
-        
-        console.log('All fields populated successfully');
-    })
-    .catch(error => {
-        console.error('Error loading form data:', error);
-    });
-});
+// Pass existing job data to JavaScript
+window.existingJobData = {
+    skills: @json($skills ?? []),
+    benefits: @json($benefits ?? []),
+    attributes: @json($attributes ?? [])
+};
 </script>
 @endpush

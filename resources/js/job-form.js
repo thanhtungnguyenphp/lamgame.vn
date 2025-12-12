@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Tom Select: Initializing...');
     const form = document.querySelector('form');
     const submitBtn = form.querySelector('button[type="submit"]');
+    const isEditMode = window.existingJobData !== undefined;
         
         // Initialize Tom Select instances (will be populated after API call)
         let skillsSelect, benefitsSelect;
@@ -43,14 +44,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const { attributes, popular_skills, common_benefits } = data.data;
             
             // Populate standard selects
-            populateSelect('job_type', attributes.job_type?.options || []);
-            populateSelect('experience_level', attributes.experience_level?.options || []);
-            populateSelect('job_location', attributes.job_location?.options || []);
-            populateSelect('salary_range', attributes.salary_range?.options || []);
-            populateSelect('application_method', attributes.application_method?.options || []);
-            populateSelect('education_level', attributes.education_level?.options || []);
-            populateSelect('english_level', attributes.english_level?.options || []);
-            populateSelect('company_size', attributes.company_size?.options || []);
+            populateSelect('job_type', attributes.job_type?.options || [], isEditMode ? window.existingJobData.attributes[40] : null);
+            populateSelect('experience_level', attributes.experience_level?.options || [], isEditMode ? window.existingJobData.attributes[41] : null);
+            populateSelect('job_location', attributes.job_location?.options || [], isEditMode ? window.existingJobData.attributes[43] : null);
+            populateSelect('salary_range', attributes.salary_range?.options || [], isEditMode ? window.existingJobData.attributes[42] : null);
+            populateSelect('application_method', attributes.application_method?.options || [], isEditMode ? window.existingJobData.attributes[46] : null);
+            populateSelect('education_level', attributes.education_level?.options || [], isEditMode ? window.existingJobData.attributes[44] : null);
+            populateSelect('english_level', attributes.english_level?.options || [], isEditMode ? window.existingJobData.attributes[47] : null);
+            populateSelect('company_size', attributes.company_size?.options || [], isEditMode ? window.existingJobData.attributes[49] : null);
             
             // Initialize Tom Select with data
             skillsSelect = initMultiSelect('#required_skills', {
@@ -67,6 +68,18 @@ document.addEventListener('DOMContentLoaded', function() {
             populateOptions(skillsSelect, popular_skills || []);
             populateOptions(benefitsSelect, common_benefits || []);
             
+            // Pre-select existing values in edit mode
+            if (isEditMode) {
+                if (window.existingJobData.skills && window.existingJobData.skills.length > 0) {
+                    skillsSelect.setValue(window.existingJobData.skills);
+                    updateCounter(skillsSelect, 'skills_count');
+                }
+                if (window.existingJobData.benefits && window.existingJobData.benefits.length > 0) {
+                    benefitsSelect.setValue(window.existingJobData.benefits);
+                    updateCounter(benefitsSelect, 'benefits_count');
+                }
+            }
+            
             // Enable form after loading
             disableForm(false);
         })
@@ -76,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
             disableForm(false);
         });
         
-        function populateSelect(selectId, options) {
+        function populateSelect(selectId, options, selectedValue = null) {
             const select = document.getElementById(selectId);
             if (select) {
                 const placeholder = select.querySelector('option[value=""]');
@@ -87,6 +100,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     const opt = document.createElement('option');
                     opt.value = option.id;
                     opt.textContent = option.value;
+                    if (selectedValue && option.id == selectedValue) {
+                        opt.selected = true;
+                    }
                     select.appendChild(opt);
                 });
             }
