@@ -28,8 +28,8 @@ class JobOptionsController extends Controller
             $formData = [
                 'attributes' => $this->jobFilterService->getJobAttributesForForm(),
                 'categories' => $this->jobFilterService->getJobCategories(),
-                'popular_skills' => $this->jobFilterService->getSkills(null, null, 30),
-                'common_benefits' => $this->jobFilterService->getBenefits(null, 20),
+                'popular_skills' => $this->jobFilterService->getSkills(null, null, 100),
+                'common_benefits' => $this->jobFilterService->getBenefits(null, 100),
             ];
 
             return response()->json([
