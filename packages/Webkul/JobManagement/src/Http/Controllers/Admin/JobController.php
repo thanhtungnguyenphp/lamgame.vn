@@ -166,6 +166,20 @@ class JobController extends Controller
             ->where('product_id', $id)
             ->pluck('text_value', 'attribute_id');
         
+        // Convert single-value attributes to integers
+        foreach ([40, 41, 42, 43, 44, 46, 47, 49] as $attrId) {
+            if (isset($attributes[$attrId]) && is_numeric($attributes[$attrId])) {
+                $attributes[$attrId] = (int) $attributes[$attrId];
+            }
+        }
+        
+        // Get skills and benefits
+        $skillsValue = $attributes[45] ?? '';
+        $benefitsValue = $attributes[48] ?? '';
+        
+        $skills = $skillsValue ? array_map('intval', explode(',', $skillsValue)) : [];
+        $benefits = $benefitsValue ? array_map('intval', explode(',', $benefitsValue)) : [];
+        
         // Load admin's company
         $admin = auth()->guard('admin')->user();
         $company = null;
@@ -188,7 +202,7 @@ class JobController extends Controller
             }
         }
 
-        return view('admin.jobs.edit', compact('job', 'attributes', 'company'));
+        return view('admin.jobs.edit', compact('job', 'attributes', 'company', 'skills', 'benefits'));
     }
 
     /**
