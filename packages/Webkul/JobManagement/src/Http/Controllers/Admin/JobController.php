@@ -81,6 +81,10 @@ class JobController extends Controller
      */
     public function store(Request $request)
     {
+        \Log::info('Store job started', [
+            'request_data' => $request->all()
+        ]);
+        
         $request->validate([
             'title' => 'required|string|max:255',
             'company_id' => 'required|exists:companies,id',
@@ -103,6 +107,8 @@ class JobController extends Controller
                 'created_by_admin_id' => auth()->guard('admin')->id(),
             ]);
 
+            \Log::info('Product created', ['product_id' => $product->id]);
+
             // Create product flat
             DB::table('product_flat')->insert([
                 'product_id' => $product->id,
@@ -121,6 +127,8 @@ class JobController extends Controller
 
             // Save job attributes
             $this->saveJobAttributes($product->id, $request);
+            
+            \Log::info('Job created successfully', ['product_id' => $product->id]);
 
             DB::commit();
 
@@ -129,6 +137,10 @@ class JobController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
+            \Log::error('Store job failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             session()->flash('error', trans('job_management::app.admin.jobs.create-error'));
             return back()->withInput();
         }
@@ -437,6 +449,11 @@ class JobController extends Controller
             51 => $request->contact_phone
         ];
 
+        \Log::info('Saving job attributes', [
+            'product_id' => $productId,
+            'attributes' => $attributes
+        ]);
+
         foreach ($attributes as $attributeId => $value) {
             if ($value) {
                 DB::table('product_attribute_values')->insert([
@@ -446,6 +463,9 @@ class JobController extends Controller
                     'locale' => 'vi',
                     'channel' => 'default'
                 ]);
+                \Log::info('Inserted attribute', ['attribute_id' => $attributeId, 'value' => $value]);
+            } else {
+                \Log::warning('Skipped empty attribute', ['attribute_id' => $attributeId]);
             }
         }
     }
