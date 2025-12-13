@@ -108,3 +108,7 @@ cleanup-backups/
 *-fix-summary.md
 CLEANUP_SUMMARY.md
 *export*.sql
+
+# Local config files
+docker-compose.yml
+docker/nginx/lamgame.conf
