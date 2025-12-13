@@ -85,6 +85,72 @@
                                         <span>{{ $postedAgo }}</span>
                                     </div>
                                 </div>
+
+                                <!-- Job Quick Info: Skills & Benefits Combined -->
+                                @if(
+                                    (isset($job->attributes['required_skills']) && !empty($job->attributes['required_skills'])) ||
+                                    (isset($job->attributes['job_benefits']) && !empty($job->attributes['job_benefits']))
+                                )
+                                <div class="job-quick-info">
+                                    <!-- Skills Row -->
+                                    @if(isset($job->attributes['required_skills']) && !empty($job->attributes['required_skills']))
+                                    @php
+                                        $skills = array_map('trim', explode(',', $job->attributes['required_skills']));
+                                        $visibleSkills = array_slice($skills, 0, 4);
+                                        $hiddenSkillsCount = max(0, count($skills) - 4);
+                                    @endphp
+                                    <div class="quick-info-row">
+                                        <span class="quick-info-label">Kỹ năng:</span>
+                                        <div class="quick-info-content">
+                                            @foreach($visibleSkills as $skill)
+                                                <span class="info-pill">{{ $skill }}</span>
+                                            @endforeach
+                                            @if($hiddenSkillsCount > 0)
+                                                <button type="button" class="show-more-link" onclick="toggleQuickSkills(this)" data-count="{{ $hiddenSkillsCount }}">
+                                                    +{{ $hiddenSkillsCount }} kỹ năng
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    @if($hiddenSkillsCount > 0)
+                                    <div class="quick-info-content hidden-skills" style="display: none; padding-left: 82px;">
+                                        @foreach(array_slice($skills, 4) as $skill)
+                                            <span class="info-pill">{{ $skill }}</span>
+                                        @endforeach
+                                    </div>
+                                    @endif
+                                    @endif
+
+                                    <!-- Benefits Row -->
+                                    @if(isset($job->attributes['job_benefits']) && !empty($job->attributes['job_benefits']))
+                                    @php
+                                        $benefits = array_map('trim', explode(',', $job->attributes['job_benefits']));
+                                        $visibleBenefits = array_slice($benefits, 0, 4);
+                                        $hiddenBenefitsCount = max(0, count($benefits) - 4);
+                                    @endphp
+                                    <div class="quick-info-row">
+                                        <span class="quick-info-label">Phúc lợi:</span>
+                                        <div class="quick-info-content">
+                                            @foreach($visibleBenefits as $benefit)
+                                                <span class="info-pill">{{ $benefit }}</span>
+                                            @endforeach
+                                            @if($hiddenBenefitsCount > 0)
+                                                <button type="button" class="show-more-link" onclick="toggleQuickBenefits(this)" data-count="{{ $hiddenBenefitsCount }}">
+                                                    +{{ $hiddenBenefitsCount }} phúc lợi
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    @if($hiddenBenefitsCount > 0)
+                                    <div class="quick-info-content hidden-benefits" style="display: none; padding-left: 82px;">
+                                        @foreach(array_slice($benefits, 4) as $benefit)
+                                            <span class="info-pill">{{ $benefit }}</span>
+                                        @endforeach
+                                    </div>
+                                    @endif
+                                    @endif
+                                </div>
+                                @endif
                             </div>
                         </div>
 
@@ -100,73 +166,6 @@
                             </button>
                         </div>
                     </div>
-
-                    <!-- Skills & Benefits Highlight (New Position) -->
-                    @if(isset($job->attributes['required_skills']) && !empty($job->attributes['required_skills']))
-                    @php
-                        $skills = array_map('trim', explode(',', $job->attributes['required_skills']));
-                    @endphp
-                    <div class="skills-highlight-card">
-                        <div class="card-header">
-                            <span class="icon">🎯</span>
-                            <h3 class="card-title">Kỹ năng yêu cầu</h3>
-                        </div>
-                        <div class="skills-grid">
-                            @foreach(array_slice($skills, 0, 6) as $skill)
-                                <span class="skill-pill">{{ $skill }}</span>
-                            @endforeach
-                            @if(count($skills) > 6)
-                                <button class="show-more-btn" onclick="toggleSkills(this)">
-                                    +{{ count($skills) - 6 }} more
-                                </button>
-                            @endif
-                        </div>
-                        @if(count($skills) > 6)
-                        <div class="skills-grid-hidden" style="display: none;">
-                            @foreach(array_slice($skills, 6) as $skill)
-                                <span class="skill-pill">{{ $skill }}</span>
-                            @endforeach
-                        </div>
-                        @endif
-                    </div>
-                    @endif
-
-                    @if(isset($job->attributes['job_benefits']) && !empty($job->attributes['job_benefits']))
-                    @php
-                        $benefits = array_map('trim', explode(',', $job->attributes['job_benefits']));
-                    @endphp
-                    <div class="benefits-highlight-card">
-                        <div class="card-header">
-                            <span class="icon">🎁</span>
-                            <h3 class="card-title">Phúc lợi nổi bật</h3>
-                        </div>
-                        <div class="benefits-grid">
-                            @foreach(array_slice($benefits, 0, 6) as $benefit)
-                                <div class="benefit-item-compact">
-                                    <svg class="check-icon" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                    </svg>
-                                    <span>{{ $benefit }}</span>
-                                </div>
-                            @endforeach
-                        </div>
-                        @if(count($benefits) > 6)
-                        <button class="show-all-btn" onclick="toggleBenefits(this)">
-                            Xem tất cả phúc lợi →
-                        </button>
-                        <div class="benefits-grid-hidden" style="display: none;">
-                            @foreach(array_slice($benefits, 6) as $benefit)
-                                <div class="benefit-item-compact">
-                                    <svg class="check-icon" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                    </svg>
-                                    <span>{{ $benefit }}</span>
-                                </div>
-                            @endforeach
-                        </div>
-                        @endif
-                    </div>
-                    @endif
 
                     <!-- Main Content Sections -->
                     <div class="content-sections">
@@ -459,6 +458,84 @@
         .meta-item i {
             color: #667eea;
             font-size: 0.9rem;
+        }
+
+        /* Job Quick Info - Combined Skills & Benefits */
+        .job-quick-info {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .quick-info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-info-label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+            min-width: 70px;
+            flex-shrink: 0;
+            line-height: 1.75;
+        }
+
+        .quick-info-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            flex: 1;
+            align-items: center;
+        }
+
+        .quick-info-content.hidden-skills,
+        .quick-info-content.hidden-benefits {
+            padding-left: 82px;
+            margin-top: -0.25rem;
+        }
+
+        .info-pill {
+            background: white;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            line-height: 1.2;
+        }
+
+        .info-pill:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+
+        .show-more-link {
+            color: #667eea;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            background: none;
+            border: none;
+            padding: 0.375rem 0.5rem;
+            text-decoration: none;
+            line-height: 1.2;
+        }
+
+        .show-more-link:hover {
+            color: #5a67d8;
+            text-decoration: underline;
         }
 
         /* Action Buttons */
@@ -1206,6 +1283,25 @@
 
             .apply-cta h3 {
                 font-size: 1.2rem;
+            }
+
+            /* Job Quick Info Mobile */
+            .job-quick-info {
+                padding: 0.875rem 1rem;
+            }
+            
+            .quick-info-row {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .quick-info-label {
+                min-width: auto;
+            }
+            
+            .quick-info-content.hidden-skills,
+            .quick-info-content.hidden-benefits {
+                padding-left: 0;
             }
         }
 
