@@ -351,6 +351,10 @@ class JobController extends Controller
             41 => $request->experience_level,
             42 => $request->salary_range,
             43 => $request->job_location,
+            44 => $request->education_level,
+            46 => $request->application_method,
+            47 => $request->english_level,
+            49 => $request->company_size,
             50 => $request->contact_email,
             51 => $request->contact_phone
         ];
@@ -360,13 +364,25 @@ class JobController extends Controller
                 DB::table('product_attribute_values')->insert([
                     'product_id' => $productId,
                     'attribute_id' => $attributeId,
-                    'text_value' => $value
+                    'text_value' => $value,
+                    'locale' => 'vi',
+                    'channel' => 'default'
                 ]);
             }
         }
         
-        // Save skills using pivot table
+        // Save skills using pivot table AND product_attribute_values
         if ($request->has('required_skills') && is_array($request->required_skills)) {
+            // Save to product_attribute_values (for compatibility)
+            DB::table('product_attribute_values')->insert([
+                'product_id' => $productId,
+                'attribute_id' => 45,
+                'text_value' => implode(',', $request->required_skills),
+                'locale' => 'vi',
+                'channel' => 'default'
+            ]);
+            
+            // Save to pivot table
             $skillsData = array_map(function($skillId) use ($productId) {
                 return [
                     'product_id' => $productId,
@@ -379,8 +395,18 @@ class JobController extends Controller
             DB::table('job_skills')->insert($skillsData);
         }
         
-        // Save benefits using pivot table
+        // Save benefits using pivot table AND product_attribute_values
         if ($request->has('job_benefits') && is_array($request->job_benefits)) {
+            // Save to product_attribute_values (for compatibility)
+            DB::table('product_attribute_values')->insert([
+                'product_id' => $productId,
+                'attribute_id' => 48,
+                'text_value' => implode(',', $request->job_benefits),
+                'locale' => 'vi',
+                'channel' => 'default'
+            ]);
+            
+            // Save to pivot table
             $benefitsData = array_map(function($benefitId) use ($productId) {
                 return [
                     'product_id' => $productId,
