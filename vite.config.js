@@ -17,7 +17,9 @@ export default defineConfig({
       input: [
         'resources/css/app.css',
         'resources/js/app.js',
-        'resources/js/job-form.js'
+        'resources/js/job-form.js',
+        'resources/js/job-editor.js',
+        'resources/css/job-editor.css'
       ],
       refresh: true,
       // dùng mặc định: hotFile => storage/framework/vite.hot

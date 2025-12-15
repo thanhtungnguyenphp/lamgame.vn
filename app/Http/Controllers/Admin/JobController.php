@@ -32,6 +32,12 @@ class JobController extends Controller
 
     public function store(Request $request)
     {
+        // Sanitize HTML inputs
+        $request->merge([
+            'short_description' => \App\Helpers\HtmlSanitizer::sanitizeAndLimit($request->short_description, 500),
+            'description' => \App\Helpers\HtmlSanitizer::sanitize($request->description),
+        ]);
+        
         // Validate request
         $request->validate([
             'title' => 'required|string|max:255',
