@@ -3,6 +3,13 @@ import 'tom-select/dist/css/tom-select.bootstrap5.css';
 import '../css/tom-select-custom.css';
 import { initMultiSelect, updateCounter, populateOptions } from './components/multiselect.js';
 
+// Import Quill for text editor
+import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
+import '../css/job-editor.css';
+
+console.log('Job form + editor loaded');
+
 // Make functions available globally for inline scripts or export for module usage
 window.JobForm = {
     initMultiSelect,
@@ -139,4 +146,74 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.appendChild(errorDiv);
             setTimeout(() => errorDiv.remove(), 5000);
         }
+    
+    // Initialize Quill Editors
+    console.log('Initializing Quill editors...');
+    
+    // Short Description Editor
+    const shortDescContainer = document.getElementById('short_description');
+    if (shortDescContainer) {
+        console.log('Found short_description textarea');
+        shortDescContainer.style.display = 'none';
+        
+        const editorDiv = document.createElement('div');
+        editorDiv.id = 'short-desc-editor';
+        editorDiv.className = 'quill-editor-short';
+        shortDescContainer.parentNode.insertBefore(editorDiv, shortDescContainer.nextSibling);
+        
+        const shortDescEditor = new Quill('#short-desc-editor', {
+            theme: 'snow',
+            placeholder: 'Nhập mô tả ngắn...',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    [{ 'list': 'bullet' }]
+                ]
+            }
+        });
+        
+        if (shortDescContainer.value) {
+            shortDescEditor.root.innerHTML = shortDescContainer.value;
+        }
+        
+        shortDescEditor.on('text-change', function() {
+            shortDescContainer.value = shortDescEditor.root.innerHTML;
+        });
+        
+        console.log('Short description editor initialized');
+    }
+    
+    // Full Description Editor
+    const descContainer = document.getElementById('description');
+    if (descContainer) {
+        console.log('Found description textarea');
+        descContainer.style.display = 'none';
+        
+        const editorDiv = document.createElement('div');
+        editorDiv.id = 'desc-editor';
+        editorDiv.className = 'quill-editor-full';
+        descContainer.parentNode.insertBefore(editorDiv, descContainer.nextSibling);
+        
+        const descEditor = new Quill('#desc-editor', {
+            theme: 'snow',
+            placeholder: 'Nhập mô tả chi tiết...',
+            modules: {
+                toolbar: [
+                    [{ 'header': [3, 4, false] }],
+                    ['bold', 'italic', 'underline'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }]
+                ]
+            }
+        });
+        
+        if (descContainer.value) {
+            descEditor.root.innerHTML = descContainer.value;
+        }
+        
+        descEditor.on('text-change', function() {
+            descContainer.value = descEditor.root.innerHTML;
+        });
+        
+        console.log('Description editor initialized');
+    }
 });
