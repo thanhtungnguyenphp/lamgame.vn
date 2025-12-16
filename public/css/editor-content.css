@@ -1,0 +1,129 @@
+/* Editor Content Styles - Preserve formatting from WYSIWYG editor */
+
+.editor-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Headings */
+.editor-content h1,
+.editor-content h2,
+.editor-content h3,
+.editor-content h4,
+.editor-content h5,
+.editor-content h6 {
+    font-weight: 600;
+    margin: 1.5em 0 0.75em;
+    line-height: 1.3;
+    color: #1a202c;
+}
+
+.editor-content h1 { font-size: 1.75em; }
+.editor-content h2 { font-size: 1.5em; }
+.editor-content h3 { font-size: 1.25em; }
+.editor-content h4 { font-size: 1.1em; }
+.editor-content h5 { font-size: 1em; }
+.editor-content h6 { font-size: 0.9em; }
+
+/* Paragraphs */
+.editor-content p {
+    margin: 0.75em 0;
+    line-height: 1.6;
+}
+
+/* Text formatting */
+.editor-content strong,
+.editor-content b {
+    font-weight: 600;
+    color: #1a202c;
+}
+
+.editor-content em,
+.editor-content i {
+    font-style: italic;
+}
+
+.editor-content u {
+    text-decoration: underline;
+}
+
+/* Lists */
+.editor-content ul,
+.editor-content ol {
+    margin: 1em 0;
+    padding-left: 2em;
+}
+
+.editor-content ul {
+    list-style-type: disc;
+}
+
+.editor-content ol {
+    list-style-type: decimal;
+}
+
+.editor-content li {
+    margin: 0.5em 0;
+    line-height: 1.6;
+}
+
+/* Nested lists */
+.editor-content li > ul,
+.editor-content li > ol {
+    margin: 0.5em 0;
+}
+
+.editor-content ul ul {
+    list-style-type: circle;
+}
+
+.editor-content ul ul ul {
+    list-style-type: square;
+}
+
+/* Line breaks */
+.editor-content br {
+    display: block;
+    content: "";
+    margin: 0.5em 0;
+}
+
+/* Reset margins for first/last elements */
+.editor-content > *:first-child {
+    margin-top: 0;
+}
+
+.editor-content > *:last-child {
+    margin-bottom: 0;
+}
+
+/* Container optimization */
+.section-content.editor-content {
+    /* Prevent overflow */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    
+    /* Isolate styles to prevent affecting other blocks */
+    isolation: isolate;
+}
+
+/* Clear floats */
+.section-content.editor-content::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .editor-content {
+        font-size: 0.95rem;
+    }
+    
+    .editor-content ul,
+    .editor-content ol {
+        padding-left: 1.5em;
+    }
+}

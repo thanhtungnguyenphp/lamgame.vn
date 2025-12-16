@@ -16,8 +16,8 @@ class HtmlSanitizer
             return '';
         }
         
-        // Allowed tags for job descriptions
-        $allowedTags = '<p><br><strong><em><u><ol><ul><li><h3><h4>';
+        // Allowed tags for job descriptions (including editor formatting)
+        $allowedTags = '<p><br><strong><b><em><i><u><ol><ul><li><h1><h2><h3><h4><h5><h6>';
         
         // Strip all tags except allowed
         $html = strip_tags($html, $allowedTags);
