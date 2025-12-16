@@ -209,6 +209,9 @@ class LamGamePageController extends Controller
             })
             ->take(15);
 
+        // Generate structured data
+        $schemas = \App\Helpers\StructuredDataHelper::generateAll('blog', $blog);
+
         return view('lamgame.pages.blog-detail', [
             'page_title' => $blog->meta_title ?: $blog->name . ' - Làm Game',
             'page_description' => $blog->meta_description ?: $blog->short_description,
@@ -220,6 +223,7 @@ class LamGamePageController extends Controller
             'categories' => $categories,
             'recentPosts' => $recentPosts,
             'popularTags' => $popularTags,
+            'schemas' => $schemas,
         ]);
     }
 
@@ -705,6 +709,9 @@ class LamGamePageController extends Controller
             ];
         }
 
+        // Generate structured data
+        $schemas = \App\Helpers\StructuredDataHelper::generateAll('job', $job);
+
         return view('lamgame.pages.job-detail', [
             'job' => $job,
             'jobTitle' => $jobTitle,
@@ -717,6 +724,7 @@ class LamGamePageController extends Controller
             'isLoggedIn' => !is_null($customer),
             'page_title' => $jobTitle . ' - ' . $companyName . ' - Làm Game',
             'page_description' => \Str::limit($job->short_description, 160),
+            'schemas' => $schemas,
         ]);
     }
 

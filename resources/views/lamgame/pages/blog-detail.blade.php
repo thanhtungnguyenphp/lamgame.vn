@@ -8,6 +8,13 @@
 @endif
 
 @push('meta')
+<!-- Structured Data (Schema.org) -->
+@if(isset($schemas))
+    @foreach($schemas as $schema)
+        <script type="application/ld+json">{!! $schema !!}</script>
+    @endforeach
+@endif
+
 <!-- Blog tracking -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {

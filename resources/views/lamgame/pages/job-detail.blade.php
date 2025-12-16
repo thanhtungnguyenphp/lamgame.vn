@@ -7,6 +7,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="job-id" content="{{ $job->id }}">
     
+    <!-- Structured Data (Schema.org) -->
+    @if(isset($schemas))
+        @foreach($schemas as $schema)
+            <script type="application/ld+json">{!! $schema !!}</script>
+        @endforeach
+    @endif
+    
     <!-- Highlight Cards CSS -->
     <link rel="stylesheet" href="{{ asset('css/job-detail-highlight.css') }}">
     

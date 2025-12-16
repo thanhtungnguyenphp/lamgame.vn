@@ -9,11 +9,13 @@ class StructuredDataHelper
      */
     public static function jobPosting($job)
     {
+        $description = $job->description ?? $job->short_description ?? '';
+        
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'JobPosting',
             'title' => $job->name,
-            'description' => strip_tags($job->description ?? $job->short_description),
+            'description' => strip_tags($description),
             'datePosted' => date('Y-m-d', strtotime($job->created_at)),
             'validThrough' => date('Y-m-d', strtotime('+30 days', strtotime($job->created_at))),
             'employmentType' => self::getEmploymentType($job),
