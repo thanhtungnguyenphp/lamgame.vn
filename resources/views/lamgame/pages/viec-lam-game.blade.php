@@ -261,17 +261,12 @@
                                             <i class="fa fa-eye"></i>
                                             <span class="btn-text">Chi tiết</span>
                                         </a>
-                                        @if($job->contact_email)
-                                            <a href="mailto:{{ $job->contact_email }}?subject=Ứng tuyển: {{ $job->job_title }}" class="btn btn-apply">
-                                                <i class="fa fa-paper-plane"></i>
-                                                <span class="btn-text">Ứng tuyển</span>
-                                            </a>
-                                        @else
-                                            <button class="btn btn-apply">
-                                                <i class="fa fa-paper-plane"></i>
-                                                <span class="btn-text">Ứng tuyển</span>
-                                            </button>
-                                        @endif
+                                        <a href="{{ route('lamgame.job.detail', $job->url_key) }}" 
+                                           class="btn btn-apply" 
+                                           onclick="trackApplyClick({{ $job->id }}, '{{ $job->job_title }}', '{{ $job->company_name }}')">
+                                            <i class="fa fa-paper-plane"></i>
+                                            <span class="btn-text">Ứng tuyển</span>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -788,6 +783,37 @@
                 `;
                 document.head.appendChild(style);
             });
+        }
+    </script>
+
+    <script>
+        // Track Apply button clicks
+        function trackApplyClick(jobId, jobTitle, companyName) {
+            const trackData = {
+                job_id: jobId,
+                job_title: jobTitle,
+                company_name: companyName,
+                timestamp: new Date().toISOString(),
+                source: 'job_listing'
+            };
+            
+            // Log to console
+            console.log('Apply Button Clicked:', trackData);
+            
+            // Send to server (optional)
+            fetch('/api/track-apply-click', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                },
+                body: JSON.stringify(trackData)
+            }).catch(err => console.log('Tracking error:', err));
+            
+            // Store in localStorage for analytics
+            const clicks = JSON.parse(localStorage.getItem('apply_clicks') || '[]');
+            clicks.push(trackData);
+            localStorage.setItem('apply_clicks', JSON.stringify(clicks.slice(-50))); // Keep last 50
         }
     </script>
     @endpush
