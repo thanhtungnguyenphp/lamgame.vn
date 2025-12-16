@@ -10,6 +10,9 @@
     <!-- Highlight Cards CSS -->
     <link rel="stylesheet" href="{{ asset('css/job-detail-highlight.css') }}">
     
+    <!-- Editor Content CSS -->
+    <link rel="stylesheet" href="{{ asset('css/editor-content.css') }}">
+    
     <!-- Customer data for auto-fill -->
     @if($isLoggedIn)
     <script>
@@ -172,9 +175,9 @@
                         <!-- Job Description -->
                         <div class="content-section">
                             <h2 class="section-title">Mô tả công việc</h2>
-                            <div class="section-content">
+                            <div class="section-content editor-content">
                                 @if($job->description)
-                                    {!! nl2br($job->description) !!}
+                                    {!! \App\Helpers\HtmlSanitizer::sanitize($job->description) !!}
                                 @else
                                     <p>Thông tin mô tả công việc sẽ được cập nhật sớm.</p>
                                 @endif
