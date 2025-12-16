@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => errorDiv.remove(), 5000);
         }
     
-    // Initialize Quill Editors
+    // Initialize Quill Editors (Enhanced)
     console.log('Initializing Quill editors...');
     
     // Short Description Editor
@@ -161,14 +161,22 @@ document.addEventListener('DOMContentLoaded', function() {
         editorDiv.className = 'quill-editor-short';
         shortDescContainer.parentNode.insertBefore(editorDiv, shortDescContainer.nextSibling);
         
+        // Counter
+        const counterDiv = document.createElement('div');
+        counterDiv.id = 'short-desc-counter';
+        counterDiv.className = 'editor-counter';
+        editorDiv.parentNode.insertBefore(counterDiv, editorDiv.nextSibling);
+        
         const shortDescEditor = new Quill('#short-desc-editor', {
             theme: 'snow',
-            placeholder: 'Nhập mô tả ngắn...',
+            placeholder: 'Nhập mô tả ngắn (tối đa 200 ký tự)...',
             modules: {
                 toolbar: [
                     ['bold', 'italic', 'underline'],
-                    [{ 'list': 'bullet' }]
-                ]
+                    [{ 'list': 'bullet' }],
+                    ['clean']
+                ],
+                history: { delay: 1000, maxStack: 50, userOnly: true }
             }
         });
         
@@ -176,14 +184,24 @@ document.addEventListener('DOMContentLoaded', function() {
             shortDescEditor.root.innerHTML = shortDescContainer.value;
         }
         
+        const updateShortCounter = () => {
+            const text = shortDescEditor.getText().trim();
+            const length = text.length;
+            counterDiv.textContent = `${length}/200 ký tự`;
+            counterDiv.style.color = length > 200 ? '#ef4444' : '#6b7280';
+            if (length > 200) shortDescEditor.deleteText(200, length);
+        };
+        
+        updateShortCounter();
         shortDescEditor.on('text-change', function() {
             shortDescContainer.value = shortDescEditor.root.innerHTML;
+            updateShortCounter();
         });
         
         console.log('Short description editor initialized');
     }
     
-    // Full Description Editor
+    // Full Description Editor (Enhanced)
     const descContainer = document.getElementById('description');
     if (descContainer) {
         console.log('Found description textarea');
@@ -194,15 +212,26 @@ document.addEventListener('DOMContentLoaded', function() {
         editorDiv.className = 'quill-editor-full';
         descContainer.parentNode.insertBefore(editorDiv, descContainer.nextSibling);
         
+        // Counter
+        const counterDiv = document.createElement('div');
+        counterDiv.id = 'desc-counter';
+        counterDiv.className = 'editor-counter';
+        editorDiv.parentNode.insertBefore(counterDiv, editorDiv.nextSibling);
+        
         const descEditor = new Quill('#desc-editor', {
             theme: 'snow',
-            placeholder: 'Nhập mô tả chi tiết...',
+            placeholder: 'Nhập mô tả chi tiết công việc...',
             modules: {
                 toolbar: [
-                    [{ 'header': [3, 4, false] }],
-                    ['bold', 'italic', 'underline'],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }]
-                ]
+                    [{ 'header': [1, 2, 3, 4, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    [{ 'align': [] }],
+                    ['blockquote', 'link'],
+                    ['clean']
+                ],
+                history: { delay: 1000, maxStack: 50, userOnly: true }
             }
         });
         
@@ -210,8 +239,15 @@ document.addEventListener('DOMContentLoaded', function() {
             descEditor.root.innerHTML = descContainer.value;
         }
         
+        const updateDescCounter = () => {
+            const text = descEditor.getText().trim();
+            counterDiv.textContent = `${text.length} ký tự`;
+        };
+        
+        updateDescCounter();
         descEditor.on('text-change', function() {
             descContainer.value = descEditor.root.innerHTML;
+            updateDescCounter();
         });
         
         console.log('Description editor initialized');
