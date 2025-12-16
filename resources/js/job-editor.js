@@ -4,8 +4,17 @@ import 'quill/dist/quill.snow.css';
 console.log('Job editor script loaded');
 
 // XSS Protection: Whitelist allowed tags and attributes
-const allowedTags = ['p', 'br', 'strong', 'em', 'u', 'ol', 'ul', 'li', 'h3', 'h4'];
-const allowedAttributes = {};
+const allowedTags = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'ol', 'ul', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'a'];
+const allowedAttributes = {
+    'a': ['href', 'title', 'target', 'rel'],
+    'p': ['class'],
+    'h1': ['class'],
+    'h2': ['class'],
+    'h3': ['class'],
+    'h4': ['class'],
+    'h5': ['class'],
+    'h6': ['class']
+};
 
 // Sanitize HTML to prevent XSS
 function sanitizeHTML(html) {
@@ -26,8 +35,21 @@ function sanitizeHTML(html) {
             }
         });
         
+        // Sanitize links
+        if (el.tagName === 'A') {
+            const href = el.getAttribute('href');
+            if (href && !href.match(/^https?:\/\//i)) {
+                el.removeAttribute('href');
+            }
+            // Add security attributes
+            el.setAttribute('rel', 'noopener noreferrer');
+            if (el.getAttribute('target') === '_blank') {
+                el.setAttribute('target', '_blank');
+            }
+        }
+        
         // Remove dangerous attributes
-        ['href', 'src', 'action', 'formaction', 'data'].forEach(attr => {
+        ['src', 'action', 'formaction', 'data'].forEach(attr => {
             if (el.hasAttribute(attr)) {
                 const value = el.getAttribute(attr);
                 if (value && (value.includes('javascript:') || value.includes('data:'))) {
@@ -38,6 +60,26 @@ function sanitizeHTML(html) {
     });
     
     return div.innerHTML;
+}
+
+// Character counter
+function updateCounter(editor, counterId, maxLength = null) {
+    const counter = document.getElementById(counterId);
+    if (!counter) return;
+    
+    const text = editor.getText().trim();
+    const length = text.length;
+    
+    if (maxLength) {
+        counter.textContent = `${length}/${maxLength} ký tự`;
+        if (length > maxLength) {
+            counter.style.color = '#ef4444';
+        } else {
+            counter.style.color = '#6b7280';
+        }
+    } else {
+        counter.textContent = `${length} ký tự`;
+    }
 }
 
 // Initialize Quill editors
@@ -58,6 +100,12 @@ document.addEventListener('DOMContentLoaded', function() {
         editorDiv.className = 'quill-editor-short';
         shortDescContainer.parentNode.insertBefore(editorDiv, shortDescContainer.nextSibling);
         
+        // Create counter
+        const counterDiv = document.createElement('div');
+        counterDiv.id = 'short-desc-counter';
+        counterDiv.className = 'editor-counter';
+        editorDiv.parentNode.insertBefore(counterDiv, editorDiv.nextSibling);
+        
         const shortDescEditor = new Quill('#short-desc-editor', {
             theme: 'snow',
             placeholder: 'Nhập mô tả ngắn (tối đa 200 ký tự)...',
@@ -66,7 +114,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     ['bold', 'italic', 'underline'],
                     [{ 'list': 'bullet' }],
                     ['clean']
-                ]
+                ],
+                history: {
+                    delay: 1000,
+                    maxStack: 50,
+                    userOnly: true
+                }
             }
         });
         
@@ -75,10 +128,16 @@ document.addEventListener('DOMContentLoaded', function() {
             shortDescEditor.root.innerHTML = shortDescContainer.value;
         }
         
+        // Update counter initially
+        updateCounter(shortDescEditor, 'short-desc-counter', 200);
+        
         // Sync with textarea on change
         shortDescEditor.on('text-change', function() {
             const html = sanitizeHTML(shortDescEditor.root.innerHTML);
             shortDescContainer.value = html;
+            
+            // Update counter
+            updateCounter(shortDescEditor, 'short-desc-counter', 200);
             
             // Character limit
             const text = shortDescEditor.getText();
@@ -88,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Full Description Editor
+    // Full Description Editor (Enhanced)
     const descContainer = document.getElementById('description');
     if (descContainer) {
         // Hide original textarea
@@ -100,16 +159,41 @@ document.addEventListener('DOMContentLoaded', function() {
         editorDiv.className = 'quill-editor-full';
         descContainer.parentNode.insertBefore(editorDiv, descContainer.nextSibling);
         
+        // Create counter
+        const counterDiv = document.createElement('div');
+        counterDiv.id = 'desc-counter';
+        counterDiv.className = 'editor-counter';
+        editorDiv.parentNode.insertBefore(counterDiv, editorDiv.nextSibling);
+        
         const descEditor = new Quill('#desc-editor', {
             theme: 'snow',
             placeholder: 'Nhập mô tả chi tiết công việc...',
             modules: {
                 toolbar: [
-                    [{ 'header': [3, 4, false] }],
-                    ['bold', 'italic', 'underline'],
+                    // Headers
+                    [{ 'header': [1, 2, 3, 4, false] }],
+                    
+                    // Text formatting
+                    ['bold', 'italic', 'underline', 'strike'],
+                    
+                    // Lists
                     [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    
+                    // Alignment
+                    [{ 'align': [] }],
+                    
+                    // Blockquote & Link
+                    ['blockquote', 'link'],
+                    
+                    // Clean
                     ['clean']
-                ]
+                ],
+                history: {
+                    delay: 1000,
+                    maxStack: 50,
+                    userOnly: true
+                }
             }
         });
         
@@ -118,10 +202,16 @@ document.addEventListener('DOMContentLoaded', function() {
             descEditor.root.innerHTML = descContainer.value;
         }
         
+        // Update counter initially
+        updateCounter(descEditor, 'desc-counter');
+        
         // Sync with textarea on change
         descEditor.on('text-change', function() {
             const html = sanitizeHTML(descEditor.root.innerHTML);
             descContainer.value = html;
+            
+            // Update counter
+            updateCounter(descEditor, 'desc-counter');
         });
     }
     
