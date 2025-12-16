@@ -1,0 +1,50 @@
+═══════════════════════════════════════════════════════════════
+  GOOGLE INDEXING API - QUICK SETUP GUIDE (lamgame.vn)
+═══════════════════════════════════════════════════════════════
+
+📍 STEP 1: Google Cloud Console
+   → https://console.cloud.google.com/
+   → New Project: "lamgame-indexing"
+   → Enable "Indexing API"
+   
+📍 STEP 2: Create Service Account
+   → APIs & Services → Credentials
+   → Create Service Account: "lamgame-indexing-bot"
+   → Download JSON key file
+
+📍 STEP 3: Grant Permission in Search Console  
+   → https://search.google.com/search-console
+   → Settings → Users → Add user
+   → Email: [từ JSON] @....iam.gserviceaccount.com
+   → Permission: Owner
+
+📍 STEP 4: Upload to Server
+   $ scp lamgame-xxx.json root@server:/data/www/lamgame.vn/storage/app/google-service-account.json
+   $ chmod 600 storage/app/google-service-account.json
+
+📍 STEP 5: Test
+   $ docker exec lg-php php artisan google:push-index --type=all --limit=5
+
+═══════════════════════════════════════════════════════════════
+  DAILY USAGE
+═══════════════════════════════════════════════════════════════
+
+Push tất cả (auto):
+  $ docker exec lg-php php artisan google:push-index --type=all --limit=10
+
+Push jobs only:
+  $ docker exec lg-php php artisan google:push-index --type=jobs --limit=20
+
+Push blogs only:
+  $ docker exec lg-php php artisan google:push-index --type=blogs --limit=15
+
+═══════════════════════════════════════════════════════════════
+  LIMITS
+═══════════════════════════════════════════════════════════════
+
+✓ 200 requests/minute (auto delay 0.3s)
+✓ 200 URLs/day (free quota)
+
+═══════════════════════════════════════════════════════════════
+
+Full docs: GOOGLE_INDEXING_API_SETUP.md

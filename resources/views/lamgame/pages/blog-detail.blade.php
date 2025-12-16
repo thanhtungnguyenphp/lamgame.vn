@@ -8,6 +8,11 @@
 @endif
 
 @push('meta')
+
+    {{-- Article Structured Data --}}
+    <script type="application/ld+json">
+    {!! \App\Helpers\StructuredDataHelper::article($blog) !!}
+    </script>
 <!-- Blog tracking -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {

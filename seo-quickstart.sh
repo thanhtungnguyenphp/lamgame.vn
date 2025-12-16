@@ -20,7 +20,7 @@ if [ ! -f "artisan" ]; then
 fi
 
 # Detect if running in Docker or host
-DOCKER_CONTAINER="lamgame-php"
+DOCKER_CONTAINER="lg-php"
 if docker ps --format '{{.Names}}' | grep -q "^${DOCKER_CONTAINER}$"; then
     echo -e "${GREEN}✅ Detected Docker container: ${DOCKER_CONTAINER}${NC}"
     PHP_CMD="docker exec ${DOCKER_CONTAINER} php"
