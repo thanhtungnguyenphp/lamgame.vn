@@ -1,15 +1,10 @@
 <?php
 
 return [
-    /**
-     * Application service providers.
-     */
     App\Providers\AppServiceProvider::class,
     App\Providers\BlogServiceProvider::class,
-
-    /**
-     * Webkul's service providers.
-     */
+    App\Providers\MenuServiceProvider::class,
+    LamGame\Banner\Providers\BannerServiceProvider::class,
     Webkul\Admin\Providers\AdminServiceProvider::class,
     Webkul\Attribute\Providers\AttributeServiceProvider::class,
     Webkul\BookingProduct\Providers\BookingProductServiceProvider::class,
@@ -28,8 +23,10 @@ return [
     Webkul\GDPR\Providers\GDPRServiceProvider::class,
     Webkul\Installer\Providers\InstallerServiceProvider::class,
     Webkul\Inventory\Providers\InventoryServiceProvider::class,
+    Webkul\JobManagement\Providers\JobManagementServiceProvider::class,
     Webkul\MagicAI\Providers\MagicAIServiceProvider::class,
     Webkul\Marketing\Providers\MarketingServiceProvider::class,
+    Webkul\Menu\Providers\MenuServiceProvider::class,
     Webkul\Notification\Providers\NotificationServiceProvider::class,
     Webkul\Payment\Providers\PaymentServiceProvider::class,
     Webkul\Paypal\Providers\PaypalServiceProvider::class,
@@ -44,7 +41,4 @@ return [
     Webkul\Tax\Providers\TaxServiceProvider::class,
     Webkul\Theme\Providers\ThemeServiceProvider::class,
     Webkul\User\Providers\UserServiceProvider::class,
-    Webkul\Menu\Providers\MenuServiceProvider::class,
-    Webkul\JobManagement\Providers\JobManagementServiceProvider::class,
-    LamGame\Banner\Providers\BannerServiceProvider::class,
 ];

@@ -68,5 +68,6 @@ class Kernel extends HttpKernel
         'job.auth' => \App\Http\Middleware\JobAuth::class,
         'admin' => \Webkul\User\Http\Middleware\Bouncer::class,
         'customer' => \Webkul\Customer\Http\Middleware\RedirectIfNotCustomer::class,
+        'seller' => \App\Http\Middleware\CheckSeller::class,
     ];
 }

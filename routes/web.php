@@ -20,6 +20,31 @@ Route::get('source-game/{slug}', [LamGamePageController::class, 'sourceGameDetai
 Route::get('blog', [LamGamePageController::class, 'blog'])->name('lamgame.blog');
 Route::get('blog/{slug}', [LamGamePageController::class, 'blogShow'])->name('blog.show');
 
+// Seller routes
+Route::prefix('seller')->name('seller.')->middleware('theme')->group(function () {
+    Route::get('register', [App\Http\Controllers\SellerController::class, 'showRegisterForm'])->name('register');
+    Route::post('register', [App\Http\Controllers\SellerController::class, 'register'])->name('register.submit');
+    Route::get('pending', [App\Http\Controllers\SellerController::class, 'pending'])->name('pending');
+    
+    Route::middleware('seller')->group(function () {
+        Route::get('dashboard', [App\Http\Controllers\SellerController::class, 'dashboard'])->name('dashboard');
+    });
+});
+
+// Admin Seller Management routes
+Route::prefix('admin')->middleware('admin')->name('admin.')->group(function () {
+    Route::prefix('sellers')->name('sellers.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\AdminSellerController::class, 'index'])->name('index');
+        Route::get('pending', [App\Http\Controllers\Admin\AdminSellerController::class, 'pending'])->name('pending');
+        Route::get('{id}', [App\Http\Controllers\Admin\AdminSellerController::class, 'show'])->name('show');
+        Route::post('{id}/approve', [App\Http\Controllers\Admin\AdminSellerController::class, 'approve'])->name('approve');
+        Route::post('{id}/reject', [App\Http\Controllers\Admin\AdminSellerController::class, 'reject'])->name('reject');
+        Route::post('{id}/suspend', [App\Http\Controllers\Admin\AdminSellerController::class, 'suspend'])->name('suspend');
+        Route::post('{id}/activate', [App\Http\Controllers\Admin\AdminSellerController::class, 'activate'])->name('activate');
+    });
+});
+
+
 // Company logo route
 Route::get('storage/company-logos/{filename}', [App\Http\Controllers\LogoController::class, 'show'])
     ->where('filename', '[A-Za-z0-9\-_\.]+')

@@ -91,6 +91,14 @@ class Customer extends Authenticatable implements CustomerContract
     }
 
     /**
+     * Get the seller profile for the customer.
+     */
+    public function seller()
+    {
+        return $this->hasOne(\App\Models\SourceGameSeller::class);
+    }
+
+    /**
      * Get image url for the customer profile.
      *
      * @return string|null
