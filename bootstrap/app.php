@@ -48,6 +48,13 @@ return Application::configure(basePath: dirname(__DIR__))
          */
         $middleware->replaceInGroup('web', BaseEncryptCookies::class, EncryptCookies::class);
         $middleware->replace(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class, \App\Http\Middleware\VerifyCsrfToken::class);
+        
+        /**
+         * Register middleware aliases
+         */
+        $middleware->alias([
+            'seller' => \App\Http\Middleware\CheckSeller::class,
+        ]);
     })
     ->withSchedule(function (Schedule $schedule) {
         //
