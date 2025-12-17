@@ -54,7 +54,7 @@ class SellerProductController extends Controller
         $validated = $request->validate([
             'type' => 'required|in:simple,downloadable',
             'attribute_family_id' => 'required|exists:attribute_families,id',
-            'sku' => 'required|unique:products,sku',
+            'sku' => 'required|unique:products,sku|regex:/^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*$/',
             'name' => 'required|string|max:255',
             'url_key' => 'required|string|unique:product_flat,url_key',
             'short_description' => 'nullable|string',
@@ -65,6 +65,9 @@ class SellerProductController extends Controller
             'images.*' => 'nullable|image|max:2048',
             'source_file' => 'nullable|file|max:524288', // 512MB
         ]);
+
+        // Auto-convert SKU to slug format (lowercase, replace _ with -)
+        $validated['sku'] = strtolower(str_replace('_', '-', $validated['sku']));
 
         // Create product
         $product = Product::create([

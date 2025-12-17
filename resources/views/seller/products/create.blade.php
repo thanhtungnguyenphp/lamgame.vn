@@ -126,7 +126,8 @@
 
                     <div class="form-group">
                         <label>SKU <span style="color: red;">*</span></label>
-                        <input type="text" name="sku" value="{{ old('sku') }}" required placeholder="VD: GAME-UNITY-001">
+                        <input type="text" name="sku" value="{{ old('sku') }}" required placeholder="VD: game-unity-001">
+                        <small style="color: #666;">Chỉ dùng chữ thường, số và dấu gạch ngang (-). VD: game-unity-001</small>
                         @error('sku')
                             <span style="color: red; font-size: 0.9rem;">{{ $message }}</span>
                         @enderror
