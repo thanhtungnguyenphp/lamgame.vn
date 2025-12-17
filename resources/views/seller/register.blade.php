@@ -95,8 +95,15 @@
     <div class="container">
         <!-- Header -->
         <div class="register-header">
-            <h1>🎮 Đăng ký Seller</h1>
-            <p>Bắt đầu bán source code game của bạn trên Làm Game</p>
+            <h1>{{ $isEdit ? '✏️ Cập nhật thông tin Seller' : '🎮 Đăng ký Seller' }}</h1>
+            <p>{{ $isEdit ? 'Chỉnh sửa thông tin shop của bạn' : 'Bắt đầu bán source code game của bạn trên Làm Game' }}</p>
+            @if(config('app.debug'))
+                <small style="display: block; margin-top: 1rem; opacity: 0.7;">
+                    Debug: isEdit={{ $isEdit ? 'true' : 'false' }}, 
+                    seller={{ $seller ? 'exists (ID: '.$seller->id.')' : 'null' }},
+                    customer_id={{ $customer->id }}
+                </small>
+            @endif
         </div>
 
         <!-- Form Card -->
@@ -110,7 +117,7 @@
 
                     <div class="form-group">
                         <label>Tên Shop <span>*</span></label>
-                        <input type="text" name="shop_name" value="{{ old('shop_name') }}" required placeholder="VD: GameDev Studio">
+                        <input type="text" name="shop_name" value="{{ old('shop_name', $seller->shop_name ?? '') }}" required placeholder="VD: GameDev Studio">
                         @error('shop_name')
                             <span>{{ $message }}</span>
                         @enderror
@@ -122,7 +129,7 @@
                         </label>
                         <textarea name="shop_description" rows="4"
                            
-                            placeholder="Giới thiệu về shop của bạn...">{{ old('shop_description') }}</textarea>
+                            placeholder="Giới thiệu về shop của bạn...">{{ old('shop_description', $seller->shop_description ?? '') }}</textarea>
                         @error('shop_description')
                             <span>{{ $message }}</span>
                         @enderror
@@ -133,9 +140,15 @@
                             <label>
                                 Logo Shop
                             </label>
+                            @if($seller && $seller->shop_logo)
+                                <div style="margin-bottom: 0.5rem;">
+                                    <img src="{{ Storage::url($seller->shop_logo) }}" alt="Current Logo" style="max-width: 100px; border-radius: 8px;">
+                                    <small style="display: block; color: #666;">Logo hiện tại</small>
+                                </div>
+                            @endif
                             <input type="file" name="shop_logo" accept="image/*"
                                >
-                            <small>Max 2MB, JPG/PNG</small>
+                            <small>Max 2MB, JPG/PNG {{ $seller ? '(Để trống nếu không đổi)' : '' }}</small>
                             @error('shop_logo')
                                 <span>{{ $message }}</span>
                             @enderror
@@ -145,9 +158,15 @@
                             <label>
                                 Banner Shop
                             </label>
+                            @if($seller && $seller->shop_banner)
+                                <div style="margin-bottom: 0.5rem;">
+                                    <img src="{{ Storage::url($seller->shop_banner) }}" alt="Current Banner" style="max-width: 200px; border-radius: 8px;">
+                                    <small style="display: block; color: #666;">Banner hiện tại</small>
+                                </div>
+                            @endif
                             <input type="file" name="shop_banner" accept="image/*"
                                >
-                            <small>Max 5MB, JPG/PNG</small>
+                            <small>Max 5MB, JPG/PNG {{ $seller ? '(Để trống nếu không đổi)' : '' }}</small>
                             @error('shop_banner')
                                 <span>{{ $message }}</span>
                             @enderror
@@ -166,7 +185,7 @@
                             <label>
                                 Email <span>*</span>
                             </label>
-                            <input type="email" name="contact_email" value="{{ old('contact_email', $customer->email) }}" required
+                            <input type="email" name="contact_email" value="{{ old('contact_email', $seller->contact_email ?? $customer->email) }}" required
                                >
                             @error('contact_email')
                                 <span>{{ $message }}</span>
@@ -177,7 +196,7 @@
                             <label>
                                 Số điện thoại
                             </label>
-                            <input type="text" name="contact_phone" value="{{ old('contact_phone', $customer->phone) }}"
+                            <input type="text" name="contact_phone" value="{{ old('contact_phone', $seller->contact_phone ?? $customer->phone) }}"
                                >
                             @error('contact_phone')
                                 <span>{{ $message }}</span>
@@ -189,7 +208,7 @@
                         <label>
                             Website
                         </label>
-                        <input type="url" name="website" value="{{ old('website') }}"
+                        <input type="url" name="website" value="{{ old('website', $seller->website ?? '') }}"
                            
                             placeholder="https://yourwebsite.com">
                         @error('website')
@@ -210,8 +229,8 @@
                         </label>
                         <select name="business_type" required
                            >
-                            <option value="individual" {{ old('business_type') == 'individual' ? 'selected' : '' }}>Cá nhân</option>
-                            <option value="company" {{ old('business_type') == 'company' ? 'selected' : '' }}>Công ty</option>
+                            <option value="individual" {{ old('business_type', $seller->business_type ?? '') == 'individual' ? 'selected' : '' }}>Cá nhân</option>
+                            <option value="company" {{ old('business_type', $seller->business_type ?? '') == 'company' ? 'selected' : '' }}>Công ty</option>
                         </select>
                         @error('business_type')
                             <span>{{ $message }}</span>
@@ -222,7 +241,7 @@
                         <label>
                             Mã số thuế
                         </label>
-                        <input type="text" name="tax_id" value="{{ old('tax_id') }}"
+                        <input type="text" name="tax_id" value="{{ old('tax_id', $seller->tax_id ?? '') }}"
                            >
                         @error('tax_id')
                             <span>{{ $message }}</span>
@@ -240,7 +259,7 @@
                         <label>
                             Tên ngân hàng <span>*</span>
                         </label>
-                        <input type="text" name="bank_name" value="{{ old('bank_name') }}" required
+                        <input type="text" name="bank_name" value="{{ old('bank_name', $seller->bank_name ?? '') }}" required
                            
                             placeholder="VD: Vietcombank">
                         @error('bank_name')
@@ -253,7 +272,7 @@
                             <label>
                                 Số tài khoản <span>*</span>
                             </label>
-                            <input type="text" name="bank_account" value="{{ old('bank_account') }}" required
+                            <input type="text" name="bank_account" value="{{ old('bank_account', $seller->bank_account ?? '') }}" required
                                >
                             @error('bank_account')
                                 <span>{{ $message }}</span>
@@ -264,7 +283,7 @@
                             <label>
                                 Chủ tài khoản <span>*</span>
                             </label>
-                            <input type="text" name="bank_holder" value="{{ old('bank_holder', $customer->first_name . ' ' . $customer->last_name) }}" required
+                            <input type="text" name="bank_holder" value="{{ old('bank_holder', $seller->bank_holder ?? $customer->first_name . ' ' . $customer->last_name) }}" required
                                >
                             @error('bank_holder')
                                 <span>{{ $message }}</span>
@@ -274,23 +293,25 @@
                 </div>
 
                 <!-- Terms -->
+                @if(!$isEdit)
                 <div class="form-section">
                     <label>
                         <input type="checkbox" name="terms_accepted" value="1" required
                            >
                         <span>
-                            Tôi đồng ý với <a href="#">Điều khoản dịch vụ</a> và 
-                            <a href="#">Chính sách bán hàng</a>
+                            Tôi đồng ý với <a href="#" style="color: #2c5f41; text-decoration: underline;">Điều khoản dịch vụ</a> và 
+                            <a href="#" style="color: #2c5f41; text-decoration: underline;">Chính sách bán hàng</a>
                         </span>
                     </label>
                     @error('terms_accepted')
                         <span>{{ $message }}</span>
                     @enderror
                 </div>
+                @endif
 
                 <!-- Submit Button -->
                 <button type="submit" class="btn-submit">
-                    🚀 Đăng ký Seller
+                    {{ $isEdit ? '💾 Cập nhật thông tin' : '🚀 Đăng ký Seller' }}
                 </button>
             </form>
         </div>

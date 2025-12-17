@@ -46,9 +46,14 @@
 @section('content')
 <div class="seller-dashboard">
     <div class="dashboard-header">
-        <div class="container">
-            <h1>👋 Xin chào, {{ $seller->shop_name }}!</h1>
-            <p>Quản lý shop và sản phẩm của bạn</p>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1>👋 Xin chào, {{ $seller->shop_name }}!</h1>
+                <p>Quản lý shop và sản phẩm của bạn</p>
+            </div>
+            <a href="{{ route('seller.register') }}" style="background: white; color: #2c5f41; padding: 0.75rem 1.5rem; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
+                ✏️ Chỉnh sửa thông tin
+            </a>
         </div>
     </div>
 

@@ -14,38 +14,36 @@ class SellerController extends Controller
 {
     public function showRegisterForm()
     {
-        // Check if already logged in
         if (!Auth::guard('customer')->check()) {
             return redirect('/auth/login')
                 ->with('warning', 'Vui lòng đăng nhập trước khi đăng ký seller.');
         }
 
         $customer = Auth::guard('customer')->user();
+        $seller = $customer->seller;
 
-        // Check if already a seller
-        if ($customer->seller) {
-            return redirect()->route('seller.dashboard')
-                ->with('info', 'Bạn đã là seller rồi.');
-        }
+        // Debug
+        \Log::info('Customer ID: ' . $customer->id);
+        \Log::info('Seller exists: ' . ($seller ? 'Yes - ' . $seller->shop_name : 'No'));
 
         return view('seller.register', [
             'customer' => $customer,
-            'page_title' => 'Đăng ký Seller - Làm Game',
+            'seller' => $seller,
+            'isEdit' => $seller ? true : false,
+            'page_title' => $seller ? 'Cập nhật thông tin Seller - Làm Game' : 'Đăng ký Seller - Làm Game',
         ]);
     }
 
     public function register(Request $request)
     {
         $customer = Auth::guard('customer')->user();
-
-        // Check if already a seller
-        if ($customer->seller) {
-            return redirect()->route('seller.dashboard')
-                ->with('error', 'Bạn đã đăng ký seller rồi.');
-        }
+        $seller = $customer->seller;
+        $isEdit = $seller ? true : false;
 
         $validated = $request->validate([
-            'shop_name' => 'required|string|max:255|unique:source_game_sellers',
+            'shop_name' => $isEdit 
+                ? 'required|string|max:255|unique:source_game_sellers,shop_name,' . $seller->id
+                : 'required|string|max:255|unique:source_game_sellers',
             'shop_description' => 'nullable|string|max:1000',
             'shop_logo' => 'nullable|image|max:2048',
             'shop_banner' => 'nullable|image|max:5120',
@@ -57,23 +55,27 @@ class SellerController extends Controller
             'bank_name' => 'required|string|max:255',
             'bank_account' => 'required|string|max:100',
             'bank_holder' => 'required|string|max:255',
-            'terms_accepted' => 'required|accepted',
+            'terms_accepted' => $isEdit ? 'nullable' : 'required|accepted',
         ]);
 
         // Handle file uploads
-        $logoPath = null;
+        $logoPath = $seller ? $seller->shop_logo : null;
         if ($request->hasFile('shop_logo')) {
+            if ($seller && $seller->shop_logo) {
+                Storage::disk('public')->delete($seller->shop_logo);
+            }
             $logoPath = $request->file('shop_logo')->store('seller/logos', 'public');
         }
 
-        $bannerPath = null;
+        $bannerPath = $seller ? $seller->shop_banner : null;
         if ($request->hasFile('shop_banner')) {
+            if ($seller && $seller->shop_banner) {
+                Storage::disk('public')->delete($seller->shop_banner);
+            }
             $bannerPath = $request->file('shop_banner')->store('seller/banners', 'public');
         }
 
-        // Create seller
-        $seller = SourceGameSeller::create([
-            'customer_id' => $customer->id,
+        $data = [
             'shop_name' => $validated['shop_name'],
             'shop_slug' => Str::slug($validated['shop_name']),
             'shop_description' => $validated['shop_description'],
@@ -87,19 +89,30 @@ class SellerController extends Controller
             'bank_name' => $validated['bank_name'],
             'bank_account' => $validated['bank_account'],
             'bank_holder' => $validated['bank_holder'],
-            'status' => 'pending',
-        ]);
+        ];
 
-        // Send notification to admin
-        try {
-            $adminEmail = config('mail.admin_email', 'admin@lamgame.vn');
-            Mail::to($adminEmail)->send(new NewSellerRegistration($seller));
-        } catch (\Exception $e) {
-            \Log::error('Failed to send admin notification: ' . $e->getMessage());
+        if ($isEdit) {
+            // Update existing seller
+            $seller->update($data);
+            $message = 'Cập nhật thông tin seller thành công!';
+        } else {
+            // Create new seller
+            $data['customer_id'] = $customer->id;
+            $data['status'] = 'pending';
+            $seller = SourceGameSeller::create($data);
+            $message = 'Đăng ký seller thành công! Chúng tôi sẽ xem xét và phản hồi trong vòng 24-48 giờ.';
+
+            // Send notification to admin
+            try {
+                $adminEmail = config('mail.admin_email', 'admin@lamgame.vn');
+                Mail::to($adminEmail)->send(new NewSellerRegistration($seller));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send admin notification: ' . $e->getMessage());
+            }
         }
 
-        return redirect()->route('seller.pending')
-            ->with('success', 'Đăng ký seller thành công! Chúng tôi sẽ xem xét và phản hồi trong vòng 24-48 giờ.');
+        return redirect()->route($seller->isActive() ? 'seller.dashboard' : 'seller.pending')
+            ->with('success', $message);
     }
 
     public function pending()
