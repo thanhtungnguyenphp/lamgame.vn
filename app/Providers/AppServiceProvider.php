@@ -56,5 +56,8 @@ class AppServiceProvider extends ServiceProvider
         ParallelTesting::setUpTestDatabase(function (string $database, int $token) {
             Artisan::call('db:seed');
         });
+
+        // Preserve seller_id when admin updates product
+        \Event::listen('catalog.product.update.before', \App\Listeners\PreserveSellerIdOnProductUpdate::class);
     }
 }
