@@ -150,6 +150,7 @@ class SellerProductController extends Controller
             'special_price' => 'nullable|numeric|min:0',
             'categories' => 'required|array',
             'images.*' => 'nullable|image|max:2048',
+            'source_file' => 'nullable|file|max:524288',
         ]);
 
         // Update product flat
@@ -172,6 +173,23 @@ class SellerProductController extends Controller
             }
         }
 
+        // Handle new source file
+        if ($request->hasFile('source_file')) {
+            // Delete old downloadable links
+            $product->downloadable_links()->delete();
+            
+            $path = $request->file('source_file')->store('products/downloads/' . $product->id, 'public');
+            
+            $product->downloadable_links()->create([
+                'title' => $validated['name'],
+                'price' => 0,
+                'type' => 'file',
+                'file' => $path,
+                'downloads' => 0,
+                'sort_order' => 1,
+            ]);
+        }
+
         return redirect()->route('seller.products.index')
             ->with('success', 'Sản phẩm đã được cập nhật.');
     }
@@ -185,5 +203,27 @@ class SellerProductController extends Controller
 
         return redirect()->route('seller.products.index')
             ->with('success', 'Sản phẩm đã được xóa.');
+    }
+
+    public function deleteImage($imageId)
+    {
+        $seller = Auth::guard('customer')->user()->seller;
+        
+        $image = \Webkul\Product\Models\ProductImage::findOrFail($imageId);
+        
+        // Check if image belongs to seller's product
+        if ($image->product->seller_id !== $seller->id) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        // Delete file from storage
+        if (Storage::disk('public')->exists($image->path)) {
+            Storage::disk('public')->delete($image->path);
+        }
+
+        // Delete record
+        $image->delete();
+
+        return response()->json(['success' => true, 'message' => 'Đã xóa hình ảnh']);
     }
 }

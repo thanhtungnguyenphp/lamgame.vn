@@ -29,6 +29,7 @@ Route::prefix('seller')->name('seller.')->middleware('theme')->group(function ()
     Route::middleware('seller')->group(function () {
         Route::get('dashboard', [App\Http\Controllers\SellerController::class, 'dashboard'])->name('dashboard');
         Route::resource('products', App\Http\Controllers\Seller\SellerProductController::class);
+        Route::delete('products/images/{id}', [App\Http\Controllers\Seller\SellerProductController::class, 'deleteImage'])->name('products.images.delete');
     });
 });
 
