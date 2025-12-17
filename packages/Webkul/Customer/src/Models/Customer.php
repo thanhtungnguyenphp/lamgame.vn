@@ -292,6 +292,16 @@ class Customer extends Authenticatable implements CustomerContract
     }
 
     /**
+     * Get the seller associated with the customer.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function seller()
+    {
+        return $this->hasOne(\App\Models\SourceGameSeller::class, 'customer_id');
+    }
+
+    /**
      * Create a new factory instance for the model.
      *
      * @return \Webkul\Customer\Database\Factories\CustomerFactory

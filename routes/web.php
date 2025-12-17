@@ -22,6 +22,28 @@ Route::get('blog/{slug}', [LamGamePageController::class, 'blogShow'])->name('blo
 
 // Seller routes
 Route::prefix('seller')->name('seller.')->middleware('theme')->group(function () {
+    // Debug route
+    Route::get('debug', function() {
+        if (!Auth::guard('customer')->check()) {
+            return 'Not logged in';
+        }
+        $customer = Auth::guard('customer')->user();
+        $seller = $customer->seller;
+        
+        return [
+            'customer_id' => $customer->id,
+            'customer_email' => $customer->email,
+            'has_seller_method' => method_exists($customer, 'seller'),
+            'seller_exists' => $seller ? true : false,
+            'seller_data' => $seller ? [
+                'id' => $seller->id,
+                'shop_name' => $seller->shop_name,
+                'status' => $seller->status,
+            ] : null,
+            'direct_query' => \App\Models\SourceGameSeller::where('customer_id', $customer->id)->first(),
+        ];
+    })->name('debug');
+    
     Route::get('register', [App\Http\Controllers\SellerController::class, 'showRegisterForm'])->name('register');
     Route::post('register', [App\Http\Controllers\SellerController::class, 'register'])->name('register.submit');
     Route::get('pending', [App\Http\Controllers\SellerController::class, 'pending'])->name('pending');
