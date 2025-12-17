@@ -123,28 +123,28 @@
                 🚀 Hành động nhanh
             </h2>
             <div>
-                <a href="#">
+                <a href="{{ route('seller.products.index') }}">
                     <span>➕</span>
                     <div>
                         <div>Thêm sản phẩm</div>
                         <div>Upload source game mới</div>
                     </div>
                 </a>
-                <a href="#">
+                <a href="{{ route('seller.products.index') }}">
                     <span>📊</span>
                     <div>
                         <div>Xem báo cáo</div>
                         <div>Thống kê chi tiết</div>
                     </div>
                 </a>
-                <a href="#">
+                <a href="{{ route('seller.products.index') }}">
                     <span>💳</span>
                     <div>
                         <div>Rút tiền</div>
                         <div>Yêu cầu thanh toán</div>
                     </div>
                 </a>
-                <a href="#">
+                <a href="{{ route('seller.products.index') }}">
                     <span>⚙️</span>
                     <div>
                         <div>Cài đặt</div>
