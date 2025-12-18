@@ -16,6 +16,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Bind custom Product model
+        $this->app->bind(
+            \Webkul\Product\Models\Product::class,
+            \App\Models\Product::class
+        );
+
         // Enable Debugbar only when the package exists and IP is allowed.
         $allowedIPs = array_map('trim', explode(',', (string) config('app.debug_allowed_ips')));
         $allowedIPs = array_filter($allowedIPs);

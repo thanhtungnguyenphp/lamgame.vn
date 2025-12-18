@@ -30,6 +30,7 @@ Route::prefix('seller')->name('seller.')->middleware('theme')->group(function ()
         Route::get('dashboard', [App\Http\Controllers\SellerController::class, 'dashboard'])->name('dashboard');
         Route::resource('products', App\Http\Controllers\Seller\SellerProductController::class);
         Route::delete('products/images/{id}', [App\Http\Controllers\Seller\SellerProductController::class, 'deleteImage'])->name('products.images.delete');
+        Route::post('products/{id}/submit-review', [App\Http\Controllers\Seller\SellerProductController::class, 'submitForReview'])->name('products.submit-review');
     });
 });
 
@@ -43,6 +44,14 @@ Route::prefix('admin')->middleware('admin')->name('admin.')->group(function () {
         Route::post('{id}/reject', [App\Http\Controllers\Admin\AdminSellerController::class, 'reject'])->name('reject');
         Route::post('{id}/suspend', [App\Http\Controllers\Admin\AdminSellerController::class, 'suspend'])->name('suspend');
         Route::post('{id}/activate', [App\Http\Controllers\Admin\AdminSellerController::class, 'activate'])->name('activate');
+    });
+
+    Route::prefix('products')->name('products.')->group(function () {
+        Route::get('sellers', [App\Http\Controllers\Admin\AdminProductController::class, 'sellers'])->name('sellers');
+        Route::get('pending', [App\Http\Controllers\Admin\AdminProductController::class, 'pending'])->name('pending');
+        Route::get('{id}/review', [App\Http\Controllers\Admin\AdminProductController::class, 'review'])->name('review');
+        Route::post('{id}/approve', [App\Http\Controllers\Admin\AdminProductController::class, 'approve'])->name('approve');
+        Route::post('{id}/reject', [App\Http\Controllers\Admin\AdminProductController::class, 'reject'])->name('reject');
     });
 });
 

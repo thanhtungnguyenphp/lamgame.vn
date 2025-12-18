@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Seller;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Webkul\Product\Models\Product;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Product;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 
@@ -75,7 +76,8 @@ class SellerProductController extends Controller
             'attribute_family_id' => $validated['attribute_family_id'],
             'sku' => $validated['sku'],
             'seller_id' => $seller->id,
-            'status' => 0, // Draft - waiting for admin approval
+            'status' => 0, // Draft
+            'pending_review' => false,
         ]);
 
         // Save product flat data
@@ -225,5 +227,27 @@ class SellerProductController extends Controller
         $image->delete();
 
         return response()->json(['success' => true, 'message' => 'Đã xóa hình ảnh']);
+    }
+
+    public function submitForReview($id)
+    {
+        $seller = Auth::guard('customer')->user()->seller;
+        $product = Product::where('seller_id', $seller->id)->findOrFail($id);
+
+        // Validate product has required data
+        if (!$product->name || !$product->price || $product->images->count() === 0) {
+            return back()->with('error', 'Sản phẩm cần có tên, giá và ít nhất 1 hình ảnh trước khi gửi duyệt.');
+        }
+
+        // Update status
+        $product->update([
+            'pending_review' => true,
+            'rejection_reason' => null,
+        ]);
+
+        // TODO: Send email to admin
+        // Mail::to(config('mail.admin_email'))->send(new ProductSubmittedForReview($product));
+
+        return back()->with('success', 'Đã gửi sản phẩm để admin duyệt.');
     }
 }
