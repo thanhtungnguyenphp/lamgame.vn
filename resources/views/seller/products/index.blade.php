@@ -57,9 +57,10 @@
     font-size: 0.85rem;
     font-weight: 600;
 }
-.status-draft { background: #ffc107; color: #333; }
+.status-draft { background: #6c757d; color: white; }
+.status-pending { background: #ffc107; color: #333; }
 .status-active { background: #28a745; color: white; }
-.status-inactive { background: #6c757d; color: white; }
+.status-rejected { background: #dc3545; color: white; }
 .actions {
     display: flex;
     gap: 0.5rem;
@@ -127,12 +128,27 @@
                         <div>{{ $product->sku }}</div>
                         <div style="font-weight: 600; color: #2c5f41;">{{ number_format($product->price, 0, ',', '.') }}đ</div>
                         <div>
-                            <span class="status-badge status-{{ $product->status ? 'active' : 'draft' }}">
-                                {{ $product->status ? 'Đã duyệt' : 'Chờ duyệt' }}
+                            <span class="status-badge {{ $product->status_badge_class }}">
+                                {{ $product->status_label }}
                             </span>
+                            @if($product->rejection_reason)
+                                <div style="font-size: 0.8rem; color: #dc3545; margin-top: 0.25rem;">
+                                    Lý do: {{ Str::limit($product->rejection_reason, 50) }}
+                                </div>
+                            @endif
                         </div>
                         <div class="actions">
                             <a href="{{ route('seller.products.edit', $product->id) }}" class="btn-sm btn-edit">Sửa</a>
+                            
+                            @if($product->isDraft())
+                                <form action="{{ route('seller.products.submit-review', $product->id) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    <button type="submit" class="btn-sm" style="background: #007bff; color: white; border: none; cursor: pointer;">
+                                        Gửi duyệt
+                                    </button>
+                                </form>
+                            @endif
+                            
                             <form action="{{ route('seller.products.destroy', $product->id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 @method('DELETE')

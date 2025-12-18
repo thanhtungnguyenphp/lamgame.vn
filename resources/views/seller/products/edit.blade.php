@@ -118,6 +118,21 @@
                 ✏️ Chỉnh sửa sản phẩm
             </h1>
 
+            <!-- Status Alert -->
+            @if($product->isPendingReview())
+                <div style="background: #fff3cd; border: 1px solid #ffc107; color: #856404; padding: 1rem; border-radius: 10px; margin-bottom: 2rem;">
+                    ⏳ Sản phẩm đang chờ admin duyệt. Bạn vẫn có thể chỉnh sửa nhưng cần gửi duyệt lại sau khi sửa.
+                </div>
+            @elseif($product->isPublished())
+                <div style="background: #d4edda; border: 1px solid #28a745; color: #155724; padding: 1rem; border-radius: 10px; margin-bottom: 2rem;">
+                    ✅ Sản phẩm đã được duyệt và đang hiển thị công khai.
+                </div>
+            @elseif($product->rejection_reason)
+                <div style="background: #f8d7da; border: 1px solid #dc3545; color: #721c24; padding: 1rem; border-radius: 10px; margin-bottom: 2rem;">
+                    ❌ Sản phẩm bị từ chối: {{ $product->rejection_reason }}
+                </div>
+            @endif
+
             <form action="{{ route('seller.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
