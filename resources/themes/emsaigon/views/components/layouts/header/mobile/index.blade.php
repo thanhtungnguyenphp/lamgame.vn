@@ -208,12 +208,23 @@
                                     @endif
 
                                     @auth('customer')
-                                        @if(auth('customer')->user()->seller)
+                                        @php
+                                            $currentSeller = auth('customer')->user()->seller;
+                                        @endphp
+                                        
+                                        @if($currentSeller && $currentSeller->isActive())
                                             <a
                                                 class="cursor-pointer px-5 py-2 text-base font-semibold text-green-600 hover:bg-green-50"
                                                 href="{{ route('seller.dashboard') }}"
                                             >
                                                 🏪 Seller Dashboard
+                                            </a>
+                                        @elseif($currentSeller && $currentSeller->isPending())
+                                            <a
+                                                class="cursor-pointer px-5 py-2 text-base text-yellow-600 hover:bg-yellow-50"
+                                                href="{{ route('seller.pending') }}"
+                                            >
+                                                ⏳ Seller (Chờ duyệt)
                                             </a>
                                         @else
                                             <a
