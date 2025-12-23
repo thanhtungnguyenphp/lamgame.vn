@@ -29,40 +29,36 @@
                 </div>
             @endif
 
-            <!-- Contact Information -->
+            <!-- Contact Information (Read-only from profile) -->
             <div class="form-section">
                 <h2 class="section-title">Thông tin liên hệ</h2>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label required">Họ</label>
-                        <input type="text" name="first_name" value="{{ old('first_name') }}" required class="form-input" placeholder="Nguyễn">
-                        @error('first_name')<span class="error-text">{{ $message }}</span>@enderror
+                <div class="info-display">
+                    <div class="info-row">
+                        <span class="info-label">Họ tên:</span>
+                        <span class="info-value">{{ auth()->guard('customer')->user()->first_name }} {{ auth()->guard('customer')->user()->last_name }}</span>
                     </div>
-
-                    <div class="form-group">
-                        <label class="form-label required">Tên</label>
-                        <input type="text" name="last_name" value="{{ old('last_name') }}" required class="form-input" placeholder="Văn A">
-                        @error('last_name')<span class="error-text">{{ $message }}</span>@enderror
+                    <div class="info-row">
+                        <span class="info-label">Số điện thoại:</span>
+                        <span class="info-value">{{ auth()->guard('customer')->user()->phone }}</span>
                     </div>
-
-                    <div class="form-group">
-                        <label class="form-label required">Số điện thoại</label>
-                        <input type="tel" name="phone" value="{{ old('phone') }}" required class="form-input" placeholder="0912345678">
-                        @error('phone')<span class="error-text">{{ $message }}</span>@enderror
+                    <div class="info-row">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">{{ auth()->guard('customer')->user()->email }}</span>
                     </div>
-
-                    <div class="form-group">
-                        <label class="form-label required">Email</label>
-                        <input type="email" name="email" value="{{ old('email', auth()->guard('customer')->user()->email) }}" required class="form-input" placeholder="email@example.com">
-                        @error('email')<span class="error-text">{{ $message }}</span>@enderror
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label class="form-label">Tên công ty (tùy chọn)</label>
-                        <input type="text" name="company_name" value="{{ old('company_name') }}" class="form-input" placeholder="Tên công ty">
-                        @error('company_name')<span class="error-text">{{ $message }}</span>@enderror
-                    </div>
+                    <p class="info-note">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                        </svg>
+                        Để thay đổi thông tin liên hệ, vui lòng cập nhật trong <a href="{{ route('shop.customers.account.profile.edit') }}">Thông tin cá nhân</a>
+                    </p>
                 </div>
+
+                <!-- Hidden fields to submit with form -->
+                <input type="hidden" name="first_name" value="{{ auth()->guard('customer')->user()->first_name }}">
+                <input type="hidden" name="last_name" value="{{ auth()->guard('customer')->user()->last_name }}">
+                <input type="hidden" name="phone" value="{{ auth()->guard('customer')->user()->phone }}">
+                <input type="hidden" name="email" value="{{ auth()->guard('customer')->user()->email }}">
+                <input type="hidden" name="company_name" value="">
             </div>
 
             <!-- Address Details -->
@@ -204,6 +200,16 @@
         .form-section { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
         .section-title { font-size: 1.125rem; font-weight: 600; color: #1f2937; margin: 0 0 1.5rem 0; padding-bottom: 0.75rem; border-bottom: 2px solid #e5e7eb; }
         
+        .info-display { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; }
+        .info-row { display: flex; padding: 0.75rem 0; border-bottom: 1px solid #e5e7eb; }
+        .info-row:last-of-type { border-bottom: none; }
+        .info-label { font-weight: 500; color: #6b7280; min-width: 140px; }
+        .info-value { color: #1f2937; font-weight: 500; }
+        .info-note { display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0 0 0; padding: 0.75rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; font-size: 0.875rem; color: #1e40af; }
+        .info-note svg { flex-shrink: 0; }
+        .info-note a { color: #2563eb; text-decoration: underline; font-weight: 500; }
+        .info-note a:hover { color: #1e40af; }
+        
         .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
         .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
         .form-group.full-width { grid-column: 1 / -1; }
@@ -229,6 +235,9 @@
             .form-section { padding: 1.5rem; }
             .form-actions { flex-direction: column-reverse; }
             .btn-cancel, .btn-save { width: 100%; justify-content: center; }
+            .info-row { flex-direction: column; gap: 0.25rem; }
+            .info-label { min-width: auto; font-size: 0.75rem; }
+            .info-note { font-size: 0.75rem; }
         }
     </style>
     @endpush
