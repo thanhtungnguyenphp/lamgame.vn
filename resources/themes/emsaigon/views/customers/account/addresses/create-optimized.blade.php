@@ -1,5 +1,5 @@
 <x-layouts.account>
-    <x-slot:title>Chỉnh sửa địa chỉ</x-slot>
+    <x-slot:title>Thêm địa chỉ mới</x-slot>
 
     <div class="address-form-container">
         <!-- Header -->
@@ -11,14 +11,13 @@
                     </svg>
                     Quay lại
                 </a>
-                <h1 class="form-title">Chỉnh sửa địa chỉ</h1>
-                <p class="form-subtitle">Cập nhật thông tin địa chỉ giao hàng của bạn</p>
+                <h1 class="form-title">Thêm địa chỉ mới</h1>
+                <p class="form-subtitle">Điền thông tin địa chỉ giao hàng của bạn</p>
             </div>
         </div>
 
-        <form method="POST" action="{{ route('shop.customers.account.addresses.update', $address->id) }}">
+        <form method="POST" action="{{ route('shop.customers.account.addresses.store') }}">
             @csrf
-            @method('PUT')
 
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -36,31 +35,31 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label required">Họ</label>
-                        <input type="text" name="first_name" value="{{ old('first_name', $address->first_name) }}" required class="form-input" placeholder="Nguyễn">
+                        <input type="text" name="first_name" value="{{ old('first_name') }}" required class="form-input" placeholder="Nguyễn">
                         @error('first_name')<span class="error-text">{{ $message }}</span>@enderror
                     </div>
 
                     <div class="form-group">
                         <label class="form-label required">Tên</label>
-                        <input type="text" name="last_name" value="{{ old('last_name', $address->last_name) }}" required class="form-input" placeholder="Văn A">
+                        <input type="text" name="last_name" value="{{ old('last_name') }}" required class="form-input" placeholder="Văn A">
                         @error('last_name')<span class="error-text">{{ $message }}</span>@enderror
                     </div>
 
                     <div class="form-group">
                         <label class="form-label required">Số điện thoại</label>
-                        <input type="tel" name="phone" value="{{ old('phone', $address->phone) }}" required class="form-input" placeholder="0912345678">
+                        <input type="tel" name="phone" value="{{ old('phone') }}" required class="form-input" placeholder="0912345678">
                         @error('phone')<span class="error-text">{{ $message }}</span>@enderror
                     </div>
 
                     <div class="form-group">
                         <label class="form-label required">Email</label>
-                        <input type="email" name="email" value="{{ old('email', $address->email) }}" required class="form-input" placeholder="email@example.com">
+                        <input type="email" name="email" value="{{ old('email', auth()->guard('customer')->user()->email) }}" required class="form-input" placeholder="email@example.com">
                         @error('email')<span class="error-text">{{ $message }}</span>@enderror
                     </div>
 
                     <div class="form-group full-width">
                         <label class="form-label">Tên công ty (tùy chọn)</label>
-                        <input type="text" name="company_name" value="{{ old('company_name', $address->company_name) }}" class="form-input" placeholder="Tên công ty">
+                        <input type="text" name="company_name" value="{{ old('company_name') }}" class="form-input" placeholder="Tên công ty">
                         @error('company_name')<span class="error-text">{{ $message }}</span>@enderror
                     </div>
                 </div>
@@ -71,52 +70,54 @@
                 <h2 class="section-title">Địa chỉ chi tiết</h2>
                 <div class="form-grid">
                     <div class="form-group full-width">
-                        <label class="form-label required">Địa chỉ cụ thể</label>
-                        <input type="text" name="address[]" value="{{ old('address.0', explode(PHP_EOL, $address->address)[0] ?? '') }}" required class="form-input" placeholder="Số nhà, tên đường (VD: 123 Nguyễn Huệ)">
+                        <label class="form-label required">Địa chỉ</label>
+                        <input type="text" name="address[]" value="{{ old('address.0') }}" required class="form-input" placeholder="Số nhà, tên đường">
                         @error('address.0')<span class="error-text">{{ $message }}</span>@enderror
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label required">Tỉnh/Thành phố</label>
-                        <select name="state" required class="form-input">
-                            <option value="">Chọn Tỉnh/Thành phố</option>
-                            @php
-                            $provinces = ['Hồ Chí Minh', 'Hà Nội', 'Đà Nẵng', 'Cần Thơ', 'Hải Phòng', 'An Giang', 'Bà Rịa - Vũng Tàu', 'Bắc Giang', 'Bắc Kạn', 'Bạc Liêu', 'Bắc Ninh', 'Bến Tre', 'Bình Định', 'Bình Dương', 'Bình Phước', 'Bình Thuận', 'Cà Mau', 'Cao Bằng', 'Đắk Lắk', 'Đắk Nông', 'Điện Biên', 'Đồng Nai', 'Đồng Tháp', 'Gia Lai', 'Hà Giang', 'Hà Nam', 'Hà Tĩnh', 'Hải Dương', 'Hậu Giang', 'Hòa Bình', 'Hưng Yên', 'Khánh Hòa', 'Kiên Giang', 'Kon Tum', 'Lai Châu', 'Lâm Đồng', 'Lạng Sơn', 'Lào Cai', 'Long An', 'Nam Định', 'Nghệ An', 'Ninh Bình', 'Ninh Thuận', 'Phú Thọ', 'Phú Yên', 'Quảng Bình', 'Quảng Nam', 'Quảng Ngãi', 'Quảng Ninh', 'Quảng Trị', 'Sóc Trăng', 'Sơn La', 'Tây Ninh', 'Thái Bình', 'Thái Nguyên', 'Thanh Hóa', 'Thừa Thiên Huế', 'Tiền Giang', 'Trà Vinh', 'Tuyên Quang', 'Vĩnh Long', 'Vĩnh Phúc', 'Yên Bái'];
-                            @endphp
-                            @foreach($provinces as $province)
-                                <option value="{{ $province }}" {{ old('state', $address->state) == $province ? 'selected' : '' }}>
-                                    {{ $province == 'Hồ Chí Minh' ? 'TP. Hồ Chí Minh' : $province }}
+                        <label class="form-label required">Quốc gia</label>
+                        <select name="country" required class="form-input" id="country">
+                            <option value="">Chọn quốc gia</option>
+                            @foreach (core()->countries() as $country)
+                                <option value="{{ $country->code }}" {{ old('country') == $country->code ? 'selected' : '' }}>
+                                    {{ $country->name }}
                                 </option>
                             @endforeach
                         </select>
+                        @error('country')<span class="error-text">{{ $message }}</span>@enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">Tỉnh/Thành phố</label>
+                        <input type="text" name="state" value="{{ old('state') }}" required class="form-input" placeholder="Hồ Chí Minh">
                         @error('state')<span class="error-text">{{ $message }}</span>@enderror
                     </div>
 
                     <div class="form-group">
                         <label class="form-label required">Quận/Huyện</label>
-                        <input type="text" name="city" value="{{ old('city', $address->city) }}" required class="form-input" placeholder="VD: Quận 1, Huyện Củ Chi">
+                        <input type="text" name="city" value="{{ old('city') }}" required class="form-input" placeholder="Quận 1">
                         @error('city')<span class="error-text">{{ $message }}</span>@enderror
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Phường/Xã (tùy chọn)</label>
-                        <input type="text" name="address[1]" value="{{ old('address.1', explode(PHP_EOL, $address->address)[1] ?? '') }}" class="form-input" placeholder="VD: Phường Bến Nghé">
-                    </div>
-
-                    <div class="form-group">
                         <label class="form-label required">Mã bưu điện</label>
-                        <input type="text" name="postcode" value="{{ old('postcode', $address->postcode) }}" required class="form-input" placeholder="VD: 700000">
+                        <input type="text" name="postcode" value="{{ old('postcode') }}" required class="form-input" placeholder="700000">
                         @error('postcode')<span class="error-text">{{ $message }}</span>@enderror
                     </div>
 
-                    <input type="hidden" name="country" value="VN">
+                    <div class="form-group">
+                        <label class="form-label">Mã số thuế (tùy chọn)</label>
+                        <input type="text" name="vat_id" value="{{ old('vat_id') }}" class="form-input" placeholder="0123456789">
+                        @error('vat_id')<span class="error-text">{{ $message }}</span>@enderror
+                    </div>
                 </div>
             </div>
 
             <!-- Default Address -->
             <div class="form-section">
                 <label class="checkbox-wrapper">
-                    <input type="checkbox" name="default_address" value="1" {{ old('default_address', $address->default_address) ? 'checked' : '' }}>
+                    <input type="checkbox" name="default_address" value="1" {{ old('default_address') ? 'checked' : '' }}>
                     <span class="checkbox-label">Đặt làm địa chỉ mặc định</span>
                 </label>
             </div>
@@ -128,7 +129,7 @@
                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"/>
                     </svg>
-                    Cập nhật địa chỉ
+                    Lưu địa chỉ
                 </button>
             </div>
         </form>
