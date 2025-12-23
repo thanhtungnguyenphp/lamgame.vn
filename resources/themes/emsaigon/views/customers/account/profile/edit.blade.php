@@ -15,7 +15,31 @@
             </a>
         </div>
 
-        <x-shop::form :action="route('shop.customers.account.profile.update')" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('shop.customers.account.profile.update') }}" enctype="multipart/form-data">
+            @csrf
+            
+            @if ($errors->any())
+                <div class="alert alert-danger" style="background: #fee; border: 1px solid #fcc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <ul style="margin: 0; padding-left: 1.5rem;">
+                        @foreach ($errors->all() as $error)
+                            <li style="color: #c00;">{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @if (session('success'))
+                <div class="alert alert-success" style="background: #efe; border: 1px solid #cfc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; color: #060;">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('warning'))
+                <div class="alert alert-warning" style="background: #ffc; border: 1px solid #fc6; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; color: #630;">
+                    {{ session('warning') }}
+                </div>
+            @endif
+            
             <!-- Basic Info -->
             <div class="form-card">
                 <h2 class="form-section-title">Thông tin cơ bản</h2>
@@ -66,15 +90,15 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Mật khẩu hiện tại</label>
-                        <input type="password" name="old_password" class="form-input" placeholder="••••••••">
+                        <input type="password" name="current_password" class="form-input" placeholder="••••••••">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Mật khẩu mới</label>
-                        <input type="password" name="password" class="form-input" placeholder="••••••••">
+                        <input type="password" name="new_password" class="form-input" placeholder="••••••••">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Xác nhận mật khẩu mới</label>
-                        <input type="password" name="password_confirmation" class="form-input" placeholder="••••••••">
+                        <input type="password" name="new_password_confirmation" class="form-input" placeholder="••••••••">
                     </div>
                 </div>
             </div>
@@ -97,7 +121,7 @@
                     Lưu thay đổi
                 </button>
             </div>
-        </x-shop::form>
+        </form>
     </div>
 
     @push('styles')
@@ -123,6 +147,7 @@
         .btn-cancel:hover { background: #f9fafb; }
         .btn-save { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: #2c5f41; color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
         .btn-save:hover { background: #1e4530; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(44,95,65,0.2); }
+        .btn-save:active { transform: translateY(0); }
         @media (max-width: 768px) {
             .edit-header { flex-direction: column; align-items: flex-start; }
             .edit-title { font-size: 1.5rem; }
@@ -132,5 +157,36 @@
             .btn-cancel, .btn-save { width: 100%; justify-content: center; }
         }
     </style>
+    @endpush
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const submitBtn = document.querySelector('.btn-save');
+            
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    console.log('Form submitting...', {
+                        action: form.action,
+                        method: form.method,
+                        data: new FormData(form)
+                    });
+                    
+                    // Disable button to prevent double submit
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span>Đang lưu...</span>';
+                    }
+                });
+            }
+            
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function(e) {
+                    console.log('Submit button clicked');
+                });
+            }
+        });
+    </script>
     @endpush
 </x-layouts.account>
