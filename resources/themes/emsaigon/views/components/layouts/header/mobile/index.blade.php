@@ -206,6 +206,24 @@
                                             @lang('shop::app.components.layouts.header.wishlist')
                                         </a>
                                     @endif
+
+                                    @auth('customer')
+                                        @if(auth('customer')->user()->seller)
+                                            <a
+                                                class="cursor-pointer px-5 py-2 text-base font-semibold text-green-600 hover:bg-green-50"
+                                                href="{{ route('seller.dashboard') }}"
+                                            >
+                                                🏪 Seller Dashboard
+                                            </a>
+                                        @else
+                                            <a
+                                                class="cursor-pointer px-5 py-2 text-base text-blue-600 hover:bg-blue-50"
+                                                href="{{ route('seller.register') }}"
+                                            >
+                                                💼 Đăng ký Seller
+                                            </a>
+                                        @endif
+                                    @endauth
     
                                     <!--Customers logout-->
                                     @auth('customer')
