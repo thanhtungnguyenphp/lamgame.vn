@@ -23,6 +23,10 @@
 
         <!-- Products Grid -->
         @if($products->count() > 0)
+            <div style="background: white; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #e5e7eb;">
+                <strong>Debug:</strong> Tìm thấy {{ $products->total() }} sản phẩm (Hiển thị {{ $products->count() }} trên trang này)
+            </div>
+
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
                 @foreach($products as $product)
                     <div style="background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden;">
@@ -99,6 +103,9 @@
         @else
             <!-- Empty State -->
             <div style="background: white; padding: 4rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); text-align: center;">
+                <div style="background: #fee2e2; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; color: #991b1b;">
+                    <strong>Debug:</strong> Không tìm thấy sản phẩm nào với company_id = {{ $seller->id }}
+                </div>
                 <div style="font-size: 4rem; margin-bottom: 1rem;">📦</div>
                 <h3 style="color: #374151; font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Chưa có sản phẩm nào</h3>
                 <p style="color: #6b7280; margin-bottom: 2rem;">Bắt đầu bán source game của bạn ngay hôm nay!</p>

@@ -83,12 +83,19 @@
                         <select name="category_id" required
                                 style="width: 100%; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem;">
                             <option value="">-- Chọn danh mục --</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->translations->first()->name ?? $category->name }}
-                                </option>
-                            @endforeach
+                            @if($categories->count() > 0)
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                        {{ $category->translations->first()->name ?? $category->name ?? 'Category #' . $category->id }}
+                                    </option>
+                                @endforeach
+                            @else
+                                <option value="" disabled>Chưa có danh mục nào</option>
+                            @endif
                         </select>
+                        <small style="color: #6b7280; font-size: 0.875rem; display: block; margin-top: 0.25rem;">
+                            Tổng: {{ $categories->count() }} danh mục
+                        </small>
                         @error('category_id')<span style="color: #dc2626; font-size: 0.875rem; display: block;">{{ $message }}</span>@enderror
                     </div>
                 </div>

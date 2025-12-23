@@ -32,6 +32,9 @@ Route::prefix('seller')->name('seller.')->middleware('theme')->group(function ()
         
         // Products
         Route::resource('products', App\Http\Controllers\SellerProductController::class);
+        Route::get('products-debug', function() {
+            return view('shop::seller.products.debug');
+        })->name('products.debug');
         
         // Orders
         Route::get('orders', [App\Http\Controllers\SellerController::class, 'orders'])->name('orders.index');

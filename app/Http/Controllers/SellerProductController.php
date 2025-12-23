@@ -31,12 +31,25 @@ class SellerProductController extends Controller
             return redirect()->route('seller.pending');
         }
 
-        $products = $this->productRepository
-            ->where('company_id', $seller->id)
+        // Debug: Log seller ID
+        \Log::info('Seller ID: ' . $seller->id);
+
+        // Simple query without repository
+        $products = \Webkul\Product\Models\Product::where('company_id', $seller->id)
             ->where('type', 'downloadable')
             ->with(['flat', 'images', 'downloadable_links'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
+
+        // Debug: Log products count
+        \Log::info('Products count: ' . $products->total());
+        
+        // Debug: Log all products for this seller
+        $allProducts = \Webkul\Product\Models\Product::where('company_id', $seller->id)->get();
+        \Log::info('All products (any type): ' . $allProducts->count());
+        foreach ($allProducts as $p) {
+            \Log::info("Product ID: {$p->id}, Type: {$p->type}, SKU: {$p->sku}");
+        }
 
         return view('shop::seller.products.index', compact('products', 'seller'));
     }
@@ -49,12 +62,15 @@ class SellerProductController extends Controller
             return redirect()->route('seller.pending')->with('error', 'Bạn không có quyền upload sản phẩm');
         }
 
+        // Load categories có slug chứa "source"
         $categories = $this->categoryRepository
             ->getModel()
+            ->with('translations')
+            ->where('status', 1)
             ->whereHas('translations', function($q) {
                 $q->where('slug', 'like', '%source%');
             })
-            ->with('translations')
+            ->orderBy('position')
             ->get();
 
         return view('shop::seller.products.create', compact('categories', 'seller'));
