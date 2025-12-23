@@ -144,17 +144,69 @@ class SellerController extends Controller
                 ->with('error', 'Tài khoản seller chưa được kích hoạt.');
         }
 
+        // Stats
         $stats = [
             'total_products' => $seller->total_products,
             'total_sales' => $seller->total_sales,
             'total_revenue' => $seller->total_revenue,
             'rating_avg' => $seller->rating_avg,
+            'available_balance' => $this->getAvailableBalance($seller),
         ];
+
+        // Recent orders
+        $recentOrders = \DB::table('orders')
+            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('products.company_id', $seller->id)
+            ->select('orders.*', 'order_items.product_id', 'order_items.name as product_name', 'order_items.total')
+            ->orderBy('orders.created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        // Top products
+        $topProducts = \DB::table('products')
+            ->leftJoin('product_flat', 'products.id', '=', 'product_flat.product_id')
+            ->leftJoin('order_items', 'products.id', '=', 'order_items.product_id')
+            ->where('products.company_id', $seller->id)
+            ->select('products.id', 'product_flat.name', \DB::raw('COUNT(order_items.id) as sales_count'), \DB::raw('SUM(order_items.total) as revenue'))
+            ->groupBy('products.id', 'product_flat.name')
+            ->orderBy('sales_count', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Monthly revenue (last 6 months)
+        $monthlyRevenue = \DB::table('orders')
+            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('products.company_id', $seller->id)
+            ->where('orders.created_at', '>=', now()->subMonths(6))
+            ->select(\DB::raw('DATE_FORMAT(orders.created_at, "%Y-%m") as month'), \DB::raw('SUM(order_items.total) as revenue'))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
 
         return view('seller.dashboard', [
             'seller' => $seller,
             'stats' => $stats,
+            'recentOrders' => $recentOrders,
+            'topProducts' => $topProducts,
+            'monthlyRevenue' => $monthlyRevenue,
             'page_title' => 'Dashboard - Seller - Làm Game',
         ]);
+    }
+
+    private function getAvailableBalance($seller)
+    {
+        $totalEarnings = \DB::table('source_game_earnings')
+            ->where('seller_id', $seller->id)
+            ->where('status', 'completed')
+            ->sum('seller_amount');
+
+        $totalWithdrawn = \DB::table('source_game_withdrawals')
+            ->where('seller_id', $seller->id)
+            ->where('status', 'completed')
+            ->sum('amount');
+
+        return $totalEarnings - $totalWithdrawn;
     }
 }
