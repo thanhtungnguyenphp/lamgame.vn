@@ -28,9 +28,17 @@ Route::prefix('seller')->name('seller.')->middleware('theme')->group(function ()
     
     Route::middleware('seller')->group(function () {
         Route::get('dashboard', [App\Http\Controllers\SellerController::class, 'dashboard'])->name('dashboard');
-        Route::resource('products', App\Http\Controllers\Seller\SellerProductController::class);
-        Route::delete('products/images/{id}', [App\Http\Controllers\Seller\SellerProductController::class, 'deleteImage'])->name('products.images.delete');
-        Route::post('products/{id}/submit-review', [App\Http\Controllers\Seller\SellerProductController::class, 'submitForReview'])->name('products.submit-review');
+        
+        // Products
+        Route::resource('products', App\Http\Controllers\SellerProductController::class);
+        
+        // Earnings
+        Route::get('earnings', [App\Http\Controllers\SellerEarningController::class, 'index'])->name('earnings.index');
+        
+        // Withdrawals
+        Route::get('withdrawals', [App\Http\Controllers\SellerWithdrawalController::class, 'index'])->name('withdrawals.index');
+        Route::get('withdrawals/create', [App\Http\Controllers\SellerWithdrawalController::class, 'create'])->name('withdrawals.create');
+        Route::post('withdrawals', [App\Http\Controllers\SellerWithdrawalController::class, 'store'])->name('withdrawals.store');
     });
 });
 
