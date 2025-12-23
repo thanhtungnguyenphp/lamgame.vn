@@ -38,7 +38,7 @@ class SellerProductController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('seller.products.index', compact('products', 'seller'));
+        return view('shop::seller.products.index', compact('products', 'seller'));
     }
 
     public function create()
@@ -57,7 +57,7 @@ class SellerProductController extends Controller
             ->with('translations')
             ->get();
 
-        return view('seller.products.create', compact('categories', 'seller'));
+        return view('shop::seller.products.create', compact('categories', 'seller'));
     }
 
     public function store(Request $request)

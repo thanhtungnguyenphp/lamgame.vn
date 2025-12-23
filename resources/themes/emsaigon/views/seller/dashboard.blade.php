@@ -1,4 +1,4 @@
-@extends('emsaigon::layouts.master')
+@extends('shop::seller.layouts.master')
 
 @section('page_title', $page_title)
 
@@ -80,32 +80,46 @@
                 🚀 Hành động nhanh
             </h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                <a href="#" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; border: 2px solid transparent;">
+                <a href="{{ route('seller.products.create') }}" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; border: 2px solid transparent;">
                     <span style="font-size: 2rem;">➕</span>
                     <div>
                         <div style="font-weight: 600;">Thêm sản phẩm</div>
                         <div style="font-size: 0.9rem; color: #666;">Upload source game mới</div>
                     </div>
                 </a>
-                <a href="#" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; border: 2px solid transparent;">
-                    <span style="font-size: 2rem;">📊</span>
+                <a href="{{ route('seller.products.index') }}" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; border: 2px solid transparent;">
+                    <span style="font-size: 2rem;">📦</span>
                     <div>
-                        <div style="font-weight: 600;">Xem báo cáo</div>
-                        <div style="font-size: 0.9rem; color: #666;">Thống kê chi tiết</div>
+                        <div style="font-weight: 600;">Quản lý sản phẩm</div>
+                        <div style="font-size: 0.9rem; color: #666;">Xem & chỉnh sửa</div>
                     </div>
                 </a>
-                <a href="#" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; border: 2px solid transparent;">
+                <a href="{{ route('seller.orders.index') }}" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; border: 2px solid transparent;">
+                    <span style="font-size: 2rem;">📊</span>
+                    <div>
+                        <div style="font-weight: 600;">Đơn hàng</div>
+                        <div style="font-size: 0.9rem; color: #666;">Theo dõi đơn hàng</div>
+                    </div>
+                </a>
+                <a href="{{ route('seller.withdrawals.index') }}" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; border: 2px solid transparent;">
                     <span style="font-size: 2rem;">💳</span>
                     <div>
                         <div style="font-weight: 600;">Rút tiền</div>
-                        <div style="font-size: 0.9rem; color: #666;">Yêu cầu thanh toán</div>
+                        <div style="font-size: 0.9rem; color: #666;">{{ number_format($stats['available_balance'], 0, ',', '.') }}đ</div>
                     </div>
                 </a>
-                <a href="#" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; border: 2px solid transparent;">
+                <a href="{{ route('seller.register') }}" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; border: 2px solid transparent;">
                     <span style="font-size: 2rem;">⚙️</span>
                     <div>
-                        <div style="font-weight: 600;">Cài đặt</div>
-                        <div style="font-size: 0.9rem; color: #666;">Quản lý shop</div>
+                        <div style="font-weight: 600;">Cài đặt Shop</div>
+                        <div style="font-size: 0.9rem; color: #666;">Thông tin & ngân hàng</div>
+                    </div>
+                </a>
+                <a href="{{ route('seller.analytics') }}" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 10px; text-decoration: none; color: #333; transition: all 0.3s; border: 2px solid transparent;">
+                    <span style="font-size: 2rem;">📈</span>
+                    <div>
+                        <div style="font-weight: 600;">Phân tích</div>
+                        <div style="font-size: 0.9rem; color: #666;">Biểu đồ & báo cáo</div>
                     </div>
                 </a>
             </div>

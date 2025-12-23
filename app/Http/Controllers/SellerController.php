@@ -26,7 +26,7 @@ class SellerController extends Controller
         \Log::info('Customer ID: ' . $customer->id);
         \Log::info('Seller exists: ' . ($seller ? 'Yes - ' . $seller->shop_name : 'No'));
 
-        return view('seller.register', [
+        return view('shop::seller.register', [
             'customer' => $customer,
             'seller' => $seller,
             'isEdit' => $seller ? true : false,
@@ -128,7 +128,7 @@ class SellerController extends Controller
             return redirect()->route('seller.dashboard');
         }
 
-        return view('seller.pending', [
+        return view('shop::seller.pending', [
             'seller' => $seller,
             'page_title' => 'Đang chờ duyệt - Làm Game',
         ]);
@@ -185,7 +185,7 @@ class SellerController extends Controller
             ->orderBy('month')
             ->get();
 
-        return view('seller.dashboard', [
+        return view('shop::seller.dashboard', [
             'seller' => $seller,
             'stats' => $stats,
             'recentOrders' => $recentOrders,
@@ -208,5 +208,103 @@ class SellerController extends Controller
             ->sum('amount');
 
         return $totalEarnings - $totalWithdrawn;
+    }
+
+    public function orders()
+    {
+        $customer = Auth::guard('customer')->user();
+        $seller = $customer->seller;
+
+        if (!$seller || !$seller->isActive()) {
+            return redirect()->route('seller.pending');
+        }
+
+        $orders = \DB::table('orders')
+            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('products.company_id', $seller->id)
+            ->select('orders.*', 'order_items.product_id', 'order_items.name as product_name', 'order_items.qty', 'order_items.total')
+            ->orderBy('orders.created_at', 'desc')
+            ->paginate(20);
+
+        return view('shop::seller.orders.index', [
+            'seller' => $seller,
+            'orders' => $orders,
+            'page_title' => 'Đơn hàng - Seller - Làm Game',
+        ]);
+    }
+
+    public function orderShow($id)
+    {
+        $customer = Auth::guard('customer')->user();
+        $seller = $customer->seller;
+
+        $order = \DB::table('orders')
+            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('products.company_id', $seller->id)
+            ->where('orders.id', $id)
+            ->select('orders.*', 'order_items.*')
+            ->first();
+
+        if (!$order) {
+            abort(404);
+        }
+
+        return view('shop::seller.orders.show', [
+            'seller' => $seller,
+            'order' => $order,
+            'page_title' => 'Chi tiết đơn hàng - Seller - Làm Game',
+        ]);
+    }
+
+    public function analytics()
+    {
+        $customer = Auth::guard('customer')->user();
+        $seller = $customer->seller;
+
+        if (!$seller || !$seller->isActive()) {
+            return redirect()->route('seller.pending');
+        }
+
+        // Monthly revenue (last 12 months)
+        $monthlyRevenue = \DB::table('orders')
+            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('products.company_id', $seller->id)
+            ->where('orders.created_at', '>=', now()->subMonths(12))
+            ->select(\DB::raw('DATE_FORMAT(orders.created_at, "%Y-%m") as month'), \DB::raw('SUM(order_items.total) as revenue'), \DB::raw('COUNT(DISTINCT orders.id) as orders_count'))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        // Top products (top 10)
+        $topProducts = \DB::table('products')
+            ->leftJoin('product_flat', 'products.id', '=', 'product_flat.product_id')
+            ->leftJoin('order_items', 'products.id', '=', 'order_items.product_id')
+            ->where('products.company_id', $seller->id)
+            ->select('products.id', 'product_flat.name', \DB::raw('COUNT(order_items.id) as sales_count'), \DB::raw('SUM(order_items.total) as revenue'))
+            ->groupBy('products.id', 'product_flat.name')
+            ->orderBy('sales_count', 'desc')
+            ->limit(10)
+            ->get();
+
+        // Category breakdown
+        $categoryStats = \DB::table('products')
+            ->join('product_categories', 'products.id', '=', 'product_categories.product_id')
+            ->join('category_translations', 'product_categories.category_id', '=', 'category_translations.category_id')
+            ->leftJoin('order_items', 'products.id', '=', 'order_items.product_id')
+            ->where('products.company_id', $seller->id)
+            ->select('category_translations.name as category_name', \DB::raw('COUNT(DISTINCT products.id) as products_count'), \DB::raw('COUNT(order_items.id) as sales_count'), \DB::raw('SUM(order_items.total) as revenue'))
+            ->groupBy('category_translations.name')
+            ->get();
+
+        return view('shop::seller.analytics', [
+            'seller' => $seller,
+            'monthlyRevenue' => $monthlyRevenue,
+            'topProducts' => $topProducts,
+            'categoryStats' => $categoryStats,
+            'page_title' => 'Phân tích - Seller - Làm Game',
+        ]);
     }
 }
