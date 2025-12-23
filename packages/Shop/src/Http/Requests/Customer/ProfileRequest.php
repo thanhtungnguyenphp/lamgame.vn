@@ -29,15 +29,15 @@ class ProfileRequest extends FormRequest
         return [
             'first_name'                => ['required'],
             'last_name'                 => ['required'],
-            'gender'                    => 'required|in:Other,Male,Female',
-            'date_of_birth'             => 'date|before:today',
-            'email'                     => 'email|unique:customers,email,'.$id,
+            'gender'                    => 'nullable|in:Other,Male,Female',
+            'date_of_birth'             => 'nullable|date|before:today',
+            'email'                     => 'required|email|unique:customers,email,'.$id,
             'new_password'              => 'confirmed|min:6|required_with:current_password',
             'new_password_confirmation' => 'required_with:new_password',
             'current_password'          => 'required_with:new_password',
             'image'                     => 'array',
             'image.*'                   => 'mimes:bmp,jpeg,jpg,png,webp',
-            'phone'                     => ['required', new PhoneNumber, 'unique:customers,phone,'.$id],
+            'phone'                     => ['nullable', new PhoneNumber, 'unique:customers,phone,'.$id],
             'subscribed_to_news_letter' => 'nullable',
         ];
     }
