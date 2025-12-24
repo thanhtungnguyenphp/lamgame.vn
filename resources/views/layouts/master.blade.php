@@ -391,8 +391,8 @@
                         <div class="user-menu">
                             <span class="user-name">{{ auth('customer')->user()->first_name }}</span>
                             <div class="user-dropdown">
-                                <a href="{{ route('auth.profile') }}">Thông tin cá nhân</a>
-                                <form action="{{ route('auth.logout') }}" method="POST" style="display: inline;">
+                                <a href="{{ route('shop.customers.account.profile.index') }}">Thông tin cá nhân</a>
+                                <form action="{{ route('shop.customer.session.destroy') }}" method="POST" style="display: inline;">
                                     @csrf
                                     <button type="submit" style="background: none; border: none; color: inherit; cursor: pointer;">Đăng xuất</button>
                                 </form>
