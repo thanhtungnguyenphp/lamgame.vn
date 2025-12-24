@@ -39,7 +39,7 @@
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-homepage.css') }}">
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/hero-banner-v2.css') }}">
     
-    @vite(['resources/themes/emsaigon/assets/scss/app.scss'], 'themes/shop/emsaigon/build')
+    {{-- @vite(['resources/themes/emsaigon/assets/scss/app.scss'], 'themes/shop/emsaigon/build') --}}
 </head>
 
 <body>
@@ -111,7 +111,7 @@
     <!-- Scripts -->
     @stack('scripts')
     
-    @vite(['resources/themes/emsaigon/assets/js/app.js'], 'themes/shop/emsaigon/build')
+    {{-- @vite(['resources/themes/emsaigon/assets/js/app.js'], 'themes/shop/emsaigon/build') --}}
     
     <script>
         // Header scroll effect
