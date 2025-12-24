@@ -1,4 +1,4 @@
-@extends('emsaigon::layouts.master')
+@extends('shop::layouts.master')
 
 @section('page_title', $page_title)
 

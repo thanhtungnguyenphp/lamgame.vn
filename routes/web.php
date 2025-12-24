@@ -28,9 +28,17 @@ Route::prefix('seller')->name('seller.')->middleware('theme')->group(function ()
     
     Route::middleware('seller')->group(function () {
         Route::get('dashboard', [App\Http\Controllers\SellerController::class, 'dashboard'])->name('dashboard');
+        Route::get('analytics', [App\Http\Controllers\SellerController::class, 'analytics'])->name('analytics');
         
         // Products
         Route::resource('products', App\Http\Controllers\SellerProductController::class);
+        Route::get('products-debug', function() {
+            return view('shop::seller.products.debug');
+        })->name('products.debug');
+        
+        // Orders
+        Route::get('orders', [App\Http\Controllers\SellerController::class, 'orders'])->name('orders.index');
+        Route::get('orders/{id}', [App\Http\Controllers\SellerController::class, 'orderShow'])->name('orders.show');
         
         // Earnings
         Route::get('earnings', [App\Http\Controllers\SellerEarningController::class, 'index'])->name('earnings.index');
