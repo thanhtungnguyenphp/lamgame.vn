@@ -10,7 +10,6 @@
     <meta name="keywords" content="game developer việt nam, unity developer, unreal engine, việc làm game, lập trình game, forum game dev, source code game, tuyển dụng game">
     <meta name="author" content="LamGame.vn Team">
     <meta name="robots" content="index,follow">
-    <link rel="canonical" href="{{ url()->current() }}">
 
     {{-- Language and Locale --}}
     <meta name="language" content="Vietnamese">

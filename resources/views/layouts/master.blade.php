@@ -21,6 +21,13 @@
     <meta property="og:image" content="{{ asset('assets/logos/png/logo-square-512.png') }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">
+    
+    <!-- Google AdSense -->
+    <meta name="google-adsense-account" content="ca-pub-5812352607411986">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url()->current() }}">
+    
     @stack('meta')
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/logos/favicon/favicon.ico') }}">
