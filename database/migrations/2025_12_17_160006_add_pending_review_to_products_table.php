@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->boolean('pending_review')->default(false)->after('visible_individually');
+            $table->boolean('pending_review')->default(false)->after('seller_id');
             $table->text('rejection_reason')->nullable()->after('pending_review');
             $table->index('pending_review');
         });

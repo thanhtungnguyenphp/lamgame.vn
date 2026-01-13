@@ -1,530 +1,572 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
     <url>
-    <loc>https://lamgame.localhost</loc>
-    <lastmod>2025-12-16T15:39:24+07:00</lastmod>
+    <loc>https://lamgame.vn</loc>
+    <lastmod>2026-01-13T09:00:01+07:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/viec-lam-game</loc>
-    <lastmod>2025-12-16T15:39:24+07:00</lastmod>
+    <loc>https://lamgame.vn/viec-lam-game</loc>
+    <lastmod>2026-01-13T09:00:01+07:00</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.9</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/viec-lam/lập-trình-game-unity-32</loc>
-    <lastmod>2025-12-05T19:07:32+07:00</lastmod>
+    <loc>https://lamgame.vn/viec-lam/s-38</loc>
+    <lastmod>2025-12-12T14:56:27+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/viec-lam/job-a-33</loc>
-    <lastmod>2025-11-12T21:03:49+07:00</lastmod>
+    <loc>https://lamgame.vn/viec-lam/thực-tập-sinh-game-designer-39</loc>
+    <lastmod>2025-12-13T11:09:53+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/viec-lam/job-b-36</loc>
-    <lastmod>2025-12-08T13:48:32+07:00</lastmod>
+    <loc>https://lamgame.vn/viec-lam/game-designer-40</loc>
+    <lastmod>2025-12-13T11:18:03+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/viec-lam/asd-37</loc>
-    <lastmod>2025-12-16T11:24:37+07:00</lastmod>
+    <loc>https://lamgame.vn/viec-lam/fresher-ua-marketing-(game/app)-41</loc>
+    <lastmod>2025-12-13T11:36:35+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/viec-lam/test-a-38</loc>
-    <lastmod>2025-12-15T11:06:23+07:00</lastmod>
+    <loc>https://lamgame.vn/viec-lam/game-designer-intern-42</loc>
+    <lastmod>2025-12-13T19:15:25+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/viec-lam/test-2-39</loc>
-    <lastmod>2025-12-15T13:45:57+07:00</lastmod>
+    <loc>https://lamgame.vn/viec-lam/cộng-tác-viên-chăm-sóc-khách-hàng-43</loc>
+    <lastmod>2025-12-16T14:22:04+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog</loc>
-    <lastmod>2025-12-16T15:39:24+07:00</lastmod>
+    <loc>https://lamgame.vn/viec-lam/senior-2d-game-artist-44</loc>
+    <lastmod>2025-12-16T14:16:30+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+            </url>
+    <url>
+    <loc>https://lamgame.vn/viec-lam/job-overview-and-responsibility-45</loc>
+    <lastmod>2025-12-22T09:25:58+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+            </url>
+    <url>
+    <loc>https://lamgame.vn/viec-lam/senior-hoặc-lead-backend-engineer-(golang)-46</loc>
+    <lastmod>2025-12-22T10:42:27+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+            </url>
+    <url>
+    <loc>https://lamgame.vn/viec-lam/senior-backend-java,golang-47</loc>
+    <lastmod>2025-12-22T10:54:27+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+            </url>
+    <url>
+    <loc>https://lamgame.vn/blog</loc>
+    <lastmod>2026-01-13T09:00:01+07:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/huong-dan-unity-2023-tinh-nang-moi</loc>
-    <lastmod>2025-10-05T16:59:08+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/huong-dan-unity-2023-tinh-nang-moi</loc>
+    <lastmod>2025-10-05T09:59:08+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/csharp-co-ban-cho-game-developer</loc>
-    <lastmod>2025-10-05T05:44:13+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/csharp-co-ban-cho-game-developer</loc>
+    <lastmod>2025-10-04T22:44:13+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/toi-uu-hoa-performance-game-mobile-unity</loc>
-    <lastmod>2025-10-05T17:04:40+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/toi-uu-hoa-performance-game-mobile-unity</loc>
+    <lastmod>2025-10-05T10:04:40+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/game-design-101-nguyen-tac-thiet-ke-game</loc>
-    <lastmod>2025-10-05T17:07:54+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/game-design-101-nguyen-tac-thiet-ke-game</loc>
+    <lastmod>2025-10-05T10:07:54+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/csgo-danh-gia-chi-tiet-game-fps-huyen-thoai-2024</loc>
-    <lastmod>2025-10-05T19:13:34+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/csgo-danh-gia-chi-tiet-game-fps-huyen-thoai-2024</loc>
+    <lastmod>2025-10-05T12:13:34+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/pubg-game-sinh-ton-battle-royale-gay-nghien-nhat</loc>
-    <lastmod>2025-10-05T20:11:27+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/pubg-game-sinh-ton-battle-royale-gay-nghien-nhat</loc>
+    <lastmod>2025-10-05T13:11:27+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-10-game-pc-cu-nhung-van-cuc-hay-2024</loc>
-    <lastmod>2025-10-05T20:22:59+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-10-game-pc-cu-nhung-van-cuc-hay-2024</loc>
+    <lastmod>2025-10-05T13:22:59+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/grand-chase-m-game-nhap-vai-hanh-dong-anime-3d-sieu-hot</loc>
-    <lastmod>2025-10-07T04:40:16+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/grand-chase-m-game-nhap-vai-hanh-dong-anime-3d-sieu-hot</loc>
+    <lastmod>2025-10-06T21:40:16+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-15-game-mien-phi-hay-nhat-tren-steam-2024</loc>
-    <lastmod>2025-10-05T18:49:03+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-15-game-mien-phi-hay-nhat-tren-steam-2024</loc>
+    <lastmod>2025-10-05T11:49:03+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/the-walking-dead-no-man-s-land-khi-cai-chet-troi-day</loc>
-    <lastmod>2025-10-05T20:16:09+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/the-walking-dead-no-man-s-land-khi-cai-chet-troi-day</loc>
+    <lastmod>2025-10-05T13:16:09+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/this-war-of-mine-phan-anh-nguoi-trong-chien-tranh</loc>
-    <lastmod>2025-10-05T18:26:49+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/this-war-of-mine-phan-anh-nguoi-trong-chien-tranh</loc>
+    <lastmod>2025-10-05T11:26:49+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/tools-phat-trien-game-html5-tot-nhat-2024</loc>
-    <lastmod>2025-10-05T18:38:25+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/tools-phat-trien-game-html5-tot-nhat-2024</loc>
+    <lastmod>2025-10-05T11:38:25+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/free-fire-arena-tong-ket-giai-đau-ffa</loc>
-    <lastmod>2025-10-05T17:17:34+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/free-fire-arena-tong-ket-giai-đau-ffa</loc>
+    <lastmod>2025-10-05T10:17:34+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/5kitu-game-ghep-chu-tieng-viet-gay-nghien</loc>
-    <lastmod>2025-10-05T21:06:49+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/5kitu-game-ghep-chu-tieng-viet-gay-nghien</loc>
+    <lastmod>2025-10-05T14:06:49+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/borderlands-2-game-ban-sung-rpg-hap-dan</loc>
-    <lastmod>2025-10-05T21:13:58+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/borderlands-2-game-ban-sung-rpg-hap-dan</loc>
+    <lastmod>2025-10-05T14:13:58+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/boss-boxing-game-dam-boc-mobile-song-dong</loc>
-    <lastmod>2025-10-05T21:19:56+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/boss-boxing-game-dam-boc-mobile-song-dong</loc>
+    <lastmod>2025-10-05T14:19:56+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/overwatch-cap-nhat-ban-do-eichenwald-moi</loc>
-    <lastmod>2025-10-05T21:39:17+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/overwatch-cap-nhat-ban-do-eichenwald-moi</loc>
+    <lastmod>2025-10-05T14:39:17+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/bo-suu-tap-chuot-gaming-chat-luong-cao</loc>
-    <lastmod>2025-10-05T22:51:46+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/bo-suu-tap-chuot-gaming-chat-luong-cao</loc>
+    <lastmod>2025-10-05T15:51:46+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/cs-go-danh-gia-chi-tiet-game-fps-huyen-thoai</loc>
-    <lastmod>2025-10-05T22:44:32+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/cs-go-danh-gia-chi-tiet-game-fps-huyen-thoai</loc>
+    <lastmod>2025-10-05T15:44:32+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/captain-heroes-game-sieu-anh-hung-mobile</loc>
-    <lastmod>2025-10-06T04:39:44+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/captain-heroes-game-sieu-anh-hung-mobile</loc>
+    <lastmod>2025-10-05T21:39:44+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/cartel-kings-game-chien-thuat-b-ng-dang</loc>
-    <lastmod>2025-10-06T04:47:06+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/cartel-kings-game-chien-thuat-b-ng-dang</loc>
+    <lastmod>2025-10-05T21:47:06+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/deadwalk-the-last-war-game-zombie-sinh-ton</loc>
-    <lastmod>2025-10-06T14:53:41+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/deadwalk-the-last-war-game-zombie-sinh-ton</loc>
+    <lastmod>2025-10-06T07:53:41+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/10-tua-game-pc-cu-hay-tuyet-ma-ban-khong-nen-bo-qua</loc>
-    <lastmod>2025-10-06T14:56:33+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/10-tua-game-pc-cu-hay-tuyet-ma-ban-khong-nen-bo-qua</loc>
+    <lastmod>2025-10-06T07:56:33+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/dirty-bomb-game-fps-mien-phi-hay-nhat-tu-splash-damage</loc>
-    <lastmod>2025-10-06T14:59:02+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/dirty-bomb-game-fps-mien-phi-hay-nhat-tu-splash-damage</loc>
+    <lastmod>2025-10-06T07:59:02+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/dirty-bomb-danh-gia-chi-tiet-game-fps-mien-phi</loc>
-    <lastmod>2025-10-06T15:01:54+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/dirty-bomb-danh-gia-chi-tiet-game-fps-mien-phi</loc>
+    <lastmod>2025-10-06T08:01:54+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/resident-evil-7-ac-mong-kinh-hoang-tro-lai</loc>
-    <lastmod>2025-10-06T15:06:14+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/resident-evil-7-ac-mong-kinh-hoang-tro-lai</loc>
+    <lastmod>2025-10-06T08:06:14+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/pubg-ly-do-thu-hut-hang-trieu-nguoi-choi-tren-toan-the-gioi</loc>
-    <lastmod>2025-10-05T03:11:28+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/pubg-ly-do-thu-hut-hang-trieu-nguoi-choi-tren-toan-the-gioi</loc>
+    <lastmod>2025-10-04T20:11:28+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/bayonetta-vanquish-ban-cap-nhat-moi-cho-pc</loc>
-    <lastmod>2025-10-05T03:03:27+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/bayonetta-vanquish-ban-cap-nhat-moi-cho-pc</loc>
+    <lastmod>2025-10-04T20:03:27+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/call-of-duty-wwii-su-tro-lai-cua-thoi-ky-the-chien-2</loc>
-    <lastmod>2025-10-05T02:49:54+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/call-of-duty-wwii-su-tro-lai-cua-thoi-ky-the-chien-2</loc>
+    <lastmod>2025-10-04T19:49:54+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/dota-2-valve-yeu-cau-so-dien-thoai-cho-ranked-match</loc>
-    <lastmod>2025-10-05T02:31:37+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/dota-2-valve-yeu-cau-so-dien-thoai-cho-ranked-match</loc>
+    <lastmod>2025-10-04T19:31:37+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-5-game-dau-nao-nhung-cuc-hay-phan-1</loc>
-    <lastmod>2025-10-05T02:21:24+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-5-game-dau-nao-nhung-cuc-hay-phan-1</loc>
+    <lastmod>2025-10-04T19:21:24+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-5-game-dau-nao-nhung-cuc-hay-phan-2</loc>
-    <lastmod>2025-10-05T02:10:44+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-5-game-dau-nao-nhung-cuc-hay-phan-2</loc>
+    <lastmod>2025-10-04T19:10:44+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/grand-chase-m-game-nhap-vai-hanh-dong-mobile-tuyet-voi</loc>
-    <lastmod>2025-10-04T23:47:37+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/grand-chase-m-game-nhap-vai-hanh-dong-mobile-tuyet-voi</loc>
+    <lastmod>2025-10-04T16:47:37+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/grand-sphere-game-mobile-rpg-voi-do-hoa-tuyet-dep</loc>
-    <lastmod>2025-10-04T23:44:01+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/grand-sphere-game-mobile-rpg-voi-do-hoa-tuyet-dep</loc>
+    <lastmod>2025-10-04T16:44:01+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/hit-game-mobile-hanh-dong-cuc-hap-dan</loc>
-    <lastmod>2025-10-04T21:28:18+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/hit-game-mobile-hanh-dong-cuc-hap-dan</loc>
+    <lastmod>2025-10-04T14:28:18+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/hidden-heroes-game-chien-thuat-an-danh-hay-ho</loc>
-    <lastmod>2025-10-04T21:13:10+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/hidden-heroes-game-chien-thuat-an-danh-hay-ho</loc>
+    <lastmod>2025-10-04T14:13:10+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/hungry-shark-evolution-cuoc-phieu-luu-cua-ca-map-doi</loc>
-    <lastmod>2025-10-04T21:04:40+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/hungry-shark-evolution-cuoc-phieu-luu-cua-ca-map-doi</loc>
+    <lastmod>2025-10-04T14:04:40+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/hunter-apocalypse-s-n-lung-zombie-trong-tan-the</loc>
-    <lastmod>2025-10-04T21:00:41+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/hunter-apocalypse-s-n-lung-zombie-trong-tan-the</loc>
+    <lastmod>2025-10-04T14:00:41+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/insurgency-game-fps-chien-thuat-quan-phien-loan</loc>
-    <lastmod>2025-10-05T17:58:11+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/insurgency-game-fps-chien-thuat-quan-phien-loan</loc>
+    <lastmod>2025-10-05T10:58:11+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/ire-blood-memory-game-nhap-vai-hanh-dong-day-mau-me</loc>
-    <lastmod>2025-10-04T20:43:13+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/ire-blood-memory-game-nhap-vai-hanh-dong-day-mau-me</loc>
+    <lastmod>2025-10-04T13:43:13+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/marvel-contest-of-champions-dai-chien-sieu-anh-hung</loc>
-    <lastmod>2025-10-04T20:37:51+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/marvel-contest-of-champions-dai-chien-sieu-anh-hung</loc>
+    <lastmod>2025-10-04T13:37:51+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/million-arthur-game-the-bai-chien-thuat-hay-nhat</loc>
-    <lastmod>2025-10-04T20:32:31+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/million-arthur-game-the-bai-chien-thuat-hay-nhat</loc>
+    <lastmod>2025-10-04T13:32:31+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/minidom-game-chien-thuat-thoi-gian-thuc-mini</loc>
-    <lastmod>2025-10-04T20:27:33+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/minidom-game-chien-thuat-thoi-gian-thuc-mini</loc>
+    <lastmod>2025-10-04T13:27:33+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/pes-club-manager-game-quan-ly-bong-da-chuyen-nghiep</loc>
-    <lastmod>2025-10-07T04:36:18+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/pes-club-manager-game-quan-ly-bong-da-chuyen-nghiep</loc>
+    <lastmod>2025-10-06T21:36:18+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/resident-evil-0-hd-remaster-kinh-di-sinh-ton-kinh-dien</loc>
-    <lastmod>2025-10-05T03:17:04+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/resident-evil-0-hd-remaster-kinh-di-sinh-ton-kinh-dien</loc>
+    <lastmod>2025-10-04T20:17:04+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/sonic-dash-2-sonic-boom-endless-runner-toc-do</loc>
-    <lastmod>2025-10-05T02:57:09+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/sonic-dash-2-sonic-boom-endless-runner-toc-do</loc>
+    <lastmod>2025-10-04T19:57:09+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/do-hoa-man-nhan-cua-game-online-phuong-dong</loc>
-    <lastmod>2025-10-05T02:43:44+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/do-hoa-man-nhan-cua-game-online-phuong-dong</loc>
+    <lastmod>2025-10-04T19:43:44+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/nintendo-new-2ds-xl-may-choi-game-cam-tay-moi</loc>
-    <lastmod>2025-10-05T02:17:15+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/nintendo-new-2ds-xl-may-choi-game-cam-tay-moi</loc>
+    <lastmod>2025-10-04T19:17:15+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-5-game-rpg-mini-moi-tren-android-va-ios</loc>
-    <lastmod>2025-10-05T02:05:59+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-5-game-rpg-mini-moi-tren-android-va-ios</loc>
+    <lastmod>2025-10-04T19:05:59+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/riot-tiet-lo-tuong-moi-lien-minh-huyen-thoai</loc>
-    <lastmod>2025-10-04T21:32:16+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/riot-tiet-lo-tuong-moi-lien-minh-huyen-thoai</loc>
+    <lastmod>2025-10-04T14:32:16+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-3-trang-bi-op-trong-lien-minh-huyen-thoai-esports</loc>
-    <lastmod>2025-10-04T21:24:03+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-3-trang-bi-op-trong-lien-minh-huyen-thoai-esports</loc>
+    <lastmod>2025-10-04T14:24:03+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/dot-kich-top-5-tips-zombie-v4-map-hoang-l-ng</loc>
-    <lastmod>2025-10-05T18:07:00+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/dot-kich-top-5-tips-zombie-v4-map-hoang-l-ng</loc>
+    <lastmod>2025-10-05T11:07:00+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/deformers-game-online-tu-the-order-1886-open-beta</loc>
-    <lastmod>2025-10-04T20:52:18+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/deformers-game-online-tu-the-order-1886-open-beta</loc>
+    <lastmod>2025-10-04T13:52:18+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-game-online-phong-cach-hoat-hinh-doc-dao</loc>
-    <lastmod>2025-10-04T18:58:05+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-game-online-phong-cach-hoat-hinh-doc-dao</loc>
+    <lastmod>2025-10-04T11:58:05+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/riot-he-lo-tuong-thu-135-cua-lien-minh-huyen-thoai</loc>
-    <lastmod>2025-10-04T18:28:02+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/riot-he-lo-tuong-thu-135-cua-lien-minh-huyen-thoai</loc>
+    <lastmod>2025-10-04T11:28:02+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-5-game-fps-mien-phi-tuyet-hay-tren-android</loc>
-    <lastmod>2025-10-04T20:22:02+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-5-game-fps-mien-phi-tuyet-hay-tren-android</loc>
+    <lastmod>2025-10-04T13:22:02+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-15-game-dua-xe-mobile-hap-dan-nhat</loc>
-    <lastmod>2025-10-04T19:59:01+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-15-game-dua-xe-mobile-hap-dan-nhat</loc>
+    <lastmod>2025-10-04T12:59:01+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/call-of-duty-mobile-game-tu-cha-de-candy-crush</loc>
-    <lastmod>2025-10-04T19:50:26+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/call-of-duty-mobile-game-tu-cha-de-candy-crush</loc>
+    <lastmod>2025-10-04T12:50:26+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/modern-combat-versus-fps-dau-mang-tu-gameloft</loc>
-    <lastmod>2025-10-04T19:44:43+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/modern-combat-versus-fps-dau-mang-tu-gameloft</loc>
+    <lastmod>2025-10-04T12:44:43+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/transformers-mobile-do-hoa-dep-nhat-tu-truoc-den-nay</loc>
-    <lastmod>2025-10-04T19:34:12+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/transformers-mobile-do-hoa-dep-nhat-tu-truoc-den-nay</loc>
+    <lastmod>2025-10-04T12:34:12+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/xbox-project-scorpio-thong-so-khung-vuot-ps4-pro</loc>
-    <lastmod>2025-10-04T19:30:14+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/xbox-project-scorpio-thong-so-khung-vuot-ps4-pro</loc>
+    <lastmod>2025-10-04T12:30:14+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-game-offline-phong-cach-anime-tuyet-dep</loc>
-    <lastmod>2025-10-04T18:24:50+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-game-offline-phong-cach-anime-tuyet-dep</loc>
+    <lastmod>2025-10-04T11:24:50+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/quake-champions-game-fps-mien-phi-cau-hinh-nhe</loc>
-    <lastmod>2025-10-04T18:22:33+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/quake-champions-game-fps-mien-phi-cau-hinh-nhe</loc>
+    <lastmod>2025-10-04T11:22:33+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/tong-hop-game-offline-mobile-mien-phi-hay-nhat</loc>
-    <lastmod>2025-10-04T19:07:38+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/tong-hop-game-offline-mobile-mien-phi-hay-nhat</loc>
+    <lastmod>2025-10-04T12:07:38+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/lich-su-zombie-trong-video-game-tai-sao-pho-bien</loc>
-    <lastmod>2025-10-04T18:17:34+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/lich-su-zombie-trong-video-game-tai-sao-pho-bien</loc>
+    <lastmod>2025-10-04T11:17:34+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-game-online-dang-choi-ngay-khi-ra-mat-2024</loc>
-    <lastmod>2025-10-04T18:08:26+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-game-online-dang-choi-ngay-khi-ra-mat-2024</loc>
+    <lastmod>2025-10-04T11:08:26+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/brawl-of-ages-game-the-bai-chien-thuat-mien-phi</loc>
-    <lastmod>2025-10-04T18:05:58+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/brawl-of-ages-game-the-bai-chien-thuat-mien-phi</loc>
+    <lastmod>2025-10-04T11:05:58+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-5-game-the-gioi-mo-hay-nhat-cua-gameloft</loc>
-    <lastmod>2025-10-04T18:02:39+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-5-game-the-gioi-mo-hay-nhat-cua-gameloft</loc>
+    <lastmod>2025-10-04T11:02:39+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-8-game-truong-ton-theo-thoi-gian</loc>
-    <lastmod>2025-10-04T18:00:21+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-8-game-truong-ton-theo-thoi-gian</loc>
+    <lastmod>2025-10-04T11:00:21+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-5-game-android-phong-cach-minecraft</loc>
-    <lastmod>2025-10-04T16:18:24+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-5-game-android-phong-cach-minecraft</loc>
+    <lastmod>2025-10-04T09:18:24+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/star-wars-battlefront-2-game-ban-sung-khung-2017</loc>
-    <lastmod>2025-10-04T16:12:13+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/star-wars-battlefront-2-game-ban-sung-khung-2017</loc>
+    <lastmod>2025-10-04T09:12:13+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/10-game-mien-phi-tren-steam-sieu-hay-2024</loc>
-    <lastmod>2025-10-04T01:05:59+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/10-game-mien-phi-tren-steam-sieu-hay-2024</loc>
+    <lastmod>2025-10-03T18:05:59+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/life-is-feudal-game-mmo-thoi-trung-co</loc>
-    <lastmod>2025-10-04T01:00:26+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/life-is-feudal-game-mmo-thoi-trung-co</loc>
+    <lastmod>2025-10-03T18:00:26+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-game-online-danh-cho-fan-manga-anime</loc>
-    <lastmod>2025-10-04T00:48:34+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-game-online-danh-cho-fan-manga-anime</loc>
+    <lastmod>2025-10-03T17:48:34+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/azera-iron-heart-game-nhap-vai-18-mobile</loc>
-    <lastmod>2025-10-04T00:42:32+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/azera-iron-heart-game-nhap-vai-18-mobile</loc>
+    <lastmod>2025-10-03T17:42:32+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/starcraft-mien-phi-phien-ban-cho-khong-tu-blizzard</loc>
-    <lastmod>2025-10-04T00:15:13+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/starcraft-mien-phi-phien-ban-cho-khong-tu-blizzard</loc>
+    <lastmod>2025-10-03T17:15:13+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/blog/top-8-game-thu-thach-nao-bo-cuc-hay</loc>
-    <lastmod>2025-10-04T19:01:47+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/top-8-game-thu-thach-nao-bo-cuc-hay</loc>
+    <lastmod>2025-10-04T12:01:47+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/forum</loc>
-    <lastmod>2025-12-16T15:39:24+07:00</lastmod>
+    <loc>https://lamgame.vn/blog/review-gunbound-legend-vtc-huyen-thoai-ban-sung-toa-đo-hoi-sinh-hay-chi-la-binh-moi-ruou-cu</loc>
+    <lastmod>2025-12-23T11:01:56+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://lamgame.vn/blog/top-game-coop-noel-2025-san-sale-steam</loc>
+    <lastmod>2025-12-24T10:45:20+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://lamgame.vn/blog/o-an-quan-mobile-khi-cong-nghe-cui-minh-truoc-di-san-ngan-nam</loc>
+    <lastmod>2025-12-25T11:06:51+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+            </url>
+    <url>
+    <loc>https://lamgame.vn/forum</loc>
+    <lastmod>2026-01-13T09:00:01+07:00</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
-    <loc>https://lamgame.localhost/source-game</loc>
-    <lastmod>2025-12-16T15:39:24+07:00</lastmod>
+    <loc>https://lamgame.vn/source-game</loc>
+    <lastmod>2026-01-13T09:00:01+07:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
             </url>
