@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use App\Models\SourceGameSeller;
 use Webkul\Product\Repositories\ProductRepository;
@@ -31,25 +33,11 @@ class SellerProductController extends Controller
             return redirect()->route('seller.pending');
         }
 
-        // Debug: Log seller ID
-        \Log::info('Seller ID: ' . $seller->id);
-
-        // Simple query without repository
-        $products = \Webkul\Product\Models\Product::where('company_id', $seller->id)
+        $products = \App\Models\Product::where('seller_id', $seller->id)
             ->where('type', 'downloadable')
-            ->with(['flat', 'images', 'downloadable_links'])
+            ->with(['product_flats', 'images', 'downloadable_links'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-
-        // Debug: Log products count
-        \Log::info('Products count: ' . $products->total());
-        
-        // Debug: Log all products for this seller
-        $allProducts = \Webkul\Product\Models\Product::where('company_id', $seller->id)->get();
-        \Log::info('All products (any type): ' . $allProducts->count());
-        foreach ($allProducts as $p) {
-            \Log::info("Product ID: {$p->id}, Type: {$p->type}, SKU: {$p->sku}");
-        }
 
         return view('shop::seller.products.index', compact('products', 'seller'));
     }
@@ -98,64 +86,107 @@ class SellerProductController extends Controller
             'source_files.*' => 'nullable|file|max:102400',
         ]);
 
-        // Create product
-        $product = $this->productRepository->create([
-            'type' => 'downloadable',
-            'sku' => 'SG-' . strtoupper(Str::random(8)),
-            'company_id' => $seller->id,
-            'attribute_family_id' => 1,
-            'vi' => [
+        $sku = 'SG-' . strtoupper(Str::random(8));
+        $locale = core()->getCurrentLocale()->code ?? 'vi';
+        $channel = core()->getCurrentChannel()->code ?? 'default';
+
+        DB::beginTransaction();
+        try {
+            // Step 1: Create product (basic record only)
+            $product = $this->productRepository->create([
+                'type' => 'downloadable',
+                'sku' => $sku,
+                'attribute_family_id' => 1,
+            ]);
+
+            // Step 2: Prepare data for update (attribute values)
+            $urlKey = Str::slug($validated['name']) . '-' . $product->id;
+            
+            $updateData = [
+                'sku' => $sku,
+                'channel' => $channel,
+                'locale' => $locale,
                 'name' => $validated['name'],
+                'url_key' => $urlKey,
                 'short_description' => $validated['short_description'],
                 'description' => $validated['description'],
-                'url_key' => Str::slug($validated['name']),
-            ],
-            'price' => $validated['price'],
-            'status' => 0, // Pending approval
-            'visible_individually' => 1,
-            'categories' => [$validated['category_id']],
-        ]);
+                'price' => $validated['price'],
+                'status' => 0,
+                'visible_individually' => 1,
+                'guest_checkout' => 0,
+                'categories' => [$validated['category_id']],
+            ];
 
-        // Upload images
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('product/' . $product->id, 'public');
-                $this->productImageRepository->create([
-                    'product_id' => $product->id,
-                    'type' => 'images',
-                    'path' => $path,
-                ]);
+            // Step 3: Handle images upload
+            if ($request->hasFile('images')) {
+                $updateData['images'] = [];
+                foreach ($request->file('images') as $index => $image) {
+                    $updateData['images'][$index] = $image;
+                }
             }
-        }
 
-        // Upload source files
-        if ($request->hasFile('source_files')) {
-            foreach ($request->file('source_files') as $index => $file) {
-                $path = $file->store('downloadable/' . $product->id, 'public');
-                $this->downloadableLinkRepository->create([
-                    'product_id' => $product->id,
-                    'title' => $file->getClientOriginalName(),
-                    'type' => 'file',
-                    'file' => $path,
-                    'file_name' => $file->getClientOriginalName(),
-                    'downloads' => 0,
-                ]);
+            // Step 4: Handle downloadable links
+            if ($request->hasFile('source_files')) {
+                $updateData['downloadable_links'] = [];
+                foreach ($request->file('source_files') as $index => $file) {
+                    $updateData['downloadable_links'][$index] = [
+                        $locale => [
+                            'title' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+                        ],
+                        'price' => 0,
+                        'type' => 'file',
+                        'file' => $file,
+                        'file_name' => $file->getClientOriginalName(),
+                        'downloads' => 0,
+                        'sort_order' => $index,
+                    ];
+                }
             }
+
+            // Step 5: Update product with all attribute values
+            $this->productRepository->update($updateData, $product->id);
+
+            // Step 6: Set seller_id (not in fillable, use direct update)
+            DB::table('products')->where('id', $product->id)->update([
+                'seller_id' => $seller->id,
+            ]);
+
+            // Refresh product and dispatch event to trigger flat indexer
+            $product->refresh();
+            Event::dispatch('catalog.product.create.after', $product);
+
+            // Update seller stats
+            $seller->increment('total_products');
+
+            DB::commit();
+
+            return redirect()->route('seller.products.index')
+                ->with('success', 'Sản phẩm đã được tạo và đang chờ duyệt');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Seller product create error: ' . $e->getMessage(), [
+                'seller_id' => $seller->id,
+                'trace' => $e->getTraceAsString(),
+            ]);
+            
+            return back()
+                ->withInput()
+                ->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
         }
-
-        // Update seller stats
-        $seller->increment('total_products');
-
-        return redirect()->route('seller.products.index')
-            ->with('success', 'Sản phẩm đã được tạo và đang chờ duyệt');
     }
 
     public function edit($id)
     {
         $seller = Auth::guard('customer')->user()->seller;
-        $product = $this->productRepository->findOrFail($id);
+        
+        // Handle both model binding and raw ID
+        $productId = $id instanceof \Webkul\Product\Contracts\Product ? $id->id : $id;
+        
+        $product = $this->productRepository->findOrFail($productId);
 
-        if ($product->company_id != $seller->id) {
+        $productSellerId = DB::table('products')->where('id', $productId)->value('seller_id');
+        if ($productSellerId != $seller->id) {
             abort(403, 'Unauthorized');
         }
 
@@ -167,15 +198,21 @@ class SellerProductController extends Controller
             ->with('translations')
             ->get();
 
-        return view('seller.products.edit', compact('product', 'categories', 'seller'));
+        return view('shop::seller.products.edit', compact('product', 'categories', 'seller'));
     }
 
     public function update(Request $request, $id)
     {
         $seller = Auth::guard('customer')->user()->seller;
-        $product = $this->productRepository->findOrFail($id);
+        
+        // Handle both model binding and raw ID
+        $productId = $id instanceof \Webkul\Product\Contracts\Product ? $id->id : $id;
+        
+        $product = $this->productRepository->findOrFail($productId);
 
-        if ($product->company_id != $seller->id) {
+        // Check ownership via seller_id
+        $productSellerId = DB::table('products')->where('id', $productId)->value('seller_id');
+        if ($productSellerId != $seller->id) {
             abort(403, 'Unauthorized');
         }
 
@@ -189,53 +226,79 @@ class SellerProductController extends Controller
             'source_files.*' => 'nullable|file|max:102400',
         ]);
 
-        $this->productRepository->update([
-            'vi' => [
+        $locale = core()->getCurrentLocale()->code ?? 'vi';
+        $channel = core()->getCurrentChannel()->code ?? 'default';
+
+        DB::beginTransaction();
+        try {
+            $updateData = [
+                'channel' => $channel,
+                'locale' => $locale,
                 'name' => $validated['name'],
                 'short_description' => $validated['short_description'],
                 'description' => $validated['description'],
-            ],
-            'price' => $validated['price'],
-            'categories' => [$validated['category_id']],
-        ], $id);
+                'price' => $validated['price'],
+                'categories' => [$validated['category_id']],
+            ];
 
-        // Upload new images
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('product/' . $product->id, 'public');
-                $this->productImageRepository->create([
-                    'product_id' => $product->id,
-                    'type' => 'images',
-                    'path' => $path,
-                ]);
+            // Handle new images
+            if ($request->hasFile('images')) {
+                $updateData['images'] = [];
+                foreach ($request->file('images') as $index => $image) {
+                    $updateData['images'][$index] = $image;
+                }
             }
-        }
 
-        // Upload new source files
-        if ($request->hasFile('source_files')) {
-            foreach ($request->file('source_files') as $file) {
-                $path = $file->store('downloadable/' . $product->id, 'public');
-                $this->downloadableLinkRepository->create([
-                    'product_id' => $product->id,
-                    'title' => $file->getClientOriginalName(),
-                    'type' => 'file',
-                    'file' => $path,
-                    'file_name' => $file->getClientOriginalName(),
-                    'downloads' => 0,
-                ]);
+            // Handle new downloadable links
+            if ($request->hasFile('source_files')) {
+                $updateData['downloadable_links'] = [];
+                foreach ($request->file('source_files') as $index => $file) {
+                    $updateData['downloadable_links']['link_' . $index] = [
+                        $locale => [
+                            'title' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+                        ],
+                        'price' => 0,
+                        'type' => 'file',
+                        'file' => $file,
+                        'file_name' => $file->getClientOriginalName(),
+                        'downloads' => 0,
+                        'sort_order' => $index,
+                    ];
+                }
             }
-        }
 
-        return redirect()->route('seller.products.index')
-            ->with('success', 'Sản phẩm đã được cập nhật');
+            $this->productRepository->update($updateData, $productId);
+
+            // Dispatch event to trigger flat indexer
+            $product->refresh();
+            Event::dispatch('catalog.product.update.after', $product);
+
+            DB::commit();
+
+            return redirect()->route('seller.products.index')
+                ->with('success', 'Sản phẩm đã được cập nhật');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Seller product update error: ' . $e->getMessage());
+            
+            return back()
+                ->withInput()
+                ->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
+        }
     }
 
     public function destroy($id)
     {
         $seller = Auth::guard('customer')->user()->seller;
-        $product = $this->productRepository->findOrFail($id);
+        
+        // Handle both model binding and raw ID
+        $productId = $id instanceof \Webkul\Product\Contracts\Product ? $id->id : $id;
+        
+        $product = $this->productRepository->findOrFail($productId);
 
-        if ($product->company_id != $seller->id) {
+        $productSellerId = DB::table('products')->where('id', $productId)->value('seller_id');
+        if ($productSellerId != $seller->id) {
             abort(403, 'Unauthorized');
         }
 
@@ -249,7 +312,7 @@ class SellerProductController extends Controller
             }
         }
 
-        $this->productRepository->delete($id);
+        $this->productRepository->delete($productId);
         $seller->decrement('total_products');
 
         return redirect()->route('seller.products.index')

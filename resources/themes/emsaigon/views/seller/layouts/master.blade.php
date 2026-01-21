@@ -69,6 +69,18 @@
 
     <!-- Main Content -->
     <main class="seller-main">
+        @if(session('success'))
+            <div style="max-width: 900px; margin: 1rem auto; padding: 1rem 1.5rem; background: #d1fae5; border: 1px solid #6ee7b7; border-radius: 8px; color: #065f46;">
+                ✓ {{ session('success') }}
+            </div>
+        @endif
+        
+        @if(session('error'))
+            <div style="max-width: 900px; margin: 1rem auto; padding: 1rem 1.5rem; background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px; color: #991b1b;">
+                ✗ {{ session('error') }}
+            </div>
+        @endif
+        
         @yield('content')
     </main>
 

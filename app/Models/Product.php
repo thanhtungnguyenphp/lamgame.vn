@@ -10,6 +10,12 @@ class Product extends BaseProduct
         'pending_review' => 'boolean',
     ];
 
+    // Accessor for flat (single product_flat for current locale/channel)
+    public function getFlatAttribute()
+    {
+        return $this->product_flats->first();
+    }
+
     // Relationships
     public function seller()
     {
