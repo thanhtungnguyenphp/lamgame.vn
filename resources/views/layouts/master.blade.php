@@ -377,14 +377,14 @@
                         :priority="true"
                         :lazy="false"
                         :interactive="true"
-                        href="{{ route('home') }}"
+                        href="{{ url('/') }}"
                         title="Về trang chủ LamGame.vn - Cộng đồng Game Developer Việt Nam"
                     />
                 </div>
 
                 {{-- Navigation Menu --}}
                 <nav class="nav">
-                    <a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Trang chủ</a>
+                    <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a>
                     <a href="{{ route('lamgame.source-game') }}" class="{{ request()->routeIs('lamgame.source-game') ? 'active' : '' }}">Source Game</a>
                     <a href="{{ route('forum.index') }}" class="{{ request()->routeIs('forum.*') ? 'active' : '' }}">Forum</a>
                     <a href="{{ route('lamgame.blog') }}" class="{{ request()->routeIs('lamgame.blog*', 'blog.*') ? 'active' : '' }}">Blog</a>

@@ -12,6 +12,10 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Checkout routes (override Bagisto)
 Route::get('checkout/cart', fn() => view('checkout.cart'))->name('shop.checkout.cart.index');
+Route::get('checkout/onepage', fn() => view('checkout.onepage'))->name('shop.checkout.onepage.index');
+
+// Bagisto route aliases (must be after homepage route)
+Route::get('/', [HomeController::class, 'index'])->name('shop.home.index');
 
 // Source Game routes
 Route::get('source-game', [LamGamePageController::class, 'sourceGame'])->name('lamgame.source-game');
@@ -251,6 +255,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 // Login alias for middleware compatibility
 Route::get('/customer/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLoginForm'])->name('customer.session.create');
 Route::get('/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLoginForm'])->name('login');
+Route::get('/customer/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLoginForm'])->name('shop.customer.session.index');
 
 // Test auth route
 Route::get('/test-auth', function() {
