@@ -103,7 +103,7 @@
                 <!-- Cart Information -->
                 <template v-else>
                     <div
-                        class="mt-8 flex flex-wrap gap-20 pb-8 max-1060:flex-col max-md:mt-0 max-md:gap-[30px] max-md:pb-0"
+                        class="mt-8 flex flex-wrap gap-8 pb-8 max-1060:flex-col max-md:mt-0 max-md:gap-6 max-md:pb-0"
                         v-if="cart?.items?.length"
                     >
                         <div class="flex flex-1 flex-col gap-6 max-md:gap-5">
@@ -389,18 +389,7 @@
                             {!! view_render_event('bagisto.shop.checkout.cart.controls.before') !!}
 
                             <!-- Cart Item Actions -->
-                            <div class="flex flex-wrap justify-end gap-8 max-md:justify-between max-md:gap-5">
-                                {!! view_render_event('bagisto.shop.checkout.cart.continue_shopping.before') !!}
-
-                                <a
-                                    class="secondary-button max-h-14 rounded-2xl max-md:rounded-lg max-md:px-6 max-md:py-3 max-md:text-sm max-sm:py-2"
-                                    href="{{ route('shop.home.index') }}"
-                                >
-                                    @lang('shop::app.checkout.cart.index.continue-shopping')
-                                </a>
-
-                                {!! view_render_event('bagisto.shop.checkout.cart.continue_shopping.after') !!}
-
+                            <div class="flex flex-wrap justify-end gap-4 max-md:justify-between max-md:gap-5">
                                 {!! view_render_event('bagisto.shop.checkout.cart.update_cart.before') !!}
 
                                 <x-shop::button
