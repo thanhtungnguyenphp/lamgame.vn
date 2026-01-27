@@ -7,10 +7,15 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
-// Homepage route - Must be first to override any default routes
+// Homepage route
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/test-home', [HomeController::class, 'index'])->name('test-home');
-Route::get('/debug-homepage', [HomeController::class, 'index'])->name('debug-homepage');
+
+// Checkout routes (override Bagisto)
+Route::get('checkout/cart', fn() => view('checkout.cart'))->name('shop.checkout.cart.index');
+Route::get('checkout/onepage', fn() => view('checkout.onepage'))->name('shop.checkout.onepage.index');
+
+// Bagisto route aliases (must be after homepage route)
+Route::get('/', [HomeController::class, 'index'])->name('shop.home.index');
 
 // Source Game routes
 Route::get('source-game', [LamGamePageController::class, 'sourceGame'])->name('lamgame.source-game');
@@ -250,6 +255,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 // Login alias for middleware compatibility
 Route::get('/customer/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLoginForm'])->name('customer.session.create');
 Route::get('/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLoginForm'])->name('login');
+Route::get('/customer/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLoginForm'])->name('shop.customer.session.index');
 
 // Test auth route
 Route::get('/test-auth', function() {

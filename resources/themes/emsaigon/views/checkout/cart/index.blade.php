@@ -6,46 +6,14 @@
 @endPush
 
 <x-shop::layouts
-    :has-header="false"
+    :has-header="true"
     :has-feature="false"
-    :has-footer="false"
+    :has-footer="true"
 >
     <!-- Page Title -->
     <x-slot:title>
         @lang('shop::app.checkout.cart.index.cart')
     </x-slot>
-
-    {!! view_render_event('bagisto.shop.checkout.cart.header.before') !!}
-
-    <!-- Page Header -->
-    <div class="flex flex-wrap">
-        <div class="flex w-full justify-between border border-b border-l-0 border-r-0 border-t-0 px-[60px] py-4 max-lg:px-8 max-md:px-4">
-            <div class="flex items-center gap-x-14 max-[1180px]:gap-x-9">
-                {!! view_render_event('bagisto.shop.checkout.cart.logo.before') !!}
-
-                <a
-                    href="{{ route('shop.home.index') }}"
-                    class="flex min-h-[30px]"
-                    aria-label="@lang('shop::app.checkout.cart.index.bagisto')"
-                >
-                    <img
-                        src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
-                        alt="{{ config('app.name') }}"
-                        width="131"
-                        height="29"
-                    >
-                </a>
-
-                {!! view_render_event('bagisto.shop.checkout.cart.logo.after') !!}
-            </div>
-
-            @guest('customer')
-                @include('shop::checkout.login')
-            @endguest
-        </div>
-    </div>
-
-    {!! view_render_event('bagisto.shop.checkout.cart.header.after') !!}
 
     <div class="flex-auto">
         <div class="container px-[60px] max-lg:px-8 max-md:px-4">
@@ -409,7 +377,7 @@
                         {!! view_render_event('bagisto.shop.checkout.cart.summary.before') !!}
 
                         <!-- Cart Summary Blade File -->
-                        @include('shop::checkout.cart.summary')
+                        @include('checkout.cart.summary')
 
                         {!! view_render_event('bagisto.shop.checkout.cart.summary.after') !!}
                     </div>

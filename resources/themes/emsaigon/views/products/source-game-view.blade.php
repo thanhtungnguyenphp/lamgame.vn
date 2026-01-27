@@ -18,7 +18,7 @@
     $sourceCategory = $attributeData->where('label', 'Source Category')->first()['value'] ?? null;
 @endphp
 
-@extends('layouts.master')
+@extends('shop::layouts.master')
 
 @section('page_title', trim($product->meta_title) != "" ? $product->meta_title : $product->name)
 
@@ -1435,30 +1435,40 @@
                                 </div>
                             @endif
 
-                            <div class="purchase-buttons">
-                                @if (core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
-                                    <button
-                                        type="submit"
-                                        class="btn-add-cart"
-                                        :disabled="!product.isSaleable || isStoring.addToCart"
-                                        @click="is_buy_now=0;"
-                                    >
-                                        <span v-if="isStoring.addToCart">🔄 Đang thêm...</span>
-                                        <span v-else>🛒 Thêm vào giỏ hàng</span>
-                                    </button>
-                                @endif
+                            {{-- Debug info - remove in production --}}
+                            @if(config('app.debug'))
+                                <div style="background: #fff3cd; padding: 0.75rem; margin-bottom: 1rem; border-radius: 8px; font-size: 0.85rem;">
+                                    <strong>🔧 Debug:</strong>
+                                    Cart: {{ core()->getConfigData('sales.checkout.shopping_cart.cart_page') ? '✅' : '❌' }} |
+                                    BuyNow: {{ core()->getConfigData('catalog.products.storefront.buy_now_button_display') ? '✅' : '❌' }} |
+                                    Saleable: {{ $product->getTypeInstance()->isSaleable() ? '✅' : '❌' }} |
+                                    Type: {{ $product->type }} |
+                                    Price: {{ $product->price }}
+                                </div>
+                            @endif
 
-                                @if (core()->getConfigData('catalog.products.storefront.buy_now_button_display'))
-                                    <button
-                                        type="submit"
-                                        class="btn-buy-now"
-                                        :disabled="!product.isSaleable || isStoring.buyNow"
-                                        @click="is_buy_now=1;"
-                                    >
-                                        <span v-if="isStoring.buyNow">⚡ Đang xử lý...</span>
-                                        <span v-else>⚡ Mua ngay</span>
-                                    </button>
-                                @endif
+                            <div class="purchase-buttons">
+                                {{-- Always show Add to Cart button --}}
+                                <button
+                                    type="submit"
+                                    class="btn-add-cart"
+                                    :disabled="isStoring.addToCart"
+                                    @click="is_buy_now=0;"
+                                >
+                                    <span v-if="isStoring.addToCart">🔄 Đang thêm...</span>
+                                    <span v-else>🛒 Thêm vào giỏ hàng</span>
+                                </button>
+
+                                {{-- Always show Buy Now button --}}
+                                <button
+                                    type="submit"
+                                    class="btn-buy-now"
+                                    :disabled="isStoring.buyNow"
+                                    @click="is_buy_now=1;"
+                                >
+                                    <span v-if="isStoring.buyNow">⚡ Đang xử lý...</span>
+                                    <span v-else>⚡ Mua ngay</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1511,6 +1521,15 @@
                     }
                 },
 
+                mounted() {
+                    console.log('🎮 Source Game Product mounted', {
+                        productId: this.product.id,
+                        productType: this.product.type,
+                        hasAxios: !!this.$axios,
+                        hasEmitter: !!this.$emitter
+                    });
+                },
+
                 methods: {
                     increaseQty() {
                         this.quantity++;
@@ -1528,6 +1547,7 @@
 
                     handleSubmit(event, callback) {
                         event.preventDefault();
+                        console.log('🛒 Form submitted, is_buy_now:', this.is_buy_now);
                         callback();
                     },
 
@@ -1536,6 +1556,18 @@
                         this.isStoring[operation] = true;
 
                         let formData = new FormData(this.$refs.formData);
+                        
+                        // Ensure quantity is set
+                        if (!formData.get('quantity')) {
+                            formData.set('quantity', this.quantity);
+                        }
+
+                        console.log('🛒 Adding to cart:', {
+                            product_id: formData.get('product_id'),
+                            quantity: formData.get('quantity'),
+                            is_buy_now: formData.get('is_buy_now'),
+                            url: '{{ route("shop.api.checkout.cart.store") }}'
+                        });
 
                         this.$axios.post('{{ route("shop.api.checkout.cart.store") }}', formData, {
                                 headers: {
@@ -1543,22 +1575,27 @@
                                 }
                             })
                             .then(response => {
+                                console.log('✅ Cart response:', response.data);
+                                
                                 if (response.data.message) {
                                     this.$emitter.emit('update-mini-cart', response.data.data);
-                                    alert('✅ ' + response.data.message);
+                                    this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
 
                                     if (response.data.redirect) {
                                         window.location.href = response.data.redirect;
                                     }
-                                } else {
-                                    alert('⚠️ ' + response.data.data.message);
+                                } else if (response.data.data?.message) {
+                                    this.$emitter.emit('add-flash', { type: 'warning', message: response.data.data.message });
                                 }
 
                                 this.isStoring[operation] = false;
                             })
                             .catch(error => {
+                                console.error('❌ Cart error:', error.response?.data || error);
                                 this.isStoring[operation] = false;
-                                alert('❌ ' + (error.response?.data?.message || 'Có lỗi xảy ra'));
+                                
+                                const message = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
+                                this.$emitter.emit('add-flash', { type: 'error', message: message });
                             });
                     },
                 },
