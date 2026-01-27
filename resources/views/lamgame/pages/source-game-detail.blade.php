@@ -753,6 +753,71 @@
         </div>
     </div>
 
+    <!-- Purchase Section -->
+    @if(!$sourceGame['is_free'] && isset($sourceGame['id']) && !str_starts_with($sourceGame['id'], 'sample-'))
+    @php
+        $downloadableLinks = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->pluck('id')->toArray();
+    @endphp
+    <div id="purchase" class="purchase-section" style="background: linear-gradient(135deg, #6a4c93 0%, #4a3373 100%); border-radius: 16px; padding: 32px; margin-top: 32px; color: white;">
+        <h2 style="font-size: 1.8rem; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
+            <i class="fa fa-shopping-cart"></i>
+            Mua Source Code
+        </h2>
+        <p style="opacity: 0.9; margin-bottom: 24px;">Nhận ngay toàn bộ source code, tài liệu hướng dẫn và hỗ trợ kỹ thuật.</p>
+        
+        <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span>{{ $sourceGame['title'] }}</span>
+                <span style="font-weight: 700;">{{ number_format($sourceGame['price']) }}đ</span>
+            </div>
+            <div style="font-size: 0.9rem; opacity: 0.8;">
+                ✓ Source code hoàn chỉnh &nbsp; ✓ Tài liệu hướng dẫn &nbsp; ✓ Hỗ trợ 30 ngày
+            </div>
+        </div>
+
+        <form id="add-to-cart-form" style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <input type="hidden" name="product_id" value="{{ $sourceGame['id'] }}">
+            <input type="hidden" name="quantity" value="1">
+            @foreach($downloadableLinks as $linkId)
+                <input type="hidden" name="links[]" value="{{ $linkId }}">
+            @endforeach
+            
+            <button type="button" id="btn-add-cart" class="btn" style="background: white; color: #6a4c93; flex: 1; min-width: 200px; justify-content: center;">
+                <i class="fa fa-cart-plus"></i>
+                <span>Thêm vào giỏ hàng</span>
+            </button>
+            
+            <button type="button" id="btn-buy-now" class="btn" style="background: #ff6b35; color: white; flex: 1; min-width: 200px; justify-content: center;">
+                <i class="fa fa-bolt"></i>
+                <span>Mua ngay</span>
+            </button>
+        </form>
+        
+        <div id="cart-message" style="margin-top: 16px; display: none; padding: 12px; border-radius: 8px;"></div>
+    </div>
+    @elseif($sourceGame['is_free'])
+    <div id="download" class="download-section" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px; padding: 32px; margin-top: 32px; color: white;">
+        <h2 style="font-size: 1.8rem; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
+            <i class="fa fa-download"></i>
+            Tải về miễn phí
+        </h2>
+        <p style="opacity: 0.9; margin-bottom: 24px;">Source code này hoàn toàn miễn phí. Tải về và sử dụng ngay!</p>
+        
+        @if(count($sourceGame['downloadable_links']) > 0)
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                @foreach($sourceGame['downloadable_links'] as $link)
+                <a href="{{ $link['url'] ?? '#' }}" class="btn" style="background: white; color: #10b981; justify-content: center;" target="_blank">
+                    <i class="fa fa-download"></i>
+                    {{ $link['title'] }} ({{ $link['file_name'] }})
+                </a>
+                @endforeach
+            </div>
+        @else
+            <p style="opacity: 0.8;">Vui lòng liên hệ để nhận link tải về.</p>
+        @endif
+    </div>
+    @endif
+
     <!-- Related Sources -->
     @if(count($relatedSources) > 0)
     <div class="related-sources">
@@ -803,10 +868,80 @@ function changeMainImage(imageUrl, thumbElement) {
     thumbElement.classList.add('active');
 }
 
-// Smooth scrolling for anchor links
+// Cart functionality
 document.addEventListener('DOMContentLoaded', function() {
-    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+    const addCartBtn = document.getElementById('btn-add-cart');
+    const buyNowBtn = document.getElementById('btn-buy-now');
+    const messageDiv = document.getElementById('cart-message');
     
+    function showMessage(text, isError = false) {
+        if (!messageDiv) return;
+        messageDiv.style.display = 'block';
+        messageDiv.style.background = isError ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)';
+        messageDiv.innerHTML = (isError ? '❌ ' : '✅ ') + text;
+    }
+    
+    function addToCart(buyNow = false) {
+        const form = document.getElementById('add-to-cart-form');
+        if (!form) return;
+        
+        const productId = form.querySelector('[name="product_id"]').value;
+        const quantity = form.querySelector('[name="quantity"]').value;
+        const linkInputs = form.querySelectorAll('[name="links[]"]');
+        const links = Array.from(linkInputs).map(input => input.value);
+        
+        const btn = buyNow ? buyNowBtn : addCartBtn;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
+        btn.disabled = true;
+        
+        fetch('{{ route("shop.api.checkout.cart.store") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: quantity,
+                is_buy_now: buyNow ? 1 : 0,
+                links: links
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Cart response:', data);
+            
+            if (data.message) {
+                showMessage(data.message);
+                if (data.redirect) {
+                    setTimeout(() => window.location.href = data.redirect, 500);
+                }
+            } else if (data.data?.message) {
+                showMessage(data.data.message, true);
+            }
+        })
+        .catch(error => {
+            console.error('Cart error:', error);
+            showMessage('Có lỗi xảy ra. Vui lòng thử lại.', true);
+        })
+        .finally(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+    }
+    
+    if (addCartBtn) {
+        addCartBtn.addEventListener('click', () => addToCart(false));
+    }
+    
+    if (buyNowBtn) {
+        buyNowBtn.addEventListener('click', () => addToCart(true));
+    }
+    
+    // Smooth scrolling for anchor links
+    const anchorLinks = document.querySelectorAll('a[href^="#"]');
     anchorLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             const targetId = this.getAttribute('href').substring(1);
