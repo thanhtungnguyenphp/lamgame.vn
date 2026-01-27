@@ -58,6 +58,7 @@
                 <a href="{{ route('seller.orders.index') }}">Đơn hàng</a>
                 <a href="{{ route('seller.withdrawals.index') }}">Rút tiền</a>
                 <a href="{{ route('seller.analytics') }}">Phân tích</a>
+                <a href="{{ route('seller.register') }}">Cài đặt</a>
             </nav>
             
             <div class="seller-user">
