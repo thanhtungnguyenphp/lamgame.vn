@@ -81,7 +81,7 @@
             </div>
 
             <!-- Back Button -->
-            <a href="{{ route('home') }}" 
+            <a href="{{ url('/') }}" 
                 style="display: inline-block; margin-top: 2rem; padding: 0.75rem 2rem; background: #f8f9fa; color: #2c5f41; border: 2px solid #2c5f41; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s;">
                 ← Về trang chủ
             </a>

@@ -168,6 +168,16 @@ class Cart extends Model implements CartContract
     public function hasGuestCheckoutItems(): bool
     {
         foreach ($this->items as $item) {
+            if (! $item->product) {
+                continue;
+            }
+            
+            // Allow guest checkout for downloadable and virtual products
+            $productType = $item->product->type ?? '';
+            if (in_array($productType, ['downloadable', 'virtual'])) {
+                continue;
+            }
+            
             if (! $item->product->getAttribute('guest_checkout')) {
                 return false;
             }

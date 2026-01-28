@@ -10,7 +10,7 @@
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.before') !!}
 
         <a
-            href="{{ route('home') }}"
+            href="{{ url('/') }}"
             aria-label="@lang('shop::app.components.layouts.header.bagisto')"
             class="flex items-center"
         >

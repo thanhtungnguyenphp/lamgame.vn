@@ -95,7 +95,7 @@
             <div class="container">
                 <nav class="breadcrumb" aria-label="breadcrumb">
                     <ol class="breadcrumb-list">
-                        <li><a href="{{ route('home') }}">🏠 Trang chủ</a></li>
+                        <li><a href="{{ url('/') }}">🏠 Trang chủ</a></li>
                         <li><a href="{{ route('shop.product_or_category.index', 'source-code-game') }}">🎮 Source Code Game</a></li>
                         @foreach ($product->categories as $category)
                             @if($category->slug != 'source-code-game')

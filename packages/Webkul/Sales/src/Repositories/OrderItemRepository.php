@@ -84,14 +84,14 @@ class OrderItemRepository extends Repository
 
         if ($orderItem->getTypeInstance()->isComposite()) {
             foreach ($orderItem->children as $child) {
-                if (! $child->product->manage_stock) {
+                if (! $child->product || ! $child->product->manage_stock) {
                     continue;
                 }
 
                 $orderItems[] = $child;
             }
         } else {
-            if ($orderItem->product->manage_stock) {
+            if ($orderItem->product && $orderItem->product->manage_stock) {
                 $orderItems[] = $orderItem;
             }
         }
@@ -197,7 +197,8 @@ class OrderItemRepository extends Repository
     public function manageCustomizableOptions(OrderItem $orderItem): void
     {
         if (
-            ! $orderItem->product->getTypeInstance()->isCustomizable()
+            ! $orderItem->product
+            || ! $orderItem->product->getTypeInstance()->isCustomizable()
             || (
                 $orderItem->product->getTypeInstance()->isCustomizable()
                 && empty($orderItem->additional['formatted_customizable_options'])

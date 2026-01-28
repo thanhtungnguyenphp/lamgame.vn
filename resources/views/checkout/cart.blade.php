@@ -49,7 +49,7 @@
                 <div class="empty-cart-icon">🛒</div>
                 <h3>Giỏ hàng trống</h3>
                 <p style="color: #666; margin: 1rem 0;">Bạn chưa có sản phẩm nào trong giỏ hàng</p>
-                <a href="{{ route('home') }}" class="btn-continue" style="max-width: 300px; margin: 0 auto;">Tiếp tục mua sắm</a>
+                <a href="{{ url('/') }}" class="btn-continue" style="max-width: 300px; margin: 0 auto;">Tiếp tục mua sắm</a>
             </div>
             
             <div v-else class="cart-content">
@@ -93,7 +93,7 @@
                         <span>@{{ formatPrice(cart.grand_total) }}</span>
                     </div>
                     <a href="/checkout/onepage" class="btn-checkout">Tiến hành thanh toán</a>
-                    <a href="{{ route('home') }}" class="btn-continue">Tiếp tục mua sắm</a>
+                    <a href="{{ url('/') }}" class="btn-continue">Tiếp tục mua sắm</a>
                 </div>
             </div>
         </div>
