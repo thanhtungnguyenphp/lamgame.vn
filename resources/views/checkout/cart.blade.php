@@ -76,6 +76,24 @@
                 
                 <div class="cart-summary">
                     <h3 style="margin-bottom: 1rem; color: #333;">Tóm tắt đơn hàng</h3>
+                    
+                    <!-- Coupon -->
+                    <div style="margin-bottom: 1rem;">
+                        <div v-if="!cart.coupon_code" style="display: flex; gap: 0.5rem;">
+                            <input type="text" v-model="couponCode" placeholder="Nhập mã giảm giá" 
+                                style="flex: 1; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px;">
+                            <button @click="applyCoupon" :disabled="applyingCoupon" 
+                                style="padding: 0.5rem 1rem; background: #2c5f41; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                                @{{ applyingCoupon ? '...' : 'Áp dụng' }}
+                            </button>
+                        </div>
+                        <div v-else style="display: flex; justify-content: space-between; align-items: center; background: #f0fdf4; padding: 0.5rem; border-radius: 6px;">
+                            <span style="color: #2c5f41;">🎫 @{{ cart.coupon_code }}</span>
+                            <button @click="removeCoupon" style="background: none; border: none; color: #dc3545; cursor: pointer;">Xóa</button>
+                        </div>
+                        <p v-if="couponError" style="color: #dc3545; font-size: 0.85rem; margin-top: 0.25rem;">@{{ couponError }}</p>
+                    </div>
+                    
                     <div class="summary-row">
                         <span>Tạm tính</span>
                         <span>@{{ formatPrice(cart.sub_total) }}</span>
@@ -110,7 +128,10 @@ createApp({
     data() {
         return {
             cart: null,
-            loading: true
+            loading: true,
+            couponCode: '',
+            couponError: '',
+            applyingCoupon: false
         }
     },
     mounted() {
@@ -163,6 +184,47 @@ createApp({
                 this.loadCart();
             } catch (e) {
                 console.error('Error removing item:', e);
+            }
+        },
+        async applyCoupon() {
+            if (!this.couponCode.trim()) return;
+            this.applyingCoupon = true;
+            this.couponError = '';
+            try {
+                const res = await fetch('/api/checkout/cart/coupon', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ code: this.couponCode })
+                });
+                const data = await res.json();
+                if (!res.ok || data.message?.includes('không hợp lệ') || data.message?.includes('invalid')) {
+                    this.couponError = data.message || 'Mã giảm giá không hợp lệ';
+                } else {
+                    this.couponCode = '';
+                    this.loadCart();
+                }
+            } catch (e) {
+                this.couponError = 'Có lỗi xảy ra';
+            } finally {
+                this.applyingCoupon = false;
+            }
+        },
+        async removeCoupon() {
+            try {
+                await fetch('/api/checkout/cart/coupon', {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+                this.loadCart();
+            } catch (e) {
+                console.error('Error removing coupon:', e);
             }
         }
     }
