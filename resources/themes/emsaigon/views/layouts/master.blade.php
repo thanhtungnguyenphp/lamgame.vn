@@ -46,7 +46,7 @@
     <!-- Header -->
     <header class="header" id="header">
         <div class="wrap row">
-            <a href="{{ route('home') }}" class="brand brand-container" aria-label="Trang chủ Làm Game">
+            <a href="{{ url('/') }}" class="brand brand-container" aria-label="Trang chủ Làm Game">
                 <x-logo 
                     size="60" 
                     variant="horizontal" 

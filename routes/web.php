@@ -13,6 +13,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 // Checkout routes (override Bagisto)
 Route::get('checkout/cart', fn() => view('checkout.cart'))->name('shop.checkout.cart.index');
 Route::get('checkout/onepage', fn() => view('checkout.onepage'))->name('shop.checkout.onepage.index');
+Route::get('checkout/onepage/success', [\Webkul\Shop\Http\Controllers\OnepageController::class, 'success'])->name('shop.checkout.onepage.success');
 
 // Bagisto route aliases (must be after homepage route)
 Route::get('/', [HomeController::class, 'index'])->name('shop.home.index');

@@ -24,7 +24,7 @@
 
                 <x-slot:header>
                     <div class="flex items-center justify-between">
-                        <a href="{{ route('home') }}" class="flex items-center min-h-[44px] min-w-[44px] justify-center">
+                        <a href="{{ url('/') }}" class="flex items-center min-h-[44px] min-w-[44px] justify-center">
                             <x-logo size="60" variant="horizontal" 
                                    class="h-[35px] max-h-[35px] w-auto" 
                                    priority="true" />
@@ -81,7 +81,7 @@
             {!! view_render_event('bagisto.shop.components.layouts.header.mobile.logo.before') !!}
 
             <a
-                href="{{ route('home') }}"
+                href="{{ url('/') }}"
                 class="flex items-center min-h-[44px] min-w-[44px] justify-center p-1"
                 aria-label="@lang('shop::app.components.layouts.header.bagisto')"
             >

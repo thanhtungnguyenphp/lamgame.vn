@@ -53,6 +53,7 @@ class DownloadableLinkPurchasedRepository extends Repository
                 'download_bought' => $productDownloadableLink->downloads * $orderItem->qty_ordered,
                 'status'          => 'pending',
                 'customer_id'     => $orderItem->order->customer_id,
+                'customer_email'  => $orderItem->order->customer_email,
                 'order_id'        => $orderItem->order_id,
                 'order_item_id'   => $orderItem->id,
             ]);

@@ -50,7 +50,7 @@
             <div class="container">
                 <nav class="breadcrumb" aria-label="breadcrumb">
                     <ol class="breadcrumb-list">
-                        <li><a href="{{ route('home') }}">Trang chủ</a></li>
+                        <li><a href="{{ url('/') }}">Trang chủ</a></li>
                         @foreach ($product->categories as $category)
                             <li><a href="{{ route('shop.product_or_category.index', $category->slug) }}">{{ $category->name }}</a></li>
                             @break
