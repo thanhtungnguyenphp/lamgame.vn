@@ -121,11 +121,12 @@
 - **Trạng thái:** ✅ Hoàn thành
 - **Mô tả:** Hiển thị thông tin đơn hàng sau khi đặt thành công
 - **Files liên quan:**
-  - `resources/themes/emsaigon/views/checkout/success.blade.php`
+  - `packages/Webkul/Shop/src/Resources/views/checkout/success.blade.php`
 - **Đã hoàn thành:**
   - [x] Tạo custom success page với master layout
   - [x] Hiển thị mã đơn hàng
   - [x] Tiếng Việt hóa
+  - [x] Fix layout UX - icon nhỏ gọn, căn giữa nội dung
 - **Test cases:** TC_CHECKOUT_001, TC_CHECKOUT_003
 
 ### CHECKOUT-008: Email xác nhận đơn hàng
@@ -178,6 +179,7 @@
 
 | Ngày | Thay đổi |
 |------|----------|
+| 2026-01-29 | Fix layout UX trang Success Page - icon nhỏ gọn, căn giữa nội dung |
 | 2026-01-28 | Hoàn thành CHECKOUT-008 (Email xác nhận) - đã verify qua Mailpit |
 | 2026-01-28 | Hoàn thành CART-005 (Mã giảm giá) |
 | 2026-01-28 | Hoàn thành CHECKOUT-006 (Place Order) và CHECKOUT-007 (Success Page) |
