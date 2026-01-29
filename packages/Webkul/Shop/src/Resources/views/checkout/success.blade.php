@@ -3,23 +3,25 @@
 @section('page_title', 'Đặt hàng thành công')
 
 @section('content')
-<div class="container mx-auto px-4 py-12">
-    <div class="flex flex-col items-center justify-center text-center">
-        <div class="mb-6">
-            <svg class="w-32 h-32 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+<div style="min-height: 60vh; display: flex; align-items: center; justify-content: center; padding: 3rem 1rem;">
+    <div style="text-align: center; max-width: 500px;">
+        <!-- Icon nhỏ gọn -->
+        <div style="margin-bottom: 1.5rem;">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" style="margin: 0 auto;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9 12l2 2 4-4"></path>
             </svg>
         </div>
 
-        <p class="text-lg text-gray-700 mb-2">
-            Mã đơn hàng của bạn là <span class="font-semibold">#{{ $order->increment_id }}</span>
+        <p style="font-size: 1rem; color: #666; margin-bottom: 0.5rem;">
+            Mã đơn hàng của bạn là <strong>#{{ $order->increment_id }}</strong>
         </p>
 
-        <h1 class="text-2xl font-semibold text-gray-900 mb-3">
+        <h1 style="font-size: 1.75rem; font-weight: 600; color: #333; margin-bottom: 1rem;">
             Cảm ơn bạn đã đặt hàng!
         </h1>
 
-        <p class="text-gray-500 mb-6 max-w-md">
+        <p style="color: #666; margin-bottom: 2rem;">
             @if (! empty($order->checkout_message))
                 {!! nl2br($order->checkout_message) !!}
             @else
@@ -28,7 +30,7 @@
         </p>
 
         <a href="{{ url('/') }}" 
-           class="inline-block bg-[#2c5f41] hover:bg-[#1e4530] text-white font-medium py-3 px-8 rounded-full transition-colors">
+           style="display: inline-block; background: #2c5f41; color: white; padding: 0.875rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 500;">
             Tiếp tục mua sắm
         </a>
     </div>
