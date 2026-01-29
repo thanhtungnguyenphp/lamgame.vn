@@ -45,7 +45,7 @@
         </v-dark>
 
         <a 
-            href="{{ route('home') }}" 
+            href="{{ url('/') }}" 
             target="_blank"
             class="flex"
         >

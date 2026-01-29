@@ -49,4 +49,11 @@ return [
         'class' => 'Webkul\Product\Type\Bundle',
         'sort'  => 7,
     ],
+
+    'job'          => [
+        'key'   => 'job',
+        'name'  => 'product::app.type.job',
+        'class' => 'Webkul\Product\Type\Virtual',
+        'sort'  => 8,
+    ],
 ];

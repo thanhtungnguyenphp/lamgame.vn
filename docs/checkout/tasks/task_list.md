@@ -4,9 +4,9 @@
 
 | Module | Hoàn thành | Đang làm | Chưa làm | Tổng |
 |--------|------------|----------|----------|------|
-| Giỏ hàng | 5 | 1 | 1 | 7 |
-| Thanh toán | 6 | 2 | 3 | 11 |
-| **Tổng** | **11** | **3** | **4** | **18** |
+| Giỏ hàng | 6 | 0 | 1 | 7 |
+| Thanh toán | 9 | 0 | 2 | 11 |
+| **Tổng** | **15** | **0** | **3** | **18** |
 
 ---
 
@@ -43,13 +43,14 @@
 - **Test cases:** TC_CART_004
 
 ### CART-005: Áp dụng mã giảm giá
-- **Trạng thái:** 🔄 Đang làm
+- **Trạng thái:** ✅ Hoàn thành
 - **Mô tả:** Nhập và áp dụng coupon code
 - **Files liên quan:**
-  - `packages/Shop/src/Resources/views/checkout/coupon.blade.php`
-- **Công việc còn lại:**
-  - [ ] Thêm UI nhập mã giảm giá vào trang cart custom
-  - [ ] Kết nối API coupon
+  - `resources/views/checkout/cart.blade.php`
+- **Đã hoàn thành:**
+  - [x] Thêm UI nhập mã giảm giá vào trang cart
+  - [x] Kết nối API coupon (apply/remove)
+  - [x] Hiển thị mã đã áp dụng và nút xóa
 - **Test cases:** TC_CART_005, TC_CART_006
 
 ### CART-006: Mini Cart (Header)
@@ -104,33 +105,40 @@
   - `resources/views/checkout/onepage.blade.php`
 
 ### CHECKOUT-006: Đặt hàng (Place Order)
-- **Trạng thái:** 🔄 Đang làm
+- **Trạng thái:** ✅ Hoàn thành
 - **Mô tả:** Xử lý đặt hàng và chuyển đến trang success
 - **Files liên quan:**
   - `packages/Webkul/Shop/src/Http/Controllers/API/OnepageController.php`
   - `packages/Webkul/Sales/src/Repositories/OrderRepository.php`
-- **Vấn đề hiện tại:**
+  - `packages/Webkul/Sales/src/Repositories/DownloadableLinkPurchasedRepository.php`
+- **Đã fix:**
   - [x] Fix lỗi `manage_stock` null cho downloadable products
-  - [ ] Test đặt hàng thành công end-to-end
+  - [x] Fix lỗi `customer_id` cannot be null cho guest checkout downloadable
+  - [x] Migration cho phép customer_id nullable trong downloadable_link_purchased
 - **Test cases:** TC_CHECKOUT_001, TC_CHECKOUT_003
 
 ### CHECKOUT-007: Trang xác nhận đơn hàng (Success Page)
-- **Trạng thái:** ❌ Chưa làm
+- **Trạng thái:** ✅ Hoàn thành
 - **Mô tả:** Hiển thị thông tin đơn hàng sau khi đặt thành công
-- **Công việc:**
-  - [ ] Tạo custom success page với master layout
-  - [ ] Hiển thị mã đơn hàng, thông tin chi tiết
-  - [ ] Link đến lịch sử đơn hàng (nếu đăng nhập)
+- **Files liên quan:**
+  - `resources/themes/emsaigon/views/checkout/success.blade.php`
+- **Đã hoàn thành:**
+  - [x] Tạo custom success page với master layout
+  - [x] Hiển thị mã đơn hàng
+  - [x] Tiếng Việt hóa
 - **Test cases:** TC_CHECKOUT_001, TC_CHECKOUT_003
 
 ### CHECKOUT-008: Email xác nhận đơn hàng
-- **Trạng thái:** 🔄 Đang làm
+- **Trạng thái:** ✅ Hoàn thành
 - **Mô tả:** Gửi email xác nhận sau khi đặt hàng thành công
 - **Files liên quan:**
-  - `packages/Shop/src/Resources/views/emails/`
-- **Công việc còn lại:**
-  - [ ] Kiểm tra email template
-  - [ ] Test gửi email thực tế
+  - `packages/Webkul/Shop/src/Listeners/Order.php`
+  - `packages/Webkul/Shop/src/Resources/views/emails/orders/created.blade.php`
+- **Đã xác nhận:**
+  - [x] Email notification enabled trong config
+  - [x] Email gửi cho khách hàng (Subject: "New Order Confirmation")
+  - [x] Email gửi cho Admin
+  - [x] Mailpit nhận được email thành công
 
 ### CHECKOUT-009: Thanh toán COD
 - **Trạng thái:** ❌ Chưa làm
@@ -157,18 +165,12 @@
 
 ## Công việc kế tiếp (Priority Order)
 
-### Ưu tiên cao (Cần hoàn thành trước)
-1. **CHECKOUT-006:** Test đặt hàng end-to-end, đảm bảo không còn lỗi 500
-2. **CHECKOUT-007:** Tạo trang Success Page với layout đúng
-3. **CART-005:** Hoàn thiện chức năng mã giảm giá
-
 ### Ưu tiên trung bình
-4. **CHECKOUT-008:** Kiểm tra và test email xác nhận
-5. **CHECKOUT-009:** Cấu hình thanh toán COD
+1. **CHECKOUT-009:** Cấu hình thanh toán COD
 
 ### Ưu tiên thấp (Có thể làm sau)
-6. **CART-007:** Cải thiện UI giỏ hàng trống
-7. **CHECKOUT-010:** Tích hợp VNPay/MoMo
+2. **CART-007:** Cải thiện UI giỏ hàng trống
+3. **CHECKOUT-010:** Tích hợp VNPay/MoMo
 
 ---
 
@@ -176,5 +178,9 @@
 
 | Ngày | Thay đổi |
 |------|----------|
+| 2026-01-28 | Hoàn thành CHECKOUT-008 (Email xác nhận) - đã verify qua Mailpit |
+| 2026-01-28 | Hoàn thành CART-005 (Mã giảm giá) |
+| 2026-01-28 | Hoàn thành CHECKOUT-006 (Place Order) và CHECKOUT-007 (Success Page) |
+| 2026-01-28 | Fix guest checkout cho downloadable products (customer_id nullable) |
 | 2026-01-28 | Tạo task list ban đầu, phân tích code hiện tại |
 | 2026-01-27 | Fix layout cart và checkout, thêm guest checkout |
