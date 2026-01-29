@@ -10,7 +10,7 @@
         <!-- Icon -->
         <div class="mb-6">
             <img 
-                src="{{ bagisto_asset('images/thank-you.png') }}" 
+                src="{{ asset('images/thank-you.png') }}" 
                 alt="Đặt hàng thành công" 
                 class="w-32 h-32"
             >

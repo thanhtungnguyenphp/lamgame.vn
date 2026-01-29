@@ -4,9 +4,9 @@
 
 | Module | Hoàn thành | Đang làm | Chưa làm | Tổng |
 |--------|------------|----------|----------|------|
-| Giỏ hàng | 5 | 1 | 1 | 7 |
-| Thanh toán | 8 | 1 | 2 | 11 |
-| **Tổng** | **13** | **2** | **3** | **18** |
+| Giỏ hàng | 6 | 0 | 1 | 7 |
+| Thanh toán | 9 | 0 | 2 | 11 |
+| **Tổng** | **15** | **0** | **3** | **18** |
 
 ---
 
@@ -43,13 +43,14 @@
 - **Test cases:** TC_CART_004
 
 ### CART-005: Áp dụng mã giảm giá
-- **Trạng thái:** 🔄 Đang làm
+- **Trạng thái:** ✅ Hoàn thành
 - **Mô tả:** Nhập và áp dụng coupon code
 - **Files liên quan:**
-  - `packages/Shop/src/Resources/views/checkout/coupon.blade.php`
-- **Công việc còn lại:**
-  - [ ] Thêm UI nhập mã giảm giá vào trang cart custom
-  - [ ] Kết nối API coupon
+  - `resources/views/checkout/cart.blade.php`
+- **Đã hoàn thành:**
+  - [x] Thêm UI nhập mã giảm giá vào trang cart
+  - [x] Kết nối API coupon (apply/remove)
+  - [x] Hiển thị mã đã áp dụng và nút xóa
 - **Test cases:** TC_CART_005, TC_CART_006
 
 ### CART-006: Mini Cart (Header)
@@ -128,13 +129,16 @@
 - **Test cases:** TC_CHECKOUT_001, TC_CHECKOUT_003
 
 ### CHECKOUT-008: Email xác nhận đơn hàng
-- **Trạng thái:** 🔄 Đang làm
+- **Trạng thái:** ✅ Hoàn thành
 - **Mô tả:** Gửi email xác nhận sau khi đặt hàng thành công
 - **Files liên quan:**
-  - `packages/Shop/src/Resources/views/emails/`
-- **Công việc còn lại:**
-  - [ ] Kiểm tra email template
-  - [ ] Test gửi email thực tế
+  - `packages/Webkul/Shop/src/Listeners/Order.php`
+  - `packages/Webkul/Shop/src/Resources/views/emails/orders/created.blade.php`
+- **Đã xác nhận:**
+  - [x] Email notification enabled trong config
+  - [x] Email gửi cho khách hàng (Subject: "New Order Confirmation")
+  - [x] Email gửi cho Admin
+  - [x] Mailpit nhận được email thành công
 
 ### CHECKOUT-009: Thanh toán COD
 - **Trạng thái:** ❌ Chưa làm
@@ -161,16 +165,12 @@
 
 ## Công việc kế tiếp (Priority Order)
 
-### Ưu tiên cao (Cần hoàn thành trước)
-1. **CART-005:** Hoàn thiện chức năng mã giảm giá
-2. **CHECKOUT-008:** Kiểm tra và test email xác nhận
-
 ### Ưu tiên trung bình
-3. **CHECKOUT-009:** Cấu hình thanh toán COD
+1. **CHECKOUT-009:** Cấu hình thanh toán COD
 
 ### Ưu tiên thấp (Có thể làm sau)
-4. **CART-007:** Cải thiện UI giỏ hàng trống
-5. **CHECKOUT-010:** Tích hợp VNPay/MoMo
+2. **CART-007:** Cải thiện UI giỏ hàng trống
+3. **CHECKOUT-010:** Tích hợp VNPay/MoMo
 
 ---
 
@@ -178,6 +178,8 @@
 
 | Ngày | Thay đổi |
 |------|----------|
+| 2026-01-28 | Hoàn thành CHECKOUT-008 (Email xác nhận) - đã verify qua Mailpit |
+| 2026-01-28 | Hoàn thành CART-005 (Mã giảm giá) |
 | 2026-01-28 | Hoàn thành CHECKOUT-006 (Place Order) và CHECKOUT-007 (Success Page) |
 | 2026-01-28 | Fix guest checkout cho downloadable products (customer_id nullable) |
 | 2026-01-28 | Tạo task list ban đầu, phân tích code hiện tại |
