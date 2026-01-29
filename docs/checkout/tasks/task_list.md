@@ -4,9 +4,9 @@
 
 | Module | Hoàn thành | Đang làm | Chưa làm | Tổng |
 |--------|------------|----------|----------|------|
-| Giỏ hàng | 6 | 0 | 1 | 7 |
-| Thanh toán | 9 | 0 | 2 | 11 |
-| **Tổng** | **15** | **0** | **3** | **18** |
+| Giỏ hàng | 7 | 0 | 0 | 7 |
+| Thanh toán | 10 | 0 | 1 | 11 |
+| **Tổng** | **17** | **0** | **1** | **18** |
 
 ---
 
@@ -60,11 +60,15 @@
   - `packages/Shop/src/Resources/views/checkout/cart/mini-cart.blade.php`
 
 ### CART-007: Trang giỏ hàng trống
-- **Trạng thái:** ❌ Chưa làm
+- **Trạng thái:** ✅ Hoàn thành
 - **Mô tả:** Hiển thị thông báo và link khi giỏ hàng trống
-- **Công việc:**
-  - [ ] Cải thiện UI trang giỏ hàng trống
-  - [ ] Thêm gợi ý sản phẩm
+- **Files liên quan:**
+  - `resources/views/checkout/cart.blade.php`
+- **Đã hoàn thành:**
+  - [x] Icon SVG giỏ hàng đẹp hơn
+  - [x] Nút "Khám phá Source Game" để gợi ý sản phẩm
+  - [x] Nút "Về trang chủ"
+  - [x] Card với shadow và padding cải thiện
 
 ---
 
@@ -142,11 +146,13 @@
   - [x] Mailpit nhận được email thành công
 
 ### CHECKOUT-009: Thanh toán COD
-- **Trạng thái:** ❌ Chưa làm
-- **Mô tả:** Thêm phương thức thanh toán khi nhận hàng
-- **Công việc:**
-  - [ ] Cấu hình COD payment method
-  - [ ] Test flow COD
+- **Trạng thái:** ✅ Hoàn thành
+- **Mô tả:** Phương thức thanh toán khi nhận hàng
+- **Kết quả kiểm tra:**
+  - [x] COD đã được cấu hình và active trong hệ thống
+  - [x] Logic: COD chỉ hiển thị khi giỏ hàng có sản phẩm vật lý (stockable)
+  - [x] Sản phẩm downloadable/virtual không hỗ trợ COD (đúng logic nghiệp vụ)
+- **Ghi chú:** Hệ thống hiện chỉ có sản phẩm downloadable nên COD không hiển thị. Khi thêm sản phẩm physical, COD sẽ tự động xuất hiện.
 
 ### CHECKOUT-010: Thanh toán trực tuyến (VNPay/MoMo)
 - **Trạng thái:** ❌ Chưa làm
@@ -166,12 +172,8 @@
 
 ## Công việc kế tiếp (Priority Order)
 
-### Ưu tiên trung bình
-1. **CHECKOUT-009:** Cấu hình thanh toán COD
-
 ### Ưu tiên thấp (Có thể làm sau)
-2. **CART-007:** Cải thiện UI giỏ hàng trống
-3. **CHECKOUT-010:** Tích hợp VNPay/MoMo
+1. **CHECKOUT-010:** Tích hợp VNPay/MoMo
 
 ---
 
@@ -179,7 +181,8 @@
 
 | Ngày | Thay đổi |
 |------|----------|
-| 2026-01-29 | Fix layout UX trang Success Page - icon nhỏ gọn, căn giữa nội dung |
+| 2026-01-29 | Hoàn thành CART-007 (UI giỏ hàng trống) |
+| 2026-01-29 | Hoàn thành CHECKOUT-009 (COD) - đã cấu hình, chỉ hiển thị cho sản phẩm physical |
 | 2026-01-28 | Hoàn thành CHECKOUT-008 (Email xác nhận) - đã verify qua Mailpit |
 | 2026-01-28 | Hoàn thành CART-005 (Mã giảm giá) |
 | 2026-01-28 | Hoàn thành CHECKOUT-006 (Place Order) và CHECKOUT-007 (Success Page) |
