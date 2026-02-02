@@ -85,6 +85,11 @@
         .nav a.active::after { content: ''; position: absolute; bottom: -8px; left: 0; right: 0; height: 3px; background: #6a4c93; border-radius: 2px; }
         .nav a.cta { background: #6a4c93; color: white; padding: 0.5rem 1rem; border-radius: 5px; }
         .nav a.cta.active::after { display: none; }
+        
+        /* Cart Icon */
+        .cart-icon { position: relative; font-size: 1.3rem; padding: 0.3rem 0.5rem !important; }
+        .cart-badge { position: absolute; top: -5px; right: -5px; background: #ff6b35; color: white; font-size: 0.7rem; font-weight: 600; min-width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        
         .mobile-toggle { display: none; flex-direction: column; gap: 3px; cursor: pointer; }
         .mobile-toggle span { width: 25px; height: 3px; background: #333; transition: 0.3s; }
 
@@ -391,6 +396,21 @@
                     <a href="{{ route('lamgame.viec-lam-game') }}" class="{{ request()->routeIs('lamgame.viec-lam-game*') ? 'active' : '' }}">Việc làm</a>
                     <a href="{{ route('lamgame.gioi-thieu') }}" class="{{ request()->routeIs('lamgame.gioi-thieu*') ? 'active' : '' }}">Giới thiệu</a>
                     <a href="{{ route('lamgame.lien-he') }}" class="{{ request()->routeIs('lamgame.lien-he*') ? 'active' : '' }}">Liên hệ</a>
+
+                    {{-- Cart Icon --}}
+                    <a href="{{ route('shop.checkout.cart.index') }}" class="cart-icon {{ request()->routeIs('shop.checkout.cart.*') ? 'active' : '' }}" title="Giỏ hàng">
+                        🛒
+                        @php
+                            $cartItemCount = 0;
+                            try {
+                                $cart = cart()->getCart();
+                                $cartItemCount = $cart ? $cart->items->count() : 0;
+                            } catch (\Exception $e) {}
+                        @endphp
+                        @if($cartItemCount > 0)
+                            <span class="cart-badge">{{ $cartItemCount }}</span>
+                        @endif
+                    </a>
 
                     @guest('customer')
                         <a href="{{ route('auth.login') }}" class="cta">Tham gia ngay</a>

@@ -367,8 +367,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const quantity = form.querySelector('[name="quantity"]').value;
         const links = Array.from(form.querySelectorAll('[name="links[]"]')).map(i => i.value);
         
+        let originalText = '';
         if (btn) {
-            var originalText = btn.innerHTML;
+            originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
             btn.disabled = true;
         }
@@ -380,15 +381,22 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(r => r.json())
         .then(data => {
-            if (data.message) {
+            if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
+            
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else if (data.message) {
                 showMessage(data.message);
-                if (data.redirect) setTimeout(() => window.location.href = data.redirect, 500);
+                // Redirect to cart after 1s if add to cart success
+                if (!buyNow) setTimeout(() => window.location.href = '{{ route("shop.checkout.cart.index") }}', 1000);
             } else if (data.data?.message) {
                 showMessage(data.data.message, true);
             }
         })
-        .catch(() => showMessage('Có lỗi xảy ra. Vui lòng thử lại.', true))
-        .finally(() => { if (btn) { btn.innerHTML = originalText; btn.disabled = false; } });
+        .catch(() => {
+            if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
+            showMessage('Có lỗi xảy ra. Vui lòng thử lại.', true);
+        });
     }
     
     if (addCartBtn) addCartBtn.addEventListener('click', () => addToCart(false, addCartBtn));
