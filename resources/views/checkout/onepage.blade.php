@@ -216,7 +216,12 @@
                         </div>
                     </div>
 
+                    <!-- PayPal Smart Button -->
+                    <div v-if="selectedPayment?.method === 'paypal_smart_button'" id="paypal-button-container" style="margin-top: 1rem;"></div>
+                    
+                    <!-- Normal Place Order Button -->
                     <button 
+                        v-else
                         class="btn-proceed" 
                         @click="placeOrder"
                         :disabled="!canPlaceOrder || isPlacing"
@@ -231,6 +236,17 @@
 @endsection
 
 @push('scripts')
+@php
+    $paypalActive = (bool) core()->getConfigData('sales.payment_methods.paypal_smart_button.active');
+    $paypalClientId = core()->getConfigData('sales.payment_methods.paypal_smart_button.client_id');
+    // Always use USD for PayPal since VND is not supported
+    $currencyToUse = 'USD';
+@endphp
+
+@if($paypalActive && $paypalClientId)
+<script src="https://www.paypal.com/sdk/js?client-id={{ $paypalClientId }}&currency={{ $currencyToUse }}" data-partner-attribution-id="Bagisto_Cart"></script>
+@endif
+
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script>
 const { createApp } = Vue;
@@ -554,9 +570,76 @@ createApp({
                     body: JSON.stringify({ payment: { method: method.method } })
                 });
                 await this.refreshCart();
+                
+                // Render PayPal button if PayPal selected
+                if (method.method === 'paypal_smart_button') {
+                    this.$nextTick(() => this.renderPayPalButton());
+                }
             } catch (e) {
                 console.error('Error:', e);
             }
+        },
+        
+        renderPayPalButton() {
+            const container = document.getElementById('paypal-button-container');
+            if (!container || typeof paypal === 'undefined') return;
+            
+            container.innerHTML = '';
+            
+            paypal.Buttons({
+                style: { layout: 'vertical', shape: 'rect' },
+                
+                createOrder: async (data, actions) => {
+                    try {
+                        const res = await fetch('/paypal/smart-button/create-order', {
+                            headers: { 'Accept': 'application/json' },
+                            credentials: 'same-origin'
+                        });
+                        const result = await res.json();
+                        if (result.result?.id) {
+                            return result.result.id;
+                        }
+                        throw new Error(result.message || 'Failed to create PayPal order');
+                    } catch (e) {
+                        console.error('PayPal create order error:', e);
+                        alert('Không thể tạo đơn hàng PayPal. Vui lòng thử lại.');
+                        throw e;
+                    }
+                },
+                
+                onApprove: async (data, actions) => {
+                    try {
+                        const res = await fetch('/paypal/smart-button/capture-order', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            credentials: 'same-origin',
+                            body: JSON.stringify({ orderData: data })
+                        });
+                        const result = await res.json();
+                        if (result.success) {
+                            window.location.href = result.redirect_url || '/checkout/onepage/success';
+                        } else {
+                            alert(result.message || 'Thanh toán thất bại');
+                        }
+                    } catch (e) {
+                        console.error('PayPal capture error:', e);
+                        alert('Có lỗi xảy ra khi xử lý thanh toán.');
+                    }
+                },
+                
+                onCancel: (data) => {
+                    console.log('PayPal payment cancelled');
+                },
+                
+                onError: (err) => {
+                    console.error('PayPal error:', err);
+                    alert('Có lỗi xảy ra với PayPal. Vui lòng thử lại.');
+                }
+            }).render('#paypal-button-container');
         },
         
         async refreshCart() {
