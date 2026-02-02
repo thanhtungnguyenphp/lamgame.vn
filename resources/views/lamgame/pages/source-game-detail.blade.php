@@ -5,564 +5,135 @@
 
 @push('styles')
 <style>
-    /* Source Game Detail Styles */
-    .source-detail-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
+    .source-detail-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
     
-    .source-header {
-        background: white;
-        border-radius: 12px;
-        padding: 32px;
-        margin-bottom: 32px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    /* Compact Header - như 3DOcean */
+    .compact-header {
+        display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+        padding: 16px 0; border-bottom: 1px solid #e5e7eb; margin-bottom: 24px; gap: 16px;
     }
+    .compact-header-left { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .compact-header-left a { color: #6a4c93; text-decoration: none; font-weight: 500; }
+    .compact-header-left span { color: #6b7280; display: flex; align-items: center; gap: 6px; }
+    .compact-header-right { display: flex; gap: 16px; }
+    .action-link { color: #6b7280; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; cursor: pointer; }
+    .action-link:hover { color: #6a4c93; }
     
-    .source-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 16px;
-        line-height: 1.2;
-    }
+    /* Tabs */
+    .tabs { display: flex; gap: 0; border-bottom: 1px solid #e5e7eb; margin-bottom: 24px; }
+    .tab { padding: 12px 20px; border: 1px solid #e5e7eb; border-bottom: none; background: #f9fafb; color: #6b7280; cursor: pointer; margin-right: -1px; }
+    .tab.active { background: white; color: #1f2937; font-weight: 600; border-bottom: 1px solid white; margin-bottom: -1px; }
     
-    .source-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 24px;
-        margin-bottom: 24px;
-        padding: 20px 0;
-        border-top: 1px solid #e5e7eb;
-        border-bottom: 1px solid #e5e7eb;
-    }
+    /* Main Grid */
+    .content-grid { display: grid; grid-template-columns: 1fr 340px; gap: 32px; }
     
-    .meta-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #6b7280;
-        font-size: 0.95rem;
-    }
+    /* Gallery */
+    .gallery-container { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 4px; padding: 16px; margin-bottom: 16px; }
+    .gallery-main { position: relative; }
+    .gallery-main img { width: 100%; height: auto; max-height: 500px; object-fit: contain; }
+    .more-images-btn { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 8px 16px; border-radius: 4px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .gallery-thumbs { display: flex; gap: 8px; margin-top: 16px; overflow-x: auto; }
+    .gallery-thumb { width: 80px; height: 60px; border: 2px solid transparent; cursor: pointer; flex-shrink: 0; }
+    .gallery-thumb.active, .gallery-thumb:hover { border-color: #6a4c93; }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
     
-    .meta-item i {
-        color: #6a4c93;
-        font-size: 1.1rem;
-    }
+    /* Quick Actions dưới gallery */
+    .quick-actions { display: flex; gap: 12px; margin-bottom: 24px; }
+    .quick-action-btn { flex: 1; padding: 12px; border: 1px solid #e5e7eb; background: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; color: #374151; transition: all 0.2s; }
+    .quick-action-btn:hover { border-color: #6a4c93; color: #6a4c93; }
     
-    .source-description {
-        font-size: 1.1rem;
-        line-height: 1.7;
-        color: #4b5563;
-        margin-bottom: 32px;
-    }
+    /* Product Title */
+    .product-title { font-size: 0.95rem; color: #6b7280; margin-bottom: 32px; }
     
-    .source-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-    }
+    /* Sidebar */
+    .sidebar { position: sticky; top: 20px; height: fit-content; }
+    .sidebar-card { background: white; border: 1px solid #e5e7eb; border-radius: 4px; padding: 20px; margin-bottom: 16px; }
     
-    .btn {
-        padding: 14px 28px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 1rem;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
+    /* Price Box */
+    .price-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+    .license-select { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.9rem; }
+    .price-value { font-size: 2rem; font-weight: 700; color: #1f2937; }
+    .price-value sup { font-size: 1rem; }
+    .license-desc { font-size: 0.85rem; color: #6b7280; line-height: 1.5; margin-bottom: 16px; }
+    .license-links { font-size: 0.85rem; margin-bottom: 20px; }
+    .license-links a { color: #6a4c93; text-decoration: none; }
     
-    .btn-primary {
-        background: #6a4c93;
-        color: white;
-    }
+    /* CTA Buttons */
+    .btn { width: 100%; padding: 14px; border-radius: 4px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; transition: all 0.2s; }
+    .btn-cart { background: #82b440; color: white; margin-bottom: 8px; }
+    .btn-cart:hover { background: #72a430; }
+    .btn-buy { background: #6b7280; color: white; }
+    .btn-buy:hover { background: #5b6270; }
+    .price-note { font-size: 0.8rem; color: #9ca3af; text-align: center; margin-top: 12px; }
     
-    .btn-primary:hover {
-        background: #5a3c83;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(106, 76, 147, 0.3);
-    }
+    /* Author Card */
+    .author-card { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .author-avatar { width: 64px; height: 64px; border-radius: 4px; background: linear-gradient(135deg, #6a4c93 0%, #9b59b6 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem; }
+    .author-name { font-weight: 600; color: #1f2937; margin-bottom: 4px; }
+    .author-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+    .badge { width: 24px; height: 24px; border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+    .btn-portfolio { width: 100%; padding: 10px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 4px; color: #374151; cursor: pointer; }
+    .btn-portfolio:hover { background: #e5e7eb; }
     
-    .btn-outline {
-        background: transparent;
-        color: #6a4c93;
-        border: 2px solid #6a4c93;
-    }
+    /* Attributes */
+    .attr-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; }
+    .attr-row:last-child { border-bottom: none; }
+    .attr-label { color: #6b7280; font-weight: 500; }
+    .attr-value { color: #1f2937; font-weight: 600; }
+    .more-attr-btn { width: 100%; padding: 10px; background: none; border: none; color: #6a4c93; cursor: pointer; font-weight: 500; margin-top: 8px; }
+    .hidden-attrs { display: none; }
+    .hidden-attrs.show { display: block; }
     
-    .btn-outline:hover {
-        background: #6a4c93;
-        color: white;
-        transform: translateY(-2px);
-    }
+    /* Content Sections */
+    .content-section { margin-bottom: 32px; }
+    .section-title { font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .features-list { list-style: none; padding: 0; margin: 0; }
+    .features-list li { padding: 8px 0; display: flex; align-items: center; gap: 10px; }
+    .features-list li::before { content: '✓'; color: #10b981; font-weight: 600; }
     
-    .btn-secondary {
-        background: #f3f4f6;
-        color: #374151;
-        border: 1px solid #d1d5db;
-    }
+    /* Related Items */
+    .related-section { margin-top: 40px; padding-top: 32px; border-top: 1px solid #e5e7eb; }
+    .related-title { font-size: 1.1rem; color: #1f2937; margin-bottom: 16px; }
+    .related-grid { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px; }
+    .related-item { flex-shrink: 0; width: 120px; }
+    .related-item img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; }
+    .related-item-title { font-size: 0.8rem; color: #374151; line-height: 1.3; }
     
-    .btn-secondary:hover {
-        background: #e5e7eb;
-        transform: translateY(-1px);
-    }
+    /* Footer links */
+    .footer-links { text-align: center; font-size: 0.85rem; color: #9ca3af; margin-top: 16px; }
+    .footer-links a { color: #6a4c93; text-decoration: none; }
     
-    .content-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 32px;
-        margin-bottom: 32px;
-    }
+    /* Message */
+    .cart-message { margin-top: 12px; padding: 10px; border-radius: 4px; font-size: 0.9rem; display: none; }
     
-    .main-content {
-        background: white;
-        border-radius: 12px;
-        padding: 32px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-    
-    .sidebar {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
-    
-    .sidebar-card {
-        background: white;
-        border-radius: 12px;
-        padding: 24px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-    
-    .section-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #1f2937;
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .gallery {
-        margin-bottom: 32px;
-    }
-    
-    .gallery-main {
-        margin-bottom: 16px;
-    }
-    
-    .gallery-main img {
-        width: 100%;
-        height: 400px;
-        object-fit: cover;
-        border-radius: 8px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    }
-    
-    .gallery-thumbs {
-        display: flex;
-        gap: 12px;
-        overflow-x: auto;
-        padding-bottom: 8px;
-    }
-    
-    .gallery-thumb {
-        flex-shrink: 0;
-        width: 80px;
-        height: 60px;
-        border-radius: 6px;
-        overflow: hidden;
-        cursor: pointer;
-        border: 2px solid transparent;
-        transition: all 0.3s ease;
-    }
-    
-    .gallery-thumb:hover,
-    .gallery-thumb.active {
-        border-color: #6a4c93;
-        transform: scale(1.05);
-    }
-    
-    .gallery-thumb img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    
-    .features-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    
-    .features-list li {
-        padding: 12px 0;
-        border-bottom: 1px solid #f3f4f6;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 0.95rem;
-        line-height: 1.5;
-    }
-    
-    .features-list li:last-child {
-        border-bottom: none;
-    }
-    
-    .features-list li::before {
-        content: '✓';
-        background: #10b981;
-        color: white;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: 600;
-        flex-shrink: 0;
-    }
-    
-    .tech-specs {
-        display: grid;
-        gap: 16px;
-    }
-    
-    .spec-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid #f3f4f6;
-    }
-    
-    .spec-row:last-child {
-        border-bottom: none;
-    }
-    
-    .spec-label {
-        font-weight: 500;
-        color: #6b7280;
-        font-size: 0.9rem;
-    }
-    
-    .spec-value {
-        font-weight: 600;
-        color: #1f2937;
-        font-size: 0.9rem;
-    }
-    
-    .price-info {
-        text-align: center;
-        padding: 24px;
-        background: linear-gradient(135deg, #6a4c93 0%, #9b59b6 100%);
-        color: white;
-        border-radius: 12px;
-        margin-bottom: 24px;
-    }
-    
-    .price-label {
-        font-size: 0.9rem;
-        opacity: 0.9;
-        margin-bottom: 8px;
-    }
-    
-    .price-value {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 16px;
-    }
-    
-    .price-note {
-        font-size: 0.85rem;
-        opacity: 0.8;
-    }
-    
-    .author-info {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        padding: 20px;
-        background: #f9fafb;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-    
-    .author-avatar {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #6a4c93 0%, #9b59b6 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 700;
-        font-size: 1.5rem;
-        flex-shrink: 0;
-    }
-    
-    .author-details h4 {
-        margin: 0 0 4px 0;
-        color: #1f2937;
-        font-size: 1.1rem;
-    }
-    
-    .author-details p {
-        margin: 0;
-        color: #6b7280;
-        font-size: 0.9rem;
-        line-height: 1.4;
-    }
-    
-    .video-demo {
-        margin-bottom: 32px;
-    }
-    
-    .video-container {
-        position: relative;
-        width: 100%;
-        height: 0;
-        padding-bottom: 56.25%; /* 16:9 aspect ratio */
-        overflow: hidden;
-        border-radius: 8px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    }
-    
-    .video-container iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-        border-radius: 8px;
-    }
-    
-    .tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 16px;
-    }
-    
-    .tag {
-        background: #f3f4f6;
-        color: #374151;
-        padding: 6px 12px;
-        border-radius: 16px;
-        font-size: 0.8rem;
-        font-weight: 500;
-        border: 1px solid #e5e7eb;
-        transition: all 0.3s ease;
-    }
-    
-    .tag:hover {
-        background: #6a4c93;
-        color: white;
-        border-color: #6a4c93;
-    }
-    
-    .related-sources {
-        background: white;
-        border-radius: 12px;
-        padding: 32px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-    
-    .sources-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 24px;
-        margin-top: 24px;
-    }
-    
-    .source-card {
-        background: #f9fafb;
-        border-radius: 8px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        border: 1px solid #e5e7eb;
-    }
-    
-    .source-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-        border-color: #6a4c93;
-    }
-    
-    .source-card img {
-        width: 100%;
-        height: 160px;
-        object-fit: cover;
-    }
-    
-    .source-card-content {
-        padding: 16px;
-    }
-    
-    .source-card h4 {
-        margin: 0 0 8px 0;
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #1f2937;
-    }
-    
-    .source-card-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.85rem;
-        color: #6b7280;
-    }
-    
-    .rating {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        color: #fbbf24;
-    }
-    
-    /* Mobile Responsive */
-    @media (max-width: 768px) {
-        .source-detail-container {
-            padding: 16px;
-        }
-        
-        .source-header {
-            padding: 24px;
-        }
-        
-        .source-title {
-            font-size: 1.8rem;
-        }
-        
-        .source-meta {
-            flex-direction: column;
-            gap: 12px;
-            align-items: flex-start;
-        }
-        
-        .source-actions {
-            flex-direction: column;
-        }
-        
-        .btn {
-            text-align: center;
-            justify-content: center;
-        }
-        
-        .content-grid {
-            grid-template-columns: 1fr;
-            gap: 24px;
-        }
-        
-        .main-content,
-        .sidebar-card {
-            padding: 20px;
-        }
-        
-        .gallery-main img {
-            height: 250px;
-        }
-        
-        .sources-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .author-info {
-            flex-direction: column;
-            text-align: center;
-        }
-        
-        .price-value {
-            font-size: 1.6rem;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .source-title {
-            font-size: 1.5rem;
-        }
-        
-        .gallery-thumbs {
-            justify-content: center;
-        }
-        
-        .gallery-thumb {
-            width: 60px;
-            height: 45px;
-        }
+    /* Mobile */
+    @media (max-width: 900px) {
+        .content-grid { grid-template-columns: 1fr; }
+        .sidebar { position: static; }
+        .compact-header { flex-direction: column; align-items: flex-start; }
     }
 </style>
 @endpush
 
 @section('content')
 <div class="source-detail-container">
-    <!-- Source Game Header -->
-    <div class="source-header">
-        <h1 class="source-title">{{ $sourceGame['title'] }}</h1>
-        <p class="source-description">{{ $sourceGame['description'] }}</p>
-        
-        <div class="source-meta">
-            <div class="meta-item">
-                <i class="fa fa-gamepad"></i>
-                <span>{{ $sourceGame['engine'] }}</span>
-            </div>
-            <div class="meta-item">
-                <i class="fa fa-code"></i>
-                <span>{{ $sourceGame['language'] }}</span>
-            </div>
-            <div class="meta-item">
-                <i class="fa fa-download"></i>
-                <span>{{ number_format($sourceGame['downloads_count']) }} lượt tải</span>
-            </div>
-            <div class="meta-item">
-                <i class="fa fa-star"></i>
-                <span>{{ $sourceGame['rating'] }}/5.0</span>
-            </div>
-            <div class="meta-item">
-                <i class="fa fa-hdd-o"></i>
-                <span>{{ $sourceGame['file_size'] }}</span>
-            </div>
-            <div class="meta-item">
-                <i class="fa fa-calendar"></i>
-                <span>Cập nhật {{ $sourceGame['last_updated'] }}</span>
-            </div>
+    <!-- Compact Header -->
+    <div class="compact-header">
+        <div class="compact-header-left">
+            <span>Bởi <a href="#">{{ $sourceGame['author_name'] }}</a></span>
+            <span><i class="fa fa-comment"></i> 0 Bình luận</span>
+            <span><i class="fa fa-shopping-cart"></i> {{ number_format($sourceGame['downloads_count']) }} lượt mua</span>
         </div>
-        
-        <div class="source-actions">
-            @if($sourceGame['is_free'])
-                <a href="#download" class="btn btn-primary">
-                    <i class="fa fa-download"></i>
-                    Tải về miễn phí
-                </a>
-            @else
-                <a href="#purchase" class="btn btn-primary">
-                    <i class="fa fa-shopping-cart"></i>
-                    Mua ngay {{ number_format($sourceGame['price']) }}đ
-                </a>
-            @endif
-            
-            @if($sourceGame['demo_url'])
-                <a href="{{ $sourceGame['demo_url'] }}" target="_blank" class="btn btn-outline">
-                    <i class="fa fa-play"></i>
-                    Demo trực tuyến
-                </a>
-            @endif
-            
-            <a href="#contact-author" class="btn btn-secondary">
-                <i class="fa fa-envelope"></i>
-                Liên hệ tác giả
-            </a>
+        <div class="compact-header-right">
+            <span class="action-link" onclick="addToFavorites()"><i class="fa fa-heart"></i> Yêu thích</span>
+            <span class="action-link" onclick="addToCollection()"><i class="fa fa-folder"></i> Bộ sưu tập</span>
         </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <div class="tab active">Chi tiết sản phẩm</div>
+        <div class="tab">Bình luận</div>
     </div>
 
     <div class="content-grid">
@@ -570,15 +141,20 @@
         <div class="main-content">
             <!-- Gallery -->
             @if(count($sourceGame['images']) > 0)
-            <div class="gallery">
+            <div class="gallery-container">
                 <div class="gallery-main">
-                    <img id="main-image" src="{{ $sourceGame['images'][0]['url'] }}" alt="{{ $sourceGame['images'][0]['alt'] }}">
+                    <img id="main-image" src="{{ $sourceGame['images'][0]['url'] }}" alt="{{ $sourceGame['title'] }}">
+                    @if(count($sourceGame['images']) > 1)
+                    <div class="more-images-btn" onclick="openGallery()">
+                        <i class="fa fa-image"></i> Xem thêm ảnh
+                    </div>
+                    @endif
                 </div>
                 @if(count($sourceGame['images']) > 1)
                 <div class="gallery-thumbs">
                     @foreach($sourceGame['images'] as $index => $image)
                     <div class="gallery-thumb {{ $index == 0 ? 'active' : '' }}" onclick="changeMainImage('{{ $image['url'] }}', this)">
-                        <img src="{{ $image['url'] }}" alt="{{ $image['alt'] }}">
+                        <img src="{{ $image['url'] }}" alt="">
                     </div>
                     @endforeach
                 </div>
@@ -586,26 +162,23 @@
             </div>
             @endif
 
-            <!-- Video Demo -->
-            @if($sourceGame['video_demo_url'])
-            <div class="video-demo">
-                <h3 class="section-title">
-                    <i class="fa fa-play-circle"></i>
-                    Video hướng dẫn
-                </h3>
-                <div class="video-container">
-                    <iframe src="{{ $sourceGame['video_demo_url'] }}" allowfullscreen></iframe>
-                </div>
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="quick-action-btn" onclick="addToFavorites()">
+                    <i class="fa fa-heart-o"></i> Thêm yêu thích
+                </button>
+                <button class="quick-action-btn" onclick="addToCollection()">
+                    <i class="fa fa-folder-o"></i> Thêm bộ sưu tập
+                </button>
             </div>
-            @endif
+
+            <!-- Product Title/Description -->
+            <p class="product-title">{{ $sourceGame['description'] }}</p>
 
             <!-- Features -->
             @if(count($sourceGame['features']) > 0)
-            <div class="features">
-                <h3 class="section-title">
-                    <i class="fa fa-list-ul"></i>
-                    Tính năng nổi bật
-                </h3>
+            <div class="content-section">
+                <h3 class="section-title">Tính năng nổi bật</h3>
                 <ul class="features-list">
                     @foreach($sourceGame['features'] as $feature)
                     <li>{{ $feature }}</li>
@@ -616,38 +189,30 @@
 
             <!-- Full Description -->
             @if($sourceGame['full_description'])
-            <div class="description">
-                <h3 class="section-title">
-                    <i class="fa fa-info-circle"></i>
-                    Mô tả chi tiết
-                </h3>
-                <div class="content">
-                    {!! nl2br(e($sourceGame['full_description'])) !!}
-                </div>
+            <div class="content-section">
+                <h3 class="section-title">Mô tả chi tiết</h3>
+                <div>{!! nl2br(e($sourceGame['full_description'])) !!}</div>
             </div>
             @endif
 
             <!-- Requirements -->
             @if($sourceGame['requirements'])
-            <div class="requirements">
-                <h3 class="section-title">
-                    <i class="fa fa-wrench"></i>
-                    Yêu cầu hệ thống
-                </h3>
+            <div class="content-section">
+                <h3 class="section-title">Yêu cầu hệ thống</h3>
                 <p>{{ $sourceGame['requirements'] }}</p>
             </div>
             @endif
 
-            <!-- Tags -->
-            @if(count($sourceGame['tags']) > 0)
-            <div class="tags-section">
-                <h3 class="section-title">
-                    <i class="fa fa-tags"></i>
-                    Thẻ
-                </h3>
-                <div class="tags">
-                    @foreach($sourceGame['tags'] as $tag)
-                    <span class="tag">{{ $tag }}</span>
+            <!-- Related Sources -->
+            @if(count($relatedSources) > 0)
+            <div class="related-section">
+                <h3 class="related-title">Sản phẩm khác của {{ $sourceGame['author_name'] }}</h3>
+                <div class="related-grid">
+                    @foreach($relatedSources as $source)
+                    <a href="{{ $source['url'] }}" class="related-item">
+                        <img src="{{ $source['image'] }}" alt="{{ $source['title'] }}">
+                        <div class="related-item-title">{{ Str::limit($source['title'], 40) }}</div>
+                    </a>
                     @endforeach
                 </div>
             </div>
@@ -656,219 +221,131 @@
 
         <!-- Sidebar -->
         <div class="sidebar">
-            <!-- Price & Download -->
+            <!-- Price & Purchase -->
             <div class="sidebar-card">
-                <div class="price-info">
-                    <div class="price-label">Giá</div>
+                <div class="price-header">
+                    <select class="license-select">
+                        <option>Giấy phép thường</option>
+                    </select>
                     <div class="price-value">
                         @if($sourceGame['is_free'])
                             Miễn phí
                         @else
-                            {{ number_format($sourceGame['price']) }}đ
+                            {{ number_format($sourceGame['price']) }}<sup>đ</sup>
                         @endif
                     </div>
-                    @if($sourceGame['is_free'])
-                        <div class="price-note">Tải về và sử dụng hoàn toàn miễn phí</div>
-                    @else
-                        <div class="price-note">Giá đã bao gồm tất cả source code và tài liệu</div>
-                    @endif
                 </div>
                 
-                @if($sourceGame['is_free'])
-                    <a href="#download" class="btn btn-primary" style="width: 100%; justify-content: center; margin-bottom: 16px;">
-                        <i class="fa fa-download"></i>
-                        Tải về miễn phí
-                    </a>
-                @else
-                    <a href="#purchase" class="btn btn-primary" style="width: 100%; justify-content: center; margin-bottom: 16px;">
-                        <i class="fa fa-shopping-cart"></i>
+                <p class="license-desc">Sử dụng cho một dự án cá nhân hoặc thương mại. Giá đã bao gồm source code và tài liệu.</p>
+                
+                <div class="license-links">
+                    <a href="#">Chi tiết giấy phép</a> | <a href="#">Tại sao mua tại LamGame?</a>
+                </div>
+
+                @if(!$sourceGame['is_free'] && isset($sourceGame['id']) && !str_starts_with($sourceGame['id'], 'sample-'))
+                @php
+                    $downloadableLinks = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->pluck('id')->toArray();
+                @endphp
+                <form id="add-to-cart-form">
+                    <input type="hidden" name="product_id" value="{{ $sourceGame['id'] }}">
+                    <input type="hidden" name="quantity" value="1">
+                    @foreach($downloadableLinks as $linkId)
+                        <input type="hidden" name="links[]" value="{{ $linkId }}">
+                    @endforeach
+                    
+                    <button type="button" id="btn-add-cart" class="btn btn-cart">
+                        <i class="fa fa-cart-plus"></i> Thêm vào giỏ hàng
+                    </button>
+                    <button type="button" id="btn-buy-now" class="btn btn-buy">
                         Mua ngay
-                    </a>
+                    </button>
+                </form>
+                <p class="price-note">Giá chưa bao gồm thuế VAT</p>
+                <div id="cart-message" class="cart-message"></div>
+                @elseif($sourceGame['is_free'])
+                <a href="#download" class="btn btn-cart">
+                    <i class="fa fa-download"></i> Tải về miễn phí
+                </a>
                 @endif
-                
-                <a href="#contact-support" class="btn btn-outline" style="width: 100%; justify-content: center;">
-                    <i class="fa fa-question-circle"></i>
-                    Hỗ trợ
-                </a>
             </div>
 
-            <!-- Technical Specifications -->
+            <!-- Author -->
             <div class="sidebar-card">
-                <h4 class="section-title">
-                    <i class="fa fa-cog"></i>
-                    Thông số kỹ thuật
-                </h4>
-                <div class="tech-specs">
-                    <div class="spec-row">
-                        <span class="spec-label">Game Engine</span>
-                        <span class="spec-value">{{ $sourceGame['engine'] }}</span>
-                    </div>
-                    <div class="spec-row">
-                        <span class="spec-label">Ngôn ngữ</span>
-                        <span class="spec-value">{{ $sourceGame['language'] }}</span>
-                    </div>
-                    <div class="spec-row">
-                        <span class="spec-label">Dung lượng</span>
-                        <span class="spec-value">{{ $sourceGame['file_size'] }}</span>
-                    </div>
-                    <div class="spec-row">
-                        <span class="spec-label">Phiên bản</span>
-                        <span class="spec-value">{{ $sourceGame['version'] }}</span>
-                    </div>
-                    <div class="spec-row">
-                        <span class="spec-label">Loại</span>
-                        <span class="spec-value">{{ $sourceGame['category_name'] }}</span>
-                    </div>
-                    <div class="spec-row">
-                        <span class="spec-label">Lượt tải</span>
-                        <span class="spec-value">{{ number_format($sourceGame['downloads_count']) }}</span>
-                    </div>
-                    <div class="spec-row">
-                        <span class="spec-label">Đánh giá</span>
-                        <span class="spec-value">{{ $sourceGame['rating'] }}/5.0</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Author Information -->
-            <div class="sidebar-card" id="contact-author">
-                <h4 class="section-title">
-                    <i class="fa fa-user"></i>
-                    Liên hệ lập trình viên
-                </h4>
-                <div class="author-info">
-                    <div class="author-avatar">
-                        {{ strtoupper(substr($sourceGame['author_name'], 0, 1)) }}
-                    </div>
-                    <div class="author-details">
-                        <h4>{{ $sourceGame['author_name'] }}</h4>
-                        <p>{{ $sourceGame['author_bio'] }}</p>
-                    </div>
-                </div>
-                <a href="mailto:{{ $sourceGame['author_email'] }}" class="btn btn-outline" style="width: 100%; justify-content: center;">
-                    <i class="fa fa-envelope"></i>
-                    Gửi email
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Purchase Section -->
-    @if(!$sourceGame['is_free'] && isset($sourceGame['id']) && !str_starts_with($sourceGame['id'], 'sample-'))
-    @php
-        $downloadableLinks = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->pluck('id')->toArray();
-    @endphp
-    <div id="purchase" class="purchase-section" style="background: linear-gradient(135deg, #6a4c93 0%, #4a3373 100%); border-radius: 16px; padding: 32px; margin-top: 32px; color: white;">
-        <h2 style="font-size: 1.8rem; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
-            <i class="fa fa-shopping-cart"></i>
-            Mua Source Code
-        </h2>
-        <p style="opacity: 0.9; margin-bottom: 24px;">Nhận ngay toàn bộ source code, tài liệu hướng dẫn và hỗ trợ kỹ thuật.</p>
-        
-        <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 20px; margin-bottom: 24px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <span>{{ $sourceGame['title'] }}</span>
-                <span style="font-weight: 700;">{{ number_format($sourceGame['price']) }}đ</span>
-            </div>
-            <div style="font-size: 0.9rem; opacity: 0.8;">
-                ✓ Source code hoàn chỉnh &nbsp; ✓ Tài liệu hướng dẫn &nbsp; ✓ Hỗ trợ 30 ngày
-            </div>
-        </div>
-
-        <form id="add-to-cart-form" style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <input type="hidden" name="product_id" value="{{ $sourceGame['id'] }}">
-            <input type="hidden" name="quantity" value="1">
-            @foreach($downloadableLinks as $linkId)
-                <input type="hidden" name="links[]" value="{{ $linkId }}">
-            @endforeach
-            
-            <button type="button" id="btn-add-cart" class="btn" style="background: white; color: #6a4c93; flex: 1; min-width: 200px; justify-content: center;">
-                <i class="fa fa-cart-plus"></i>
-                <span>Thêm vào giỏ hàng</span>
-            </button>
-            
-            <button type="button" id="btn-buy-now" class="btn" style="background: #ff6b35; color: white; flex: 1; min-width: 200px; justify-content: center;">
-                <i class="fa fa-bolt"></i>
-                <span>Mua ngay</span>
-            </button>
-        </form>
-        
-        <div id="cart-message" style="margin-top: 16px; display: none; padding: 12px; border-radius: 8px;"></div>
-    </div>
-    @elseif($sourceGame['is_free'])
-    <div id="download" class="download-section" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px; padding: 32px; margin-top: 32px; color: white;">
-        <h2 style="font-size: 1.8rem; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
-            <i class="fa fa-download"></i>
-            Tải về miễn phí
-        </h2>
-        <p style="opacity: 0.9; margin-bottom: 24px;">Source code này hoàn toàn miễn phí. Tải về và sử dụng ngay!</p>
-        
-        @if(count($sourceGame['downloadable_links']) > 0)
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                @foreach($sourceGame['downloadable_links'] as $link)
-                <a href="{{ $link['url'] ?? '#' }}" class="btn" style="background: white; color: #10b981; justify-content: center;" target="_blank">
-                    <i class="fa fa-download"></i>
-                    {{ $link['title'] }} ({{ $link['file_name'] }})
-                </a>
-                @endforeach
-            </div>
-        @else
-            <p style="opacity: 0.8;">Vui lòng liên hệ để nhận link tải về.</p>
-        @endif
-    </div>
-    @endif
-
-    <!-- Related Sources -->
-    @if(count($relatedSources) > 0)
-    <div class="related-sources">
-        <h2 class="section-title">
-            <i class="fa fa-gamepad"></i>
-            Source Game liên quan
-        </h2>
-        <div class="sources-grid">
-            @foreach($relatedSources as $source)
-            <div class="source-card">
-                <a href="{{ $source['url'] }}" style="text-decoration: none; color: inherit;">
-                    <img src="{{ $source['image'] }}" alt="{{ $source['title'] }}">
-                    <div class="source-card-content">
-                        <h4>{{ $source['title'] }}</h4>
-                        <div class="source-card-meta">
-                            <span class="price">
-                                @if($source['price'] > 0)
-                                    {{ number_format($source['price']) }}đ
-                                @else
-                                    Miễn phí
-                                @endif
-                            </span>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <span>{{ $source['rating'] }}</span>
-                            </div>
+                <div class="author-card">
+                    <div class="author-avatar">{{ strtoupper(substr($sourceGame['author_name'], 0, 1)) }}</div>
+                    <div>
+                        <div class="author-name">{{ $sourceGame['author_name'] }}</div>
+                        <div class="author-badges">
+                            <span class="badge" title="Verified">✓</span>
                         </div>
                     </div>
-                </a>
+                </div>
+                <button class="btn-portfolio">Xem Portfolio</button>
             </div>
-            @endforeach
+
+            <!-- Attributes -->
+            <div class="sidebar-card">
+                <div class="attr-row">
+                    <span class="attr-label">Cập nhật</span>
+                    <span class="attr-value">{{ $sourceGame['last_updated'] }}</span>
+                </div>
+                <div class="hidden-attrs" id="more-attrs">
+                    <div class="attr-row">
+                        <span class="attr-label">Game Engine</span>
+                        <span class="attr-value">{{ $sourceGame['engine'] }}</span>
+                    </div>
+                    <div class="attr-row">
+                        <span class="attr-label">Ngôn ngữ</span>
+                        <span class="attr-value">{{ $sourceGame['language'] }}</span>
+                    </div>
+                    <div class="attr-row">
+                        <span class="attr-label">Dung lượng</span>
+                        <span class="attr-value">{{ $sourceGame['file_size'] }}</span>
+                    </div>
+                    <div class="attr-row">
+                        <span class="attr-label">Phiên bản</span>
+                        <span class="attr-value">{{ $sourceGame['version'] }}</span>
+                    </div>
+                    <div class="attr-row">
+                        <span class="attr-label">Đánh giá</span>
+                        <span class="attr-value">{{ $sourceGame['rating'] }}/5.0</span>
+                    </div>
+                </div>
+                <button class="more-attr-btn" onclick="toggleAttrs(this)">
+                    Xem thêm thông số <i class="fa fa-chevron-down"></i>
+                </button>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer-links">
+                © {{ $sourceGame['author_name'] }}<br>
+                <a href="#">Liên hệ hỗ trợ</a>
+            </div>
         </div>
     </div>
-    @endif
 </div>
 @endsection
 
 @push('scripts')
 <script>
-function changeMainImage(imageUrl, thumbElement) {
-    // Update main image
-    document.getElementById('main-image').src = imageUrl;
-    
-    // Update active thumbnail
-    document.querySelectorAll('.gallery-thumb').forEach(thumb => {
-        thumb.classList.remove('active');
-    });
-    thumbElement.classList.add('active');
+function changeMainImage(url, el) {
+    document.getElementById('main-image').src = url;
+    document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
 }
 
-// Cart functionality
+function toggleAttrs(btn) {
+    const attrs = document.getElementById('more-attrs');
+    attrs.classList.toggle('show');
+    btn.innerHTML = attrs.classList.contains('show') 
+        ? 'Thu gọn <i class="fa fa-chevron-up"></i>' 
+        : 'Xem thêm thông số <i class="fa fa-chevron-down"></i>';
+}
+
+function addToFavorites() { alert('Tính năng đang phát triển'); }
+function addToCollection() { alert('Tính năng đang phát triển'); }
+function openGallery() { /* TODO: lightbox */ }
+
 document.addEventListener('DOMContentLoaded', function() {
     const addCartBtn = document.getElementById('btn-add-cart');
     const buyNowBtn = document.getElementById('btn-buy-now');
@@ -877,85 +354,45 @@ document.addEventListener('DOMContentLoaded', function() {
     function showMessage(text, isError = false) {
         if (!messageDiv) return;
         messageDiv.style.display = 'block';
-        messageDiv.style.background = isError ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)';
-        messageDiv.innerHTML = (isError ? '❌ ' : '✅ ') + text;
+        messageDiv.style.background = isError ? '#fef2f2' : '#f0fdf4';
+        messageDiv.style.color = isError ? '#dc2626' : '#16a34a';
+        messageDiv.innerHTML = text;
     }
     
-    function addToCart(buyNow = false) {
+    function addToCart(buyNow = false, btn = null) {
         const form = document.getElementById('add-to-cart-form');
         if (!form) return;
         
         const productId = form.querySelector('[name="product_id"]').value;
         const quantity = form.querySelector('[name="quantity"]').value;
-        const linkInputs = form.querySelectorAll('[name="links[]"]');
-        const links = Array.from(linkInputs).map(input => input.value);
+        const links = Array.from(form.querySelectorAll('[name="links[]"]')).map(i => i.value);
         
-        const btn = buyNow ? buyNowBtn : addCartBtn;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
-        btn.disabled = true;
+        if (btn) {
+            var originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
+            btn.disabled = true;
+        }
         
         fetch('{{ route("shop.api.checkout.cart.store") }}', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                product_id: productId,
-                quantity: quantity,
-                is_buy_now: buyNow ? 1 : 0,
-                links: links
-            })
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+            body: JSON.stringify({ product_id: productId, quantity: quantity, is_buy_now: buyNow ? 1 : 0, links: links })
         })
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
-            console.log('Cart response:', data);
-            
             if (data.message) {
                 showMessage(data.message);
-                if (data.redirect) {
-                    setTimeout(() => window.location.href = data.redirect, 500);
-                }
+                if (data.redirect) setTimeout(() => window.location.href = data.redirect, 500);
             } else if (data.data?.message) {
                 showMessage(data.data.message, true);
             }
         })
-        .catch(error => {
-            console.error('Cart error:', error);
-            showMessage('Có lỗi xảy ra. Vui lòng thử lại.', true);
-        })
-        .finally(() => {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        });
+        .catch(() => showMessage('Có lỗi xảy ra. Vui lòng thử lại.', true))
+        .finally(() => { if (btn) { btn.innerHTML = originalText; btn.disabled = false; } });
     }
     
-    if (addCartBtn) {
-        addCartBtn.addEventListener('click', () => addToCart(false));
-    }
-    
-    if (buyNowBtn) {
-        buyNowBtn.addEventListener('click', () => addToCart(true));
-    }
-    
-    // Smooth scrolling for anchor links
-    const anchorLinks = document.querySelectorAll('a[href^="#"]');
-    anchorLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            const targetId = this.getAttribute('href').substring(1);
-            const targetElement = document.getElementById(targetId);
-            
-            if (targetElement) {
-                e.preventDefault();
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
+    if (addCartBtn) addCartBtn.addEventListener('click', () => addToCart(false, addCartBtn));
+    if (buyNowBtn) buyNowBtn.addEventListener('click', () => addToCart(true, buyNowBtn));
 });
 </script>
 @endpush
