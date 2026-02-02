@@ -166,4 +166,5 @@
 
 | Ngày | Tester | Test Case | Kết quả | Ghi chú |
 |------|--------|-----------|---------|---------|
-| | | | | |
+| 2026-02-02 | Dev | TC_PAYPAL_001 | ✅ Pass | Nút PayPal hiển thị đúng |
+| 2026-02-02 | Dev | TC_PAYPAL_002 | ✅ Pass | Thanh toán Visa qua PayPal thành công |
