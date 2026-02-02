@@ -52,6 +52,11 @@ class SmartButtonController extends Controller
     }
 
     /**
+     * VND to USD exchange rate (approximate)
+     */
+    protected const VND_TO_USD_RATE = 25000;
+
+    /**
      * Build request body.
      *
      * @return array
@@ -61,6 +66,21 @@ class SmartButtonController extends Controller
         $cart = Cart::getCart();
 
         $billingAddressLines = $this->getAddressLines($cart->billing_address->address);
+
+        // Convert VND to USD if needed
+        $currencyCode = $cart->cart_currency_code;
+        $exchangeRate = 1;
+        
+        if ($currencyCode === 'VND') {
+            $currencyCode = 'USD';
+            $exchangeRate = self::VND_TO_USD_RATE;
+        }
+
+        $subTotal = $this->convertAmount($cart->sub_total, $exchangeRate);
+        $taxTotal = $this->convertAmount($cart->tax_total, $exchangeRate);
+        $shippingAmount = $this->convertAmount($cart->selected_shipping_rate ? $cart->selected_shipping_rate->price : 0, $exchangeRate);
+        $discountAmount = $this->convertAmount($cart->discount_amount, $exchangeRate);
+        $grandTotal = $subTotal + $taxTotal + $shippingAmount - $discountAmount;
 
         $data = [
             'intent' => 'CAPTURE',
@@ -90,33 +110,33 @@ class SmartButtonController extends Controller
             'purchase_units' => [
                 [
                     'amount'   => [
-                        'value'         => $this->smartButton->formatCurrencyValue((float) $cart->sub_total + $cart->tax_total + ($cart->selected_shipping_rate ? $cart->selected_shipping_rate->price : 0) - $cart->discount_amount),
-                        'currency_code' => $cart->cart_currency_code,
+                        'value'         => $this->smartButton->formatCurrencyValue($grandTotal),
+                        'currency_code' => $currencyCode,
 
                         'breakdown'     => [
                             'item_total' => [
-                                'currency_code' => $cart->cart_currency_code,
-                                'value'         => $this->smartButton->formatCurrencyValue((float) $cart->sub_total),
+                                'currency_code' => $currencyCode,
+                                'value'         => $this->smartButton->formatCurrencyValue($subTotal),
                             ],
 
                             'shipping'   => [
-                                'currency_code' => $cart->cart_currency_code,
-                                'value'         => $this->smartButton->formatCurrencyValue((float) ($cart->selected_shipping_rate ? $cart->selected_shipping_rate->price : 0)),
+                                'currency_code' => $currencyCode,
+                                'value'         => $this->smartButton->formatCurrencyValue($shippingAmount),
                             ],
 
                             'tax_total'  => [
-                                'currency_code' => $cart->cart_currency_code,
-                                'value'         => $this->smartButton->formatCurrencyValue((float) $cart->tax_total),
+                                'currency_code' => $currencyCode,
+                                'value'         => $this->smartButton->formatCurrencyValue($taxTotal),
                             ],
 
                             'discount'   => [
-                                'currency_code' => $cart->cart_currency_code,
-                                'value'         => $this->smartButton->formatCurrencyValue((float) $cart->discount_amount),
+                                'currency_code' => $currencyCode,
+                                'value'         => $this->smartButton->formatCurrencyValue($discountAmount),
                             ],
                         ],
                     ],
 
-                    'items'    => $this->getLineItems($cart),
+                    'items'    => $this->getLineItems($cart, $currencyCode, $exchangeRate),
                 ],
             ],
         ];
@@ -157,27 +177,45 @@ class SmartButtonController extends Controller
     /**
      * Return cart items.
      *
-     * @param  string  $cart
+     * @param  object  $cart
+     * @param  string  $currencyCode
+     * @param  float   $exchangeRate
      * @return array
      */
-    protected function getLineItems($cart)
+    protected function getLineItems($cart, $currencyCode = 'USD', $exchangeRate = 1)
     {
         $lineItems = [];
 
         foreach ($cart->items as $item) {
             $lineItems[] = [
                 'unit_amount' => [
-                    'currency_code' => $cart->cart_currency_code,
-                    'value'         => $this->smartButton->formatCurrencyValue((float) $item->price),
+                    'currency_code' => $currencyCode,
+                    'value'         => $this->smartButton->formatCurrencyValue($this->convertAmount($item->price, $exchangeRate)),
                 ],
                 'quantity'    => $item->quantity,
-                'name'        => $item->name,
+                'name'        => mb_substr($item->name, 0, 127),
                 'sku'         => $item->sku,
                 'category'    => $item->getTypeInstance()->isStockable() ? 'PHYSICAL_GOODS' : 'DIGITAL_GOODS',
             ];
         }
 
         return $lineItems;
+    }
+
+    /**
+     * Convert amount from VND to target currency.
+     *
+     * @param  float  $amount
+     * @param  float  $exchangeRate
+     * @return float
+     */
+    protected function convertAmount($amount, $exchangeRate)
+    {
+        if ($exchangeRate <= 0) {
+            return (float) $amount;
+        }
+        
+        return round((float) $amount / $exchangeRate, 2);
     }
 
     /**

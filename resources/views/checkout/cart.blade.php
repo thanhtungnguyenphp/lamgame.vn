@@ -27,8 +27,8 @@
     .btn-checkout:hover { background: #1e4530; }
     .btn-continue { width: 100%; padding: 0.75rem; background: white; color: #2c5f41; border: 1px solid #2c5f41; border-radius: 8px; font-size: 0.9rem; cursor: pointer; margin-top: 0.5rem; text-decoration: none; display: block; text-align: center; }
     .btn-continue:hover { background: #f0fdf4; }
-    .empty-cart { text-align: center; padding: 3rem; }
-    .empty-cart-icon { font-size: 4rem; margin-bottom: 1rem; }
+    .empty-cart { text-align: center; padding: 4rem 2rem; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .empty-cart-icon { margin-bottom: 1.5rem; }
     @media (max-width: 768px) {
         .cart-content { grid-template-columns: 1fr; }
     }
@@ -46,10 +46,21 @@
             </div>
             
             <div v-else-if="!cart || !cart.items || cart.items.length === 0" class="empty-cart">
-                <div class="empty-cart-icon">🛒</div>
-                <h3>Giỏ hàng trống</h3>
-                <p style="color: #666; margin: 1rem 0;">Bạn chưa có sản phẩm nào trong giỏ hàng</p>
-                <a href="{{ url('/') }}" class="btn-continue" style="max-width: 300px; margin: 0 auto;">Tiếp tục mua sắm</a>
+                <div class="empty-cart-icon">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                </div>
+                <h3 style="font-size: 1.5rem; color: #333; margin-bottom: 0.5rem;">Giỏ hàng trống</h3>
+                <p style="color: #666; margin-bottom: 1.5rem;">Bạn chưa có sản phẩm nào trong giỏ hàng</p>
+                <a href="{{ url('/source-game') }}" class="btn-checkout" style="max-width: 280px; margin: 0 auto 1rem;">
+                    🎮 Khám phá Source Game
+                </a>
+                <a href="{{ url('/') }}" class="btn-continue" style="max-width: 280px; margin: 0 auto;">
+                    Về trang chủ
+                </a>
             </div>
             
             <div v-else class="cart-content">
