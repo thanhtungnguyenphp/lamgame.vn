@@ -46,6 +46,7 @@ return [
         'configurable' => 'Configurable',
         'downloadable' => 'Downloadable',
         'grouped'      => 'Grouped',
+        'job'          => 'Job',
         'simple'       => 'Simple',
         'virtual'      => 'Virtual',
     ],
