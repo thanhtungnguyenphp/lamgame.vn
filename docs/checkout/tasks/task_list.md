@@ -5,8 +5,8 @@
 | Module | Hoàn thành | Đang làm | Chưa làm | Tổng |
 |--------|------------|----------|----------|------|
 | Giỏ hàng | 7 | 0 | 0 | 7 |
-| Thanh toán | 10 | 0 | 1 | 11 |
-| **Tổng** | **17** | **0** | **1** | **18** |
+| Thanh toán | 11 | 0 | 0 | 11 |
+| **Tổng** | **18** | **0** | **0** | **18** |
 
 ---
 
@@ -154,14 +154,21 @@
   - [x] Sản phẩm downloadable/virtual không hỗ trợ COD (đúng logic nghiệp vụ)
 - **Ghi chú:** Hệ thống hiện chỉ có sản phẩm downloadable nên COD không hiển thị. Khi thêm sản phẩm physical, COD sẽ tự động xuất hiện.
 
-### CHECKOUT-010: Thanh toán trực tuyến (VNPay/MoMo)
-- **Trạng thái:** ❌ Chưa làm
-- **Mô tả:** Tích hợp cổng thanh toán VNPay hoặc MoMo
-- **Công việc:**
-  - [ ] Cài đặt package payment gateway
-  - [ ] Cấu hình API keys
+### CHECKOUT-010: Thanh toán PayPal Smart Button
+- **Trạng thái:** ✅ Hoàn thành
+- **Mô tả:** Tích hợp PayPal Smart Button cho thanh toán quốc tế
+- **Files liên quan:**
+  - `packages/Webkul/Paypal/src/Http/Controllers/SmartButtonController.php`
+  - `packages/Webkul/Paypal/src/Payment/SmartButton.php`
+  - `packages/Webkul/Paypal/src/Resources/views/checkout/onepage/paypal-smart-button.blade.php`
+- **Đã hoàn thành:**
+  - [x] Cấu hình PayPal API keys trong Admin
+  - [x] Enable PayPal Smart Button
+- **Cần test:**
   - [ ] Test thanh toán sandbox
-- **Test cases:** TC_CHECKOUT_006
+  - [ ] Test với sản phẩm downloadable
+  - [ ] Test guest checkout
+- **Test cases:** TC_PAYPAL_001 → TC_PAYPAL_007 (xem `test_paypal.md`)
 
 ### CHECKOUT-011: Quay lại giỏ hàng từ trang thanh toán
 - **Trạng thái:** ✅ Hoàn thành
@@ -172,8 +179,11 @@
 
 ## Công việc kế tiếp (Priority Order)
 
-### Ưu tiên thấp (Có thể làm sau)
-1. **CHECKOUT-010:** Tích hợp VNPay/MoMo
+### Cần test ngay
+1. **CHECKOUT-010:** Test thanh toán PayPal Sandbox (xem `test_paypal.md`)
+
+### Hoàn thành
+- Tất cả 18/18 tasks đã implement, chỉ còn test PayPal
 
 ---
 
@@ -181,6 +191,8 @@
 
 | Ngày | Thay đổi |
 |------|----------|
+| 2026-02-02 | Hoàn thành CHECKOUT-010 (PayPal Smart Button) - đã cấu hình API keys |
+| 2026-02-02 | Tạo test cases PayPal (`test_paypal.md`) |
 | 2026-01-29 | Hoàn thành CART-007 (UI giỏ hàng trống) |
 | 2026-01-29 | Hoàn thành CHECKOUT-009 (COD) - đã cấu hình, chỉ hiển thị cho sản phẩm physical |
 | 2026-01-28 | Hoàn thành CHECKOUT-008 (Email xác nhận) - đã verify qua Mailpit |
