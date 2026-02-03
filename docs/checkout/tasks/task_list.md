@@ -164,11 +164,10 @@
 - **Đã hoàn thành:**
   - [x] Cấu hình PayPal API keys trong Admin
   - [x] Enable PayPal Smart Button
-- **Cần test:**
-  - [ ] Test thanh toán sandbox
-  - [ ] Test với sản phẩm downloadable
-  - [ ] Test guest checkout
-- **Test cases:** TC_PAYPAL_001 → TC_PAYPAL_007 (xem `test_paypal.md`)
+  - [x] Test thanh toán sandbox ✅ (2026-02-03)
+  - [x] Test với sản phẩm downloadable ✅
+  - [x] Test guest checkout ✅
+- **Test cases:** TC_PAYPAL_001 → TC_PAYPAL_007 - PASSED
 
 ### CHECKOUT-011: Quay lại giỏ hàng từ trang thanh toán
 - **Trạng thái:** ✅ Hoàn thành
@@ -179,11 +178,25 @@
 
 ## Công việc kế tiếp (Priority Order)
 
-### Cần test ngay
-1. **CHECKOUT-010:** Test thanh toán PayPal Sandbox (xem `test_paypal.md`)
+### ✅ Đã hoàn thành tất cả 18/18 tasks
 
-### Hoàn thành
-- Tất cả 18/18 tasks đã implement, chỉ còn test PayPal
+### Backlog - Tính năng mới cần phát triển
+
+#### Priority 1 - Download & Order Management
+1. **DOWNLOAD-001:** Trang download sau thanh toán - cho phép user tải source code
+2. **ORDER-001:** Trang "Đơn hàng của tôi" - hiển thị lịch sử và link download
+3. **EMAIL-001:** Email chứa link download sau thanh toán thành công
+
+#### Priority 2 - UX Enhancement
+4. **WISHLIST-001:** Tính năng yêu thích sản phẩm
+5. **COLLECTION-001:** Tạo bộ sưu tập sản phẩm
+6. **REVIEW-001:** Đánh giá và rating sản phẩm
+7. **SEARCH-001:** Tìm kiếm và filter source game
+
+#### Priority 3 - Seller Features
+8. **SELLER-001:** Seller Dashboard
+9. **REPORT-001:** Báo cáo doanh thu
+10. **PAYOUT-001:** Hệ thống thanh toán cho seller
 
 ---
 
@@ -191,6 +204,10 @@
 
 | Ngày | Thay đổi |
 |------|----------|
+| 2026-02-03 | ✅ PayPal Sandbox test PASSED - thanh toán thành công |
+| 2026-02-03 | ✅ Thêm icon giỏ hàng vào header với badge số lượng |
+| 2026-02-02 | UX/UI Source Game Detail theo chuẩn 3DOcean |
+| 2026-02-02 | Fix button "Đang xử lý" bị stuck, redirect sau add to cart |
 | 2026-02-02 | Hoàn thành CHECKOUT-010 (PayPal Smart Button) - đã cấu hình API keys |
 | 2026-02-02 | Tạo test cases PayPal (`test_paypal.md`) |
 | 2026-01-29 | Hoàn thành CART-007 (UI giỏ hàng trống) |
