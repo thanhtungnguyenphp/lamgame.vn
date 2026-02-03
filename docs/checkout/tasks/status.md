@@ -29,6 +29,9 @@
 - ✅ Thanh toán PayPal Sandbox thành công
 - ✅ Icon giỏ hàng trên header với badge số lượng
 - ✅ Redirect sau khi add to cart hoạt động đúng
+- ✅ **DOWNLOAD-001**: Trang download sau thanh toán
+- ✅ **ORDER-001**: Trang "Đơn hàng của tôi" với link tải về
+- ✅ **EMAIL-001**: Email xác nhận có link download
 
 ### 2026-02-02
 - ✅ UX/UI Source Game Detail theo chuẩn 3DOcean
