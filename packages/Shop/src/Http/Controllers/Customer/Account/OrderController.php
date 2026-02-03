@@ -34,6 +34,11 @@ class OrderController extends Controller
             return datagrid(OrderDataGrid::class)->process();
         }
 
+        // Use custom view if exists
+        if (view()->exists('customers.account.orders.index')) {
+            return view('customers.account.orders.index');
+        }
+
         return view('shop::customers.account.orders.index');
     }
 

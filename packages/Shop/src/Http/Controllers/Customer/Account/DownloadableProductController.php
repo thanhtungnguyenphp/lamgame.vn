@@ -27,6 +27,11 @@ class DownloadableProductController extends Controller
             return datagrid(DownloadableProductDataGrid::class)->process();
         }
 
+        // Use custom view if exists
+        if (view()->exists('customers.account.downloadable_products.index')) {
+            return view('customers.account.downloadable_products.index');
+        }
+
         return view('shop::customers.account.downloadable_products.index');
     }
 

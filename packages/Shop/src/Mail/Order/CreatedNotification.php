@@ -38,8 +38,13 @@ class CreatedNotification extends Mailable
      */
     public function content(): Content
     {
+        // Use custom view if exists
+        $view = view()->exists('emails.orders.created') 
+            ? 'emails.orders.created' 
+            : 'shop::emails.orders.created';
+
         return new Content(
-            view: 'shop::emails.orders.created',
+            view: $view,
         );
     }
 }
