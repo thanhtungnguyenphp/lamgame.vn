@@ -1,7 +1,7 @@
-<x-layouts.account>
-    <x-slot:title>
-        Đăng ký Seller
-    </x-slot>
+@extends('shop::seller.layouts.master')
 
-    @include('shop::seller.register-form')
-</x-layouts.account>
+@section('page_title', 'Đăng ký Seller')
+
+@section('content')
+@include('shop::seller.register-form')
+@endsection
