@@ -102,15 +102,17 @@ class CustomerAuthController extends Controller
      */
     protected function sendLoginResponse(Request $request)
     {
+        $redirectUrl = route('shop.customers.account.profile.index');
+        
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Đăng nhập thành công!',
-                'redirect_url' => route('home')
+                'redirect_url' => $redirectUrl
             ]);
         }
 
-        return redirect()->intended(route('home'))
+        return redirect()->intended($redirectUrl)
                         ->with('success', 'Chào mừng bạn quay trở lại!');
     }
 
