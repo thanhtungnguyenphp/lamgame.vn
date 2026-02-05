@@ -72,7 +72,7 @@ Route::prefix('customer')->group(function () {
         /**
          * Logout.
          */
-        Route::delete('logout', [SessionController::class, 'destroy'])->defaults('_config', [
+        Route::match(['delete', 'post'], 'logout', [SessionController::class, 'destroy'])->defaults('_config', [
             'redirect' => 'shop.customer.session.index',
         ])->name('shop.customer.session.destroy');
 
