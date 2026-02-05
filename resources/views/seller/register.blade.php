@@ -1,316 +1,232 @@
-@extends('layouts.master')
+@extends($isEdit ? 'shop::seller.layouts.master' : 'shop::layouts.master')
 
 @section('page_title', $page_title)
 
-@push('styles')
-<style>
-.seller-register-page {
-    background: linear-gradient(135deg, #2c5f41 0%, #1e4530 100%);
-    padding: 3rem 0;
-    min-height: calc(100vh - 200px);
-}
-.register-card {
-    background: white;
-    border-radius: 20px;
-    padding: 3rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-.register-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    color: white;
-}
-.register-header h1 {
-    color: white;
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 1rem;
-}
-.register-header p {
-    color: rgba(255,255,255,0.9);
-    font-size: 1.1rem;
-}
-.form-section h3 {
-    color: #2c5f41;
-    margin-bottom: 1.5rem;
-    font-size: 1.3rem;
-    font-weight: 700;
-}
-.form-group {
-    margin-bottom: 1.5rem;
-}
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #333;
-}
-.form-group input,
-.form-group textarea,
-.form-group select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 2px solid #e9ecef;
-    border-radius: 10px;
-    font-size: 1rem;
-}
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: #2c5f41;
-}
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-.btn-submit {
-    width: 100%;
-    padding: 1rem;
-    background: linear-gradient(135deg, #2c5f41 0%, #1e4530 100%);
-    color: white;
-    border: none;
-    border-radius: 15px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-.btn-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(44,95,65,0.3);
-}
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
-@endpush
-
 @section('content')
-<div class="seller-register-page">
-    <div class="container">
+<div class="seller-register-page" style="background: #f8f9fa; padding: 3rem 0; min-height: 80vh;">
+    <div class="container" style="max-width: 800px;">
         <!-- Header -->
-        <div class="register-header">
-            <h1>{{ $isEdit ? '✏️ Cập nhật thông tin Seller' : '🎮 Đăng ký Seller' }}</h1>
-            <p>{{ $isEdit ? 'Chỉnh sửa thông tin shop của bạn' : 'Bắt đầu bán source code game của bạn trên Làm Game' }}</p>
-            @if(config('app.debug'))
-                <small style="display: block; margin-top: 1rem; opacity: 0.7;">
-                    Debug: isEdit={{ $isEdit ? 'true' : 'false' }}, 
-                    seller={{ $seller ? 'exists (ID: '.$seller->id.')' : 'null' }},
-                    customer_id={{ $customer->id }}
-                </small>
-            @endif
+        <div class="register-header" style="text-align: center; margin-bottom: 3rem;">
+            <h1 style="color: #2c5f41; font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">
+                {{ $isEdit ? '⚙️ Cài đặt Shop' : '🎮 Đăng ký Seller' }}
+            </h1>
+            <p style="color: #666; font-size: 1.1rem;">
+                {{ $isEdit ? 'Cập nhật thông tin shop của bạn' : 'Bắt đầu bán source code game của bạn trên Làm Game' }}
+            </p>
         </div>
 
         <!-- Form Card -->
-        <div class="register-card">
+        <div class="register-card" style="background: white; border-radius: 20px; padding: 3rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
             <form action="{{ route('seller.register.submit') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <!-- Shop Information -->
-                <div class="form-section">
-                    <h3>📝 Thông tin Shop</h3>
+                <div class="form-section" style="margin-bottom: 2rem;">
+                    <h3 style="color: #2c5f41; margin-bottom: 1.5rem; font-size: 1.3rem; font-weight: 700;">
+                        📝 Thông tin Shop
+                    </h3>
 
-                    <div class="form-group">
-                        <label>Tên Shop <span>*</span></label>
-                        <input type="text" name="shop_name" value="{{ old('shop_name', $seller->shop_name ?? '') }}" required placeholder="VD: GameDev Studio">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">
+                            Tên Shop <span style="color: red;">*</span>
+                        </label>
+                        <input type="text" name="shop_name" value="{{ old('shop_name', $seller->shop_name ?? '') }}" required
+                            style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem;"
+                            placeholder="VD: GameDev Studio">
                         @error('shop_name')
-                            <span>{{ $message }}</span>
+                            <span style="color: red; font-size: 0.9rem;">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">
                             Mô tả Shop
                         </label>
                         <textarea name="shop_description" rows="4"
-                           
+                            style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem;"
                             placeholder="Giới thiệu về shop của bạn...">{{ old('shop_description', $seller->shop_description ?? '') }}</textarea>
                         @error('shop_description')
-                            <span>{{ $message }}</span>
+                            <span style="color: red; font-size: 0.9rem;">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-row">
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
                         <div class="form-group">
-                            <label>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">
                                 Logo Shop
                             </label>
                             @if($seller && $seller->shop_logo)
                                 <div style="margin-bottom: 0.5rem;">
-                                    <img src="{{ Storage::url($seller->shop_logo) }}" alt="Current Logo" style="max-width: 100px; border-radius: 8px;">
+                                    <img src="{{ Storage::url($seller->shop_logo) }}" alt="Logo hiện tại" style="max-width: 80px; border-radius: 8px;">
                                     <small style="display: block; color: #666;">Logo hiện tại</small>
                                 </div>
                             @endif
                             <input type="file" name="shop_logo" accept="image/*"
-                               >
-                            <small>Max 2MB, JPG/PNG {{ $seller ? '(Để trống nếu không đổi)' : '' }}</small>
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 10px;">
+                            <small style="color: #666;">Max 2MB, JPG/PNG {{ $isEdit ? '(Để trống nếu không đổi)' : '' }}</small>
                             @error('shop_logo')
-                                <span>{{ $message }}</span>
+                                <span style="color: red; font-size: 0.9rem; display: block;">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <label>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">
                                 Banner Shop
                             </label>
                             @if($seller && $seller->shop_banner)
                                 <div style="margin-bottom: 0.5rem;">
-                                    <img src="{{ Storage::url($seller->shop_banner) }}" alt="Current Banner" style="max-width: 200px; border-radius: 8px;">
+                                    <img src="{{ Storage::url($seller->shop_banner) }}" alt="Banner hiện tại" style="max-width: 150px; border-radius: 8px;">
                                     <small style="display: block; color: #666;">Banner hiện tại</small>
                                 </div>
                             @endif
                             <input type="file" name="shop_banner" accept="image/*"
-                               >
-                            <small>Max 5MB, JPG/PNG {{ $seller ? '(Để trống nếu không đổi)' : '' }}</small>
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 10px;">
+                            <small style="color: #666;">Max 5MB, JPG/PNG {{ $isEdit ? '(Để trống nếu không đổi)' : '' }}</small>
                             @error('shop_banner')
-                                <span>{{ $message }}</span>
+                                <span style="color: red; font-size: 0.9rem; display: block;">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
                 </div>
 
                 <!-- Contact Information -->
-                <div class="form-section">
-                    <h3>
+                <div class="form-section" style="margin-bottom: 2rem;">
+                    <h3 style="color: #2c5f41; margin-bottom: 1.5rem; font-size: 1.3rem; font-weight: 700;">
                         📞 Thông tin liên hệ
                     </h3>
 
-                    <div class="form-row">
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
                         <div class="form-group">
-                            <label>
-                                Email <span>*</span>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">
+                                Email <span style="color: red;">*</span>
                             </label>
                             <input type="email" name="contact_email" value="{{ old('contact_email', $seller->contact_email ?? $customer->email) }}" required
-                               >
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem;">
                             @error('contact_email')
-                                <span>{{ $message }}</span>
+                                <span style="color: red; font-size: 0.9rem;">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <label>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">
                                 Số điện thoại
                             </label>
                             <input type="text" name="contact_phone" value="{{ old('contact_phone', $seller->contact_phone ?? $customer->phone) }}"
-                               >
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem;">
                             @error('contact_phone')
-                                <span>{{ $message }}</span>
+                                <span style="color: red; font-size: 0.9rem;">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">
                             Website
                         </label>
                         <input type="url" name="website" value="{{ old('website', $seller->website ?? '') }}"
-                           
+                            style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem;"
                             placeholder="https://yourwebsite.com">
                         @error('website')
-                            <span>{{ $message }}</span>
+                            <span style="color: red; font-size: 0.9rem;">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
 
                 <!-- Business Information -->
-                <div class="form-section">
-                    <h3>
+                <div class="form-section" style="margin-bottom: 2rem;">
+                    <h3 style="color: #2c5f41; margin-bottom: 1.5rem; font-size: 1.3rem; font-weight: 700;">
                         🏢 Thông tin doanh nghiệp
                     </h3>
 
-                    <div class="form-group">
-                        <label>
-                            Loại hình <span>*</span>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">
+                            Loại hình <span style="color: red;">*</span>
                         </label>
                         <select name="business_type" required
-                           >
+                            style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem;">
                             <option value="individual" {{ old('business_type', $seller->business_type ?? '') == 'individual' ? 'selected' : '' }}>Cá nhân</option>
                             <option value="company" {{ old('business_type', $seller->business_type ?? '') == 'company' ? 'selected' : '' }}>Công ty</option>
                         </select>
                         @error('business_type')
-                            <span>{{ $message }}</span>
+                            <span style="color: red; font-size: 0.9rem;">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-group" id="tax-id-group">
-                        <label>
+                    <div class="form-group" id="tax-id-group" style="margin-bottom: 1.5rem; display: none;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">
                             Mã số thuế
                         </label>
                         <input type="text" name="tax_id" value="{{ old('tax_id', $seller->tax_id ?? '') }}"
-                           >
+                            style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem;">
                         @error('tax_id')
-                            <span>{{ $message }}</span>
+                            <span style="color: red; font-size: 0.9rem;">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
 
                 <!-- Bank Information -->
-                <div class="form-section">
-                    <h3>
+                <div class="form-section" style="margin-bottom: 2rem;">
+                    <h3 style="color: #2c5f41; margin-bottom: 1.5rem; font-size: 1.3rem; font-weight: 700;">
                         🏦 Thông tin ngân hàng
                     </h3>
 
-                    <div class="form-group">
-                        <label>
-                            Tên ngân hàng <span>*</span>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">
+                            Tên ngân hàng <span style="color: red;">*</span>
                         </label>
                         <input type="text" name="bank_name" value="{{ old('bank_name', $seller->bank_name ?? '') }}" required
-                           
+                            style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem;"
                             placeholder="VD: Vietcombank">
                         @error('bank_name')
-                            <span>{{ $message }}</span>
+                            <span style="color: red; font-size: 0.9rem;">{{ $message }}</span>
                         @enderror
                     </div>
 
-                    <div class="form-row">
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
                         <div class="form-group">
-                            <label>
-                                Số tài khoản <span>*</span>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">
+                                Số tài khoản <span style="color: red;">*</span>
                             </label>
                             <input type="text" name="bank_account" value="{{ old('bank_account', $seller->bank_account ?? '') }}" required
-                               >
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem;">
                             @error('bank_account')
-                                <span>{{ $message }}</span>
+                                <span style="color: red; font-size: 0.9rem;">{{ $message }}</span>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <label>
-                                Chủ tài khoản <span>*</span>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">
+                                Chủ tài khoản <span style="color: red;">*</span>
                             </label>
                             <input type="text" name="bank_holder" value="{{ old('bank_holder', $seller->bank_holder ?? $customer->first_name . ' ' . $customer->last_name) }}" required
-                               >
+                                style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 10px; font-size: 1rem;">
                             @error('bank_holder')
-                                <span>{{ $message }}</span>
+                                <span style="color: red; font-size: 0.9rem;">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
                 </div>
 
-                <!-- Terms -->
+                <!-- Terms (only for new registration) -->
                 @if(!$isEdit)
-                <div class="form-section">
-                    <label>
+                <div class="form-section" style="margin-bottom: 2rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
                         <input type="checkbox" name="terms_accepted" value="1" required
-                           >
-                        <span>
+                            style="width: 20px; height: 20px; cursor: pointer;">
+                        <span style="color: #333;">
                             Tôi đồng ý với <a href="#" style="color: #2c5f41; text-decoration: underline;">Điều khoản dịch vụ</a> và 
                             <a href="#" style="color: #2c5f41; text-decoration: underline;">Chính sách bán hàng</a>
                         </span>
                     </label>
                     @error('terms_accepted')
-                        <span>{{ $message }}</span>
+                        <span style="color: red; font-size: 0.9rem; display: block; margin-top: 0.5rem;">{{ $message }}</span>
                     @enderror
                 </div>
                 @endif
 
                 <!-- Submit Button -->
-                <button type="submit" class="btn-submit">
+                <button type="submit" 
+                    style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #2c5f41 0%, #1e4530 100%); color: white; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: 700; cursor: pointer;">
                     {{ $isEdit ? '💾 Cập nhật thông tin' : '🚀 Đăng ký Seller' }}
                 </button>
             </form>
@@ -318,20 +234,23 @@
     </div>
 </div>
 
-<script>
-document.querySelector('select[name="business_type"]').addEventListener('change', function() {
-    const taxIdGroup = document.getElementById('tax-id-group');
-    if (this.value === 'company') {
-        taxIdGroup.style.display = 'block';
-    } else {
-        taxIdGroup.style.display = 'none';
-    }
-});
-
-// Trigger on page load
-if (document.querySelector('select[name="business_type"]').value === 'company') {
-    document.getElementById('tax-id-group').style.display = 'block';
+<style>
+@media (max-width: 768px) {
+    .form-row { grid-template-columns: 1fr !important; }
 }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const businessTypeSelect = document.querySelector('select[name="business_type"]');
+    const taxIdGroup = document.getElementById('tax-id-group');
+    
+    function toggleTaxId() {
+        taxIdGroup.style.display = businessTypeSelect.value === 'company' ? 'block' : 'none';
+    }
+    
+    businessTypeSelect.addEventListener('change', toggleTaxId);
+    toggleTaxId();
+});
 </script>
-</div>
 @endsection

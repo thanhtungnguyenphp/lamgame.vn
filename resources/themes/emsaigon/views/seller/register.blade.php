@@ -1,4 +1,8 @@
-@extends($isEdit ? 'shop::seller.layouts.master' : 'shop::layouts.master')
+@if($isEdit)
+    @extends('shop::seller.layouts.master')
+@else
+    @extends('layouts.master')
+@endif
 
 @section('page_title', $page_title)
 

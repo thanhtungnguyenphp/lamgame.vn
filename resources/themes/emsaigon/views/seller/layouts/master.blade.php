@@ -62,7 +62,7 @@
             </nav>
             
             <div class="seller-user">
-                <span>{{ auth()->guard('customer')->user()->seller->shop_name }}</span>
+                <span>{{ auth()->guard('customer')->user()->seller->shop_name ?? 'Seller' }}</span>
                 <a href="{{ route('shop.customers.account.profile.index') }}" style="color: white;">⚙️</a>
             </div>
         </div>
