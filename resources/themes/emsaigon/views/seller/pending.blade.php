@@ -1,4 +1,4 @@
-@extends('shop::layouts.master')
+@extends('shop::seller.layouts.master')
 
 @section('page_title', $page_title)
 
