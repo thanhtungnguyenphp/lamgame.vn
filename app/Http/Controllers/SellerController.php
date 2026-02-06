@@ -144,12 +144,27 @@ class SellerController extends Controller
                 ->with('error', 'Tài khoản seller chưa được kích hoạt.');
         }
 
-        // Stats
+        // Calculate stats realtime
+        $totalProducts = \DB::table('products')
+            ->where('seller_id', $seller->id)
+            ->count();
+
+        $salesData = \DB::table('orders')
+            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+            ->join('products', 'order_items.product_id', '=', 'products.id')
+            ->where('products.seller_id', $seller->id)
+            ->whereIn('orders.status', ['completed', 'processing', 'pending'])
+            ->select(
+                \DB::raw('COUNT(DISTINCT orders.id) as total_orders'),
+                \DB::raw('SUM(order_items.total) as total_revenue')
+            )
+            ->first();
+
         $stats = [
-            'total_products' => $seller->total_products,
-            'total_sales' => $seller->total_sales,
-            'total_revenue' => $seller->total_revenue,
-            'rating_avg' => $seller->rating_avg,
+            'total_products' => $totalProducts,
+            'total_sales' => $salesData->total_orders ?? 0,
+            'total_revenue' => $salesData->total_revenue ?? 0,
+            'rating_avg' => $seller->rating_avg ?? 0,
             'available_balance' => $this->getAvailableBalance($seller),
         ];
 
