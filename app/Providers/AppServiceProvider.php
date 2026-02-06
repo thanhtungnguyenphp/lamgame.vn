@@ -65,5 +65,8 @@ class AppServiceProvider extends ServiceProvider
 
         // Preserve seller_id when admin updates product
         \Event::listen('catalog.product.update.before', \App\Listeners\PreserveSellerIdOnProductUpdate::class);
+        
+        // Send email notification to seller when new order is placed
+        \Event::listen('checkout.order.save.after', \App\Listeners\SendSellerOrderNotification::class);
     }
 }
