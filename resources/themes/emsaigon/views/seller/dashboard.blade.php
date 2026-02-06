@@ -53,7 +53,7 @@
                         Doanh thu
                     </span>
                 </div>
-                <div style="font-size: 2.5rem; font-weight: 800; color: #2c5f41; margin-bottom: 0.5rem;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: #2c5f41; margin-bottom: 0.5rem; word-break: break-word;">
                     {{ number_format($stats['total_revenue'], 0, ',', '.') }}đ
                 </div>
                 <div style="color: #666; font-size: 0.9rem;">Tổng doanh thu</div>
