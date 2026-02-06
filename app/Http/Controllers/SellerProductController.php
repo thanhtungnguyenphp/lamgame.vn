@@ -129,7 +129,7 @@ class SellerProductController extends Controller
             if ($request->hasFile('source_files')) {
                 $updateData['downloadable_links'] = [];
                 foreach ($request->file('source_files') as $index => $file) {
-                    $updateData['downloadable_links'][$index] = [
+                    $updateData['downloadable_links']['link_' . $index] = [
                         $locale => [
                             'title' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
                         ],
