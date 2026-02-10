@@ -1054,12 +1054,26 @@ class LamGamePageController extends Controller
             }
         }
 
+        // Get seller info
+        $seller = \App\Models\SourceGameSeller::find($product->seller_id);
+
+        // Get real purchase count from order_items
+        $purchaseCount = \DB::table('order_items')
+            ->where('product_id', $product->id)
+            ->count();
+
+        // Get real review/comment count
+        $reviewCount = \DB::table('product_reviews')
+            ->where('product_id', $product->id)
+            ->where('status', 'approved')
+            ->count();
+
         // Build source game detail data
         $sourceGameDetail = [
             'id' => $product->id,
             'title' => $flat->name ?? $product->sku,
             'slug' => $slug,
-            'description' => $flat->short_description ?? '',
+            'description' => strip_tags($flat->short_description ?? ''),
             'full_description' => $flat->description ?? '',
             'price' => (float) ($flat->price ?? 0),
             'is_free' => ((float) ($flat->price ?? 0)) == 0,
@@ -1067,8 +1081,9 @@ class LamGamePageController extends Controller
             'engine' => $attributeValues['game_engine'] ?? 'Unity',
             'language' => $attributeValues['programming_language'] ?? 'C#',
             'file_size' => $attributeValues['file_size'] ?? '25 MB',
-            'downloads_count' => (int) ($attributeValues['downloads_count'] ?? rand(100, 2000)),
-            'rating' => (float) ($attributeValues['rating'] ?? number_format(rand(35, 50) / 10, 1)),
+            'downloads_count' => $purchaseCount,
+            'review_count' => $reviewCount,
+            'rating' => (float) ($attributeValues['rating'] ?? 0),
             'version' => $attributeValues['version'] ?? '1.0',
             'last_updated' => optional($product->updated_at)->format('Y-m-d'),
             'created_at' => optional($product->created_at)->format('Y-m-d'),
@@ -1076,28 +1091,34 @@ class LamGamePageController extends Controller
             'downloadable_links' => [],
             'video_demo_url' => $attributeValues['video_demo_url'] ?? null,
             'demo_url' => $attributeValues['demo_url'] ?? null,
-            'author_name' => $attributeValues['author_name'] ?? 'Làm Game Team',
-            'author_email' => $attributeValues['author_email'] ?? 'contact@lamgame.localhost',
-            'author_bio' => $attributeValues['author_bio'] ?? 'Đội ngũ phát triển chuyên nghiệp tại Làm Game',
+            'author_name' => $seller->shop_name ?? ($attributeValues['author_name'] ?? 'Làm Game Team'),
+            'author_slug' => $seller->shop_slug ?? null,
+            'author_logo' => $seller ? $seller->logo_url : null,
+            'author_verified' => $seller->verified ?? false,
+            'author_email' => $seller->contact_email ?? ($attributeValues['author_email'] ?? null),
+            'author_bio' => $seller->shop_description ?? ($attributeValues['author_bio'] ?? ''),
             'requirements' => $attributeValues['requirements'] ?? 'Unity 2022.3 LTS trở lên',
             'features' => [],
             'tags' => [],
             'category_name' => 'Source Game'
         ];
 
-        // Process images
+        // Process images — only include files that exist
         if ($product->images && $product->images->isNotEmpty()) {
             foreach ($product->images as $image) {
-                $sourceGameDetail['images'][] = [
-                    'url' => asset('storage/' . $image->path),
-                    'alt' => $sourceGameDetail['title']
-                ];
+                $filePath = storage_path('app/public/' . $image->path);
+                if (file_exists($filePath)) {
+                    $sourceGameDetail['images'][] = [
+                        'url' => asset('storage/' . $image->path),
+                        'alt' => $sourceGameDetail['title']
+                    ];
+                }
             }
-        } else {
-            // Default images if none
+        }
+        // Fallback: 1 placeholder if no valid images
+        if (empty($sourceGameDetail['images'])) {
             $sourceGameDetail['images'] = [
-                ['url' => 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=600&fit=crop', 'alt' => $sourceGameDetail['title']],
-                ['url' => 'https://images.unsplash.com/photo-1614294148960-9aa740632117?w=800&h=600&fit=crop', 'alt' => $sourceGameDetail['title']]
+                ['url' => asset('images/placeholder-game.svg'), 'alt' => $sourceGameDetail['title']]
             ];
         }
 
@@ -1155,9 +1176,8 @@ class LamGamePageController extends Controller
                     'url' => route('lamgame.source-game.detail', $relatedFlat->url_key ?? $relatedProduct->id),
                     'image' => $relatedProduct->images && $relatedProduct->images->isNotEmpty()
                              ? asset('storage/' . $relatedProduct->images->first()->path)
-                             : 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&h=200&fit=crop',
+                             : asset('images/placeholder-game.svg'),
                     'price' => (float) ($relatedFlat->price ?? 0),
-                    'rating' => 4.5
                 ];
             }
         }

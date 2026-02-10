@@ -4,6 +4,7 @@
 
 @push('styles')
 <style>
+    [v-cloak] { display: none !important; }
     .checkout-container { padding: 2rem 0; min-height: 60vh; }
     .checkout-content { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; align-items: start; }
     .checkout-steps { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
@@ -50,9 +51,12 @@
     <div class="container">
         <h1 style="margin-bottom: 1.5rem; color: #2c5f41;">💳 Thanh toán</h1>
         
-        <div id="checkout-app">
+        <div id="checkout-app" v-cloak>
             <div v-if="loading" style="text-align: center; padding: 3rem;">
-                <p>Đang tải...</p>
+                <div class="checkout-shimmer">
+                    <div style="height: 24px; width: 200px; background: #e5e7eb; border-radius: 4px; margin: 0 auto 1rem;"></div>
+                    <div style="height: 16px; width: 150px; background: #e5e7eb; border-radius: 4px; margin: 0 auto;"></div>
+                </div>
             </div>
             
             <div v-else class="checkout-content">
@@ -247,7 +251,6 @@
 <script src="https://www.paypal.com/sdk/js?client-id={{ $paypalClientId }}&currency={{ $currencyToUse }}" data-partner-attribution-id="Bagisto_Cart"></script>
 @endif
 
-<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script>
 const { createApp } = Vue;
 

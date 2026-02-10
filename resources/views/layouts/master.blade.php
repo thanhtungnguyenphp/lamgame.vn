@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#6a4c93">
-    <meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="light">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -46,7 +46,7 @@
     <style>
         /* Reset and base styles */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Roboto', sans-serif; line-height: 1.6; color: #333; }
+        body { font-family: 'Roboto', sans-serif; line-height: 1.6; color: #333; background: #fff; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
         /* Header */
@@ -284,8 +284,6 @@
 
     <!-- Pagination CSS -->
     <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
-
-    @stack('styles')
 
     <!-- Google Analytics -->
     @if(config('google_analytics.enabled') && (app()->environment('production') || config('google_analytics.enabled')))
@@ -539,8 +537,6 @@
     <!-- Vite Assets -->
     {{-- @bagistoVite(['resources/themes/emsaigon/assets/js/app.js'], 'shop-emsaigon') --}}
 
-    @stack('scripts')
-
     <!-- Inline JavaScript -->
     <script>
         // Scroll to section function
@@ -620,27 +616,10 @@
             }
         }
 
-        // Initialize active menu states and mount Vue app after DOM is loaded
+        // Initialize active menu states after DOM is loaded
         window.addEventListener('DOMContentLoaded', function() {
             // Set active states for mobile menu
             setTimeout(setActiveMobileMenuItems, 100);
-
-            // Only mount if we have Vue components on the page
-            if (typeof app !== 'undefined') {
-                try {
-                    app.mount('body');
-                    console.log('Vue app mounted successfully');
-                } catch (error) {
-                    console.log('Vue app mount error:', error.message);
-                    // Try mounting on a specific element if body fails
-                    try {
-                        app.mount('#app');
-                        console.log('Vue app mounted on #app');
-                    } catch (error2) {
-                        console.log('Secondary mount failed:', error2.message);
-                    }
-                }
-            }
         });
     </script>
 

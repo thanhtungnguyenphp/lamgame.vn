@@ -5,7 +5,7 @@
 
 @push('styles')
 <style>
-    .source-detail-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .source-detail-container { max-width: 1200px; margin: 0 auto; padding: 20px; background: #fff; color: #1f2937; }
     
     /* Compact Header - như 3DOcean */
     .compact-header {
@@ -47,13 +47,13 @@
     
     /* Sidebar */
     .sidebar { position: sticky; top: 20px; height: fit-content; }
-    .sidebar-card { background: white; border: 1px solid #e5e7eb; border-radius: 4px; padding: 20px; margin-bottom: 16px; }
+    .sidebar-card { background: white; border: 1px solid #e5e7eb; border-radius: 4px; padding: 20px; margin-bottom: 16px; overflow: hidden; }
     
     /* Price Box */
-    .price-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-    .license-select { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.9rem; }
-    .price-value { font-size: 2rem; font-weight: 700; color: #1f2937; }
-    .price-value sup { font-size: 1rem; }
+    .price-header { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+    .license-select { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.9rem; align-self: flex-start; }
+    .price-value { font-size: 1.75rem; font-weight: 700; color: #1f2937; word-break: break-word; }
+    .price-value sup { font-size: 0.875rem; }
     .license-desc { font-size: 0.85rem; color: #6b7280; line-height: 1.5; margin-bottom: 16px; }
     .license-links { font-size: 0.85rem; margin-bottom: 20px; }
     .license-links a { color: #6a4c93; text-decoration: none; }
@@ -68,7 +68,7 @@
     
     /* Author Card */
     .author-card { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-    .author-avatar { width: 64px; height: 64px; border-radius: 4px; background: linear-gradient(135deg, #6a4c93 0%, #9b59b6 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem; }
+    .author-avatar { width: 64px; height: 64px; border-radius: 4px; background: linear-gradient(135deg, #6a4c93 0%, #9b59b6 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem; flex-shrink: 0; }
     .author-name { font-weight: 600; color: #1f2937; margin-bottom: 4px; }
     .author-badges { display: flex; gap: 4px; flex-wrap: wrap; }
     .badge { width: 24px; height: 24px; border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
@@ -87,6 +87,11 @@
     /* Content Sections */
     .content-section { margin-bottom: 32px; }
     .section-title { font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .description-content { line-height: 1.8; color: #374151; }
+    .description-content p { margin-bottom: 1em; }
+    .description-content img { max-width: 100%; height: auto; border-radius: 4px; }
+    .description-content ul, .description-content ol { padding-left: 1.5em; margin-bottom: 1em; }
+    .description-content a { color: #6a4c93; }
     .features-list { list-style: none; padding: 0; margin: 0; }
     .features-list li { padding: 8px 0; display: flex; align-items: center; gap: 10px; }
     .features-list li::before { content: '✓'; color: #10b981; font-weight: 600; }
@@ -95,7 +100,7 @@
     .related-section { margin-top: 40px; padding-top: 32px; border-top: 1px solid #e5e7eb; }
     .related-title { font-size: 1.1rem; color: #1f2937; margin-bottom: 16px; }
     .related-grid { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px; }
-    .related-item { flex-shrink: 0; width: 120px; }
+    .related-item { flex-shrink: 0; width: 120px; text-decoration: none; }
     .related-item img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; }
     .related-item-title { font-size: 0.8rem; color: #374151; line-height: 1.3; }
     
@@ -120,9 +125,15 @@
     <!-- Compact Header -->
     <div class="compact-header">
         <div class="compact-header-left">
-            <span>Bởi <a href="#">{{ $sourceGame['author_name'] }}</a></span>
-            <span><i class="fa fa-comment"></i> 0 Bình luận</span>
-            <span><i class="fa fa-shopping-cart"></i> {{ number_format($sourceGame['downloads_count']) }} lượt mua</span>
+            <span>Bởi
+                @if($sourceGame['author_slug'])
+                    <a href="{{ url('seller/' . $sourceGame['author_slug']) }}">{{ $sourceGame['author_name'] }}</a>
+                @else
+                    <a href="#">{{ $sourceGame['author_name'] }}</a>
+                @endif
+            </span>
+            <span>💬 {{ $sourceGame['review_count'] }} Bình luận</span>
+            <span>🛒 {{ number_format($sourceGame['downloads_count']) }} lượt mua</span>
         </div>
         <div class="compact-header-right">
             <span class="action-link" onclick="addToFavorites()"><i class="fa fa-heart"></i> Yêu thích</span>
@@ -191,7 +202,7 @@
             @if($sourceGame['full_description'])
             <div class="content-section">
                 <h3 class="section-title">Mô tả chi tiết</h3>
-                <div>{!! nl2br(e($sourceGame['full_description'])) !!}</div>
+                <div class="description-content">{!! strip_tags($sourceGame['full_description'], '<p><br><strong><b><em><i><ul><ol><li><a><h1><h2><h3><h4><h5><h6><img><table><tr><td><th><thead><tbody><blockquote><pre><code><span><div><hr>') !!}</div>
             </div>
             @endif
 
@@ -272,15 +283,23 @@
             <!-- Author -->
             <div class="sidebar-card">
                 <div class="author-card">
-                    <div class="author-avatar">{{ strtoupper(substr($sourceGame['author_name'], 0, 1)) }}</div>
+                    @if($sourceGame['author_logo'])
+                        <img src="{{ $sourceGame['author_logo'] }}" alt="{{ $sourceGame['author_name'] }}" style="width:64px;height:64px;border-radius:4px;object-fit:cover;flex-shrink:0;">
+                    @else
+                        <div class="author-avatar">{{ mb_strtoupper(mb_substr($sourceGame['author_name'], 0, 1)) }}</div>
+                    @endif
                     <div>
                         <div class="author-name">{{ $sourceGame['author_name'] }}</div>
-                        <div class="author-badges">
-                            <span class="badge" title="Verified">✓</span>
-                        </div>
+                        @if($sourceGame['author_verified'])
+                            <div class="author-badges"><span class="badge" title="Đã xác minh">✓</span></div>
+                        @endif
                     </div>
                 </div>
-                <button class="btn-portfolio">Xem Portfolio</button>
+                @if($sourceGame['author_slug'])
+                    <a href="{{ url('seller/' . $sourceGame['author_slug']) }}" class="btn-portfolio" style="display:block;text-align:center;text-decoration:none;">Xem Portfolio</a>
+                @else
+                    <button class="btn-portfolio">Xem Portfolio</button>
+                @endif
             </div>
 
             <!-- Attributes -->
@@ -306,10 +325,12 @@
                         <span class="attr-label">Phiên bản</span>
                         <span class="attr-value">{{ $sourceGame['version'] }}</span>
                     </div>
+                    @if($sourceGame['rating'] > 0)
                     <div class="attr-row">
                         <span class="attr-label">Đánh giá</span>
                         <span class="attr-value">{{ $sourceGame['rating'] }}/5.0</span>
                     </div>
+                    @endif
                 </div>
                 <button class="more-attr-btn" onclick="toggleAttrs(this)">
                     Xem thêm thông số <i class="fa fa-chevron-down"></i>

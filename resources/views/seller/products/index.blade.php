@@ -32,6 +32,7 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($products as $product)
+                @php $flat = $product->flat; @endphp
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
@@ -39,22 +40,22 @@
                                 <img src="{{ Storage::url($product->images->first()->path) }}" class="w-16 h-16 mr-4 rounded" alt="">
                             @endif
                             <div>
-                                <div class="font-medium text-gray-900">{{ $product->flat->name ?? $product->name }}</div>
+                                <div class="font-medium text-gray-900">{{ optional($flat)->name ?? $product->name }}</div>
                                 <div class="text-sm text-gray-500">SKU: {{ $product->sku }}</div>
                             </div>
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">
-                            @if($product->flat && $product->flat->price > 0)
-                                {{ number_format($product->flat->price) }}đ
+                            @if((optional($flat)->price ?? 0) > 0)
+                                {{ number_format($flat->price) }}đ
                             @else
                                 <span class="text-green-600">Miễn phí</span>
                             @endif
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        @if($product->flat && $product->flat->status)
+                        @if(optional($flat)->status)
                             <span class="px-2 py-1 text-xs text-green-800 bg-green-100 rounded-full">Đã duyệt</span>
                         @else
                             <span class="px-2 py-1 text-xs text-yellow-800 bg-yellow-100 rounded-full">Chờ duyệt</span>

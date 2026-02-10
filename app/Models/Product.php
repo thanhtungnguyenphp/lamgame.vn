@@ -13,7 +13,10 @@ class Product extends BaseProduct
     // Accessor for flat (single product_flat for current locale/channel)
     public function getFlatAttribute()
     {
-        return $this->product_flats->first();
+        $locale = core()->getCurrentLocale()->code ?? 'vi';
+
+        return $this->product_flats->firstWhere('locale', $locale)
+            ?? $this->product_flats->first();
     }
 
     // Relationships
