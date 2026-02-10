@@ -35,7 +35,7 @@ class SellerProductController extends Controller
 
         $products = \App\Models\Product::where('seller_id', $seller->id)
             ->where('type', 'downloadable')
-            ->with(['product_flats', 'images', 'downloadable_links'])
+            ->with(['product_flats', 'images'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
