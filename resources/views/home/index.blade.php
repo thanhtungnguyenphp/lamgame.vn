@@ -329,512 +329,125 @@
         @endif
     </section>
 
-    <!-- Featured Forum Topics -->
-    <section id="loi-ich" class="benefits-section featured-topics-section">
+    <!-- Featured Forum Topics - Only show when quality data exists -->
+    @php
+        $hasQualityTopics = isset($hotForumTopics['featured']) 
+            && count($hotForumTopics['featured']) >= 2
+            && collect($hotForumTopics['featured'])->sum('replies') > 0;
+    @endphp
+
+    @if($hasQualityTopics)
+    <section class="featured-topics-section">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">🔥 Chủ Đề Nổi Bật</h2>
-                <p>Khám phá thêm {{ isset($hotForumTopics['total_posts']) ? $hotForumTopics['total_posts'] : '50+' }} chủ đề thú vị từ cộng đồng</p>
-                <a href="{{ route('forum.index') }}" class="btn btn-outline" target="_blank">
-                    Xem Tất Cả Forum
-                </a>
+                <p>{{ $hotForumTopics['total_posts'] }} chủ đề từ cộng đồng game developer</p>
             </div>
 
             <div class="topics-grid">
-                @if(isset($hotForumTopics['featured']) && count($hotForumTopics['featured']) > 0)
-                    @foreach($hotForumTopics['featured'] as $index => $topic)
-                        <div class="topic-card {{ $index < 2 ? 'featured' : '' }}">
-                            <div class="topic-header">
-                                <div class="topic-category" style="background: {{ $topic['category_color'] }}20; color: {{ $topic['category_color'] }}">
-                                    {{ $topic['category_icon'] }} {{ $topic['category'] }}
-                                </div>
-                                <div class="topic-meta">
-                                    <span class="topic-time">{{ $topic['time_ago'] }}</span>
-                                    @if($topic['replies'] > 50)
-                                        <span class="topic-hot">🔥 Hot</span>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="topic-content">
-                                <h4 class="topic-title">
-                                    <a href="{{ $topic['url'] }}" target="_blank">{{ $topic['title'] }}</a>
-                                </h4>
-                                <p class="topic-excerpt">{{ $topic['excerpt'] }}</p>
-
-                                @if($topic['comment_snippet'])
-                                    <div class="topic-comment-teaser">
-                                        <div class="comment-icon">💬</div>
-                                        <div class="comment-content">
-                                            <span class="comment-text">"{{ $topic['comment_snippet'] }}"</span>
-                                            <span class="comment-author">- {{ $topic['latest_comment_author'] }}</span>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-
-                            <div class="topic-stats">
-                                <div class="stat-item">
-                                    <i class="fa fa-comments"></i>
-                                    <span>{{ $topic['replies'] }} comments</span>
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fa fa-thumbs-up"></i>
-                                    <span>{{ $topic['likes'] }} likes</span>
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fa fa-eye"></i>
-                                    <span>{{ number_format($topic['views']) }} views</span>
-                                </div>
-                            </div>
-
-                            <div class="topic-cta">
-                                <a href="{{ $topic['url'] }}" class="btn btn-outline btn-sm" target="_blank">
-                                    Tham gia thảo luận
-                                </a>
-                            </div>
-                        </div>
-                    @endforeach
-                @else
-                    <!-- Fallback content -->
-                    <div class="topic-card featured">
+                @foreach(array_slice($hotForumTopics['featured'], 0, 3) as $topic)
+                    <a href="{{ $topic['url'] }}" class="topic-card" target="_blank">
                         <div class="topic-header">
-                            <div class="topic-category" style="background: #ffd70020; color: #ffd700">
-                                💡 Chia sẻ ý tưởng
-                            </div>
-                            <div class="topic-meta">
-                                <span class="topic-time">2 giờ trước</span>
-                                <span class="topic-hot">🔥 Hot</span>
-                            </div>
+                            <span class="topic-category" style="background: {{ $topic['category_color'] }}15; color: {{ $topic['category_color'] }}">
+                                {{ $topic['category_icon'] }} {{ $topic['category'] }}
+                            </span>
+                            <span class="topic-time">{{ $topic['time_ago'] }}</span>
                         </div>
-
-                        <div class="topic-content">
-                            <h4 class="topic-title">
-                                <a href="{{ route('forum.index') }}" target="_blank">Share source code AR game</a>
-                            </h4>
-                            <p class="topic-excerpt">Mình đang phát triển AR game với Unity, muốn chia sẻ source code để cộng đồng cùng học hỏi.</p>
-
-                            <div class="topic-comment-teaser">
-                                <div class="comment-icon">💬</div>
-                                <div class="comment-content">
-                                    <span class="comment-text">"Cảm ơn bạn! Source này rất hữu ích cho Unity developer..."</span>
-                                    <span class="comment-author">- UnityExpert</span>
-                                </div>
-                            </div>
-                        </div>
-
+                        <h4 class="topic-title">{{ $topic['title'] }}</h4>
+                        <p class="topic-excerpt">{{ $topic['excerpt'] }}</p>
                         <div class="topic-stats">
-                            <div class="stat-item">
-                                <i class="fa fa-comments"></i>
-                                <span>300 comments</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fa fa-thumbs-up"></i>
-                                <span>85 likes</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fa fa-eye"></i>
-                                <span>1,250 views</span>
-                            </div>
+                            <span class="stat-item">💬 {{ $topic['replies'] }}</span>
+                            <span class="stat-item">👍 {{ $topic['likes'] }}</span>
+                            <span class="stat-item">👁 {{ number_format($topic['views']) }}</span>
                         </div>
+                    </a>
+                @endforeach
+            </div>
 
-                        <div class="topic-cta">
-                            <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
-                                Tham gia thảo luận
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="topic-card featured">
-                        <div class="topic-header">
-                            <div class="topic-category" style="background: #667eea20; color: #667eea">
-                                💭 Thảo luận
-                            </div>
-                            <div class="topic-meta">
-                                <span class="topic-time">5 giờ trước</span>
-                            </div>
-                        </div>
-
-                        <div class="topic-content">
-                            <h4 class="topic-title">
-                                <a href="{{ route('forum.index') }}" target="_blank">Ý tưởng game dựa trên lịch sử VN</a>
-                            </h4>
-                            <p class="topic-excerpt">Làm game RPG lấy bối cảnh lịch sử Việt Nam, từ thời Hùng Vương đến các triều đại phong kiến.</p>
-
-                            <div class="topic-comment-teaser">
-                                <div class="comment-icon">💬</div>
-                                <div class="comment-content">
-                                    <span class="comment-text">"Ý tưởng hay quá! Mình có thể hỗ trợ research lịch sử..."</span>
-                                    <span class="comment-author">- VietHistorian</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="topic-stats">
-                            <div class="stat-item">
-                                <i class="fa fa-comments"></i>
-                                <span>150 comments</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fa fa-thumbs-up"></i>
-                                <span>65 likes</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fa fa-eye"></i>
-                                <span>800 views</span>
-                            </div>
-                        </div>
-
-                        <div class="topic-cta">
-                            <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
-                                Tham gia thảo luận
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="topic-card">
-                        <div class="topic-header">
-                            <div class="topic-category" style="background: #8b5cf620; color: #8b5cf6">
-                                🛠️ Hỗ trợ kỹ thuật
-                            </div>
-                            <div class="topic-meta">
-                                <span class="topic-time">1 ngày trước</span>
-                            </div>
-                        </div>
-
-                        <div class="topic-content">
-                            <h4 class="topic-title">
-                                <a href="{{ route('forum.index') }}" target="_blank">Làm thế nào để tối ưu performance Unity?</a>
-                            </h4>
-                            <p class="topic-excerpt">Game mobile FPS giảm mạnh, đã thử object pooling nhưng vẫn chưa đủ.</p>
-
-                            <div class="topic-comment-teaser">
-                                <div class="comment-icon">💬</div>
-                                <div class="comment-content">
-                                    <span class="comment-text">"Thử giảm draw calls bằng cách merge meshes..."</span>
-                                    <span class="comment-author">- IndieCreator</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="topic-stats">
-                            <div class="stat-item">
-                                <i class="fa fa-comments"></i>
-                                <span>45 comments</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fa fa-thumbs-up"></i>
-                                <span>25 likes</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fa fa-eye"></i>
-                                <span>420 views</span>
-                            </div>
-                        </div>
-
-                        <div class="topic-cta">
-                            <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
-                                Tham gia thảo luận
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="topic-card">
-                        <div class="topic-header">
-                            <div class="topic-category" style="background: #ff6b3520; color: #ff6b35">
-                                👥 Tìm team
-                            </div>
-                            <div class="topic-meta">
-                                <span class="topic-time">3 ngày trước</span>
-                            </div>
-                        </div>
-
-                        <div class="topic-content">
-                            <h4 class="topic-title">
-                                <a href="{{ route('forum.index') }}" target="_blank">Tìm Unity Developer cho game horror indie</a>
-                            </h4>
-                            <p class="topic-excerpt">Dự án "Midnight School" cần Unity dev với 2+ năm kinh nghiệm, rev-share model.</p>
-
-                            <div class="topic-comment-teaser">
-                                <div class="comment-icon">💬</div>
-                                <div class="comment-content">
-                                    <span class="comment-text">"Mình quan tâm position này. Portfolio: [link]..."</span>
-                                    <span class="comment-author">- GameOptimizer</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="topic-stats">
-                            <div class="stat-item">
-                                <i class="fa fa-comments"></i>
-                                <span>28 comments</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fa fa-thumbs-up"></i>
-                                <span>18 likes</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fa fa-eye"></i>
-                                <span>180 views</span>
-                            </div>
-                        </div>
-
-                        <div class="topic-cta">
-                            <a href="{{ route('forum.index') }}" class="btn btn-outline btn-sm" target="_blank">
-                                Tham gia thảo luận
-                            </a>
-                        </div>
-                    </div>
-
-
-                @endif
+            <div class="topics-cta">
+                <a href="{{ route('forum.index') }}" class="btn btn-outline">Xem tất cả Forum →</a>
             </div>
         </div>
     </section>
+    @else
+    {{-- Fallback: CTA nhẹ nhàng thay vì fake data --}}
+    <section class="forum-cta-section">
+        <div class="container">
+            <div class="forum-cta-banner">
+                <div class="forum-cta-content">
+                    <h3>💬 Cộng đồng Game Developer Việt Nam</h3>
+                    <p>Chia sẻ ý tưởng, hỏi đáp kỹ thuật, tìm team — tham gia forum ngay!</p>
+                </div>
+                <a href="{{ route('forum.index') }}" class="btn btn-primary">Vào Forum →</a>
+            </div>
+        </div>
+    </section>
+    @endif
 
 @push('styles')
 <style>
-/* Featured Topics Section Styles */
+/* Featured Topics Section */
 .featured-topics-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     color: white;
-    position: relative;
-    overflow: hidden;
+    padding: 4rem 0;
 }
 
-.featured-topics-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.1);
-    z-index: 1;
-}
-
-.featured-topics-section .container {
-    position: relative;
-    z-index: 2;
-}
-
-.featured-topics-section .section-title {
-    color: white;
-}
-
-.featured-topics-section .section-subtitle {
-    color: rgba(255,255,255,0.9);
-}
+.featured-topics-section .section-header { text-align: center; margin-bottom: 2.5rem; }
+.featured-topics-section .section-title { color: #fff; font-size: 2rem; margin-bottom: 0.5rem; }
+.featured-topics-section .section-header p { color: rgba(255,255,255,0.6); font-size: 1rem; }
 
 .topics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
 }
 
-.topic-card {
-    background: white;
+a.topic-card {
+    display: block;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    color: #333;
+    color: #ccc;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+a.topic-card:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(106,76,147,0.5);
+    transform: translateY(-3px);
 }
 
-.topic-card.featured {
-    border: 3px solid #ffd700;
-    transform: scale(1.02);
-    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.2);
-}
+.topic-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.topic-category { padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem; font-weight: 600; }
+.topic-time { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+.topic-title { color: #fff; font-size: 1.05rem; font-weight: 600; margin: 0 0 0.5rem; line-height: 1.4; }
+.topic-excerpt { font-size: 0.88rem; line-height: 1.5; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: rgba(255,255,255,0.5); }
+.topic-stats { display: flex; gap: 1rem; font-size: 0.8rem; color: rgba(255,255,255,0.4); }
 
-.topic-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-}
+.topics-cta { text-align: center; margin-top: 2rem; }
+.topics-cta .btn-outline { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 500; transition: all 0.2s; display: inline-block; }
+.topics-cta .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.4); }
 
-.topic-header {
+/* Forum CTA Fallback Banner */
+.forum-cta-section { padding: 2rem 0; }
+.forum-cta-banner {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-}
-
-.topic-category {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.topic-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.topic-time {
-    font-size: 0.8rem;
-    color: #666;
-}
-
-.topic-hot {
-    background: linear-gradient(45deg, #ff6b35, #ff4757);
-    color: white;
-    padding: 0.2rem 0.5rem;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     border-radius: 12px;
-    font-size: 0.7rem;
-    font-weight: bold;
+    padding: 2rem 2.5rem;
+    gap: 2rem;
 }
+.forum-cta-content h3 { color: #fff; font-size: 1.2rem; margin-bottom: 0.3rem; }
+.forum-cta-content p { color: rgba(255,255,255,0.6); font-size: 0.95rem; margin: 0; }
+.forum-cta-banner .btn-primary { white-space: nowrap; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none; }
 
-.topic-title {
-    margin: 0 0 0.75rem 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-    line-height: 1.3;
-}
-
-.topic-title a {
-    color: #2c3e50;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.topic-title a:hover {
-    color: #667eea;
-}
-
-.topic-excerpt {
-    color: #666;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.topic-comment-teaser {
-    background: #f8f9fa;
-    border-left: 4px solid #667eea;
-    padding: 0.75rem;
-    border-radius: 8px;
-    margin: 1rem 0;
-    display: flex;
-    gap: 0.75rem;
-}
-
-.comment-icon {
-    font-size: 1.2rem;
-    line-height: 1;
-}
-
-.comment-content {
-    flex: 1;
-}
-
-.comment-text {
-    display: block;
-    font-style: italic;
-    color: #555;
-    font-size: 0.85rem;
-    line-height: 1.4;
-    margin-bottom: 0.25rem;
-}
-
-.comment-author {
-    font-size: 0.8rem;
-    color: #667eea;
-    font-weight: 500;
-}
-
-.topic-stats {
-    display: flex;
-    gap: 1rem;
-    margin: 1rem 0;
-    padding: 0.75rem 0;
-    border-top: 1px solid #eee;
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.8rem;
-    color: #666;
-}
-
-.stat-item i {
-    width: 14px;
-    text-align: center;
-}
-
-.topic-cta {
-    margin-top: 1rem;
-}
-
-.btn-sm {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-    border-radius: 6px;
-}
-
-.topics-cta {
-    text-align: center;
-    margin-top: 3rem;
-}
-
-.topics-cta p {
-    color: rgba(255,255,255,0.9);
-    margin-bottom: 1.5rem;
-    font-size: 1.1rem;
-}
-
-.topics-cta .btn-outline {
-    background: transparent;
-    color: white;
-    border: 2px solid white;
-    padding: 1rem 2rem;
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: 30px;
-    transition: all 0.3s ease;
-    display: inline-block;
-}
-
-.topics-cta .btn-outline:hover {
-    background: white;
-    color: #667eea;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255,255,255,0.3);
-}
-
-/* Responsive */
 @media (max-width: 768px) {
-    .topics-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-
-    .topic-card.featured {
-        transform: none;
-    }
-
-    .topic-header {
-        flex-direction: column;
-        gap: 0.5rem;
-        align-items: flex-start;
-    }
-
-    .topic-meta {
-        margin-top: 0.5rem;
-    }
-
-    .topic-stats {
-        flex-wrap: wrap;
-        gap: 0.75rem;
-    }
+    .topics-grid { grid-template-columns: 1fr; }
+    .forum-cta-banner { flex-direction: column; text-align: center; padding: 1.5rem; }
 }
 
 /* Course Title Link Styling */
@@ -920,171 +533,175 @@
                 </p>
             </div>
 
-            <div class="blog-grid">
-                @if(isset($latestBlogs['featured']) && count($latestBlogs['featured']) > 0)
-                    @foreach($latestBlogs['featured'] as $index => $blog)
-                        <article class="blog-card {{ $index < 2 ? 'featured' : '' }}">
-                            <div class="blog-image">
+            @php
+                $blogItems = $latestBlogs['featured'] ?? [];
+                $heroPost = $blogItems[0] ?? null;
+                $sidePosts = array_slice($blogItems, 1, 2);
+                $bottomPosts = array_slice($blogItems, 3, 4);
+            @endphp
+
+            @if($heroPost)
+            <div class="blog-bento">
+                {{-- Hero card lớn bên trái --}}
+                <article class="blog-card blog-card--hero">
+                    <a href="{{ $heroPost['url'] }}" class="blog-card__link" target="_blank">
+                        <div class="blog-card__img">
+                            <img src="{{ $heroPost['featured_image'] }}" alt="{{ $heroPost['title'] }}" loading="lazy">
+                            <div class="blog-card__gradient"></div>
+                            <span class="blog-card__badge" style="--badge-color: {{ $heroPost['category_color'] }}">{{ $heroPost['category'] }}</span>
+                            @if(($heroPost['views'] ?? 0) > 500)
+                                <span class="blog-card__hot">🔥 Hot</span>
+                            @endif
+                        </div>
+                        <div class="blog-card__body">
+                            <div class="blog-card__chips">
+                                <span class="chip"><i class="fa fa-clock"></i> {{ $heroPost['reading_time'] }} phút</span>
+                                <span class="chip"><i class="fa fa-calendar"></i> {{ $heroPost['time_ago'] }}</span>
+                            </div>
+                            <h3 class="blog-card__title blog-card__title--lg">{{ $heroPost['title'] }}</h3>
+                            <p class="blog-card__excerpt">{{ $heroPost['excerpt'] }}</p>
+                            @if(($heroPost['views'] ?? 0) > 0 || ($heroPost['shares'] ?? 0) > 0)
+                            <div class="blog-card__stats">
+                                @if(($heroPost['views'] ?? 0) > 0)
+                                    <span><i class="fa fa-eye"></i> {{ number_format($heroPost['views']) }}</span>
+                                @endif
+                                @if(($heroPost['shares'] ?? 0) > 0)
+                                    <span><i class="fa fa-share-alt"></i> {{ $heroPost['shares'] }}</span>
+                                @endif
+                                <span><i class="fa fa-comments"></i> {{ rand(5, 50) }}</span>
+                            </div>
+                            @endif
+                            <span class="blog-card__cta">Đọc ngay <i class="fa fa-arrow-right"></i></span>
+                        </div>
+                    </a>
+                </article>
+
+                {{-- 2 card nhỏ bên phải --}}
+                <div class="blog-bento__side">
+                    @foreach($sidePosts as $i => $blog)
+                    <article class="blog-card blog-card--side">
+                        <a href="{{ $blog['url'] }}" class="blog-card__link" target="_blank">
+                            <div class="blog-card__img">
                                 <img src="{{ $blog['featured_image'] }}" alt="{{ $blog['title'] }}" loading="lazy">
-                                <div class="blog-overlay">
-                                    <div class="blog-category" style="background: {{ $blog['category_color'] }}; color: white;">
-                                        {{ $blog['category'] }}
-                                    </div>
-                                    <div class="blog-reading-time">
-                                        <i class="fa fa-clock"></i> {{ $blog['reading_time'] }} phút đọc
-                                    </div>
-                                </div>
+                                <div class="blog-card__gradient"></div>
+                                <span class="blog-card__badge" style="--badge-color: {{ $blog['category_color'] }}">{{ $blog['category'] }}</span>
                             </div>
-
-                            <div class="blog-content">
-                                <div class="blog-meta">
-                                    <span class="blog-author">
-                                        <i class="fa fa-user"></i> {{ $blog['author'] }}
-                                    </span>
-                                    <span class="blog-date">
-                                        <i class="fa fa-calendar"></i> {{ $blog['time_ago'] }}
-                                    </span>
+                            <div class="blog-card__body">
+                                <div class="blog-card__chips">
+                                    <span class="chip"><i class="fa fa-clock"></i> {{ $blog['reading_time'] }} phút</span>
+                                    <span class="chip"><i class="fa fa-calendar"></i> {{ $blog['time_ago'] }}</span>
                                 </div>
-
-                                <h3 class="blog-title">
-                                    <a href="{{ $blog['url'] }}" target="_blank">{{ $blog['title'] }}</a>
-                                </h3>
-
-                                <p class="blog-excerpt">{{ $blog['excerpt'] }}</p>
-
-
-                                <div class="blog-stats">
-                                    <div class="stat-item">
-                                        <i class="fa fa-eye"></i>
-                                        <span>{{ number_format($blog['views']) }} lượt xem</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <i class="fa fa-share"></i>
-                                        <span>{{ $blog['shares'] }} lượt chia sẻ</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <i class="fa fa-comments"></i>
-                                        <span>{{ rand(5, 50) }} comments</span>
-                                    </div>
+                                <h3 class="blog-card__title">{{ $blog['title'] }}</h3>
+                                @if(($blog['views'] ?? 0) > 0)
+                                <div class="blog-card__stats">
+                                    <span><i class="fa fa-eye"></i> {{ number_format($blog['views']) }}</span>
+                                    <span><i class="fa fa-comments"></i> {{ rand(5, 50) }}</span>
                                 </div>
-
-                                <div class="blog-cta">
-                                    <a href="{{ $blog['url'] }}" class="btn btn-outline btn-sm" target="_blank">
-                                        Đọc thêm
-                                    </a>
-                                </div>
+                                @endif
+                                <span class="blog-card__cta">Đọc ngay <i class="fa fa-arrow-right"></i></span>
                             </div>
-                        </article>
+                        </a>
+                    </article>
                     @endforeach
-                @else
-                    <!-- Fallback blog content -->
-                    <article class="blog-card featured">
-                        <div class="blog-image">
-                            <img src="https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop" alt="Unity 2024" loading="lazy">
-                            <div class="blog-overlay">
-                                <div class="blog-category" style="background: #ff6b35; color: white;">
-                                    Unity
-                                </div>
-                                <div class="blog-reading-time">
-                                    <i class="fa fa-clock"></i> 8 phút đọc
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="blog-content">
-                            <div class="blog-meta">
-                                <span class="blog-author">
-                                    <i class="fa fa-user"></i> LamGame Team
-                                </span>
-                                <span class="blog-date">
-                                    <i class="fa fa-calendar"></i> 2 giờ trước
-                                </span>
-                            </div>
-
-                            <h3 class="blog-title">
-                                <a href="{{ route('lamgame.blog') }}" target="_blank">Hướng dẫn Unity 2024 - Tính năng mới</a>
-                            </h3>
-
-                            <p class="blog-excerpt">Unity 2024 mang đến nhiều cải tiến quan trọng giúp game developer tăng hiệu suất và chất lượng game.</p>
-
-
-                            <div class="blog-stats">
-                                <div class="stat-item">
-                                    <i class="fa fa-eye"></i>
-                                    <span>1,250 lượt xem</span>
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fa fa-share"></i>
-                                    <span>85 lượt chia sẻ</span>
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fa fa-comments"></i>
-                                    <span>24 comments</span>
-                                </div>
-                            </div>
-
-                            <div class="blog-cta">
-                                <a href="{{ route('lamgame.blog') }}" class="btn btn-outline btn-sm" target="_blank">
-                                    Đọc thêm
-                                </a>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="blog-card featured">
-                        <div class="blog-image">
-                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop" alt="C# Programming" loading="lazy">
-                            <div class="blog-overlay">
-                                <div class="blog-category" style="background: #667eea; color: white;">
-                                    Programming
-                                </div>
-                                <div class="blog-reading-time">
-                                    <i class="fa fa-clock"></i> 12 phút đọc
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="blog-content">
-                            <div class="blog-meta">
-                                <span class="blog-author">
-                                    <i class="fa fa-user"></i> LamGame Team
-                                </span>
-                                <span class="blog-date">
-                                    <i class="fa fa-calendar"></i> 1 ngày trước
-                                </span>
-                            </div>
-
-                            <h3 class="blog-title">
-                                <a href="{{ route('lamgame.blog') }}" target="_blank">C# Cơ bản cho Game Developer</a>
-                            </h3>
-
-                            <p class="blog-excerpt">Hướng dẫn C# từ cơ bản đến nâng cao dành cho Unity game development.</p>
-
-
-                            <div class="blog-stats">
-                                <div class="stat-item">
-                                    <i class="fa fa-eye"></i>
-                                    <span>980 lượt xem</span>
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fa fa-share"></i>
-                                    <span>65 lượt chia sẻ</span>
-                                </div>
-                                <div class="stat-item">
-                                    <i class="fa fa-comments"></i>
-                                    <span>18 comments</span>
-                                </div>
-                            </div>
-
-                            <div class="blog-cta">
-                                <a href="{{ route('lamgame.blog') }}" class="btn btn-outline btn-sm" target="_blank">
-                                    Đọc thêm
-                                </a>
-                            </div>
-                        </div>
-                    </article>
-                @endif
+                </div>
             </div>
+
+            {{-- Bottom row: horizontal compact cards --}}
+            @if(count($bottomPosts) > 0)
+            <div class="blog-bottom-row">
+                @foreach($bottomPosts as $blog)
+                <article class="blog-card blog-card--compact">
+                    <a href="{{ $blog['url'] }}" class="blog-card__link" target="_blank">
+                        <div class="blog-card__img">
+                            <img src="{{ $blog['featured_image'] }}" alt="{{ $blog['title'] }}" loading="lazy">
+                            <span class="blog-card__badge blog-card__badge--sm" style="--badge-color: {{ $blog['category_color'] }}">{{ $blog['category'] }}</span>
+                        </div>
+                        <div class="blog-card__body">
+                            <h3 class="blog-card__title blog-card__title--sm">{{ $blog['title'] }}</h3>
+                            <div class="blog-card__chips">
+                                <span class="chip chip--xs"><i class="fa fa-clock"></i> {{ $blog['reading_time'] }}p</span>
+                                <span class="chip chip--xs"><i class="fa fa-calendar"></i> {{ $blog['time_ago'] }}</span>
+                            </div>
+                        </div>
+                    </a>
+                </article>
+                @endforeach
+            </div>
+            @endif
+
+            @else
+            {{-- Fallback khi không có data --}}
+            <div class="blog-bento">
+                <article class="blog-card blog-card--hero">
+                    <a href="{{ route('lamgame.blog') }}" class="blog-card__link" target="_blank">
+                        <div class="blog-card__img">
+                            <img src="https://images.unsplash.com/photo-1556438064-2d7646166914?w=800&h=500&fit=crop" alt="Unity 2024" loading="lazy">
+                            <div class="blog-card__gradient"></div>
+                            <span class="blog-card__badge" style="--badge-color: #ff6b35">Unity</span>
+                            <span class="blog-card__hot">🔥 Hot</span>
+                        </div>
+                        <div class="blog-card__body">
+                            <div class="blog-card__chips">
+                                <span class="chip"><i class="fa fa-clock"></i> 8 phút</span>
+                                <span class="chip"><i class="fa fa-calendar"></i> 2 giờ trước</span>
+                            </div>
+                            <h3 class="blog-card__title blog-card__title--lg">Hướng dẫn Unity 2024 - Tính năng mới đáng chú ý</h3>
+                            <p class="blog-card__excerpt">Unity 2024 mang đến nhiều cải tiến quan trọng giúp game developer tăng hiệu suất và chất lượng game.</p>
+                            <div class="blog-card__stats">
+                                <span><i class="fa fa-eye"></i> 1,250</span>
+                                <span><i class="fa fa-share-alt"></i> 85</span>
+                                <span><i class="fa fa-comments"></i> 24</span>
+                            </div>
+                            <span class="blog-card__cta">Đọc ngay <i class="fa fa-arrow-right"></i></span>
+                        </div>
+                    </a>
+                </article>
+                <div class="blog-bento__side">
+                    <article class="blog-card blog-card--side">
+                        <a href="{{ route('lamgame.blog') }}" class="blog-card__link" target="_blank">
+                            <div class="blog-card__img">
+                                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&h=300&fit=crop" alt="C# Programming" loading="lazy">
+                                <div class="blog-card__gradient"></div>
+                                <span class="blog-card__badge" style="--badge-color: #667eea">Programming</span>
+                            </div>
+                            <div class="blog-card__body">
+                                <div class="blog-card__chips">
+                                    <span class="chip"><i class="fa fa-clock"></i> 12 phút</span>
+                                    <span class="chip"><i class="fa fa-calendar"></i> 1 ngày trước</span>
+                                </div>
+                                <h3 class="blog-card__title">C# Cơ bản cho Game Developer</h3>
+                                <div class="blog-card__stats">
+                                    <span><i class="fa fa-eye"></i> 980</span>
+                                    <span><i class="fa fa-comments"></i> 18</span>
+                                </div>
+                                <span class="blog-card__cta">Đọc ngay <i class="fa fa-arrow-right"></i></span>
+                            </div>
+                        </a>
+                    </article>
+                    <article class="blog-card blog-card--side">
+                        <a href="{{ route('lamgame.blog') }}" class="blog-card__link" target="_blank">
+                            <div class="blog-card__img">
+                                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&h=300&fit=crop" alt="Game Design" loading="lazy">
+                                <div class="blog-card__gradient"></div>
+                                <span class="blog-card__badge" style="--badge-color: #10b981">Game Design</span>
+                            </div>
+                            <div class="blog-card__body">
+                                <div class="blog-card__chips">
+                                    <span class="chip"><i class="fa fa-clock"></i> 6 phút</span>
+                                    <span class="chip"><i class="fa fa-calendar"></i> 3 ngày trước</span>
+                                </div>
+                                <h3 class="blog-card__title">10 nguyên tắc Game Design bạn cần biết</h3>
+                                <div class="blog-card__stats">
+                                    <span><i class="fa fa-eye"></i> 720</span>
+                                    <span><i class="fa fa-comments"></i> 31</span>
+                                </div>
+                                <span class="blog-card__cta">Đọc ngay <i class="fa fa-arrow-right"></i></span>
+                            </div>
+                        </a>
+                    </article>
+                </div>
+            </div>
+            @endif
 
         </div>
     </section>
@@ -2289,128 +1906,28 @@
     }
 }
 
-/* Blog & News Section Styles */
+/* ===== Blog & News Section — Modern Gaming Style ===== */
 .blog-news-section {
-    background: #f8fafc;
+    background: #0f1923;
     padding: 5rem 0;
-}
-
-.blog-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-}
-
-.blog-card {
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
     position: relative;
-}
-
-.blog-card.featured {
-    border: 2px solid #667eea;
-    transform: scale(1.02);
-    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15);
-}
-
-.blog-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-}
-
-.blog-image {
-    position: relative;
-    height: 200px;
     overflow: hidden;
 }
-
-.blog-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.blog-card:hover .blog-image img {
-    transform: scale(1.05);
-}
-
-.blog-overlay {
+.blog-news-section::before {
+    content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.6));
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 1rem;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(102,126,234,0.08) 0%, transparent 70%);
+    pointer-events: none;
 }
-
-.blog-category {
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
+.blog-news-section .section-title {
+    color: #fff;
 }
-
-.blog-reading-time {
-    background: rgba(0,0,0,0.7);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.75rem;
-}
-
-.blog-content {
-    padding: 1.5rem;
-}
-
-.blog-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    font-size: 0.8rem;
-    color: #666;
-}
-
-.blog-meta i {
-    margin-right: 0.25rem;
-    width: 12px;
-}
-
-.blog-title {
-    margin: 0 0 1rem 0;
-    font-size: 1.2rem;
-    font-weight: 600;
-    line-height: 1.4;
-}
-
-.blog-title a {
-    color: #2c3e50;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.blog-title a:hover {
-    color: #667eea;
-}
-
-.blog-excerpt {
-    color: #666;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+.blog-news-section .section-subtitle {
+    color: #94a3b8;
 }
 
 /* Inline subtitle link and meta for Blog & News section */
@@ -2421,64 +1938,264 @@
     text-decoration: underline;
     white-space: nowrap;
 }
-.section-subtitle .subtitle-link:hover {
-    color: #5a67d8;
-}
+.section-subtitle .subtitle-link:hover { color: #818cf8; }
 .section-subtitle .subtitle-meta {
     color: #6b7280;
     font-size: 0.9rem;
     margin-left: 0.25rem;
 }
 
-.blog-stats {
+/* Bento grid: hero left + 2 side right */
+.blog-bento {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+}
+.blog-bento__side {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Base card */
+.blog-card {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #1a2332;
+    transition: transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.35s ease;
+}
+.blog-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(102,126,234,0.18);
+}
+.blog-card__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Image container */
+.blog-card__img {
+    position: relative;
+    overflow: hidden;
+}
+.blog-card__img img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(.22,1,.36,1);
+}
+.blog-card:hover .blog-card__img img {
+    transform: scale(1.08);
+}
+.blog-card__gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(15,25,35,0.85) 0%, rgba(15,25,35,0.2) 50%, transparent 100%);
+    pointer-events: none;
+}
+
+/* Badge */
+.blog-card__badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    background: var(--badge-color, #667eea);
+    color: #fff;
+    padding: 0.3rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 2;
+}
+.blog-card__badge--sm {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.6rem;
+}
+.blog-card__hot {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: linear-gradient(135deg, #ff6b35, #ff3860);
+    color: #fff;
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    z-index: 2;
+    animation: pulse-hot 2s ease-in-out infinite;
+}
+@keyframes pulse-hot {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,56,96,0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(255,56,96,0); }
+}
+
+/* Body */
+.blog-card__body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* Chips */
+.blog-card__chips {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+.chip {
+    background: rgba(255,255,255,0.08);
+    color: #94a3b8;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.chip--xs { font-size: 0.65rem; padding: 0.15rem 0.5rem; }
+.chip i { font-size: 0.65rem; }
+
+/* Title */
+.blog-card__title {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #e2e8f0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.3s;
+}
+.blog-card:hover .blog-card__title { color: #818cf8; }
+.blog-card__title--lg { font-size: 1.35rem; -webkit-line-clamp: 3; }
+.blog-card__title--sm { font-size: 0.9rem; }
+
+/* Excerpt */
+.blog-card__excerpt {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin: 0 0 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Stats */
+.blog-card__stats {
     display: flex;
     gap: 1rem;
-    margin: 1rem 0;
-    padding: 0.75rem 0;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
+    font-size: 0.72rem;
+    color: #64748b;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
 }
-
-.stat-item {
-    display: flex;
+.blog-card__stats span {
+    display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
-    font-size: 0.75rem;
-    color: #666;
+    gap: 0.3rem;
+}
+.blog-card__stats i { font-size: 0.7rem; }
+
+/* CTA */
+.blog-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #667eea;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 0.75rem;
+    transition: gap 0.3s, color 0.3s;
+}
+.blog-card:hover .blog-card__cta {
+    gap: 0.7rem;
+    color: #818cf8;
 }
 
-.stat-item i {
-    width: 12px;
-    text-align: center;
-}
+/* Hero card specifics */
+.blog-card--hero .blog-card__img { height: 280px; }
+.blog-card--hero .blog-card__img img { height: 100%; }
 
-.blog-cta {
-    margin-top: 1rem;
-}
+/* Side card specifics */
+.blog-card--side { flex: 1; }
+.blog-card--side .blog-card__img { height: 140px; }
+.blog-card--side .blog-card__img img { height: 100%; }
+.blog-card--side .blog-card__body { padding: 1rem; }
+.blog-card--side .blog-card__title { font-size: 0.95rem; }
 
+/* Bottom row compact cards */
+.blog-bottom-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 1.25rem;
+}
+.blog-card--compact .blog-card__link {
+    flex-direction: row;
+    align-items: center;
+}
+.blog-card--compact .blog-card__img {
+    width: 100px;
+    min-height: 80px;
+    flex-shrink: 0;
+}
+.blog-card--compact .blog-card__img img {
+    height: 100%;
+    border-radius: 16px 0 0 16px;
+}
+.blog-card--compact .blog-card__body {
+    padding: 0.75rem;
+}
+.blog-card--compact .blog-card__title {
+    -webkit-line-clamp: 2;
+    margin-bottom: 0.35rem;
+}
 
 /* Responsive */
 @media (max-width: 768px) {
-    .blog-grid {
+    .blog-bento {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
     }
-
-    .blog-card.featured {
-        transform: none;
+    .blog-bento__side {
+        flex-direction: row;
     }
-
-    .blog-meta {
+    .blog-bento__side .blog-card--side {
+        flex: 1;
+    }
+    .blog-bottom-row {
+        grid-template-columns: 1fr;
+    }
+    .blog-card--hero .blog-card__img { height: 200px; }
+    .blog-card--side .blog-card__img { height: 120px; }
+}
+@media (max-width: 480px) {
+    .blog-bento__side {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
     }
-
-    .blog-stats {
-        flex-wrap: wrap;
-        gap: 0.75rem;
+    .blog-card--compact .blog-card__link {
+        flex-direction: column;
     }
-
+    .blog-card--compact .blog-card__img {
+        width: 100%;
+        min-height: 120px;
+    }
+    .blog-card--compact .blog-card__img img {
+        border-radius: 16px 16px 0 0;
+    }
 }
 
 /* YouTube Videos Section */
