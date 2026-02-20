@@ -142,19 +142,30 @@
         .chip.selected { background: #6a4c93; color: white; border-color: #6a4c93; }
 
         /* Footer */
-        .footer { background: #6a4c93; color: white; padding: 3rem 0; }
-        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
-        .footer h4 { margin-bottom: 1rem; }
-        .social-links { display: flex; gap: 1rem; }
-        .social-links a { color: white; text-decoration: none; }
+        .footer { background: #1a1a2e; color: #ccc; padding: 0; }
+        .footer-main { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 3rem; padding: 3rem 0 2rem; }
+        .footer h4 { color: #fff; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1.2rem; position: relative; padding-bottom: 0.75rem; }
+        .footer h4::after { content: ''; position: absolute; bottom: 0; left: 0; width: 30px; height: 2px; background: #6a4c93; }
+        .footer-section p { margin-bottom: 0.6rem; font-size: 0.9rem; line-height: 1.7; }
+        .footer-section a { color: #aaa; text-decoration: none; transition: color 0.2s; }
+        .footer-section a:hover { color: #fff; }
+        .footer-nav-item { margin-bottom: 0.5rem; }
+        .footer-nav-link { color: #aaa !important; font-size: 0.9rem; }
+        .footer-nav-link:hover { color: #fff !important; }
+        .footer-contact-item { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.7rem; font-size: 0.9rem; }
+        .footer-contact-item i { color: #6a4c93; width: 16px; text-align: center; margin-top: 3px; }
+        .social-links { display: flex; gap: 0.75rem; }
+        .social-links a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.08); color: #aaa; text-decoration: none; transition: all 0.2s; font-size: 0.9rem; }
+        .social-links a:hover { background: #6a4c93; color: #fff; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding: 1.2rem 0; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #666; }
+        .footer-bottom a { color: #888; text-decoration: none; }
+        .footer-bottom a:hover { color: #fff; }
+        @media (max-width: 768px) {
+            .footer-main { grid-template-columns: 1fr; gap: 2rem; }
+            .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
+        }
 
-        /* Floating contacts */
-        .floating-contacts { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
-        .floating-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.3s ease; }
-        .floating-btn:hover { transform: scale(1.1); }
-        .floating-btn.phone { background: #25D366; color: white; }
-        .floating-btn.email { background: #EA4335; color: white; }
-        .floating-btn.youtube { background: #FF0000; color: white; }
+
 
         /* Mobile Menu Active States */
         .mobile-menu-link.active,
@@ -446,43 +457,37 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                {{-- Dynamic Footer Menu --}}
-                @include('menu::frontend.partials.footer-menu')
-
+            <div class="footer-main">
+                <div class="footer-section">
+                    <h4>Chính sách & Điều khoản</h4>
+                    <nav class="footer-nav">
+                        <div class="footer-nav-item"><a href="/page/chinh-sach-bao-mat" class="footer-nav-link">Chính sách bảo mật</a></div>
+                        <div class="footer-nav-item"><a href="/page/dieu-khoan-dich-vu" class="footer-nav-link">Điều khoản dịch vụ</a></div>
+                        <div class="footer-nav-item"><a href="/page/chinh-sach-thanh-toan-rut-tien" class="footer-nav-link">Chính sách thanh toán & rút tiền</a></div>
+                        <div class="footer-nav-item"><a href="/page/chinh-sach-hoan-tien-tranh-chap" class="footer-nav-link">Chính sách hoàn tiền & tranh chấp</a></div>
+                        <div class="footer-nav-item"><a href="/page/chinh-sach-danh-gia-xac-nhan" class="footer-nav-link">Chính sách đánh giá & xác nhận</a></div>
+                    </nav>
+                </div>
                 <div class="footer-section">
                     <h4>Liên hệ</h4>
-                    <p>📍 Địa chỉ: Tòa nhà E.Town Central, 11 Đoàn Văn Bơ, Phường 13, Quận 4, TP.HCM</p>
-                    <p>📞 Hotline: 09.1111.8300</p>
-                    <p>✉️ Email: salegamevui@gmail.com</p>
+                    <div class="footer-contact-item"><i>📍</i><span>Tòa nhà E.Town Central, 11 Đoàn Văn Bơ, P.13, Q.4, TP.HCM</span></div>
+                    <div class="footer-contact-item"><i>📞</i><span>09.1111.8300</span></div>
+                    <div class="footer-contact-item"><i>✉️</i><span>salegamevui@gmail.com</span></div>
                 </div>
                 <div class="footer-section">
-                    <h4>Theo dõi chúng tôi</h4>
+                    <h4>Kết nối</h4>
                     <div class="social-links">
-                        <a href="#" aria-label="Facebook">📘 Facebook</a>
-                        <a href="#" aria-label="Instagram">📷 Instagram</a>
-                        <a href="https://www.youtube.com/channel/UCv2lripWdZDKtlrRy1J0dBw" target="_blank" aria-label="YouTube">📺 YouTube</a>
+                        <a href="#" aria-label="Facebook" title="Facebook">f</a>
+                        <a href="#" aria-label="Instagram" title="Instagram">in</a>
                     </div>
                 </div>
-                <div class="footer-section">
-                    <p>&copy; 2025 LAMGAME - Làm Game. All rights reserved.</p>
-                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; {{ date('Y') }} LAMGAME - Làm Game. All rights reserved.</span>
+                <a href="{{ route('lamgame.lien-he') }}">Liên hệ hỗ trợ</a>
             </div>
         </div>
     </footer>
-
-    <!-- Floating Contact Buttons -->
-    <div class="floating-contacts">
-        <a href="tel:0911118300" class="floating-btn phone" aria-label="Gọi điện thoại">
-            📞
-        </a>
-        <a href="mailto:salegamevui@gmail.com" class="floating-btn email" aria-label="Gửi email">
-            ✉️
-        </a>
-        <a href="https://www.youtube.com/channel/UCv2lripWdZDKtlrRy1J0dBw" target="_blank" class="floating-btn youtube" aria-label="YouTube">
-            📺
-        </a>
-    </div>
 
     <!-- Vue.js 3 and Axios for dynamic content -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js" onload="initializeVueApp()" onerror="handleVueLoadError()"></script>
