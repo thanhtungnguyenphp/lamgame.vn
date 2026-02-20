@@ -7,16 +7,13 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
-// Homepage route
-Route::get('/', [HomeController::class, 'index'])->name('home');
+// Homepage route (shop.home.index alias needed by Bagisto)
+Route::get('/', [HomeController::class, 'index'])->name('shop.home.index');
 
 // Checkout routes (override Bagisto)
 Route::get('checkout/cart', fn() => view('checkout.cart'))->name('shop.checkout.cart.index');
 Route::get('checkout/onepage', fn() => view('checkout.onepage'))->name('shop.checkout.onepage.index');
 Route::get('checkout/onepage/success', [\Webkul\Shop\Http\Controllers\OnepageController::class, 'success'])->name('shop.checkout.onepage.success');
-
-// Bagisto route aliases (must be after homepage route)
-Route::get('/', [HomeController::class, 'index'])->name('shop.home.index');
 
 // Source Game routes
 Route::get('source-game', [LamGamePageController::class, 'sourceGame'])->name('lamgame.source-game');
@@ -137,37 +134,10 @@ Route::get('ai-thumbnail-test', function () {
     return view('ai.thumbnail-test');
 })->name('ai.thumbnail-test');
 
-// Test route for AI Thumbnails API (bypass namespace conflicts)
-Route::post('test-ai-api/blog', function(\Illuminate\Http\Request $request) {
-    try {
-        $controller = new \App\Http\Controllers\AI\PublicThumbnailController();
-        return $controller->generateBlogThumbnail($request);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
-});
-
-
 // Secure route to serve product files from private storage
 Route::get('storage/product/{productId}/{filename}', [App\Http\Controllers\ProductFileController::class, 'serve'])
     ->name('product.file')
     ->where(['productId' => '[0-9]+', 'filename' => '[A-Za-z0-9\-_\.]+']);
-
-// Temporary test route for AI storage debugging
-Route::get('test-storage/{path}', function($path) {
-    $fullPath = storage_path('app/public/' . $path);
-
-    if (!file_exists($fullPath)) {
-        abort(404, 'File not found: ' . $fullPath);
-    }
-
-    $mimeType = mime_content_type($fullPath);
-
-    return response()->file($fullPath, [
-        'Content-Type' => $mimeType,
-        'Cache-Control' => 'public, max-age=3600'
-    ]);
-})->where('path', '.*')->name('test.storage');
 
 // AI Image serving route with proper security
 Route::get('ai-images/{path}', function($path) {
@@ -250,85 +220,12 @@ Route::prefix('auth')->name('auth.')->group(function () {
     });
 });
 
-// Login alias for middleware compatibility
-Route::get('/customer/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLoginForm'])->name('customer.session.create');
-Route::get('/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLoginForm'])->name('login');
+// Login aliases for middleware compatibility
 Route::get('/customer/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLoginForm'])->name('shop.customer.session.index');
-
-// Test auth route
-Route::get('/test-auth', function() {
-    return 'Auth routes working!';
-});
-
-Route::get('/test-controller', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'test']);
+Route::get('/login', [\App\Http\Controllers\Auth\CustomerAuthController::class, 'showLoginForm'])->name('login');
 
 // Admin Job Management Routes
 require __DIR__.'/admin.php';
 
 // Legacy Redirects
 require __DIR__.'/redirects.php';
-
-// Debug route - REMOVE IN PRODUCTION
-Route::get('/debug-jobs', function() {
-    if (!app()->environment('local')) {
-        abort(404);
-    }
-    
-    $currentAdminId = Auth::guard('admin')->id() ?? 1;
-    
-    // Admin query
-    $adminJobs = DB::table('products')
-        ->leftJoin('product_flat', function($join) {
-            $join->on('products.id', '=', 'product_flat.product_id')
-                 ->where('product_flat.locale', '=', 'vi');
-        })
-        ->select('products.id', 'products.sku', 'products.type', 'products.created_by_admin_id', 
-                 'product_flat.name', 'product_flat.status', 'product_flat.visible_individually')
-        ->where('products.sku', 'LIKE', 'JOB_%')
-        ->where('products.created_by_admin_id', $currentAdminId)
-        ->get();
-    
-    // Frontend query
-    $frontendJobs = DB::table('products as p')
-        ->leftJoin('product_flat as pf', function($join) {
-            $join->on('p.id', '=', 'pf.product_id')
-                 ->where('pf.locale', '=', 'vi');
-        })
-        ->select('p.id', 'p.sku', 'p.type', 'p.created_by_admin_id', 
-                 'pf.name', 'pf.status', 'pf.visible_individually')
-        ->where('p.type', 'job')
-        ->where('p.sku', 'LIKE', 'JOB_%')
-        ->where('pf.status', 1)
-        ->where('pf.visible_individually', 1)
-        ->get();
-    
-    // All jobs (no filter)
-    $allJobs = DB::table('products as p')
-        ->leftJoin('product_flat as pf', function($join) {
-            $join->on('p.id', '=', 'pf.product_id')
-                 ->where('pf.locale', '=', 'vi');
-        })
-        ->select('p.id', 'p.sku', 'p.type', 'p.created_by_admin_id', 
-                 'pf.name', 'pf.status', 'pf.visible_individually')
-        ->where(function($q) {
-            $q->where('p.sku', 'LIKE', 'JOB_%')
-              ->orWhere('p.type', 'job');
-        })
-        ->get();
-    
-    return response()->json([
-        'current_admin_id' => $currentAdminId,
-        'admin_jobs_count' => $adminJobs->count(),
-        'admin_jobs' => $adminJobs,
-        'frontend_jobs_count' => $frontendJobs->count(),
-        'frontend_jobs' => $frontendJobs,
-        'all_jobs_count' => $allJobs->count(),
-        'all_jobs' => $allJobs,
-        'difference' => [
-            'in_frontend_not_admin' => $frontendJobs->pluck('id')->diff($adminJobs->pluck('id'))->values(),
-            'in_admin_not_frontend' => $adminJobs->pluck('id')->diff($frontendJobs->pluck('id'))->values(),
-        ]
-    ], 200, [], JSON_PRETTY_PRINT);
-});
-
-Route::get('/test-companies', function() { return 'Companies route works!'; });

@@ -4,22 +4,20 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Auth\AuthenticationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiAuthentication
 {
     /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * Ensure the request expects a JSON response.
+     * Note: This is NOT authentication - it only validates the Accept header.
      */
     public function handle(Request $request, Closure $next): Response
     {
         if (! $request->expectsJson()) {
-            throw new AuthenticationException(
-                'Unauthenticated. API requires JSON requests.'
-            );
+            return response()->json([
+                'message' => 'API requires Accept: application/json header.'
+            ], 406);
         }
 
         return $next($request);

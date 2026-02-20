@@ -22,4 +22,18 @@ return [
         'sort'  => 2,
         'icon'  => '',
     ],
+    [
+        'key'   => 'sellers.products',
+        'name'  => 'Sản phẩm Sellers',
+        'route' => 'admin.products.sellers',
+        'sort'  => 3,
+        'icon'  => '',
+    ],
+    [
+        'key'   => 'sellers.products-pending',
+        'name'  => 'Sản phẩm chờ duyệt',
+        'route' => 'admin.products.pending',
+        'sort'  => 4,
+        'icon'  => '',
+    ],
 ];

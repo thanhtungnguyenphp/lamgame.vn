@@ -85,8 +85,8 @@ Route::prefix('banner')->group(function () {
         ->name('api.banner.all');
 });
 
-// AI Thumbnail Generation API routes (without CSRF protection)
-Route::prefix('ai/thumbnails')->name('api.ai.thumbnails.')->middleware('throttle:60,1')->group(function () {
+// AI Thumbnail Generation API routes (protected)
+Route::prefix('ai/thumbnails')->name('api.ai.thumbnails.')->middleware(['auth:sanctum', 'throttle:10,1'])->group(function () {
     Route::post('blog', [PublicThumbnailController::class, 'generateBlogThumbnail'])->name('blog.generate');
     Route::post('product', [PublicThumbnailController::class, 'generateProductThumbnail'])->name('product.generate');
     Route::get('statistics', [PublicThumbnailController::class, 'getStatistics'])->name('statistics');
