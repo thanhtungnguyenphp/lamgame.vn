@@ -15,17 +15,6 @@ use App\Models\ForumPost;
 class LamGamePageController extends Controller
 {
     /**
-     * Default recruitment thumbnails for jobs without images
-     */
-    private const DEFAULT_JOB_THUMBNAILS = [
-        'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop&q=80', // Game development office
-        'https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop&q=80', // Unity/coding screen  
-        'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop&q=80', // Programming code
-        'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop&q=80', // Mobile game dev
-        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop&q=80', // VR/AR development
-    ];
-
-    /**
      * Show Gioi thieu page
      */
     public function gioiThieu()
@@ -500,7 +489,8 @@ class LamGamePageController extends Controller
         }
         
         // Fallback: Use default recruitment thumbnails from constant
-        return self::DEFAULT_JOB_THUMBNAILS[array_rand(self::DEFAULT_JOB_THUMBNAILS)];
+        $thumbnails = config('job.default_thumbnails');
+        return $thumbnails[array_rand($thumbnails)];
     }
 
     /**
