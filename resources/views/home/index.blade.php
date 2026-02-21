@@ -706,156 +706,199 @@ a.topic-card:hover {
         </div>
     </section>
 
-    <!-- Source Code Marketplace Section -->
-    <section id="source-marketplace" class="source-marketplace-section">
+    <!-- Marketplace Hub Section -->
+    <section id="source-marketplace" class="mkt-section">
         <div class="container">
-            <div class="marketplace-cta">
-                <div class="marketplace-action">
-                    <h2 class="section-title">🛒 Source Code Marketplace</h2>
-                    <p class="section-subtitle">
-                        Khám phá và tải về những source code game chất lượng cao từ cộng đồng developer
-                    </p>
-                </div>
-                <div class="marketplace-stats">
-                    <p></p>
-                    <div class="stat">
-                        <span class="stat-number">{{ $sourceGames['total_sources'] ?? '25' }}+</span>
-                        <span class="stat-label">Source codes</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">{{ $sourceGames['free_sources'] ?? '8' }}</span>
-                        <span class="stat-label">Miễn phí</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">Unity</span>
-                        <span class="stat-label">Engine chính</span>
-                    </div>
-
-                </div>
-
+            {{-- Header với service tabs --}}
+            <div class="section-header">
+                <h2 class="section-title">🎮 Game Services Marketplace</h2>
+                <p class="section-subtitle">Source code chất lượng & booking freelancer game dev — tất cả trong một nền tảng</p>
             </div>
-            <div class="marketplace-grid">
-                @if(isset($sourceGames['featured']) && count($sourceGames['featured']) > 0)
-                    @foreach($sourceGames['featured'] as $index => $source)
-                        <div class="source-card {{ $source['is_featured'] ?? false ? 'featured' : '' }}">
-                            @if($source['is_featured'] ?? false)
-                                <div class="source-badge featured-badge">Nổi bật 🔥</div>
-                            @endif
-                            @if($source['is_free'] ?? false)
-                                <div class="source-badge free-badge">Miễn phí</div>
-                            @elseif($source['price'] ?? 0 < $source['original_price'] ?? 0)
-                                <div class="source-badge sale-badge">Sale</div>
-                            @endif
 
-                            <div class="source-image">
-                                <img src="{{ $source['thumbnail'] ?? '' }}"
-                                     srcset="{{ $source['thumbnail'] ?? '' }}&w=320 320w, {{ $source['thumbnail'] ?? '' }}&w=640 640w, {{ $source['thumbnail'] ?? '' }}&w=800 800w"
-                                     sizes="(max-width: 480px) 320px, (max-width: 768px) 640px, 800px"
-                                     alt="{{ $source['title'] ?? 'No title' }}"
-                                     loading="lazy" />
-                                <div class="source-overlay">
-                                    <div class="source-engine-badge">{{ $source['engine'] ?? 'Unknown' }}</div>
-                                    <div class="source-rating">
-                                        @for($i = 1; $i <= 5; $i++)
-                                            @if($i <= floor($source['rating'] ?? 0))
-                                                <i class="fa fa-star"></i>
-                                            @elseif($i - 0.5 <= $source['rating'] ?? 0)
-                                                <i class="fa fa-star-half-o"></i>
+            <div class="mkt-tabs" role="tablist">
+                <button class="mkt-tab active" data-tab="source" role="tab" aria-selected="true">
+                    <i class="fa fa-code"></i> Source Code
+                    <span class="mkt-tab__count">{{ $sourceGames['total_sources'] ?? '25' }}+</span>
+                </button>
+                <button class="mkt-tab" data-tab="hire" role="tab" aria-selected="false">
+                    <i class="fa fa-user-circle"></i> Booking Freelancer
+                    <span class="mkt-tab__count">Mới</span>
+                </button>
+            </div>
+
+            {{-- Tab 1: Source Code --}}
+            <div class="mkt-panel active" data-panel="source">
+                <div class="mkt-grid">
+                    @if(isset($sourceGames['featured']) && count($sourceGames['featured']) > 0)
+                        @foreach($sourceGames['featured'] as $index => $source)
+                        <article class="src-card {{ ($source['is_featured'] ?? false) ? 'src-card--hot' : '' }}">
+                            <a href="{{ $source['url'] ?? '#' }}" class="src-card__link">
+                                {{-- Badges --}}
+                                @if($source['is_featured'] ?? false)
+                                    <span class="src-badge src-badge--hot">🔥 Nổi bật</span>
+                                @endif
+                                @if($source['is_free'] ?? false)
+                                    <span class="src-badge src-badge--free">Miễn phí</span>
+                                @elseif(($source['price'] ?? 0) < ($source['original_price'] ?? 0))
+                                    <span class="src-badge src-badge--sale">-{{ round((1 - ($source['price'] ?? 0) / ($source['original_price'] ?? 1)) * 100) }}%</span>
+                                @endif
+
+                                <div class="src-card__img">
+                                    <img src="{{ $source['thumbnail'] ?? '' }}" alt="{{ $source['title'] ?? '' }}" loading="lazy">
+                                    <div class="src-card__overlay">
+                                        <span class="src-card__engine">{{ $source['engine'] ?? 'Unity' }}</span>
+                                        <div class="src-card__rating">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <i class="fa fa-star{{ $i <= floor($source['rating'] ?? 0) ? '' : ($i - 0.5 <= ($source['rating'] ?? 0) ? '-half-o' : '-o') }}"></i>
+                                            @endfor
+                                            <span>{{ number_format($source['rating'] ?? 0, 1) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="src-card__body">
+                                    <span class="src-card__cat">{{ $source['category'] ?? 'General' }}</span>
+                                    <h3 class="src-card__title">{{ $source['title'] ?? 'No title' }}</h3>
+                                    <p class="src-card__desc">{{ $source['short_description'] ?? '' }}</p>
+
+                                    <div class="src-card__meta">
+                                        <span><i class="fa fa-download"></i> {{ number_format($source['downloads'] ?? 0) }}</span>
+                                        <span><i class="fa fa-code"></i> {{ $source['language'] ?? 'C#' }}</span>
+                                        <span><i class="fa fa-clock-o"></i> {{ $source['updated_ago'] ?? '' }}</span>
+                                    </div>
+
+                                    <div class="src-card__tags">
+                                        @foreach(array_slice($source['tags'] ?? [], 0, 3) as $tag)
+                                            <span class="src-tag">{{ $tag }}</span>
+                                        @endforeach
+                                    </div>
+
+                                    <div class="src-card__footer">
+                                        <div class="src-card__price">
+                                            @if($source['is_free'] ?? false)
+                                                <span class="src-price src-price--free">Miễn phí</span>
                                             @else
-                                                <i class="fa fa-star-o"></i>
+                                                <span class="src-price">{{ number_format(($source['price'] ?? 0) / 1000, 0) }}k VND</span>
+                                                @if(($source['price'] ?? 0) < ($source['original_price'] ?? 0))
+                                                    <span class="src-price--old">{{ number_format(($source['original_price'] ?? 0) / 1000, 0) }}k</span>
+                                                @endif
                                             @endif
-                                        @endfor
-                                        <span class="rating-number">{{ number_format($source['rating'] ?? 0, 1) }}</span>
+                                        </div>
+                                        <span class="src-card__btn">
+                                            {{ ($source['is_free'] ?? false) ? 'Tải ngay' : 'Mua ngay' }} <i class="fa fa-arrow-right"></i>
+                                        </span>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="source-content">
-                                <div class="source-category">{{ $source['category'] ?? 'General' }}</div>
-                                <h3 class="source-title">
-                                    <a href="{{ $source['url'] ?? '#' }}">{{ $source['title'] ?? 'No title' }}</a>
-                                </h3>
-                                <p class="source-description">{{ $source['short_description'] ?? 'No description available' }}</p>
-
-                                <div class="source-meta">
-                                    <div class="meta-item">
-                                        <i class="fa fa-download"></i>
-                                        <span>{{ number_format($source['downloads'] ?? 0) }}</span>
-                                    </div>
-                                    <div class="meta-item">
-                                        <i class="fa fa-code"></i>
-                                        <span>{{ $source['language'] ?? 'N/A' }}</span>
-                                    </div>
-                                    <div class="meta-item">
-                                        <i class="fa fa-clock-o"></i>
-                                        <span>{{ $source['updated_ago'] ?? 'Unknown' }}</span>
+                            </a>
+                        </article>
+                        @endforeach
+                    @else
+                        {{-- Fallback --}}
+                        <article class="src-card src-card--hot">
+                            <a href="{{ route('lamgame.source-game') }}" class="src-card__link">
+                                <span class="src-badge src-badge--hot">🔥 Nổi bật</span>
+                                <span class="src-badge src-badge--free">Miễn phí</span>
+                                <div class="src-card__img">
+                                    <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop&q=80" alt="Roguelike Unity Kit" loading="lazy">
+                                    <div class="src-card__overlay">
+                                        <span class="src-card__engine">Unity</span>
+                                        <div class="src-card__rating">
+                                            <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i>
+                                            <span>4.8</span>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class="source-tags">
-                                    @foreach(array_slice($source['tags'] ?? [], 0, 3) as $tag)
-                                        <span class="tag">{{ $tag }}</span>
-                                    @endforeach
-                                </div>
-
-                                <div class="source-price-action">
-                                    <div class="source-pricing">
-                                        @if($source['is_free'] ?? false)
-                                            <span class="price-current free-price">Miễn phí</span>
-                                        @else
-                                            <span class="price-current">{{ number_format($source['price'] ?? 0 / 1000, 0) }}k VND</span>
-                                            @if($source['price'] ?? 0 < $source['original_price'] ?? 0)
-                                                <span class="price-original">{{ number_format($source['original_price'] ?? 0 / 1000, 0) }}k</span>
-                                            @endif
-                                        @endif
+                                <div class="src-card__body">
+                                    <span class="src-card__cat">2D Game Kit</span>
+                                    <h3 class="src-card__title">Roguelike Unity Kit</h3>
+                                    <p class="src-card__desc">Complete roguelike template with procedural generation</p>
+                                    <div class="src-card__meta">
+                                        <span><i class="fa fa-download"></i> 1,250</span>
+                                        <span><i class="fa fa-code"></i> C#</span>
+                                        <span><i class="fa fa-clock-o"></i> 1 ngày trước</span>
                                     </div>
-                                    <a href="{{ $source['url'] ?? '#' }}" class="source-btn">
-                                        {{ $source['is_free'] ?? false ? 'Tải miễn phí' : 'Xem chi tiết' }}
-                                    </a>
+                                    <div class="src-card__tags">
+                                        <span class="src-tag">Unity</span><span class="src-tag">2D</span><span class="src-tag">Roguelike</span>
+                                    </div>
+                                    <div class="src-card__footer">
+                                        <span class="src-price src-price--free">Miễn phí</span>
+                                        <span class="src-card__btn">Tải ngay <i class="fa fa-arrow-right"></i></span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    @endforeach
-                @else
-                    <!-- Fallback content if no source games -->
-                    <div class="source-card featured">
-                        <div class="source-badge featured-badge">Nổi bật 🔥</div>
-                        <div class="source-image">
-                            <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop&q=80" alt="Unity Template" loading="lazy" />
-                            <div class="source-overlay">
-                                <div class="source-engine-badge">Unity</div>
-                                <div class="source-rating">
-                                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i>
-                                    <span class="rating-number">4.8</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="source-content">
-                            <div class="source-category">2D Game Kit</div>
-                            <h3 class="source-title">
-                                <a href="{{ route('lamgame.source-game') }}">Roguelike Unity Kit</a>
-                            </h3>
-                            <p class="source-description">Complete roguelike template with procedural generation</p>
-                            <div class="source-meta">
-                                <div class="meta-item"><i class="fa fa-download"></i><span>1.2k</span></div>
-                                <div class="meta-item"><i class="fa fa-code"></i><span>C#</span></div>
-                                <div class="meta-item"><i class="fa fa-clock-o"></i><span>1 ngày trước</span></div>
-                            </div>
-                            <div class="source-tags">
-                                <span class="tag">Unity</span><span class="tag">2D</span><span class="tag">Roguelike</span>
-                            </div>
-                            <div class="source-price-action">
-                                <div class="source-pricing">
-                                    <span class="price-current free-price">Miễn phí</span>
-                                </div>
-                                <a href="{{ route('lamgame.source-game') }}" class="source-btn">Tải miễn phí</a>
-                            </div>
-                        </div>
-                    </div>
-                @endif
+                            </a>
+                        </article>
+                    @endif
+                </div>
+                <div class="mkt-more">
+                    <a href="{{ route('lamgame.source-game') }}" class="mkt-more__btn" target="_blank">
+                        Xem tất cả {{ $sourceGames['total_sources'] ?? '25' }}+ source code <i class="fa fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
+
+            {{-- Tab 2: Booking Freelancer --}}
+            <div class="mkt-panel" data-panel="hire">
+                <div class="svc-grid">
+                    <article class="svc-card">
+                        <div class="svc-card__icon">👨‍💻</div>
+                        <h3 class="svc-card__title">Game Programmer</h3>
+                        <p class="svc-card__desc">Freelancer Unity, Unreal, Godot — nhận việc trong 24h, bảo hành code</p>
+                        <ul class="svc-card__features">
+                            <li><i class="fa fa-check"></i> Unity / Unreal / Godot</li>
+                            <li><i class="fa fa-check"></i> Mobile, PC, WebGL</li>
+                            <li><i class="fa fa-check"></i> Bảo hành 3 tháng</li>
+                        </ul>
+                        <div class="svc-card__price">Từ <strong>500k VND</strong>/giờ</div>
+                        <a href="{{ route('lamgame.lien-he') }}" class="svc-card__btn">Đặt lịch ngay <i class="fa fa-arrow-right"></i></a>
+                    </article>
+                    <article class="svc-card svc-card--popular">
+                        <span class="svc-card__badge">Phổ biến nhất</span>
+                        <div class="svc-card__icon">🎨</div>
+                        <h3 class="svc-card__title">Game Artist & Designer</h3>
+                        <p class="svc-card__desc">UI/UX, 2D/3D Art, Animation — từ concept đến asset hoàn chỉnh</p>
+                        <ul class="svc-card__features">
+                            <li><i class="fa fa-check"></i> UI/UX & Concept Art</li>
+                            <li><i class="fa fa-check"></i> 2D/3D Art & Animation</li>
+                            <li><i class="fa fa-check"></i> Sprite & Tilemap</li>
+                        </ul>
+                        <div class="svc-card__price">Từ <strong>400k VND</strong>/giờ</div>
+                        <a href="{{ route('lamgame.lien-he') }}" class="svc-card__btn svc-card__btn--primary">Đặt lịch ngay <i class="fa fa-arrow-right"></i></a>
+                    </article>
+                    <article class="svc-card">
+                        <div class="svc-card__icon">🚀</div>
+                        <h3 class="svc-card__title">Full-stack Game Dev</h3>
+                        <p class="svc-card__desc">Trọn gói từ ý tưởng đến publish — code, art, QA, deploy lên Store</p>
+                        <ul class="svc-card__features">
+                            <li><i class="fa fa-check"></i> End-to-end development</li>
+                            <li><i class="fa fa-check"></i> Project management</li>
+                            <li><i class="fa fa-check"></i> Publish lên Store</li>
+                        </ul>
+                        <div class="svc-card__price">Từ <strong>800k VND</strong>/giờ</div>
+                        <a href="{{ route('lamgame.lien-he') }}" class="svc-card__btn">Đặt lịch ngay <i class="fa fa-arrow-right"></i></a>
+                    </article>
+                </div>
+            </div>
+
         </div>
     </section>
+
+    {{-- Marketplace tab switching --}}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var tabs = document.querySelectorAll('.mkt-tab');
+        var panels = document.querySelectorAll('.mkt-panel');
+        tabs.forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                var target = this.getAttribute('data-tab');
+                tabs.forEach(function(t) { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+                panels.forEach(function(p) { p.classList.remove('active'); });
+                this.classList.add('active');
+                this.setAttribute('aria-selected', 'true');
+                document.querySelector('[data-panel="' + target + '"]').classList.add('active');
+            });
+        });
+    });
+    </script>
 
     <!-- Featured Jobs Section - Enhanced -->
     <section id="viec-lam-noi-bat" class="courses-section">
@@ -1082,452 +1125,417 @@ a.topic-card:hover {
 @push('styles')
 <style>
 /* Source Code Marketplace Section - Mobile First */
-.source-marketplace-section {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    padding: 3rem 0;
+/* ===== Marketplace Hub Section ===== */
+.mkt-section {
+    background: #0c1220;
+    padding: 5rem 0;
     position: relative;
+    overflow: hidden;
 }
-
-.source-marketplace-section::before {
+.mkt-section::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23e2e8f0" stroke-width="0.5" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') repeat;
-    opacity: 0.6;
-    z-index: 1;
+    bottom: -30%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%);
+    pointer-events: none;
 }
+.mkt-section .section-title { color: #fff; }
+.mkt-section .section-subtitle { color: #94a3b8; }
 
-.source-marketplace-section .container {
-    position: relative;
-    z-index: 2;
+/* Tabs */
+.mkt-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.25rem;
 }
-
-/* Mobile-first marketplace grid */
-.marketplace-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* Single column on mobile */
-    gap: 1.5rem;
-    margin: 2rem 0;
-}
-
-/* Tablet breakpoint */
-@media (min-width: 481px) {
-    .marketplace-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
-    }
-}
-
-/* Desktop breakpoint */
-@media (min-width: 769px) {
-    .marketplace-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2rem;
-    }
-
-    .source-marketplace-section {
-        padding: 4rem 0;
-    }
-}
-
-/* Large desktop */
-@media (min-width: 1200px) {
-    .marketplace-grid {
-        grid-template-columns: repeat(3, 1fr);
-        max-width: 1200px;
-        margin: 3rem auto;
-    }
-}
-
-/* Source card styling */
-.source-card {
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    position: relative;
-    border: 2px solid transparent;
-}
-
-.source-card.featured {
-    border-color: #ffd700;
-    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.2);
-}
-
-.source-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
-}
-
-/* Source badges */
-.source-badge {
-    position: absolute;
-    top: 0.75rem;
-    z-index: 3;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.7rem;
+.mkt-tabs::-webkit-scrollbar { display: none; }
+.mkt-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.25rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    color: #94a3b8;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: white;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+.mkt-tab:hover { background: rgba(255,255,255,0.08); color: #e2e8f0; }
+.mkt-tab.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 20px rgba(102,126,234,0.3);
+}
+.mkt-tab__count {
+    background: rgba(255,255,255,0.15);
+    padding: 0.1rem 0.5rem;
+    border-radius: 8px;
+    font-size: 0.7rem;
+}
+.mkt-tab.active .mkt-tab__count { background: rgba(255,255,255,0.25); }
+
+/* Panels */
+.mkt-panel { display: none; margin-top: 1.5rem; }
+.mkt-panel.active { display: block; animation: fadeUp 0.4s ease; }
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.featured-badge {
-    background: linear-gradient(45deg, #ff6b35, #ff4757);
-    left: 0.75rem;
+/* Source code grid */
+.mkt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
 }
 
-.free-badge {
-    background: linear-gradient(45deg, #10b981, #059669);
-    right: 0.75rem;
-}
-
-.sale-badge {
-    background: linear-gradient(45deg, #f59e0b, #d97706);
-    right: 0.75rem;
-}
-
-/* Source image */
-.source-image {
+/* Source card */
+.src-card {
     position: relative;
-    height: 160px;
+    border-radius: 14px;
     overflow: hidden;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1a2332;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.35s;
+}
+.src-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+}
+.src-card--hot { border-color: rgba(255,107,53,0.3); }
+.src-card__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
 }
 
-@media (min-width: 769px) {
-    .source-image {
-        height: 180px;
-    }
+/* Badges */
+.src-badge {
+    position: absolute;
+    z-index: 3;
+    padding: 0.25rem 0.7rem;
+    border-radius: 8px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.src-badge--hot {
+    top: 0.6rem;
+    left: 0.6rem;
+    background: linear-gradient(135deg, #ff6b35, #ff3860);
+    animation: pulse-hot 2s ease-in-out infinite;
+}
+.src-badge--free {
+    top: 0.6rem;
+    right: 0.6rem;
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+.src-badge--sale {
+    top: 0.6rem;
+    right: 0.6rem;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
 }
 
-.source-image img {
+/* Card image */
+.src-card__img {
+    position: relative;
+    height: 170px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1e293b, #334155);
+}
+.src-card__img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform 0.5s cubic-bezier(.22,1,.36,1);
 }
-
-.source-card:hover .source-image img {
-    transform: scale(1.05);
-}
-
-.source-overlay {
+.src-card:hover .src-card__img img { transform: scale(1.08); }
+.src-card__overlay {
     position: absolute;
-    top: 0;
+    bottom: 0;
     left: 0;
     right: 0;
-    bottom: 0;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.6) 100%);
+    padding: 0.6rem 0.75rem;
+    background: linear-gradient(0deg, rgba(0,0,0,0.7), transparent);
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
-    padding: 1rem;
+    align-items: center;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s;
 }
-
-.source-card:hover .source-overlay {
-    opacity: 1;
-}
-
-.source-engine-badge {
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.7rem;
-    font-weight: 600;
+.src-card:hover .src-card__overlay { opacity: 1; }
+.src-card__engine {
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 700;
     text-transform: uppercase;
 }
-
-.source-rating {
+.src-card__rating {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    color: #ffd700;
-    font-size: 0.8rem;
-}
-
-.rating-number {
-    color: white;
-    font-weight: 600;
-    font-size: 0.75rem;
-    margin-left: 0.25rem;
-}
-
-/* Source content */
-.source-content {
-    padding: 1.25rem;
-}
-
-.source-category {
-    color: #667eea;
+    gap: 0.15rem;
+    color: #fbbf24;
     font-size: 0.7rem;
-    font-weight: 600;
+}
+.src-card__rating span { color: #fff; font-weight: 600; margin-left: 0.2rem; }
+
+/* Card body */
+.src-card__body {
+    padding: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.src-card__cat {
+    color: #667eea;
+    font-size: 0.68rem;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
 }
-
-.source-title {
-    margin: 0 0 0.75rem 0;
+.src-card__title {
+    margin: 0 0 0.4rem;
     font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.3;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.3s;
 }
-
-@media (min-width: 769px) {
-    .source-title {
-        font-size: 1.1rem;
-    }
-}
-
-.source-title a {
-    color: #2c3e50;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.source-title a:hover {
-    color: #667eea;
-}
-
-.source-description {
-    color: #666;
-    font-size: 0.85rem;
+.src-card:hover .src-card__title { color: #818cf8; }
+.src-card__desc {
+    color: #64748b;
+    font-size: 0.8rem;
     line-height: 1.5;
-    margin-bottom: 1rem;
+    margin: 0 0 0.75rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-/* Source meta information */
-.source-meta {
+/* Meta */
+.src-card__meta {
     display: flex;
     gap: 0.75rem;
-    margin-bottom: 0.75rem;
-    font-size: 0.75rem;
-    color: #666;
-    flex-wrap: wrap;
-}
-
-.meta-item {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.meta-item i {
-    width: 12px;
-    text-align: center;
-    color: #667eea;
-}
-
-/* Source tags */
-.source-tags {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-}
-
-.tag {
-    background: #f1f5f9;
-    color: #475569;
-    padding: 0.2rem 0.6rem;
-    border-radius: 12px;
     font-size: 0.7rem;
+    color: #64748b;
+    margin-bottom: 0.6rem;
+    flex-wrap: wrap;
+}
+.src-card__meta span { display: inline-flex; align-items: center; gap: 0.25rem; }
+.src-card__meta i { color: #667eea; font-size: 0.65rem; }
+
+/* Tags */
+.src-card__tags {
+    display: flex;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+.src-tag {
+    background: rgba(102,126,234,0.1);
+    color: #818cf8;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.65rem;
     font-weight: 500;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(102,126,234,0.15);
 }
 
-/* Price and action area */
-.source-price-action {
+/* Footer */
+.src-card__footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+.src-card__price { display: flex; align-items: baseline; gap: 0.4rem; }
+.src-price {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #e2e8f0;
+}
+.src-price--free {
+    color: #10b981;
+    font-size: 0.9rem;
+}
+.src-price--old {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-decoration: line-through;
+}
+.src-card__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: #667eea;
+    font-size: 0.78rem;
+    font-weight: 600;
+    transition: gap 0.3s, color 0.3s;
+}
+.src-card:hover .src-card__btn { gap: 0.6rem; color: #818cf8; }
+
+/* "View all" button */
+.mkt-more {
+    text-align: center;
+    margin-top: 2rem;
+}
+.mkt-more__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 2rem;
+    border: 1px solid rgba(102,126,234,0.4);
+    border-radius: 10px;
+    color: #818cf8;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+.mkt-more__btn:hover {
+    background: rgba(102,126,234,0.1);
+    border-color: #667eea;
+    gap: 0.8rem;
 }
 
-@media (max-width: 480px) {
-    .source-price-action {
-        flex-direction: column;
-        gap: 0.75rem;
-        align-items: stretch;
-    }
+/* ===== Service cards (Hire Dev / Ads tabs) ===== */
+.svc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
 }
-
-.source-pricing {
+.svc-card {
+    position: relative;
+    background: #1a2332;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+    transition: transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.35s;
+}
+.svc-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+}
+.svc-card--popular {
+    border-color: rgba(102,126,234,0.4);
+    background: linear-gradient(180deg, rgba(102,126,234,0.08) 0%, #1a2332 100%);
+}
+.svc-card__badge {
+    position: absolute;
+    top: -0.6rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    padding: 0.2rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.svc-card__icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+.svc-card__title {
+    color: #e2e8f0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+}
+.svc-card__desc {
+    color: #64748b;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    margin: 0 0 1rem;
+}
+.svc-card__features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.25rem;
+    text-align: left;
+}
+.svc-card__features li {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    padding: 0.3rem 0;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
-
-.price-current {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #2c3e50;
-}
-
-.price-current.free-price {
-    color: #10b981;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.price-original {
-    font-size: 0.8rem;
+.svc-card__features i { color: #10b981; font-size: 0.7rem; }
+.svc-card__price {
     color: #94a3b8;
-    text-decoration: line-through;
+    font-size: 0.85rem;
+    margin-bottom: 1.25rem;
 }
-
-/* Source button - mobile-first sizing */
-.source-btn {
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    color: white;
-    text-decoration: none;
-    padding: 0.6rem 1rem;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    text-align: center;
-    white-space: nowrap;
-    min-height: 44px; /* Touch-friendly on mobile */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 120px;
-}
-
-.source-btn:hover {
-    background: linear-gradient(45deg, #5a67d8, #6b46c1);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    color: white;
-    text-decoration: none;
-}
-
-@media (max-width: 480px) {
-    .source-btn {
-        width: 100%;
-        padding: 0.75rem 1rem;
-    }
-}
-
-/* Marketplace CTA section */
-.marketplace-cta {
-    margin-top: 3rem;
-    text-align: center;
-    background: white;
-    padding: 2rem;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-@media (min-width: 769px) {
-    .marketplace-cta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        text-align: left;
-        padding: 2.5rem;
-    }
-}
-
-.marketplace-stats {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
-}
-
-@media (max-width: 480px) {
-    .marketplace-stats {
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-}
-
-@media (min-width: 769px) {
-    .marketplace-stats {
-        margin-bottom: 0;
-    }
-}
-
-.stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.stat-number {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #2c3e50;
-    line-height: 1;
-}
-
-@media (max-width: 480px) {
-    .stat-number {
-        font-size: 1.2rem;
-    }
-}
-
-.stat-label {
-    font-size: 0.8rem;
-    color: #666;
-    margin-top: 0.25rem;
-}
-
-.marketplace-action p {
-    color: #666;
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
-}
-
-@media (max-width: 480px) {
-    .marketplace-action p {
-        font-size: 0.9rem;
-    }
-}
-
-.marketplace-action .btn-outline {
-    background: transparent;
-    color: #667eea;
-    border: 2px solid #667eea;
-    padding: 1rem 2rem;
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: 30px;
-    transition: all 0.3s ease;
-    display: inline-block;
-    min-height: 44px;
+.svc-card__price strong { color: #e2e8f0; font-size: 1.1rem; }
+.svc-card__btn {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.65rem 1.5rem;
+    border: 1px solid rgba(102,126,234,0.4);
+    border-radius: 10px;
+    color: #818cf8;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+.svc-card__btn:hover {
+    background: rgba(102,126,234,0.1);
+    border-color: #667eea;
+    gap: 0.7rem;
+}
+.svc-card__btn--primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-color: transparent;
+    color: #fff;
+}
+.svc-card__btn--primary:hover {
+    box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+    transform: translateY(-1px);
 }
 
-.marketplace-action .btn-outline:hover {
-    background: #667eea;
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+/* Responsive marketplace */
+@media (max-width: 768px) {
+    .mkt-grid { grid-template-columns: 1fr; }
+    .svc-grid { grid-template-columns: 1fr; }
+    .mkt-tabs { gap: 0.35rem; }
+    .mkt-tab { padding: 0.6rem 1rem; font-size: 0.78rem; }
 }
-
 @media (max-width: 480px) {
-    .marketplace-action .btn-outline {
-        width: 100%;
-        padding: 0.75rem 1rem;
-    }
+    .mkt-section { padding: 3rem 0; }
+    .src-card__img { height: 140px; }
 }
 
 /* Enhanced Jobs Section - Mobile First */
