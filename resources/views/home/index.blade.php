@@ -900,224 +900,66 @@ a.topic-card:hover {
     });
     </script>
 
-    <!-- Featured Jobs Section - Enhanced -->
-    <section id="viec-lam-noi-bat" class="courses-section">
+    <!-- Featured Jobs Section -->
+    <section id="viec-lam-noi-bat" class="jb-section">
         <div class="container">
-            <div class="courses-cta jobs-cta">
-                <div class="jobs-stats">
-                    <div class="stat">
-                        <div class="stat-number">{{ $jobs['total_count'] ?? '50+' }}</div>
-                        <div class="stat-label">Jobs hiện có</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">{{ isset($jobs['featured']) ? count($jobs['featured']) : 0 }}</div>
-                        <div class="stat-label">Nổi bật</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">95%</div>
-                        <div class="stat-label">Hỗ trợ có việc</div>
-                    </div>
+            {{-- Section header --}}
+            <div class="jb-header">
+                <div class="jb-header__text">
+                    <h2 class="jb-header__title">Việc làm Game Dev</h2>
+                    <p class="jb-header__sub">Cơ hội mới nhất từ các studio game tại Việt Nam</p>
                 </div>
-                <div class="jobs-action">
-                    <h2 class="section-title">💼 Bảng Tin Tuyển Dụng</h2>
-                    <p>
-                        Cơ hội việc làm hot nhất từ các studio game hàng đầu Việt Nam
-                    </p>
-                    <p><a href="{{ route('lamgame.viec-lam-game') }}" class="btn btn-outline" target="_blank">Xem tất cả việc làm</a></p>
+                <div class="jb-header__stats">
+                    <span class="jb-stat"><strong>{{ $jobs['total_count'] ?? 0 }}</strong> vị trí</span>
+                    <span class="jb-stat jb-stat--accent"><strong>{{ $jobs['weekly_new'] ?? 0 }}</strong> mới tuần này</span>
                 </div>
             </div>
 
-            <div class="courses-grid enhanced-jobs-grid">
-                @if(isset($jobs['featured']) && count($jobs['featured']) > 0)
-                    @php
-                        $featuredJobs = array_slice($jobs['featured'], 0, 3); // Lấy tối đa 3 việc làm đầu tiên
-                        $jobLevels = ['Entry → Mid Level', 'Mid → Senior Level', 'Senior Level', 'Mid Level', 'All Levels'];
-                        $badges = ['Hot 🔥', 'Urgent', 'High Salary', 'Remote OK', 'New'];
-                    @endphp
+            {{-- Job list --}}
+            @if(isset($jobs['featured']) && count($jobs['featured']) > 0)
+                <div class="jb-grid">
+                    @foreach(array_slice($jobs['featured'], 0, 6) as $index => $job)
+                    <a href="{{ $job['url'] }}" class="jb-card" aria-label="{{ $job['title'] }} tại {{ $job['company'] }}">
+                        {{-- Badge --}}
+                        @if($index === 0)
+                            <span class="jb-card__badge jb-card__badge--hot">Hot</span>
+                        @elseif($index === 1)
+                            <span class="jb-card__badge jb-card__badge--new">Mới</span>
+                        @endif
 
-                    @foreach($featuredJobs as $index => $job)
-                        <div class="course-card job-card {{ $index === 0 ? 'featured' : '' }}">
-                            @if($index < 2)
-                                <div class="course-badge job-badge">{{ $badges[$index] ?? 'Hot 🔥' }}</div>
-                            @endif
-                            <div class="course-image">
-                                <img src="{{ $job['thumbnail'] }}" alt="{{ $job['title'] }} at {{ $job['company'] }}" loading="lazy" />
-                                <div class="course-overlay">
-                                    <div class="course-level">{{ $jobLevels[$index] ?? 'All Levels' }}</div>
-                                </div>
-                            </div>
-                            <div class="course-content">
-                                <h3 class="course-title job-title">
-                                    <a href="{{ $job['url'] }}">{{ $job['title'] }}</a>
-                                </h3>
-                                <p class="course-description job-description">
-                                    Cơ hội việc làm tại {{ $job['company'] }} - một trong những studio game hàng đầu tại {{ $job['location'] }}.
-                                </p>
-                                <div class="course-features job-features">
-                                    <div class="feature">
-                                        <i class="fa fa-building"></i>
-                                        <span>{{ $job['company'] }}</span>
-                                    </div>
-                                    <div class="feature">
-                                        <i class="fa fa-map-marker"></i>
-                                        <span>{{ $job['location'] }}</span>
-                                    </div>
-                                    <div class="feature">
-                                        <i class="fa fa-clock-o"></i>
-                                        <span>{{ $job['posted_ago'] }}</span>
-                                    </div>
-                                </div>
-                                <div class="course-price job-salary">
-                                    <span class="current-price salary-range">{{ $job['salary'] }}</span>
-                                </div>
-                                <a href="{{ $job['url'] }}" class="course-btn job-apply-btn">Apply Ngay</a>
+                        {{-- Company initial avatar --}}
+                        <div class="jb-card__avatar" aria-hidden="true">
+                            {{ mb_strtoupper(mb_substr($job['company'], 0, 1)) }}
+                        </div>
+
+                        {{-- Content --}}
+                        <div class="jb-card__body">
+                            <h3 class="jb-card__title">{{ $job['title'] }}</h3>
+                            <p class="jb-card__company">{{ $job['company'] }}</p>
+
+                            <div class="jb-card__meta">
+                                <span class="jb-card__tag"><i class="fa fa-map-marker"></i> {{ $job['location'] }}</span>
+                                <span class="jb-card__tag"><i class="fa fa-briefcase"></i> {{ $job['type'] }}</span>
+                                <span class="jb-card__tag"><i class="fa fa-clock-o"></i> {{ $job['posted_ago'] }}</span>
                             </div>
                         </div>
+
+                        {{-- Salary --}}
+                        <div class="jb-card__salary">{{ $job['salary'] }}</div>
+                    </a>
                     @endforeach
-                @else
-                    <!-- Enhanced fallback jobs with 4 positions -->
-                    <div class="course-card job-card featured">
-                        <div class="course-badge job-badge">Hot 🔥</div>
-                        <div class="course-image">
-                            <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop&q=80" alt="Unity Developer at VNG" loading="lazy" />
-                            <div class="course-overlay">
-                                <div class="course-level">Mid → Senior Level</div>
-                            </div>
-                        </div>
-                        <div class="course-content">
-                            <h3 class="course-title job-title">
-                                <a href="{{ route('lamgame.viec-lam-game') }}">Unity Developer</a>
-                            </h3>
-                            <p class="course-description job-description">
-                                VNG Corporation tuyển Unity Developer cho dự án game mobile mới.
-                            </p>
-                            <div class="course-features job-features">
-                                <div class="feature">
-                                    <i class="fa fa-building"></i>
-                                    <span>VNG Corporation</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-map-marker"></i>
-                                    <span>TP.HCM</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-clock-o"></i>
-                                    <span>2 ngày trước</span>
-                                </div>
-                            </div>
-                            <div class="course-price job-salary">
-                                <span class="current-price salary-range">25-40 triệu VND</span>
-                            </div>
-                            <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn job-apply-btn">Apply Ngay</a>
-                        </div>
-                    </div>
+                </div>
+            @else
+                <div class="jb-empty">
+                    <p>Chưa có tin tuyển dụng nào. <a href="{{ route('lamgame.viec-lam-game') }}">Đăng tin miễn phí →</a></p>
+                </div>
+            @endif
 
-                    <div class="course-card job-card">
-                        <div class="course-badge job-badge">Urgent</div>
-                        <div class="course-image">
-                            <img src="https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop&q=80" alt="3D Artist at Gameloft" loading="lazy" />
-                            <div class="course-overlay">
-                                <div class="course-level">Entry → Mid Level</div>
-                            </div>
-                        </div>
-                        <div class="course-content">
-                            <h3 class="course-title job-title">
-                                <a href="{{ route('lamgame.viec-lam-game') }}">3D Artist</a>
-                            </h3>
-                            <p class="course-description job-description">
-                                Gameloft Vietnam tuyển 3D Artist cho dự án game mobile AAA.
-                            </p>
-                            <div class="course-features job-features">
-                                <div class="feature">
-                                    <i class="fa fa-building"></i>
-                                    <span>Gameloft Vietnam</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-map-marker"></i>
-                                    <span>Hà Nội</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-clock-o"></i>
-                                    <span>5 ngày trước</span>
-                                </div>
-                            </div>
-                            <div class="course-price job-salary">
-                                <span class="current-price salary-range">20-30 triệu VND</span>
-                            </div>
-                            <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn job-apply-btn">Apply Ngay</a>
-                        </div>
-                    </div>
-
-                    <div class="course-card job-card">
-                        <div class="course-image">
-                            <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop&q=80" alt="Game Backend Developer" loading="lazy" />
-                            <div class="course-overlay">
-                                <div class="course-level">Senior Level</div>
-                            </div>
-                        </div>
-                        <div class="course-content">
-                            <h3 class="course-title job-title">
-                                <a href="{{ route('lamgame.viec-lam-game') }}">Backend Developer</a>
-                            </h3>
-                            <p class="course-description job-description">
-                                Appota tuyển Backend Developer cho hệ thống server game online.
-                            </p>
-                            <div class="course-features job-features">
-                                <div class="feature">
-                                    <i class="fa fa-building"></i>
-                                    <span>Appota</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-map-marker"></i>
-                                    <span>Remote/TP.HCM</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-clock-o"></i>
-                                    <span>1 tuần trước</span>
-                                </div>
-                            </div>
-                            <div class="course-price job-salary">
-                                <span class="current-price salary-range">30-45 triệu VND</span>
-                            </div>
-                            <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn job-apply-btn">Apply Ngay</a>
-                        </div>
-                    </div>
-
-                    <div class="course-card job-card">
-                        <div class="course-image">
-                            <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop&q=80" alt="Mobile Game Developer" loading="lazy" />
-                            <div class="course-overlay">
-                                <div class="course-level">Mid Level</div>
-                            </div>
-                        </div>
-                        <div class="course-content">
-                            <h3 class="course-title job-title">
-                                <a href="{{ route('lamgame.viec-lam-game') }}">Mobile Game Dev</a>
-                            </h3>
-                            <p class="course-description job-description">
-                                Studio indie tuyển Mobile Game Developer cho dự án puzzle game.
-                            </p>
-                            <div class="course-features job-features">
-                                <div class="feature">
-                                    <i class="fa fa-building"></i>
-                                    <span>IndieStudio VN</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-map-marker"></i>
-                                    <span>Remote</span>
-                                </div>
-                                <div class="feature">
-                                    <i class="fa fa-clock-o"></i>
-                                    <span>3 ngày trước</span>
-                                </div>
-                            </div>
-                            <div class="course-price job-salary">
-                                <span class="current-price salary-range">15-25 triệu VND</span>
-                            </div>
-                            <a href="{{ route('lamgame.viec-lam-game') }}" class="course-btn job-apply-btn">Apply Ngay</a>
-                        </div>
-                    </div>
-                @endif
+            {{-- CTA --}}
+            <div class="jb-footer">
+                <a href="{{ route('lamgame.viec-lam-game') }}" class="jb-footer__btn">
+                    Xem tất cả việc làm <i class="fa fa-arrow-right"></i>
+                </a>
             </div>
         </div>
     </section>
@@ -1538,297 +1380,206 @@ a.topic-card:hover {
     .src-card__img { height: 140px; }
 }
 
-/* Enhanced Jobs Section - Mobile First */
-.enhanced-jobs-grid {
+/* ===== Job Board Section ===== */
+.jb-section {
+    padding: 4rem 0;
+    background: #f8fafc;
+}
+
+.jb-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.jb-header__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+.jb-header__sub {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin: 0.25rem 0 0;
+}
+.jb-header__stats {
+    display: flex;
+    gap: 1rem;
+}
+.jb-stat {
+    font-size: 0.85rem;
+    color: #64748b;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+}
+.jb-stat strong { color: #1e293b; }
+.jb-stat--accent {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #047857;
+}
+.jb-stat--accent strong { color: #047857; }
+
+/* Job grid — list-style rows on desktop, cards on mobile */
+.jb-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Job card — horizontal row */
+.jb-card {
     display: grid;
-    grid-template-columns: 1fr; /* Single column on mobile */
-    gap: 1.5rem;
-    margin: 2rem 0;
-}
-
-@media (min-width: 481px) {
-    .enhanced-jobs-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
-    }
-}
-
-@media (min-width: 769px) {
-    .enhanced-jobs-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2rem;
-    }
-}
-
-@media (min-width: 1200px) {
-    .enhanced-jobs-grid {
-        grid-template-columns: repeat(3, 1fr); /* Giữ 3 cột cho màn hình rất rộng để UX nhất quán */
-        gap: 2rem;
-    }
-}
-
-/* Job card specific styling */
-.job-card {
-    position: relative;
-}
-
-.job-badge {
-    position: absolute;
-    top: 0.75rem;
-    left: 0.75rem;
-    z-index: 3;
-    padding: 0.25rem 0.75rem;
+    grid-template-columns: 48px 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
-    font-size: 0.7rem;
-    font-weight: 600;
+    padding: 1rem 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.jb-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.1);
+}
+
+/* Company initial avatar */
+.jb-card__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Badge */
+.jb-card__badge {
+    position: absolute;
+    top: -0.4rem;
+    right: 1rem;
+    font-size: 0.65rem;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    background: linear-gradient(45deg, #ff6b35, #ff4757);
-    color: white;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    color: #fff;
 }
+.jb-card__badge--hot { background: #ef4444; }
+.jb-card__badge--new { background: #3b82f6; }
 
-.job-title a {
-    color: #2c3e50;
-    text-decoration: none;
+/* Body */
+.jb-card__body { min-width: 0; }
+.jb-card__title {
+    font-size: 1rem;
     font-weight: 600;
-    transition: color 0.3s ease;
-}
-
-.job-title a:hover {
-    color: #667eea;
-}
-
-/* Force job title to be single-line with ellipsis */
-.job-title, .job-title a {
-    display: block;
+    color: #1e293b;
+    margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
-.job-description {
-    color: #666;
+.jb-card__company {
     font-size: 0.85rem;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    color: #64748b;
+    margin: 0.15rem 0 0.5rem;
 }
-
-.job-features {
-    margin: 1rem 0;
+.jb-card__meta {
     display: flex;
-    align-items: center;
     gap: 0.75rem;
-    flex-wrap: nowrap;           /* keep on one line */
-    overflow: hidden;            /* clip overflow */
-    white-space: nowrap;         /* prevent wrapping */
+    flex-wrap: wrap;
 }
-
-.job-features .feature {
+.jb-card__tag {
+    font-size: 0.78rem;
+    color: #64748b;
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    margin: 0;                   /* remove bottom spacing */
-    font-size: 0.8rem;
-    color: #666;
-    min-width: 0;                /* allow inner text to ellipsis */
+    gap: 0.3rem;
+}
+.jb-card__tag i {
+    font-size: 0.7rem;
+    color: #94a3b8;
 }
 
-.job-features .feature span {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;     /* truncate long company/location */
-}
-
-.job-features .feature i {
-    color: #667eea;
-    width: 14px;
-    text-align: center;
-}
-
-.job-salary {
-    margin: 1rem 0;
-}
-
-.salary-range {
-    font-size: 1rem;
+/* Salary */
+.jb-card__salary {
+    font-size: 0.95rem;
     font-weight: 700;
     color: #10b981;
-}
-
-/* Job apply button - mobile-first */
-.job-apply-btn {
-    background: linear-gradient(45deg, #10b981, #059669);
-    color: white;
-    text-decoration: none;
-    padding: 0.7rem 1.2rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    min-width: 120px;
-    text-align: center;
-}
-
-.job-apply-btn:hover {
-    background: linear-gradient(45deg, #059669, #047857);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-    color: white;
-    text-decoration: none;
-}
-
-@media (max-width: 480px) {
-    .job-apply-btn {
-        width: 100%;
-        padding: 0.75rem 1rem;
-    }
-}
-
-/* Jobs CTA section */
-.jobs-cta {
-    margin-top: 3rem;
-    text-align: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 2rem;
-    border-radius: 16px;
-    position: relative;
-    overflow: hidden;
-}
-
-.jobs-cta::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.1);
-    z-index: 1;
-}
-
-.jobs-cta > * {
-    position: relative;
-    z-index: 2;
-}
-
-@media (min-width: 769px) {
-    .jobs-cta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        text-align: left;
-        padding: 2.5rem;
-    }
-}
-
-.jobs-stats {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
-}
-
-@media (max-width: 480px) {
-    .jobs-stats {
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-}
-
-@media (min-width: 769px) {
-    .jobs-stats {
-        margin-bottom: 0;
-    }
-}
-
-.jobs-stats .stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.jobs-stats .stat-number {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: white;
-    line-height: 1;
-}
-
-@media (max-width: 480px) {
-    .jobs-stats .stat-number {
-        font-size: 1.2rem;
-    }
-}
-
-.jobs-stats .stat-label {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.8);
-    margin-top: 0.25rem;
-}
-
-.jobs-action p {
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
-}
-
-/* Inline small link inside jobs description */
-.jobs-action .subtitle-link {
-    font-size: 0.95rem;
-    margin-left: 0.75rem;
-    color: #fff;
-    text-decoration: underline;
     white-space: nowrap;
-}
-@media (prefers-contrast: more) {
-    .jobs-action .subtitle-link { text-decoration-thickness: 2px; }
-}
-
-/* Make jobs section title white */
-#viec-lam-noi-bat .section-title { color: #fff; }
-
-@media (max-width: 480px) {
-    .jobs-action p {
-        font-size: 0.9rem;
-    }
+    text-align: right;
+    flex-shrink: 0;
 }
 
-.jobs-action .btn-outline {
-    background: transparent;
-    color: white;
-    border: 2px solid white;
-    padding: 1rem 2rem;
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: 30px;
-    transition: all 0.3s ease;
+/* Empty state */
+.jb-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #64748b;
+    background: #fff;
+    border: 2px dashed #e2e8f0;
+    border-radius: 12px;
+}
+.jb-empty a { color: #667eea; font-weight: 600; }
+
+/* Footer CTA */
+.jb-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+.jb-footer__btn {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    background: #1e293b;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
     min-height: 44px;
-    cursor: pointer;
+}
+.jb-footer__btn:hover {
+    background: #334155;
+    transform: translateY(-1px);
+    color: #fff;
+    text-decoration: none;
 }
 
-.jobs-action .btn-outline:hover {
-    background: white;
-    color: #667eea;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
-}
-
-@media (max-width: 480px) {
-    .jobs-action .btn-outline {
-        width: 100%;
-        padding: 0.75rem 1rem;
+/* Mobile: stack card vertically */
+@media (max-width: 640px) {
+    .jb-header { flex-direction: column; align-items: flex-start; }
+    .jb-card {
+        grid-template-columns: 40px 1fr;
+        grid-template-rows: auto auto;
+        gap: 0.75rem;
+        padding: 1rem;
     }
+    .jb-card__avatar { width: 40px; height: 40px; font-size: 1rem; }
+    .jb-card__salary {
+        grid-column: 1 / -1;
+        text-align: left;
+        padding-top: 0.5rem;
+        border-top: 1px solid #f1f5f9;
+    }
+    .jb-footer__btn { width: 100%; justify-content: center; }
 }
 
 /* Mobile Performance & Touch Optimizations */
@@ -1839,7 +1590,7 @@ a.topic-card:hover {
     }
 
     /* Enhanced touch targets */
-    .btn, .source-btn, .job-apply-btn, .course-btn {
+    .btn, .source-btn, .course-btn, .jb-footer__btn {
         min-height: 44px;
         min-width: 44px;
         padding: 0.75rem 1rem;
