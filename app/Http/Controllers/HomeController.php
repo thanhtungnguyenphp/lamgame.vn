@@ -411,194 +411,161 @@ class HomeController extends Controller
      */
     private function getSourceGames()
     {
-        try {
-            // In production, this would fetch from products table with sku LIKE 'SOURCE_%'
-            // For now, using enhanced fallback data
-            $sourceGames = [
-                [
-                    'id' => 1,
-                    'title' => 'Roguelike Unity Kit',
-                    'description' => 'Complete roguelike game template with procedural generation, inventory system, and combat mechanics',
-                    'short_description' => 'Complete roguelike template with procedural generation',
-                    'category' => '2D Game Kit',
-                    'engine' => 'Unity',
-                    'language' => 'C#',
-                    'downloads' => 1250,
-                    'rating' => 4.8,
-                    'price' => 0,
-                    'original_price' => 99000, // VND
-                    'is_free' => true,
-                    'is_featured' => true,
-                    'thumbnail' => 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=400&h=250&fit=crop&q=80',
-                    'updated' => now()->format('Y-m-d'),
-                    'updated_ago' => now()->diffForHumans(),
-                    'url' => route('lamgame.source-game'),
-                    'tags' => ['Unity', '2D', 'Roguelike', 'C#']
-                ],
-                [
-                    'id' => 2,
-                    'title' => 'Mobile FPS Controller',
-                    'description' => 'Professional mobile FPS controller with joystick, touch controls and weapon system',
-                    'short_description' => 'Mobile FPS controller with touch controls',
-                    'category' => 'Controller System',
-                    'engine' => 'Unity',
-                    'language' => 'C#',
-                    'downloads' => 890,
-                    'rating' => 4.6,
-                    'price' => 149000, // VND
-                    'original_price' => 199000,
-                    'is_free' => false,
-                    'is_featured' => true,
-                    'thumbnail' => 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop&q=80',
-                    'updated' => now()->subDays(2)->format('Y-m-d'),
-                    'updated_ago' => now()->subDays(2)->diffForHumans(),
-                    'url' => route('lamgame.source-game'),
-                    'tags' => ['Unity', 'Mobile', 'FPS', 'Controller']
-                ],
-                [
-                    'id' => 3,
-                    'title' => 'Inventory System Pro',
-                    'description' => 'Advanced inventory and item management system for RPG games with drag & drop UI',
-                    'short_description' => 'Advanced inventory system for RPG games',
-                    'category' => 'UI System',
-                    'engine' => 'Unity',
-                    'language' => 'C#',
-                    'downloads' => 2100,
-                    'rating' => 4.9,
-                    'price' => 99000, // VND
-                    'original_price' => 149000,
-                    'is_free' => false,
-                    'is_featured' => true,
-                    'thumbnail' => 'https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop&q=80',
-                    'updated' => now()->subDays(1)->format('Y-m-d'),
-                    'updated_ago' => now()->subDays(1)->diffForHumans(),
-                    'url' => route('lamgame.source-game'),
-                    'tags' => ['Unity', 'RPG', 'Inventory', 'UI']
-                ],
-                [
-                    'id' => 4,
-                    'title' => 'VR Interaction Framework',
-                    'description' => 'Complete VR interaction system for Oculus and HTC Vive with hand tracking',
-                    'short_description' => 'VR interaction system with hand tracking',
-                    'category' => 'VR System',
-                    'engine' => 'Unity',
-                    'language' => 'C#',
-                    'downloads' => 675,
-                    'rating' => 4.7,
-                    'price' => 199000, // VND
-                    'original_price' => 299000,
-                    'is_free' => false,
-                    'is_featured' => false,
-                    'thumbnail' => 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop&q=80',
-                    'updated' => now()->subDays(3)->format('Y-m-d'),
-                    'updated_ago' => now()->subDays(3)->diffForHumans(),
-                    'url' => route('lamgame.source-game'),
-                    'tags' => ['Unity', 'VR', 'Interaction', 'Hand Tracking']
-                ],
-                [
-                    'id' => 5,
-                    'title' => 'AI Behavior Tree System',
-                    'description' => 'Visual behavior tree editor for game AI with pathfinding and state management',
-                    'short_description' => 'Visual behavior tree system for game AI',
-                    'category' => 'AI System',
-                    'engine' => 'Unity',
-                    'language' => 'C#',
-                    'downloads' => 1340,
-                    'rating' => 4.5,
-                    'price' => 179000, // VND
-                    'original_price' => 249000,
-                    'is_free' => false,
-                    'is_featured' => false,
-                    'thumbnail' => 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=250&fit=crop&q=80',
-                    'updated' => now()->subDays(4)->format('Y-m-d'),
-                    'updated_ago' => now()->subDays(4)->diffForHumans(),
-                    'url' => route('lamgame.source-game'),
-                    'tags' => ['Unity', 'AI', 'Behavior Tree', 'Pathfinding']
-                ],
-                [
-                    'id' => 6,
-                    'title' => 'Multiplayer Network Kit',
-                    'description' => 'Complete multiplayer networking solution with authoritative server and client prediction',
-                    'short_description' => 'Multiplayer networking with server authority',
-                    'category' => 'Network System',
-                    'engine' => 'Unity',
-                    'language' => 'C#',
-                    'downloads' => 580,
-                    'rating' => 4.4,
-                    'price' => 299000, // VND
-                    'original_price' => 399000,
-                    'is_free' => false,
-                    'is_featured' => true,
-                    'thumbnail' => 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop&q=80',
-                    'updated' => now()->subWeek()->format('Y-m-d'),
-                    'updated_ago' => now()->subWeek()->diffForHumans(),
-                    'url' => route('lamgame.source-game'),
-                    'tags' => ['Unity', 'Multiplayer', 'Networking', 'Server']
-                ]
-            ];
-            
-            // Ensure all required keys are present
-            $sourceGames = array_map(function($game) {
-                return array_merge([
-                    'id' => 0,
-                    'title' => 'No Title',
-                    'description' => 'No description',
-                    'short_description' => 'No description available',
-                    'category' => 'General',
-                    'engine' => 'Unknown',
-                    'language' => 'N/A',
-                    'downloads' => 0,
-                    'rating' => 0,
-                    'price' => 0,
-                    'original_price' => 0,
-                    'is_free' => false,
-                    'is_featured' => false,
-                    'thumbnail' => '',
-                    'updated' => now()->format('Y-m-d'),
-                    'updated_ago' => 'Unknown',
-                    'url' => '#',
-                    'tags' => []
-                ], $game);
-            }, $sourceGames);
+        $empty = [
+            'featured' => [], 'total_sources' => 0, 'free_sources' => 0,
+            'paid_sources' => 0, 'most_downloaded' => null, 'newest_source' => null,
+            'categories' => [], 'engines' => [],
+        ];
 
-            // Prioritize featured items first, then by downloads
-            $featuredGames = collect($sourceGames)
-                ->sortByDesc(function($item) {
-                    return ($item['is_featured'] ? 10000 : 0) + $item['downloads'];
+        try {
+            // 1. Tìm tất cả category IDs thuộc source-game (cùng logic trang /source-game)
+            $categoryIds = $this->getSourceGameCategoryIds();
+
+            // 2. Single optimized query: JOIN product_flat để lấy luôn flat data, tránh N+1
+            $rows = \DB::table('products as p')
+                ->join('product_flat as pf', function ($j) {
+                    $j->on('pf.product_id', '=', 'p.id')->where('pf.locale', 'vi');
                 })
-                ->take(6) // Display 6 items on homepage
-                ->values()
-                ->toArray();
-            
+                ->when(!empty($categoryIds), function ($q) use ($categoryIds) {
+                    $q->whereExists(function ($sub) use ($categoryIds) {
+                        $sub->select(\DB::raw(1))
+                            ->from('product_categories as pc')
+                            ->whereColumn('pc.product_id', 'p.id')
+                            ->whereIn('pc.category_id', $categoryIds);
+                    });
+                })
+                ->where('p.type', 'downloadable')
+                ->select([
+                    'p.id', 'p.sku', 'p.created_at', 'p.updated_at',
+                    'pf.name', 'pf.short_description', 'pf.description',
+                    'pf.price', 'pf.special_price', 'pf.special_price_from', 'pf.special_price_to',
+                    'pf.featured', 'pf.url_key',
+                ])
+                ->orderByDesc('pf.featured')
+                ->orderByDesc('p.created_at')
+                ->limit(6)
+                ->get();
+
+            if ($rows->isEmpty()) {
+                return $empty;
+            }
+
+            // 3. Batch load images + categories cho tất cả products (2 queries thay vì N)
+            $productIds = $rows->pluck('id')->all();
+
+            $images = \DB::table('product_images')
+                ->whereIn('product_id', $productIds)
+                ->orderBy('position')
+                ->get()
+                ->groupBy('product_id');
+
+            $catNames = \DB::table('product_categories as pc')
+                ->join('category_translations as ct', function ($j) {
+                    $j->on('ct.category_id', '=', 'pc.category_id')->where('ct.locale', 'vi');
+                })
+                ->whereIn('pc.product_id', $productIds)
+                ->select('pc.product_id', 'ct.name')
+                ->get()
+                ->groupBy('product_id');
+
+            // 4. Transform
+            $now = now();
+            $featured = $rows->map(function ($row) use ($images, $catNames, $now) {
+                $price = (float) ($row->price ?? 0);
+                $specialPrice = (float) ($row->special_price ?? 0);
+                $hasValidSpecial = $specialPrice > 0 && $specialPrice < $price
+                    && (!$row->special_price_from || $row->special_price_from <= $now->toDateString())
+                    && (!$row->special_price_to || $row->special_price_to >= $now->toDateString());
+                $effectivePrice = $hasValidSpecial ? $specialPrice : $price;
+                $isFree = $effectivePrice <= 0;
+
+                $img = $images->get($row->id)?->first();
+                $thumbnail = $img ? asset('storage/' . $img->path) : '';
+
+                $catName = $catNames->get($row->id)?->first()?->name ?? 'General';
+                $updatedAt = \Carbon\Carbon::parse($row->updated_at);
+
+                return [
+                    'id'                => $row->id,
+                    'title'             => $row->name ?? $row->sku,
+                    'description'       => $row->description ?? '',
+                    'short_description' => $row->short_description ?: \Str::limit(strip_tags($row->description ?? ''), 80),
+                    'category'          => $catName,
+                    'engine'            => 'Unity',
+                    'language'          => 'C#',
+                    'downloads'         => 0,
+                    'rating'            => 0,
+                    'price'             => $effectivePrice,
+                    'original_price'    => $hasValidSpecial ? $price : 0,
+                    'is_free'           => $isFree,
+                    'is_featured'       => (bool) $row->featured,
+                    'thumbnail'         => $thumbnail,
+                    'updated'           => $updatedAt->format('Y-m-d'),
+                    'updated_ago'       => $updatedAt->diffForHumans(),
+                    'url'               => $row->url_key ? route('lamgame.source-game.detail', $row->url_key) : route('lamgame.source-game'),
+                    'tags'              => array_filter([$catName, 'Unity', 'Source Code']),
+                ];
+            })->values()->toArray();
+
+            // 5. Aggregate stats — count tổng bằng 1 query nhẹ
+            $totalCount = \DB::table('products as p')
+                ->where('p.type', 'downloadable')
+                ->when(!empty($categoryIds), function ($q) use ($categoryIds) {
+                    $q->whereExists(function ($sub) use ($categoryIds) {
+                        $sub->select(\DB::raw(1))
+                            ->from('product_categories as pc')
+                            ->whereColumn('pc.product_id', 'p.id')
+                            ->whereIn('pc.category_id', $categoryIds);
+                    });
+                })
+                ->count();
+
+            $col = collect($featured);
+
             return [
-                'featured' => $featuredGames,
-                'total_sources' => count($sourceGames),
-                'free_sources' => collect($sourceGames)->where('is_free', true)->count(),
-                'paid_sources' => collect($sourceGames)->where('is_free', false)->count(),
-                'most_downloaded' => collect($sourceGames)->sortByDesc('downloads')->first(),
-                'newest_source' => collect($sourceGames)->sortBy('updated')->first(),
-                'categories' => collect($sourceGames)->groupBy('category')->keys()->toArray(),
-                'engines' => collect($sourceGames)->groupBy('engine')->keys()->toArray(),
-                'github_links' => [
-                    'Unity Templates' => 'https://github.com/lamgame-vn/unity-templates',
-                    'Open Source Projects' => 'https://github.com/lamgame-vn'
-                ]
+                'featured'        => $featured,
+                'total_sources'   => $totalCount,
+                'free_sources'    => $col->where('is_free', true)->count(),
+                'paid_sources'    => $col->where('is_free', false)->count(),
+                'most_downloaded' => $col->first(),
+                'newest_source'   => $col->sortByDesc('updated')->first(),
+                'categories'      => $col->pluck('category')->unique()->values()->toArray(),
+                'engines'         => ['Unity'],
             ];
-            
+
         } catch (\Exception $e) {
-            // Fallback data in case of any errors
-            return [
-                'featured' => [],
-                'total_sources' => 0,
-                'free_sources' => 0,
-                'paid_sources' => 0,
-                'most_downloaded' => null,
-                'newest_source' => null,
-                'categories' => [],
-                'engines' => [],
-                'github_links' => []
-            ];
+            return $empty;
         }
+    }
+
+    /**
+     * Lấy tất cả category IDs thuộc source-game (base + descendants).
+     * Dùng chung cho cả homepage và có thể reuse.
+     */
+    private function getSourceGameCategoryIds(): array
+    {
+        $baseIds = \DB::table('category_translations')
+            ->whereIn('slug', ['source-game', 'source-code-game'])
+            ->pluck('category_id')
+            ->filter()->unique()->values()->all();
+
+        if (empty($baseIds)) {
+            return [];
+        }
+
+        // Lấy descendants qua nested set (_lft, _rgt) — 1 query duy nhất
+        $ranges = \DB::table('categories')->whereIn('id', $baseIds)->select('_lft', '_rgt')->get();
+        $allIds = collect($baseIds);
+
+        foreach ($ranges as $r) {
+            $descendants = \DB::table('categories')
+                ->where('_lft', '>', $r->_lft)
+                ->where('_rgt', '<', $r->_rgt)
+                ->pluck('id');
+            $allIds = $allIds->merge($descendants);
+        }
+
+        return $allIds->unique()->values()->all();
     }
 
     /**
