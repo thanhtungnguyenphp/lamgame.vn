@@ -2121,6 +2121,148 @@ a.topic-card:hover {
 }
 </style>
 @endpush
+
+@push('styles')
+<style>
+/* ===== Contact Section ===== */
+.ct-section {
+    padding: 4rem 0;
+    background: #f8fafc;
+}
+.ct-wrap {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 3rem;
+    align-items: start;
+}
+.ct-form-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+.ct-form-box__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 0.25rem;
+}
+.ct-form-box__sub {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin: 0 0 1.5rem;
+}
+.ct-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+.ct-form__field { margin-bottom: 1rem; }
+.ct-form__field label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.35rem;
+}
+.ct-form__field label span { color: #ef4444; }
+.ct-form__field input,
+.ct-form__field textarea {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: #f8fafc;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+.ct-form__field input:focus,
+.ct-form__field textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+}
+.ct-form__field textarea { resize: vertical; min-height: 80px; }
+.ct-form__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    background: #1e293b;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    min-height: 44px;
+}
+.ct-form__btn:hover {
+    background: #334155;
+    transform: translateY(-1px);
+}
+.ct-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+.ct-info__item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+.ct-info__item > i {
+    color: #667eea;
+    font-size: 1rem;
+    margin-top: 0.2rem;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.ct-info__item strong {
+    display: block;
+    font-size: 0.85rem;
+    color: #1e293b;
+    margin-bottom: 0.15rem;
+}
+.ct-info__item p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #64748b;
+    line-height: 1.5;
+}
+.ct-info__item a { color: #667eea; text-decoration: none; }
+.ct-info__item a:hover { text-decoration: underline; }
+.ct-info__social {
+    display: flex;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+}
+.ct-info__social a {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: background 0.2s, color 0.2s;
+    text-decoration: none;
+}
+.ct-info__social a:hover { background: #667eea; color: #fff; }
+@media (max-width: 768px) {
+    .ct-wrap { grid-template-columns: 1fr; gap: 2rem; }
+    .ct-form-box { padding: 1.5rem; }
+    .ct-form__row { grid-template-columns: 1fr; }
+    .ct-form__btn { width: 100%; justify-content: center; }
+}
+</style>
+@endpush
     <!-- YouTube Channel Section -->
     <section id="co-hoi-viec-lam" class="yt-section">
         <div class="container">
@@ -2165,66 +2307,66 @@ a.topic-card:hover {
     </section>
 
     <!-- Contact Section -->
-    <section id="lien-he" class="contact-section">
+    <section id="lien-he" class="ct-section">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Liên hệ tư vấn</h2>
-                <p class="section-subtitle">
-                    Nhận tư vấn miễn phí và lộ trình học phù hợp nhất cho bạn
-                </p>
-            </div>
+            <div class="ct-wrap">
+                {{-- Form --}}
+                <div class="ct-form-box">
+                    <h2 class="ct-form-box__title">Liên hệ với chúng tôi</h2>
+                    <p class="ct-form-box__sub">Hợp tác, quảng cáo, hoặc bất kỳ câu hỏi nào — chúng tôi phản hồi trong 24h.</p>
 
-            <div class="contact-content">
-                <div class="contact-form">
-                    <form class="modern-form" onsubmit="handleContactSubmit(event)">
-                        <div class="form-grid">
-                            <div class="form-field">
-                                <label for="contact-name">Họ và tên *</label>
-                                <input id="contact-name" name="name" required placeholder="Nguyễn Văn A">
+                    <form class="ct-form" action="{{ route('lamgame.lien-he.submit') }}" method="POST">
+                        @csrf
+                        <div class="ct-form__row">
+                            <div class="ct-form__field">
+                                <label for="ct-name">Họ và tên <span>*</span></label>
+                                <input id="ct-name" name="name" required placeholder="Nguyễn Văn A" autocomplete="name">
                             </div>
-                            <div class="form-field">
-                                <label for="contact-phone">Số điện thoại *</label>
-                                <input id="contact-phone" name="phone" type="tel" required placeholder="09.1111.8300">
+                            <div class="ct-form__field">
+                                <label for="ct-phone">Số điện thoại <span>*</span></label>
+                                <input id="ct-phone" name="phone" type="tel" required placeholder="09.1111.8300" autocomplete="tel">
                             </div>
                         </div>
-                        <div class="form-field">
-                            <label for="contact-email">Email</label>
-                            <input id="contact-email" name="email" type="email" placeholder="example@email.com">
+                        <div class="ct-form__field">
+                            <label for="ct-email">Email</label>
+                            <input id="ct-email" name="email" type="email" placeholder="example@email.com" autocomplete="email">
                         </div>
-                        <div class="form-field">
-                            <label for="contact-course">Khóa học quan tâm</label>
-                            <select id="contact-course" name="course">
-                                <option value="">Chọn khóa học</option>
-                                <option value="unity">Unity Game Development</option>
-                                <option value="unreal">Unreal Engine 5</option>
-                                <option value="csharp">C# Programming</option>
-                                <option value="game-design">Game Design</option>
-                            </select>
+                        <div class="ct-form__field">
+                            <label for="ct-message">Lời nhắn</label>
+                            <textarea id="ct-message" name="message" rows="3" placeholder="Nội dung bạn muốn trao đổi..."></textarea>
                         </div>
-                        <div class="form-field">
-                            <label for="contact-message">Lời nhắn</label>
-                            <textarea id="contact-message" name="message" rows="4" placeholder="Câu hỏi hoặc thông tin bạn muốn biết thêm..."></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-large" style="width: 100%;">
-                            <i class="fa fa-paper-plane"></i> Gửi thông tin
+                        <button type="submit" class="ct-form__btn">
+                            Gửi liên hệ <i class="fa fa-arrow-right"></i>
                         </button>
                     </form>
                 </div>
 
-                <div class="contact-info">
-                    <div class="info-card">
-                        <h3>📍 Địa chỉ trụ sở</h3>
-                        <p>Tòa nhà E.Town Central<br>11 Đoàn Văn Bơ, Phường 13<br>Quận 4, TP. Hồ Chí Minh, Việt Nam</p>
+                {{-- Info sidebar --}}
+                <div class="ct-info">
+                    <div class="ct-info__item">
+                        <i class="fa fa-map-marker"></i>
+                        <div>
+                            <strong>Địa chỉ</strong>
+                            <p>Tòa nhà E.Town Central, 11 Đoàn Văn Bơ, P.13, Q.4, TP.HCM</p>
+                        </div>
                     </div>
-                    <div class="info-card">
-                        <h3>📞 Liên hệ trực tiếp</h3>
-                        <p>Hotline: <a href="tel:0911118300">09.1111.8300</a><br>
-                        Email: <a href="mailto:salegamevui@gmail.com">salegamevui@gmail.com</a></p>
+                    <div class="ct-info__item">
+                        <i class="fa fa-phone"></i>
+                        <div>
+                            <strong>Hotline</strong>
+                            <p><a href="tel:0911118300">09.1111.8300</a></p>
+                        </div>
                     </div>
-                    <div class="info-card">
-                        <h3>📺 Kênh truyền thông</h3>
-                        <p>YouTube: <a href="https://www.youtube.com/channel/UCv2lripWdZDKtlrRy1J0dBw" target="_blank">Làm Game Official</a><br>
-                        Website: <a href="https://lamgame.vn">lamgame.vn</a></p>
+                    <div class="ct-info__item">
+                        <i class="fa fa-envelope"></i>
+                        <div>
+                            <strong>Email</strong>
+                            <p><a href="mailto:salegamevui@gmail.com">salegamevui@gmail.com</a></p>
+                        </div>
+                    </div>
+                    <div class="ct-info__social">
+                        <a href="https://www.youtube.com/channel/UCv2lripWdZDKtlrRy1J0dBw" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.facebook.com/groups/lamgame" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
                     </div>
                 </div>
             </div>
@@ -2237,40 +2379,8 @@ a.topic-card:hover {
         function scrollToSection(selector) {
             const element = document.querySelector(selector);
             if (element) {
-                element.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-        }
-
-        // Contact form submission handler
-        function handleContactSubmit(event) {
-            event.preventDefault();
-
-            // Collect form data
-            const formData = new FormData(event.target);
-            const data = Object.fromEntries(formData.entries());
-
-            // Here you would normally send data to your server
-            console.log('Contact form data:', data);
-
-            // Show success message
-            alert('Cảm ơn bạn đã gửi thông tin! Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.');
-
-            // Optional: Reset form
-            event.target.reset();
-        }
-
-        // Track user interactions (for analytics)
-        function trackRegistration() {
-            console.log('Registration attempt tracked');
-            // Add your analytics code here
-        }
-
-        function trackCTA(action) {
-            console.log('CTA clicked:', action);
-            // Add your analytics code here
         }
 
         // Animate elements on scroll

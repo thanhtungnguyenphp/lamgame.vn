@@ -19,6 +19,10 @@ Route::get('checkout/onepage/success', [\Webkul\Shop\Http\Controllers\OnepageCon
 Route::get('source-game', [LamGamePageController::class, 'sourceGame'])->name('lamgame.source-game');
 Route::get('source-game/{slug}', [LamGamePageController::class, 'sourceGameDetail'])->name('lamgame.source-game.detail');
 
+// Contact routes
+Route::get('lien-he', [LamGamePageController::class, 'lienHe'])->name('lamgame.lien-he');
+Route::post('lien-he', [LamGamePageController::class, 'submitContact'])->name('lamgame.lien-he.submit');
+
 // Blog routes
 Route::get('blog', [LamGamePageController::class, 'blog'])->name('lamgame.blog');
 Route::get('blog/{slug}', [LamGamePageController::class, 'blogShow'])->name('blog.show');
