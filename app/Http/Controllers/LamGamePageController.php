@@ -42,19 +42,22 @@ class LamGamePageController extends Controller
     public function submitContact(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'subject' => 'required|string|max:255',
-            'message' => 'required|string|max:2000',
+            'name'    => 'required|string|max:255',
+            'phone'   => 'required|string|max:20',
+            'email'   => 'nullable|email|max:255',
+            'message' => 'nullable|string|max:2000',
         ]);
 
-        // Store in database or send email
-        // For now, just return success response
-        return response()->json([
-            'success' => true,
-            'message' => 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.'
-        ]);
+        // TODO: Store in database or send email notification
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong 24h.',
+            ]);
+        }
+
+        return back()->with('success', 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong 24h.');
     }
 
     /**
