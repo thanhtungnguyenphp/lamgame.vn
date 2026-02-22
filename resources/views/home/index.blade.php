@@ -1957,595 +1957,210 @@ a.topic-card:hover {
     }
 }
 
-/* YouTube Videos Section */
-.youtube-section {
-    background: #f8f9fa;
+/* ===== YouTube Channel Section ===== */
+.yt-section {
     padding: 4rem 0;
+    background: #fff;
 }
 
-.youtube-videos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
-    margin: 3rem 0;
+/* Channel header */
+.yt-channel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
 }
-
-.youtube-video-card {
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    border: 1px solid #e5e7eb;
-}
-
-.youtube-video-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-}
-
-.video-thumbnail {
-    position: relative;
-    overflow: hidden;
-}
-
-.thumbnail-link {
-    display: block;
-    position: relative;
-}
-
-.video-thumbnail img {
-    width: 100%;
-    height: 200px;
+.yt-channel__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
     object-fit: cover;
-    transition: transform 0.3s ease;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    flex-shrink: 0;
 }
-
-.video-thumbnail img[src=""],
-.video-thumbnail img:not([src]),
-.video-thumbnail img[src*="404"] {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    position: relative;
-}
-
-.video-thumbnail img[src=""]:after,
-.video-thumbnail img:not([src]):after,
-.video-thumbnail img[src*="404"]:after {
-    content: "\f04b";
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    color: white;
-    font-size: 3rem;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.youtube-video-card:hover .video-thumbnail img {
-    transform: scale(1.05);
-}
-
-.play-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
+.yt-channel__avatar--fallback {
+    background: #ff0000;
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    font-size: 1.2rem;
 }
-
-.youtube-video-card:hover .play-overlay {
-    opacity: 1;
+.yt-channel__info { flex: 1; min-width: 0; }
+.yt-channel__name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
 }
-
-.play-button {
-    width: 60px;
-    height: 60px;
+.yt-channel__meta {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+.yt-channel__sub {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     background: #ff0000;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    white-space: nowrap;
+    min-height: 44px;
+}
+.yt-channel__sub:hover {
+    background: #cc0000;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Video grid */
+.yt-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+/* Video card */
+.yt-card {
+    text-decoration: none;
+    color: inherit;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.yt-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+/* Thumbnail */
+.yt-card__thumb {
+    position: relative;
+    aspect-ratio: 16/9;
+    background: #1e293b;
+    overflow: hidden;
+}
+.yt-card__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+.yt-card:hover .yt-card__thumb img {
+    transform: scale(1.05);
+}
+.yt-card__play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.25);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.yt-card:hover .yt-card__play { opacity: 1; }
+.yt-card__play i {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,0,0,0.9);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-size: 24px;
-    transform: scale(0.8);
-    transition: transform 0.3s ease;
+    color: #fff;
+    font-size: 1rem;
+    padding-left: 3px;
 }
-
-.youtube-video-card:hover .play-button {
-    transform: scale(1);
-}
-
-.video-duration {
+.yt-card__dur {
     position: absolute;
     bottom: 8px;
     right: 8px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 4px 8px;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 2px 6px;
     border-radius: 4px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 500;
 }
 
-.video-info {
-    padding: 1.5rem;
-}
-
-.video-category {
-    display: inline-block;
-    background: #667eea;
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
+/* Card body */
+.yt-card__body { padding: 0.75rem 0.25rem; }
+.yt-card__title {
+    font-size: 0.95rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.75rem;
-}
-
-.video-title {
-    margin: 0.75rem 0 0.5rem 0;
-    font-size: 1.1rem;
-    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 0.25rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
     line-height: 1.4;
 }
-
-.video-title a {
-    color: #1f2937;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.video-title a:hover {
-    color: #667eea;
-}
-
-.video-description {
-    color: #6b7280;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-}
-
-.video-stats {
-    display: flex;
-    gap: 1rem;
+.yt-card__meta {
     font-size: 0.8rem;
-    color: #9ca3af;
-}
-
-.video-stats span {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-/* Enhanced YouTube Channel Section with Banner Background */
-.youtube-cta-section {
-    border-radius: 16px;
-    margin-top: 3rem;
-    overflow: hidden;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    position: relative;
-    background: #f8f9fa; /* Fallback background */
-    width: 100%;
-    /* Ensure full-width display */
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.channel-banner-background {
-    position: relative;
-    /* Full width container for optimal cover display */
-    width: 100%;
-    height: 100%;
-    /* Dynamic height based on screen width to maintain aspect ratio */
-    min-height: calc(100vw / 6);
-    max-height: 400px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    /* Optimize for crisp, non-blurry display */
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: scroll;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
-    image-rendering: optimizeQuality;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: stretch;
-    padding: 0;
-    transition: all 0.8s ease;
-    animation: fadeInUp 0.6s ease-out;
-    /* Hardware acceleration for sharp rendering */
-    transform: translateZ(0);
-    will-change: background-image;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-}
-
-.channel-banner-background.banner-loaded {
-    animation: bannerFadeIn 1s ease-out;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes bannerFadeIn {
-    from {
-        filter: blur(2px) brightness(0.8);
-        transform: scale(1.02);
-    }
-    to {
-        filter: blur(0) brightness(1);
-        transform: scale(1);
-    }
-}
-
-/* Banner Loading State */
-.banner-loading {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(102, 126, 234, 0.9);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-size: 1rem;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-}
-
-.banner-loading.loading {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-top: 3px solid white;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 1rem;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Minimal overlay - only at bottom for stats */
-.banner-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-        to top,
-        rgba(0, 0, 0, 0.8) 0%,
-        rgba(0, 0, 0, 0.4) 15%,
-        rgba(0, 0, 0, 0.1) 30%,
-        transparent 40%
-    );
-    z-index: 1;
-    pointer-events: none;
-}
-
-/* Channel Avatar - REMOVED */
-
-/* Channel Content */
-.channel-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    color: white;
-    max-width: 600px;
-    width: 100%;
-}
-
-/* Minimal Channel Stats at Bottom */
-.channel-stats-minimal {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 0.85rem;
-    line-height: 1.2;
+    color: #94a3b8;
     margin: 0;
-    width: 100%;
 }
 
-.stat-item-minimal {
-    display: flex;
-    align-items: baseline;
-    gap: 0.25rem;
-    white-space: nowrap;
-}
-
-.stat-number-minimal {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-}
-
-.stat-label-minimal {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.8);
-    text-transform: lowercase;
-    font-weight: 400;
-}
-
-.stat-divider-minimal {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.8rem;
-    font-weight: 300;
-    margin: 0 0.25rem;
-}
-
-.youtube-action-minimal {
-    display: flex;
-    align-items: center;
-}
-
-.btn-youtube-minimal {
-    background: linear-gradient(135deg, #ff0000, #cc0000);
-    color: white;
-    border: none;
-    padding: 0.3rem 0.6rem;
-    border-radius: 15px;
-    font-weight: 500;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    transition: all 0.2s ease;
-    font-size: 0.75rem;
-    box-shadow: 0 1px 5px rgba(255, 0, 0, 0.3);
-    white-space: nowrap;
-    line-height: 1;
-}
-
-.btn-youtube-minimal:hover {
-    background: linear-gradient(135deg, #cc0000, #990000);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(255, 0, 0, 0.4);
-    color: white;
-    text-decoration: none;
-}
-
-.btn-youtube-minimal i {
-    font-size: 0.8rem;
-}
-
-/* Channel description removed - no longer used */
-
-/* Old YouTube Actions removed - now inline in stats */
-
-/* Responsive Design - Mobile First Approach */
-@media (max-width: 480px) {
-    .channel-banner-background {
-        min-height: calc(100vw / 4);
-        max-height: 300px;
-    }
-
-    .channel-stats-minimal {
-        gap: 0.5rem;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.8rem;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .stat-divider-minimal {
-        display: none;
-    }
-
-    .stat-number-minimal {
-        font-size: 0.8rem;
-    }
-
-    .stat-label-minimal {
-        font-size: 0.7rem;
-    }
-
-    .btn-youtube-minimal {
-        font-size: 0.7rem;
-        padding: 0.25rem 0.5rem;
-        margin-top: 0.25rem;
-    }
-
-    .btn-youtube-minimal i {
-        font-size: 0.7rem;
-    }
-}
-
-@media (min-width: 481px) and (max-width: 768px) {
-    .channel-banner-background {
-        min-height: calc(100vw / 5);
-        max-height: 350px;
-    }
-
-    .channel-stats-minimal {
-        gap: 0.6rem;
-        padding: 0.6rem 1rem;
-        font-size: 0.85rem;
-    }
-
-    .stat-number-minimal {
-        font-size: 0.85rem;
-    }
-
-    .btn-youtube-minimal {
-        font-size: 0.75rem;
-        padding: 0.3rem 0.6rem;
-    }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-    .channel-banner-background {
-        min-height: calc(100vw / 6);
-        max-height: 350px;
-    }
-
-    .channel-stats-minimal {
-        gap: 0.8rem;
-        padding: 0.8rem 1.5rem;
-    }
-}
-
-@media (min-width: 1025px) {
-    .channel-banner-background {
-        min-height: calc(100vw / 6);
-        max-height: 400px;
-    }
-
-    .channel-stats-minimal {
-        gap: 1rem;
-        padding: 1rem 2rem;
-        font-size: 0.9rem;
-    }
-
-    .stat-number-minimal {
-        font-size: 1rem;
-    }
-
-    .stat-label-minimal {
-        font-size: 0.8rem;
-    }
-
-    .btn-youtube-minimal {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.8rem;
-    }
-
-    .btn-youtube-minimal i {
-        font-size: 0.85rem;
-    }
-}
-
-/* Global section spacing override for homepage */
-section { padding-top: 1rem !important; padding-bottom: 1rem !important; }
-
-/* Legacy responsive fixes */
+/* Responsive */
 @media (max-width: 768px) {
-    .youtube-videos-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
+    .yt-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+    .yt-card { display: grid; grid-template-columns: 160px 1fr; border-radius: 8px; }
+    .yt-card__thumb { aspect-ratio: auto; height: 100%; min-height: 90px; border-radius: 8px 0 0 8px; }
+    .yt-card__body { padding: 0.5rem 0.75rem; display: flex; flex-direction: column; justify-content: center; }
+    .yt-card__title { font-size: 0.88rem; -webkit-line-clamp: 2; }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+    .yt-grid { grid-template-columns: repeat(2, 1fr); }
 }
 </style>
 @endpush
-    <!-- YouTube Videos Section -->
-    <section id="co-hoi-viec-lam" class="youtube-section">
+    <!-- YouTube Channel Section -->
+    <section id="co-hoi-viec-lam" class="yt-section">
         <div class="container">
-            <div class="youtube-cta-section" id="youtube-channel-section" data-channel-id="{{ $youtubeVideos['channel_info']['channel_id'] }}">
-                <!-- Banner Background Container -->
-                <div class="channel-banner-background" id="channel-banner-bg">
-                    <!-- Overlay for text readability -->
-                    <div class="banner-overlay"></div>
-
-                    <!-- Minimal Channel Stats at Bottom -->
-                    <div class="channel-stats-minimal">
-                        <div class="stat-item-minimal">
-                            <span class="stat-number-minimal">{{ $youtubeVideos['channel_info']['subscribers'] }}</span>
-                            <span class="stat-label-minimal">subscribers</span>
-                        </div>
-                        <div class="stat-divider-minimal">•</div>
-                        <div class="stat-item-minimal">
-                            <span class="stat-number-minimal">{{ $youtubeVideos['channel_info']['total_views'] }}</span>
-                            <span class="stat-label-minimal">total views</span>
-                        </div>
-                        <div class="stat-divider-minimal">•</div>
-                        <div class="youtube-action-minimal">
-                            <a href="{{ $youtubeVideos['channel_info']['channel_url'] }}"
-                               target="_blank"
-                               class="btn-youtube-minimal"
-                               rel="noopener">
-                                <i class="fab fa-youtube"></i> Xem thêm video
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Loading State -->
-                    <div class="banner-loading" id="banner-loading">
-                        <div class="loading-spinner"></div>
-                        <p>Đang tải banner...</p>
-                    </div>
+            {{-- Channel header --}}
+            <div class="yt-channel">
+                @if($youtubeVideos['channel_info']['avatar_url'])
+                    <img class="yt-channel__avatar" src="{{ $youtubeVideos['channel_info']['avatar_url'] }}" alt="{{ $youtubeVideos['channel_info']['name'] }}" loading="lazy" width="48" height="48">
+                @else
+                    <div class="yt-channel__avatar yt-channel__avatar--fallback"><i class="fab fa-youtube"></i></div>
+                @endif
+                <div class="yt-channel__info">
+                    <h2 class="yt-channel__name">{{ $youtubeVideos['channel_info']['name'] }}</h2>
+                    <span class="yt-channel__meta">
+                        {{ $youtubeVideos['channel_info']['subscribers'] }} subscribers
+                        · {{ $youtubeVideos['channel_info']['total_views'] }} views
+                    </span>
                 </div>
+                <a href="{{ $youtubeVideos['channel_info']['channel_url'] }}" target="_blank" rel="noopener" class="yt-channel__sub">
+                    <i class="fab fa-youtube"></i> Subscribe
+                </a>
             </div>
 
-            <div class="youtube-videos-grid">
+            {{-- Video grid --}}
+            <div class="yt-grid">
                 @foreach($youtubeVideos['featured'] as $video)
-                <div class="youtube-video-card">
-                    <div class="video-thumbnail">
-                        <a href="{{ $video['url'] }}" target="_blank" class="thumbnail-link">
-                            <img src="{{ $video['thumbnail'] }}" alt="{{ $video['title'] }}" loading="lazy"
-                                 onerror="this.onerror=null; this.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.innerHTML='<i class=&quot;fa fa-play&quot; style=&quot;color:white;font-size:3rem;&quot;></i>'; this.removeAttribute('src');">
-                            <div class="play-overlay">
-                                <div class="play-button">
-                                    <i class="fa fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="video-duration">{{ $video['duration'] }}</div>
-                        </a>
+                <a href="{{ $video['url'] }}" target="_blank" rel="noopener" class="yt-card">
+                    <div class="yt-card__thumb">
+                        <img src="{{ $video['thumbnail'] }}" alt="{{ $video['title'] }}" loading="lazy">
+                        <span class="yt-card__play"><i class="fa fa-play"></i></span>
+                        @if($video['duration'])
+                            <span class="yt-card__dur">{{ $video['duration'] }}</span>
+                        @endif
                     </div>
-                    <div class="video-info">
-                        <div class="video-category">{{ $video['category'] }}</div>
-                        <h3 class="video-title">
-                            <a href="{{ $video['url'] }}" target="_blank">
-                                {{ $video['title'] }}
-                            </a>
-                        </h3>
-                        <p class="video-description">
-                            {{ \Illuminate\Support\Str::limit($video['description'], 100) }}
-                        </p>
-                        <div class="video-stats">
-                            <span class="video-views">
-                                <i class="fa fa-eye"></i> {{ $video['views'] }} lượt xem
-                            </span>
-                            <span class="video-date">
-                                <i class="fa fa-clock"></i> {{ $video['published_at'] }}
-                            </span>
-                        </div>
+                    <div class="yt-card__body">
+                        <h3 class="yt-card__title">{{ $video['title'] }}</h3>
+                        <p class="yt-card__meta">{{ $video['views'] }} lượt xem · {{ $video['published_at'] }}</p>
                     </div>
-                </div>
+                </a>
                 @endforeach
             </div>
-
-
         </div>
     </section>
 
@@ -2658,451 +2273,6 @@ section { padding-top: 1rem !important; padding-bottom: 1rem !important; }
             // Add your analytics code here
         }
 
-        // YouTube Channel Banner Loading
-        // To get a YouTube Data API v3 key:
-        // 1. Go to https://console.developers.google.com/
-        // 2. Create a new project or select existing
-        // 3. Enable YouTube Data API v3
-        // 4. Create credentials (API Key)
-        // 5. Restrict the key to YouTube Data API v3 and your domain
-        // 6. Replace the apiKey below with your valid key
-        class YouTubeChannelBanner {
-            constructor() {
-                // YouTube Data API v3 key - replace with valid key
-                this.apiKey = 'AQ.Ab8RN6IR67DyHGQz1jFL9Oz_hmaD7fZ-GSp4v6CdHdjnBJlc7w';
-                this.channelId = 'UCv2lripWdZDKtlrRy1J0dBw';
-                this.cache = {};
-                this.retryCount = 0;
-                this.maxRetries = 1; // Reduce retries to fail faster to fallback
-                // Local banner image as ultimate fallback
-                this.localFallbackUrl = '/lp/images/banner-em-sai-gon.jpg';
-                // Flag to skip API calls if key is invalid
-                this.apiKeyValid = true;
-            }
-
-            async fetchChannelBanner(channelId) {
-                // Check cache first
-                if (this.cache[channelId]) {
-                    return this.cache[channelId];
-                }
-
-                // Try alternative method first - extract from channel page
-                try {
-                    const alternativeBanner = await this.extractBannerFromChannelPage(channelId);
-                    if (alternativeBanner) {
-                        console.log('Banner extracted from channel page:', alternativeBanner);
-                        this.cache[channelId] = alternativeBanner;
-                        return alternativeBanner;
-                    }
-                } catch (error) {
-                    console.warn('Alternative banner extraction failed:', error);
-                }
-
-                // Skip API call if we know the key is invalid
-                if (!this.apiKeyValid) {
-                    console.log('Skipping YouTube API (invalid key), using local fallback');
-                    return this.localFallbackUrl;
-                }
-
-                try {
-                    console.log('Fetching YouTube channel banner via API...');
-
-                    // YouTube Data API v3 endpoint for channel branding
-                    const apiUrl = `https://www.googleapis.com/youtube/v3/channels`;
-                    const params = new URLSearchParams({
-                        part: 'brandingSettings',
-                        id: channelId,
-                        key: this.apiKey
-                    });
-
-                    // Try with OAuth2 token first (if key starts with certain patterns)
-                    const isOAuthToken = this.apiKey.includes('.') || this.apiKey.startsWith('ya29');
-
-                    let response;
-                    if (isOAuthToken) {
-                        console.log('Using OAuth2 token for YouTube API...');
-                        response = await fetch(`${apiUrl}?${params.toString().replace('key=', 'access_token=')}`, {
-                            method: 'GET',
-                            headers: {
-                                'Accept': 'application/json',
-                                'Authorization': `Bearer ${this.apiKey}`,
-                                'Referer': window.location.origin
-                            }
-                        });
-                    } else {
-                        console.log('Using API key for YouTube API...');
-                        response = await fetch(`${apiUrl}?${params}`, {
-                            method: 'GET',
-                            headers: {
-                                'Accept': 'application/json',
-                                'Referer': window.location.origin
-                            }
-                        });
-                    }
-
-                    if (!response.ok) {
-                        throw new Error(`YouTube API error: ${response.status} - ${response.statusText}`);
-                    }
-
-                    const data = await response.json();
-                    console.log('YouTube API response:', data);
-
-                    if (data.items && data.items.length > 0) {
-                        const branding = data.items[0].brandingSettings;
-                        const bannerUrl = branding?.image?.bannerExternalUrl;
-
-                        if (bannerUrl) {
-                            console.log('Found YouTube banner:', bannerUrl);
-
-                            // Test if the banner URL is accessible
-                            const testImg = new Image();
-                            const isAccessible = await new Promise((resolve) => {
-                                testImg.onload = () => {
-                                    console.log('YouTube banner is accessible');
-                                    resolve(true);
-                                };
-                                testImg.onerror = () => {
-                                    console.warn('YouTube banner failed to load');
-                                    resolve(false);
-                                };
-                                testImg.src = this.getResponsiveBannerUrl(bannerUrl);
-                                // Timeout after 5 seconds
-                                setTimeout(() => {
-                                    console.warn('YouTube banner load timeout');
-                                    resolve(false);
-                                }, 5000);
-                            });
-
-                            if (isAccessible) {
-                                // Cache the successful result
-                                this.cache[channelId] = bannerUrl;
-                                this.retryCount = 0; // Reset retry count on success
-                                return bannerUrl;
-                            }
-                        } else {
-                            console.warn('No banner URL found in API response');
-                        }
-                    } else {
-                        console.warn('No channel data found in API response');
-                    }
-
-                } catch (error) {
-                    console.error('YouTube API fetch failed:', error);
-
-                    // Check if it's an API key error
-                    if (error.message.includes('API key not valid') || error.message.includes('400')) {
-                        console.warn('Invalid API key detected, marking as invalid');
-                        this.apiKeyValid = false;
-                        // Don't retry for API key errors
-                        console.log('Using local fallback due to invalid API key');
-                        return this.localFallbackUrl;
-                    }
-
-                    // Retry logic for other API failures (network, quota, etc.)
-                    if (this.retryCount < this.maxRetries) {
-                        this.retryCount++;
-                        console.log(`Retrying YouTube API... (${this.retryCount}/${this.maxRetries})`);
-                        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
-                        return this.fetchChannelBanner(channelId);
-                    }
-                }
-
-                // Fallback to local image if YouTube API fails
-                console.log('Using local fallback banner');
-                return this.localFallbackUrl;
-            }
-
-            async extractBannerFromChannelPage(channelId) {
-                // Since we can't easily scrape YouTube due to CORS and dynamic content,
-                // we'll use a known working banner URL for the LamGame channel
-                // This can be manually updated when needed
-
-                if (channelId === 'UCv2lripWdZDKtlrRy1J0dBw') {
-                    // Known banner URLs for LamGame channel (update manually when needed)
-                    const knownBanners = [
-                        'https://yt3.googleusercontent.com/K8dWs8jRMbCSGnc0iF2eS-M7Hxsqi1CWZ9ZrE0pLr8ikUFu4Ogure4hyFmiYt6CHGZrISDRYxag=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj',
-                        // Fallback URLs if the primary changes
-                        'https://yt3.googleusercontent.com/K8dWs8jRMbCSGnc0iF2eS-M7Hxsqi1CWZ9ZrE0pLr8ikUFu4Ogure4hyFmiYt6CHGZrISDRYxag=w1440-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj',
-                        'https://yt3.googleusercontent.com/K8dWs8jRMbCSGnc0iF2eS-M7Hxsqi1CWZ9ZrE0pLr8ikUFu4Ogure4hyFmiYt6CHGZrISDRYxag=w1024-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj'
-                    ];
-
-                    // Test each known banner URL
-                    for (const bannerUrl of knownBanners) {
-                        try {
-                            const isAccessible = await new Promise((resolve) => {
-                                const testImg = new Image();
-                                testImg.onload = () => resolve(true);
-                                testImg.onerror = () => resolve(false);
-                                testImg.src = bannerUrl;
-                                setTimeout(() => resolve(false), 3000); // 3 second timeout
-                            });
-
-                            if (isAccessible) {
-                                console.log('Found working banner URL:', bannerUrl);
-                                return bannerUrl;
-                            }
-                        } catch (error) {
-                            console.warn('Failed to test banner URL:', bannerUrl, error);
-                        }
-                    }
-                }
-
-                // If no known banners work, return null to try other methods
-                return null;
-            }
-
-            getResponsiveBannerUrl(baseUrl) {
-                if (!baseUrl) return null;
-
-                // Check if it's a local image
-                if (baseUrl.startsWith('/') || baseUrl.startsWith(window.location.origin)) {
-                    return baseUrl;
-                }
-
-                // Handle YouTube banner URLs with responsive sizing
-                if (baseUrl.includes('yt3.googleusercontent.com')) {
-                    const screenWidth = window.innerWidth || 1920;
-
-                    // Extract base URL without size parameters
-                    let baseImageUrl;
-                    if (baseUrl.includes('=w')) {
-                        // Remove existing size parameters
-                        baseImageUrl = baseUrl.replace(/=w\d+-.*?-rj/g, '');
-                    } else {
-                        baseImageUrl = baseUrl;
-                    }
-
-                    // Add appropriate size parameter based on screen width
-                    let sizeParam;
-                    if (screenWidth <= 480) {
-                        sizeParam = '=w640-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj';
-                    } else if (screenWidth <= 768) {
-                        sizeParam = '=w1024-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj';
-                    } else if (screenWidth <= 1024) {
-                        sizeParam = '=w1440-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj';
-                    } else {
-                        sizeParam = '=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj';
-                    }
-
-                    // Combine base URL with responsive size parameter
-                    const responsiveUrl = baseImageUrl + sizeParam;
-
-                    console.log(`Responsive YouTube banner URL for width ${screenWidth}:`, responsiveUrl);
-                    return responsiveUrl;
-                }
-
-                // For other external URLs, return as-is
-                return baseUrl;
-            }
-
-            async applyBannerBackground() {
-                const bannerContainer = document.getElementById('channel-banner-bg');
-                const loadingElement = document.getElementById('banner-loading');
-
-                if (!bannerContainer) {
-                    console.warn('Banner container not found');
-                    return;
-                }
-
-                console.log('Starting banner loading process...');
-                const startTime = performance.now();
-
-                // Show loading state
-                if (loadingElement) {
-                    loadingElement.classList.add('loading');
-                }
-
-                try {
-                    const baseBannerUrl = await this.fetchChannelBanner(this.channelId);
-
-                    if (baseBannerUrl) {
-                        const responsiveBannerUrl = this.getResponsiveBannerUrl(baseBannerUrl);
-
-                        // Preload the image
-                        const img = new Image();
-                        img.onload = () => {
-                            const loadTime = performance.now() - startTime;
-                            console.log(`Banner loaded successfully in ${loadTime.toFixed(2)}ms`);
-
-                            bannerContainer.style.backgroundImage = `url('${responsiveBannerUrl}')`;
-                            bannerContainer.classList.add('banner-loaded');
-
-                            // Hide loading state
-                            if (loadingElement) {
-                                setTimeout(() => {
-                                    loadingElement.classList.remove('loading');
-                                }, 500);
-                            }
-
-                            console.log('YouTube banner applied to background');
-                        };
-
-                        img.onerror = () => {
-                            console.warn('Failed to load banner image');
-                            this.handleBannerError();
-                        };
-
-                        img.src = responsiveBannerUrl;
-                    } else {
-                        this.handleBannerError();
-                    }
-                } catch (error) {
-                    console.error('Error applying banner:', error);
-                    this.handleBannerError();
-                }
-            }
-
-            handleBannerError() {
-                const bannerContainer = document.getElementById('channel-banner-bg');
-                const loadingElement = document.getElementById('banner-loading');
-
-                // Try local fallback image first
-                if (bannerContainer && this.localFallbackUrl) {
-                    console.log('Attempting to use local fallback image:', this.localFallbackUrl);
-
-                    const testImg = new Image();
-                    testImg.onload = () => {
-                        console.log('Local fallback image loaded successfully');
-                        bannerContainer.style.backgroundImage = `url('${this.localFallbackUrl}')`;
-                        bannerContainer.classList.add('banner-loaded');
-
-                        // Hide loading state
-                        if (loadingElement) {
-                            setTimeout(() => {
-                                loadingElement.classList.remove('loading');
-                            }, 300);
-                        }
-                    };
-
-                    testImg.onerror = () => {
-                        console.warn('Local fallback image also failed, using gradient');
-                        // Final fallback to gradient
-                        bannerContainer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-
-                        // Hide loading state
-                        if (loadingElement) {
-                            setTimeout(() => {
-                                loadingElement.classList.remove('loading');
-                            }, 300);
-                        }
-                    };
-
-                    testImg.src = this.localFallbackUrl;
-                } else {
-                    // Use gradient if no local fallback
-                    if (bannerContainer) {
-                        bannerContainer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                    }
-
-                    // Hide loading state
-                    if (loadingElement) {
-                        setTimeout(() => {
-                            loadingElement.classList.remove('loading');
-                        }, 300);
-                    }
-                }
-
-                console.log('Using fallback banner background');
-            }
-        }
-
-        // Initialize YouTube banner loader
-        let youtubeBanner;
-
-        // Debug function to test banner loading and layout
-        window.testYouTubeBanner = async function() {
-            console.log('=== Testing Optimized YouTube Banner ===');
-            const banner = new YouTubeChannelBanner();
-            const channelId = 'UCv2lripWdZDKtlrRy1J0dBw';
-
-            try {
-                const bannerUrl = await banner.fetchChannelBanner(channelId);
-                console.log('Final banner URL:', bannerUrl);
-
-                const responsiveUrl = banner.getResponsiveBannerUrl(bannerUrl);
-                console.log('Responsive banner URL:', responsiveUrl);
-
-                // Test the URL and check aspect ratio
-                const img = new Image();
-                img.onload = () => {
-                    const aspectRatio = (img.width / img.height).toFixed(2);
-                    console.log('✅ Optimized banner test successful!', {
-                        dimensions: `${img.width}x${img.height}`,
-                        aspectRatio: aspectRatio,
-                        isOptimal: aspectRatio >= '5.5' && aspectRatio <= '6.5' ? 'Yes' : 'Check ratio',
-                        url: responsiveUrl
-                    });
-
-                    // Test layout elements
-                    const bannerContainer = document.getElementById('channel-banner-bg');
-                    const statsContainer = document.querySelector('.channel-stats-minimal');
-                    const youtubeButton = document.querySelector('.btn-youtube-minimal');
-                    const description = document.querySelector('.channel-description');
-
-                    console.log('Minimal Layout Check:', {
-                        bannerContainer: bannerContainer ? '✅ Found' : '❌ Missing',
-                        statsContainerMinimal: statsContainer ? '✅ Found at bottom' : '❌ Missing',
-                        youtubeButtonMinimal: youtubeButton ? '✅ Small inline button' : '❌ Missing',
-                        description: description ? '❌ Still exists (should be removed)' : '✅ Removed',
-                        bannerWidth: bannerContainer ? `${bannerContainer.offsetWidth}px (${(bannerContainer.offsetWidth / window.innerWidth * 100).toFixed(1)}%)` : 'N/A',
-                        bannerHeight: bannerContainer ? `${bannerContainer.offsetHeight}px` : 'N/A',
-                        dynamicHeight: `calc(100vw / 6) = ${window.innerWidth / 6}px`
-                    });
-                };
-                img.onerror = () => {
-                    console.error('❌ Banner test failed');
-                };
-                img.src = responsiveUrl;
-
-            } catch (error) {
-                console.error('Banner test error:', error);
-            }
-        };
-
-        // Lazy loading with Intersection Observer
-        function initializeLazyBannerLoading() {
-            const channelSection = document.getElementById('youtube-channel-section');
-
-            if (!channelSection || !('IntersectionObserver' in window)) {
-                // Fallback for browsers without Intersection Observer
-                if (channelSection) {
-                    youtubeBanner = new YouTubeChannelBanner();
-                    youtubeBanner.applyBannerBackground();
-                }
-                return;
-            }
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && !entry.target.dataset.bannerLoaded) {
-                        entry.target.dataset.bannerLoaded = 'true';
-
-                        youtubeBanner = new YouTubeChannelBanner();
-                        youtubeBanner.applyBannerBackground();
-
-                        // Stop observing after loading
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, {
-                rootMargin: '100px 0px', // Load when 100px before entering viewport
-                threshold: 0.1
-            });
-
-            observer.observe(channelSection);
-        }
-
-        // Handle window resize for responsive banner
-        let resizeTimeout;
-        function handleBannerResize() {
-            if (youtubeBanner && window.innerWidth) {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => {
-                    youtubeBanner.applyBannerBackground();
-                }, 250);
-            }
-        }
-
         // Animate elements on scroll
         const observerOptions = {
             threshold: 0.1,
@@ -3134,12 +2304,6 @@ section { padding-top: 1rem !important; padding-bottom: 1rem !important; }
                 heroSection.style.opacity = '1';
                 heroSection.style.transform = 'translateY(0)';
             }
-
-            // Initialize YouTube channel banner lazy loading
-            initializeLazyBannerLoading();
-
-            // Add resize event listener for responsive banner
-            window.addEventListener('resize', handleBannerResize);
         });
     </script>
 

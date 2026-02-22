@@ -728,58 +728,189 @@ class HomeController extends Controller
     }
     
     /**
-     * Get YouTube videos from lamgame_vn channel
-     * Real videos from https://www.youtube.com/@lamgame_vn/videos
+     * Get YouTube videos from channel via Data API v3 (server-side, cached).
+     * Fallback to hardcoded data if API key not configured or API fails.
      */
     private function getYouTubeVideos()
     {
-        // Featured videos from @lamgame_vn channel (real content)
+        $channelId = config('youtube.channel_id');
+        $apiKey = config('youtube.api_key');
+        $cacheTtl = (int) config('youtube.cache_ttl', 3600);
+
+        // Try API fetch if key is configured
+        if ($apiKey) {
+            $cached = Cache::remember("yt_channel_{$channelId}", $cacheTtl, function () use ($channelId, $apiKey) {
+                return $this->fetchYouTubeData($channelId, $apiKey);
+            });
+            if ($cached) {
+                return $cached;
+            }
+        }
+
+        return $this->getYouTubeFallback();
+    }
+
+    /**
+     * Fetch channel info + latest videos from YouTube Data API v3.
+     * Returns null on failure so cache won't store bad data.
+     */
+    private function fetchYouTubeData(string $channelId, string $apiKey): ?array
+    {
+        try {
+            // 1. Channel snippet + statistics (1 quota unit)
+            $chResp = \Illuminate\Support\Facades\Http::get('https://www.googleapis.com/youtube/v3/channels', [
+                'part' => 'snippet,statistics,brandingSettings',
+                'id'   => $channelId,
+                'key'  => $apiKey,
+            ]);
+
+            if (!$chResp->ok() || empty($chResp->json('items.0'))) {
+                return null;
+            }
+
+            $ch = $chResp->json('items.0');
+            $stats = $ch['statistics'] ?? [];
+            $snippet = $ch['snippet'] ?? [];
+            $branding = $ch['brandingSettings'] ?? [];
+
+            $channelInfo = [
+                'name'        => $snippet['title'] ?? 'Làm Game',
+                'handle'      => $snippet['customUrl'] ?? '@lamgame_vn',
+                'subscribers' => $this->formatCount($stats['subscriberCount'] ?? 0),
+                'total_views' => $this->formatCount($stats['viewCount'] ?? 0),
+                'video_count' => (int) ($stats['videoCount'] ?? 0),
+                'channel_url' => 'https://www.youtube.com/channel/' . $channelId,
+                'channel_id'  => $channelId,
+                'avatar_url'  => $snippet['thumbnails']['medium']['url'] ?? '',
+                'banner_url'  => $branding['image']['bannerExternalUrl'] ?? '',
+            ];
+
+            // 2. Search latest videos (100 quota units) — limit 6
+            $vidResp = \Illuminate\Support\Facades\Http::get('https://www.googleapis.com/youtube/v3/search', [
+                'part'       => 'snippet',
+                'channelId'  => $channelId,
+                'order'      => 'date',
+                'type'       => 'video',
+                'maxResults' => 6,
+                'key'        => $apiKey,
+            ]);
+
+            $videos = [];
+            if ($vidResp->ok()) {
+                $videoIds = collect($vidResp->json('items', []))
+                    ->pluck('id.videoId')
+                    ->filter()
+                    ->implode(',');
+
+                // 3. Video details for duration + view count (1 quota unit)
+                $detailResp = $videoIds ? \Illuminate\Support\Facades\Http::get('https://www.googleapis.com/youtube/v3/videos', [
+                    'part' => 'contentDetails,statistics',
+                    'id'   => $videoIds,
+                    'key'  => $apiKey,
+                ]) : null;
+
+                $details = collect($detailResp?->json('items', []))->keyBy('id');
+
+                foreach ($vidResp->json('items', []) as $item) {
+                    $vid = $item['id']['videoId'] ?? null;
+                    if (!$vid) continue;
+
+                    $s = $item['snippet'] ?? [];
+                    $d = $details->get($vid);
+
+                    $videos[] = [
+                        'id'           => $vid,
+                        'title'        => $s['title'] ?? '',
+                        'description'  => $s['description'] ?? '',
+                        'thumbnail'    => $s['thumbnails']['high']['url'] ?? "https://img.youtube.com/vi/{$vid}/hqdefault.jpg",
+                        'duration'     => $this->formatDuration($d['contentDetails']['duration'] ?? ''),
+                        'views'        => $this->formatCount($d['statistics']['viewCount'] ?? 0),
+                        'published_at' => \Carbon\Carbon::parse($s['publishedAt'])->diffForHumans(),
+                        'url'          => "https://www.youtube.com/watch?v={$vid}",
+                    ];
+                }
+            }
+
+            return [
+                'featured'     => $videos ?: $this->getYouTubeFallback()['featured'],
+                'channel_info' => $channelInfo,
+            ];
+        } catch (\Exception $e) {
+            \Log::warning('YouTube API fetch failed: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    private function formatCount($num): string
+    {
+        $num = (int) $num;
+        if ($num >= 1000000) return round($num / 1000000, 1) . 'M';
+        if ($num >= 1000) return round($num / 1000, 2) . 'K';
+        return (string) $num;
+    }
+
+    private function formatDuration(string $iso): string
+    {
+        if (!$iso) return '';
+        try {
+            $interval = new \DateInterval($iso);
+            $h = $interval->h;
+            $m = $interval->i;
+            $s = $interval->s;
+            return $h > 0
+                ? sprintf('%d:%02d:%02d', $h, $m, $s)
+                : sprintf('%d:%02d', $m, $s);
+        } catch (\Exception $e) {
+            return '';
+        }
+    }
+
+    private function getYouTubeFallback(): array
+    {
         return [
             'featured' => [
                 [
                     'id' => 'sOdX4Kss5sg',
                     'title' => 'Bàn phím cơ Gaming Rapoo V500 phiên bản hợp kim Alloy hiện đại | LamGame.vn',
-                    'description' => 'Đánh giá chi tiết bàn phím cơ gaming Rapoo V500 với thiết kế hợp kim Alloy cao cấp. Phù hợp cho game thủ chuyên nghiệp và lập trình viên.',
-                    'thumbnail' => 'https://img.youtube.com/vi/sOdX4Kss5sg/maxresdefault.jpg',
+                    'description' => 'Đánh giá chi tiết bàn phím cơ gaming Rapoo V500 với thiết kế hợp kim Alloy cao cấp.',
+                    'thumbnail' => 'https://img.youtube.com/vi/sOdX4Kss5sg/hqdefault.jpg',
                     'duration' => '12:45',
                     'views' => '8.5K',
                     'published_at' => '3 ngày trước',
                     'url' => 'https://www.youtube.com/watch?v=sOdX4Kss5sg',
-                    'category' => 'Gaming Gear Review'
                 ],
                 [
                     'id' => 'mnsTBAfeVdQ',
                     'title' => 'Gameplay Showcase | LamGame.vn',
-                    'description' => 'Video gameplay và hướng dẫn chi tiết từ đội ngũ LamGame.vn. Khám phá các kỹ thuật chơi game và tips hữu ích cho game thủ.',
+                    'description' => 'Video gameplay và hướng dẫn chi tiết từ đội ngũ LamGame.vn.',
                     'thumbnail' => 'https://img.youtube.com/vi/mnsTBAfeVdQ/hqdefault.jpg',
                     'duration' => '16:24',
                     'views' => '9.8K',
                     'published_at' => '4 ngày trước',
                     'url' => 'https://www.youtube.com/watch?v=mnsTBAfeVdQ',
-                    'category' => 'Gameplay'
                 ],
                 [
                     'id' => 'mQdNkT0SQFM',
                     'title' => 'Islet Online - Tựa game có lối chơi giống Minecraft | LamGame.vn',
-                    'description' => 'Khám phá Islet Online, tựa game sandbox multiplayer với lối chơi tương tự Minecraft nhưng có những điểm khác biệt thú vị.',
-                    'thumbnail' => 'https://img.youtube.com/vi/mQdNkT0SQFM/maxresdefault.jpg',
+                    'description' => 'Khám phá Islet Online, tựa game sandbox multiplayer với lối chơi tương tự Minecraft.',
+                    'thumbnail' => 'https://img.youtube.com/vi/mQdNkT0SQFM/hqdefault.jpg',
                     'duration' => '22:18',
                     'views' => '12.7K',
                     'published_at' => '5 ngày trước',
                     'url' => 'https://www.youtube.com/watch?v=mQdNkT0SQFM',
-                    'category' => 'Game Review'
-                ]
+                ],
             ],
             'channel_info' => [
                 'name' => 'Làm Game',
                 'handle' => '@lamgame_vn',
                 'subscribers' => '2.85K',
                 'total_views' => '180K',
+                'video_count' => 0,
                 'channel_url' => 'https://www.youtube.com/@lamgame_vn',
-                'channel_id' => 'UCv2lripWdZDKtlrRy1J0dBw',
-                'banner_url' => null, // Will be dynamically loaded via JavaScript
-                'avatar_url' => 'https://yt3.googleusercontent.com/ytc/AIdro_lCL4LgHPQJU8-FMRZNjLgtIoJKwk7zJZ4xJQrYB4d3iw=s240-c-k-c0x00ffffff-no-rj'
-            ]
+                'channel_id' => config('youtube.channel_id', 'UCv2lripWdZDKtlrRy1J0dBw'),
+                'avatar_url' => '',
+                'banner_url' => '',
+            ],
         ];
     }
     
