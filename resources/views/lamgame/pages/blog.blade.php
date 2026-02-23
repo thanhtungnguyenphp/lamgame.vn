@@ -3,6 +3,15 @@
 @section('page_title', $page_title ?? 'Blog & Tin tức - Làm Game')
 @section('page_description', $page_description ?? 'Khám phá các bài viết hữu ích về lập trình game, Unity, Unreal Engine và game development')
 
+@push('pagination_links')
+    @if(isset($blogs) && $blogs->currentPage() > 1)
+        <link rel="prev" href="{{ $blogs->previousPageUrl() }}">
+    @endif
+    @if(isset($blogs) && $blogs->hasMorePages())
+        <link rel="next" href="{{ $blogs->nextPageUrl() }}">
+    @endif
+@endpush
+
 @section('content')
     <!-- Hero Section -->
     <section class="hero-simple">
