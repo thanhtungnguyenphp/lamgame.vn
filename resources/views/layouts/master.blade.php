@@ -25,8 +25,16 @@
     <!-- Google AdSense -->
     <meta name="google-adsense-account" content="ca-pub-5812352607411986">
     
-    <!-- Canonical URL -->
-    <link rel="canonical" href="{{ url()->current() }}">
+    <!-- Canonical URL (strip query params to avoid duplicate) -->
+    <link rel="canonical" href="{{ @yield('canonical_url', strtok(url()->current(), '?')) }}">
+
+    <!-- Pagination rel prev/next -->
+    @stack('pagination_links')
+
+    <!-- Robots directive for paginated pages -->
+    @if(request()->has('page') && request()->get('page') > 1)
+    <meta name="robots" content="noindex, follow">
+    @endif
     
     @stack('meta')
     <!-- Favicon -->

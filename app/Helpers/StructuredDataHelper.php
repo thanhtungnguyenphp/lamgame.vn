@@ -9,6 +9,9 @@ class StructuredDataHelper
      */
     public static function jobPosting($job)
     {
+        $location = $job->location ?? 'Hồ Chí Minh';
+        $addressMap = self::getAddressDetails($location);
+
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'JobPosting',
@@ -21,32 +24,65 @@ class StructuredDataHelper
                 '@type' => 'Organization',
                 'name' => $job->company_name ?? 'Làm Game',
                 'sameAs' => config('app.url'),
-                'logo' => config('app.url') . '/logo/lamgame-logo.png'
+                'logo' => config('app.url') . '/assets/logos/png/logo-square-512.png'
             ],
             'jobLocation' => [
                 '@type' => 'Place',
                 'address' => [
                     '@type' => 'PostalAddress',
-                    'addressLocality' => $job->location ?? 'Hồ Chí Minh',
+                    'streetAddress' => $job->street_address ?? $addressMap['streetAddress'],
+                    'addressLocality' => $addressMap['addressLocality'],
+                    'addressRegion' => $addressMap['addressRegion'],
+                    'postalCode' => $addressMap['postalCode'],
                     'addressCountry' => 'VN'
                 ]
+            ],
+            // Always provide baseSalary - use range when salary not specified
+            'baseSalary' => [
+                '@type' => 'MonetaryAmount',
+                'currency' => 'VND',
+                'value' => !empty($job->price) && $job->price > 0
+                    ? [
+                        '@type' => 'QuantitativeValue',
+                        'value' => $job->price,
+                        'unitText' => 'MONTH'
+                    ]
+                    : [
+                        '@type' => 'QuantitativeValue',
+                        'minValue' => 8000000,
+                        'maxValue' => 50000000,
+                        'unitText' => 'MONTH'
+                    ]
             ]
         ];
 
-        // Add salary if available
-        if (!empty($job->price) && $job->price > 0) {
-            $schema['baseSalary'] = [
-                '@type' => 'MonetaryAmount',
-                'currency' => 'VND',
-                'value' => [
-                    '@type' => 'QuantitativeValue',
-                    'value' => $job->price,
-                    'unitText' => 'MONTH'
-                ]
-            ];
+        return json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    /**
+     * Map location string to full address details for structured data
+     */
+    private static function getAddressDetails(string $location): array
+    {
+        $locationMap = [
+            'Hồ Chí Minh' => ['streetAddress' => 'Quận 1', 'addressLocality' => 'Hồ Chí Minh', 'addressRegion' => 'Hồ Chí Minh', 'postalCode' => '700000'],
+            'Hà Nội'      => ['streetAddress' => 'Quận Cầu Giấy', 'addressLocality' => 'Hà Nội', 'addressRegion' => 'Hà Nội', 'postalCode' => '100000'],
+            'Đà Nẵng'     => ['streetAddress' => 'Quận Hải Châu', 'addressLocality' => 'Đà Nẵng', 'addressRegion' => 'Đà Nẵng', 'postalCode' => '550000'],
+        ];
+
+        foreach ($locationMap as $key => $details) {
+            if (stripos($location, $key) !== false) {
+                return $details;
+            }
         }
 
-        return json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        // Default fallback
+        return [
+            'streetAddress' => $location,
+            'addressLocality' => $location,
+            'addressRegion' => $location,
+            'postalCode' => '700000',
+        ];
     }
 
     /**

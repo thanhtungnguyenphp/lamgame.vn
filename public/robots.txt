@@ -1,15 +1,28 @@
 User-agent: *
-Disallow: /auth/
-Disallow: /index.php/
-Disallow: /*?page=2$
-Disallow: /*?page=3$
-Disallow: /*?page=4$
-Disallow: /*?page=5$
-Disallow: /*?page=6$
-Disallow: /*?page=7$
-Disallow: /*?page=8$
-Disallow: /*?page=9$
-Disallow: /*?page=10$
 Allow: /
+
+# Block authentication & internal pages
+Disallow: /auth/
+Disallow: /admin/
+Disallow: /seller/
+Disallow: /checkout/
+Disallow: /storage/
+Disallow: /ai-thumbnail-test
+Disallow: /ai-images/
+
+# Block index.php URLs (duplicate of clean URLs)
+Disallow: /index.php
+Disallow: /index.php/
+
+# Block all paginated URLs (handled via canonical + noindex)
+Disallow: /*?page=
+
+# Block search/filter query params that create duplicates
+Disallow: /*?keyword=
+Disallow: /*?sort=
+Disallow: /*?order=
+
+# Block profile pages from indexing
+Disallow: /profile/
 
 Sitemap: https://lamgame.vn/sitemap.xml

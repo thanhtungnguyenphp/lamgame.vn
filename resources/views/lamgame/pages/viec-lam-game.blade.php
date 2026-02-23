@@ -3,6 +3,15 @@
 @section('page_title', $page_title ?? 'Việc làm Game - Làm Game')
 @section('page_description', $page_description ?? 'Tìm kiếm cơ hội việc làm trong ngành game development tại Việt Nam và quốc tế')
 
+@push('pagination_links')
+    @if(isset($jobs) && $jobs->currentPage() > 1)
+        <link rel="prev" href="{{ $jobs->previousPageUrl() }}">
+    @endif
+    @if(isset($jobs) && $jobs->hasMorePages())
+        <link rel="next" href="{{ $jobs->nextPageUrl() }}">
+    @endif
+@endpush
+
 @section('content')
     <!-- Progress bar -->
     <div class="progress-bar" id="progress-bar"></div>

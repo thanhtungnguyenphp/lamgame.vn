@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Spatie\Sitemap\Sitemap;
+use Spatie\Sitemap\SitemapIndex;
 use Spatie\Sitemap\Tags\Url;
 use App\Models\Blog;
 use Carbon\Carbon;
@@ -11,38 +12,61 @@ use Carbon\Carbon;
 class GenerateSitemap extends Command
 {
     protected $signature = 'sitemap:generate';
-    protected $description = 'Generate XML sitemap for jobs and blogs';
+    protected $description = 'Generate XML sitemap index with separate sitemaps for jobs, blogs, forum, and pages';
 
     public function handle()
     {
-        $this->info('🚀 Generating sitemap...');
-        
+        $this->info('🚀 Generating sitemaps...');
+
         try {
-            $sitemap = Sitemap::create();
             $baseUrl = config('app.url');
 
-            // 1. Homepage
-            $sitemap->add(
-                Url::create('/')
-                    ->setLastModificationDate(Carbon::now())
-                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
-                    ->setPriority(1.0)
-            );
+            // Generate individual sitemaps
+            $this->generatePagesSitemap();
+            $this->generateJobsSitemap();
+            $this->generateBlogsSitemap();
+            $this->generateForumSitemap();
 
-            // 2. Jobs listing page
-            $sitemap->add(
-                Url::create('/viec-lam-game')
-                    ->setLastModificationDate(Carbon::now())
-                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_HOURLY)
-                    ->setPriority(0.9)
-            );
+            // Create sitemap index
+            $index = SitemapIndex::create()
+                ->add($baseUrl . '/sitemap-pages.xml')
+                ->add($baseUrl . '/sitemap-jobs.xml')
+                ->add($baseUrl . '/sitemap-blogs.xml')
+                ->add($baseUrl . '/sitemap-forum.xml');
 
-            // 3. Individual job posts
-            $this->info('📋 Adding job posts...');
-            $jobs = \DB::table('products as p')
-            ->join('product_flat as pf', function($join) {
-                $join->on('p.id', '=', 'pf.product_id')
-                     ->where('pf.locale', '=', 'vi');
+            $index->writeToFile(public_path('sitemap.xml'));
+
+            $this->info("✅ Sitemap index generated at /sitemap.xml");
+            return 0;
+
+        } catch (\Exception $e) {
+            $this->error('❌ Error: ' . $e->getMessage());
+            return 1;
+        }
+    }
+
+    private function generatePagesSitemap()
+    {
+        $sitemap = Sitemap::create();
+
+        $sitemap->add(Url::create('/')->setLastModificationDate(Carbon::now())->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)->setPriority(1.0));
+        $sitemap->add(Url::create('/viec-lam-game')->setLastModificationDate(Carbon::now())->setChangeFrequency(Url::CHANGE_FREQUENCY_HOURLY)->setPriority(0.9));
+        $sitemap->add(Url::create('/blog')->setLastModificationDate(Carbon::now())->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)->setPriority(0.9));
+        $sitemap->add(Url::create('/forum')->setLastModificationDate(Carbon::now())->setChangeFrequency(Url::CHANGE_FREQUENCY_HOURLY)->setPriority(0.8));
+        $sitemap->add(Url::create('/source-game')->setLastModificationDate(Carbon::now())->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)->setPriority(0.7));
+        $sitemap->add(Url::create('/lien-he')->setLastModificationDate(Carbon::now())->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)->setPriority(0.5));
+
+        $sitemap->writeToFile(public_path('sitemap-pages.xml'));
+        $this->info("✅ Pages sitemap generated");
+    }
+
+    private function generateJobsSitemap()
+    {
+        $sitemap = Sitemap::create();
+
+        $jobs = \DB::table('products as p')
+            ->join('product_flat as pf', function ($join) {
+                $join->on('p.id', '=', 'pf.product_id')->where('pf.locale', '=', 'vi');
             })
             ->where('p.type', 'job')
             ->where('pf.status', 1)
@@ -53,28 +77,23 @@ class GenerateSitemap extends Command
         foreach ($jobs as $job) {
             if (!empty($job->url_key)) {
                 $sitemap->add(
-                    Url::create('/viec-lam/' . $job->url_key)
+                    Url::create('/viec-lam/' . rawurlencode($job->url_key))
                         ->setLastModificationDate(Carbon::parse($job->updated_at))
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
                         ->setPriority(0.8)
                 );
             }
         }
-        $this->info("✅ Added {$jobs->count()} job posts");
 
-        // 4. Blog listing page
-        $sitemap->add(
-            Url::create('/blog')
-                ->setLastModificationDate(Carbon::now())
-                ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
-                ->setPriority(0.9)
-        );
+        $sitemap->writeToFile(public_path('sitemap-jobs.xml'));
+        $this->info("✅ Jobs sitemap: {$jobs->count()} URLs");
+    }
 
-        // 5. Individual blog posts
-        $this->info('📝 Adding blog posts...');
-        $blogs = Blog::published()
-            ->select('slug', 'updated_at')
-            ->get();
+    private function generateBlogsSitemap()
+    {
+        $sitemap = Sitemap::create();
+
+        $blogs = Blog::published()->select('slug', 'updated_at')->get();
 
         foreach ($blogs as $blog) {
             $sitemap->add(
@@ -84,48 +103,31 @@ class GenerateSitemap extends Command
                     ->setPriority(0.7)
             );
         }
-        $this->info("✅ Added {$blogs->count()} blog posts");
 
-        // 6. Forum pages
-        $sitemap->add(
-            Url::create('/forum')
-                ->setLastModificationDate(Carbon::now())
-                ->setChangeFrequency(Url::CHANGE_FREQUENCY_HOURLY)
-                ->setPriority(0.8)
-        );
+        $sitemap->writeToFile(public_path('sitemap-blogs.xml'));
+        $this->info("✅ Blogs sitemap: {$blogs->count()} URLs");
+    }
 
-        // 7. Static pages
-        $staticPages = [
-            '/source-game' => 0.7,
-        ];
+    private function generateForumSitemap()
+    {
+        $sitemap = Sitemap::create();
 
-        foreach ($staticPages as $url => $priority) {
+        $posts = \DB::table('forum_posts')
+            ->where('status', 'published')
+            ->select('id', 'slug', 'updated_at')
+            ->get();
+
+        foreach ($posts as $post) {
+            $slug = $post->slug ?? $post->id;
             $sitemap->add(
-                Url::create($url)
-                    ->setLastModificationDate(Carbon::now())
-                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
-                    ->setPriority($priority)
+                Url::create('/forum/posts/' . $slug)
+                    ->setLastModificationDate(Carbon::parse($post->updated_at))
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                    ->setPriority(0.6)
             );
         }
 
-        // Save sitemap
-        $path = public_path('sitemap.xml');
-        $sitemap->writeToFile($path);
-
-        $this->info("✅ Sitemap generated successfully!");
-        $this->info("📍 Location: {$path}");
-        $this->info("🔗 URL: {$baseUrl}/sitemap.xml");
-        
-            // Generate stats
-            $totalUrls = count($sitemap->getTags());
-            $this->info("📊 Total URLs: {$totalUrls}");
-
-            return 0;
-            
-        } catch (\Exception $e) {
-            $this->error('❌ Error: ' . $e->getMessage());
-            $this->info('💡 Tip: Check database connection in .env');
-            return 1;
-        }
+        $sitemap->writeToFile(public_path('sitemap-forum.xml'));
+        $this->info("✅ Forum sitemap: {$posts->count()} URLs");
     }
 }

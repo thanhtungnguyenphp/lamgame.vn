@@ -13,6 +13,15 @@
     <script type="application/ld+json">
     {!! \App\Helpers\StructuredDataHelper::article($blog) !!}
     </script>
+
+    {{-- BreadcrumbList Structured Data --}}
+    <script type="application/ld+json">
+    {!! \App\Helpers\StructuredDataHelper::breadcrumb([
+        ['name' => 'Trang chủ', 'url' => config('app.url')],
+        ['name' => 'Blog', 'url' => config('app.url') . '/blog'],
+        ['name' => $blog->name, 'url' => config('app.url') . '/blog/' . $blog->slug]
+    ]) !!}
+    </script>
 <!-- Blog tracking -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {

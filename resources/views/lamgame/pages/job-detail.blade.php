@@ -6,11 +6,21 @@
 @push('meta')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="job-id" content="{{ $job->id }}">
-    
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="vi_VN">
 
     {{-- JobPosting Structured Data --}}
     <script type="application/ld+json">
     {!! \App\Helpers\StructuredDataHelper::jobPosting($job) !!}
+    </script>
+
+    {{-- BreadcrumbList Structured Data --}}
+    <script type="application/ld+json">
+    {!! \App\Helpers\StructuredDataHelper::breadcrumb([
+        ['name' => 'Trang chủ', 'url' => config('app.url')],
+        ['name' => 'Việc làm Game', 'url' => config('app.url') . '/viec-lam-game'],
+        ['name' => $job->name, 'url' => config('app.url') . '/viec-lam/' . $job->url_key]
+    ]) !!}
     </script>
     <!-- Highlight Cards CSS -->
     <link rel="stylesheet" href="{{ asset('css/job-detail-highlight.css') }}">
