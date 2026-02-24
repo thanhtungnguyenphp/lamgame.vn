@@ -95,7 +95,7 @@ class StructuredDataHelper
             '@type' => 'Article',
             'headline' => $blog->name,
             'description' => $blog->meta_description ?? strip_tags(substr($blog->short_description, 0, 160)),
-            'image' => $blog->src ? config('app.url') . '/' . ltrim($blog->src, '/') : config('app.url') . '/logo/lamgame-logo.png',
+            'image' => $blog->featured_image,
             'datePublished' => date('c', strtotime($blog->published_at ?? $blog->created_at)),
             'dateModified' => date('c', strtotime($blog->updated_at)),
             'author' => [
