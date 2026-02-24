@@ -26,7 +26,11 @@
     <meta name="google-adsense-account" content="ca-pub-5812352607411986">
     
     <!-- Canonical URL (strip query params to avoid duplicate) -->
-    <link rel="canonical" href="{{ @yield('canonical_url', strtok(url()->current(), '?')) }}">
+    @hasSection('canonical_url')
+        <link rel="canonical" href="@yield('canonical_url')">
+    @else
+        <link rel="canonical" href="{{ strtok(url()->current(), '?') }}">
+    @endif
 
     <!-- Pagination rel prev/next -->
     @stack('pagination_links')
