@@ -2,6 +2,8 @@
 
 @section('page_title', $page_title)
 @section('page_description', $page_description)
+@section('og_type', 'article')
+@section('og_image', $blog->featured_image ?? asset('assets/logos/png/logo-square-512.png'))
 
 @if($page_keywords)
 @section('meta_keywords', $page_keywords)
@@ -27,13 +29,13 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Track blog view
         if (typeof window.trackBlogView === 'function') {
-            window.trackBlogView('{{ $blog->id }}', '{{ addslashes($blog->title) }}', '{{ $blog->category ?? "general" }}');
+            window.trackBlogView('{{ $blog->id }}', '{{ addslashes($blog->name) }}', '{{ $blog->category->name ?? "general" }}');
         } else if (typeof window.trackEvent === 'function') {
             window.trackEvent('blog_view', {
                 'event_category': 'blog',
-                'event_label': '{{ addslashes($blog->title) }}',
+                'event_label': '{{ addslashes($blog->name) }}',
                 'blog_id': '{{ $blog->id }}',
-                'blog_category': '{{ $blog->category ?? "general" }}',
+                'blog_category': '{{ $blog->category->name ?? "general" }}',
                 'value': 1
             });
         }
