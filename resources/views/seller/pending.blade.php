@@ -128,7 +128,7 @@
             </div>
 
             <!-- Back Button -->
-            <a href="{{ route('home') }}" 
+            <a href="{{ url('/') }}" 
                >
                 ← Về trang chủ
             </a>
