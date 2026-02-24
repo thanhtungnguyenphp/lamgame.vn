@@ -18,9 +18,9 @@
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="@yield('page_title', 'LAMGAME • Làm Game - Học Lập Trình Game và Phát Triển Ứng Dụng')">
     <meta property="og:description" content="@yield('page_description', 'Làm Game - Nền tảng học lập trình game, phát triển ứng dụng và các khóa học lập trình chuyên sâu. Bắt đầu hành trình của bạn ngay hôm nay!')">
-    <meta property="og:image" content="{{ asset('assets/logos/png/logo-square-512.png') }}">
+    <meta property="og:image" content="@yield('og_image', asset('assets/logos/png/logo-square-512.png'))">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="@yield('og_type', 'website')">
     
     <!-- Google AdSense -->
     <meta name="google-adsense-account" content="ca-pub-5812352607411986">
