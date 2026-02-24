@@ -4,10 +4,23 @@
 @section('page_description', $page_description)
 @section('og_type', 'article')
 @section('og_image', $blog->featured_image ?? asset('assets/logos/png/logo-square-512.png'))
+@section('twitter_card', 'summary_large_image')
 
 @if($page_keywords)
 @section('meta_keywords', $page_keywords)
 @endif
+
+@push('og_extra')
+    <meta property="article:published_time" content="{{ $blog->published_at ? $blog->published_at->toIso8601String() : $blog->created_at->toIso8601String() }}">
+    <meta property="article:modified_time" content="{{ $blog->updated_at->toIso8601String() }}">
+    <meta property="article:author" content="{{ $blog->author ?? 'Làm Game' }}">
+    @if($postCategories->count() > 0)
+    <meta property="article:section" content="{{ $postCategories->first()->name }}">
+    @endif
+    @foreach($postTags as $tag)
+    <meta property="article:tag" content="{{ $tag->name }}">
+    @endforeach
+@endpush
 
 @push('meta')
 
@@ -24,6 +37,14 @@
         ['name' => $blog->name, 'url' => config('app.url') . '/blog/' . $blog->slug]
     ]) !!}
     </script>
+
+    {{-- FAQPage Structured Data (if blog has FAQ content) --}}
+    @php $faqs = $blog->extractFaqs(); @endphp
+    @if(count($faqs) > 0)
+    <script type="application/ld+json">
+    {!! \App\Helpers\StructuredDataHelper::faq($faqs) !!}
+    </script>
+    @endif
 <!-- Blog tracking -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -71,7 +92,7 @@
                             <div class="post-meta">
                                 <div class="meta-item">
                                     <i class="fa fa-calendar"></i>
-                                    <span>{{ $blog->formatted_date }}</span>
+                                    <time datetime="{{ $blog->published_at ? $blog->published_at->toIso8601String() : $blog->created_at->toIso8601String() }}">{{ $blog->formatted_date }}</time>
                                 </div>
                                 <div class="meta-item">
                                     <i class="fa fa-user"></i>
@@ -105,7 +126,7 @@
 
                         <!-- Featured Image -->
                         <div class="post-featured-image">
-                            <img src="{{ $blog->featured_image }}" alt="{{ $blog->name }}" class="img-fluid">
+                            <img src="{{ $blog->featured_image }}" alt="{{ $blog->name }}" class="img-fluid" width="800" height="420" fetchpriority="high">
                         </div>
 
                         <!-- Post Content -->
@@ -137,13 +158,19 @@
                         <div class="social-share">
                             <h4><i class="fa fa-share-alt"></i> Chia sẻ bài viết:</h4>
                             <div class="share-buttons">
-                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" target="_blank" class="btn-share facebook">
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" target="_blank" rel="noopener noreferrer" class="btn-share facebook">
                                     <i class="fab fa-facebook-f"></i> Facebook
                                 </a>
-                                <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($blog->name) }}" target="_blank" class="btn-share twitter">
+                                <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($blog->name) }}" target="_blank" rel="noopener noreferrer" class="btn-share twitter">
                                     <i class="fab fa-twitter"></i> Twitter
                                 </a>
-                                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(request()->url()) }}" target="_blank" class="btn-share linkedin">
+                                <a href="https://zalo.me/share/url?url={{ urlencode(request()->url()) }}&title={{ urlencode($blog->name) }}" target="_blank" rel="noopener noreferrer" class="btn-share zalo">
+                                    Zalo
+                                </a>
+                                <a href="https://t.me/share/url?url={{ urlencode(request()->url()) }}&text={{ urlencode($blog->name) }}" target="_blank" rel="noopener noreferrer" class="btn-share telegram">
+                                    <i class="fab fa-telegram-plane"></i> Telegram
+                                </a>
+                                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(request()->url()) }}" target="_blank" rel="noopener noreferrer" class="btn-share linkedin">
                                     <i class="fab fa-linkedin-in"></i> LinkedIn
                                 </a>
                                 <button onclick="copyToClipboard('{{ request()->url() }}')" class="btn-share copy">
@@ -169,7 +196,7 @@
                             <article class="related-post">
                                 <div class="post-thumbnail">
                                     <a href="/blog/{{ $relatedPost->slug }}">
-                                        <img src="{{ $relatedPost->featured_image }}" alt="{{ $relatedPost->name }}">
+                                        <img src="{{ $relatedPost->featured_image }}" alt="{{ $relatedPost->name }}" loading="lazy">
                                     </a>
                                     @if($relatedPost->category)
                                     <div class="post-category">{{ $relatedPost->category->name }}</div>
@@ -221,7 +248,7 @@
                                 <div class="recent-post">
                                     <div class="post-thumb">
                                         <a href="/blog/{{ $post->slug }}">
-                                            <img src="{{ $post->featured_image }}" alt="{{ $post->name }}">
+                                            <img src="{{ $post->featured_image }}" alt="{{ $post->name }}" loading="lazy">
                                         </a>
                                     </div>
                                     <div class="post-info">
@@ -492,6 +519,8 @@
         
         .btn-share.facebook { background: #1877f2; }
         .btn-share.twitter { background: #1da1f2; }
+        .btn-share.zalo { background: #0068ff; }
+        .btn-share.telegram { background: #0088cc; }
         .btn-share.linkedin { background: #0077b5; }
         .btn-share.copy { background: #666; }
 

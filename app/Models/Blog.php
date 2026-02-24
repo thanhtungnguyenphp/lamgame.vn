@@ -117,6 +117,29 @@ class Blog extends Model
     }
 
     /**
+     * Extract FAQ items from blog content (looks for FAQ section with Q&A pattern)
+     */
+    public function extractFaqs(): array
+    {
+        $content = $this->description ?? '';
+        $faqs = [];
+
+        // Match patterns: <strong>Q: ...</strong> followed by answer text, or <h3>question</h3><p>answer</p>
+        // Pattern 1: FAQ with "Hỏi:" or "Q:" prefix
+        if (preg_match_all('/<(?:strong|b|h[34])[^>]*>\s*(?:Hỏi|Q)\s*[:：]\s*(.*?)<\/(?:strong|b|h[34])>\s*(?:<br\s*\/?>)?\s*(?:<p>)?\s*(?:(?:Trả lời|A)\s*[:：]\s*)?(.*?)(?:<\/p>|<(?:strong|b|h[34]))/si', $content, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $question = trim(strip_tags($match[1]));
+                $answer = trim(strip_tags($match[2]));
+                if ($question && $answer) {
+                    $faqs[] = ['question' => $question, 'answer' => $answer];
+                }
+            }
+        }
+
+        return $faqs;
+    }
+
+    /**
      * Get blog URL
      */
     public function getUrlAttribute()
