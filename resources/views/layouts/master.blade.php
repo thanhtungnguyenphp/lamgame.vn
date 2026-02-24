@@ -21,6 +21,15 @@
     <meta property="og:image" content="@yield('og_image', asset('assets/logos/png/logo-square-512.png'))">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:site_name" content="LamGame.vn">
+    <meta property="og:locale" content="vi_VN">
+    @stack('og_extra')
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="@yield('twitter_card', 'summary')">
+    <meta name="twitter:title" content="@yield('page_title', 'LAMGAME • Làm Game')">
+    <meta name="twitter:description" content="@yield('page_description', 'Làm Game - Nền tảng học lập trình game và phát triển ứng dụng.')">
+    <meta name="twitter:image" content="@yield('og_image', asset('assets/logos/png/logo-square-512.png'))">
     
     <!-- Google AdSense -->
     <meta name="google-adsense-account" content="ca-pub-5812352607411986">

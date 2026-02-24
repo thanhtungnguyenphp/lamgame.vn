@@ -95,12 +95,12 @@ class StructuredDataHelper
             '@type' => 'Article',
             'headline' => $blog->name,
             'description' => $blog->meta_description ?? strip_tags(substr($blog->short_description, 0, 160)),
-            'image' => $blog->src ? config('app.url') . '/' . ltrim($blog->src, '/') : config('app.url') . '/logo/lamgame-logo.png',
+            'image' => $blog->featured_image,
             'datePublished' => date('c', strtotime($blog->published_at ?? $blog->created_at)),
             'dateModified' => date('c', strtotime($blog->updated_at)),
             'author' => [
-                '@type' => 'Organization',
-                'name' => 'Làm Game',
+                '@type' => 'Person',
+                'name' => $blog->author ?? 'Làm Game',
                 'url' => config('app.url')
             ],
             'publisher' => [
@@ -114,7 +114,45 @@ class StructuredDataHelper
             'mainEntityOfPage' => [
                 '@type' => 'WebPage',
                 '@id' => config('app.url') . '/blog/' . $blog->slug
-            ]
+            ],
+            'wordCount' => str_word_count(strip_tags($blog->description ?? '')),
+            'inLanguage' => 'vi',
+        ];
+
+        // Add article section if category exists
+        if ($blog->category) {
+            $schema['articleSection'] = $blog->category->name;
+        }
+
+        // Add keywords if available
+        if ($blog->meta_keywords) {
+            $schema['keywords'] = $blog->meta_keywords;
+        }
+
+        return json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    /**
+     * Generate FAQPage schema
+     */
+    public static function faq(array $faqs)
+    {
+        $items = [];
+        foreach ($faqs as $faq) {
+            $items[] = [
+                '@type' => 'Question',
+                'name' => $faq['question'],
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text' => $faq['answer']
+                ]
+            ];
+        }
+
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'mainEntity' => $items
         ];
 
         return json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
