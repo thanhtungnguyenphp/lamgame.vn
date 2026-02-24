@@ -349,7 +349,7 @@
                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                 🚪 Đăng xuất
             </a>
-            <a href="{{ route('home') }}" class="btn-outline">
+            <a href="{{ url('/') }}" class="btn-outline">
                 🏠 Về trang chủ
             </a>
         </div>

@@ -273,7 +273,7 @@ class CustomerAuthController extends Controller
         // Auto login
         Auth::guard('customer')->login($customer);
 
-        return redirect(route('home'))
+        return redirect(url('/'))
             ->with('success', 'Xác thực thành công! Chào mừng bạn đến với LAMGAME.');
     }
 
@@ -291,11 +291,11 @@ class CustomerAuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Đã đăng xuất thành công.',
-                'redirect_url' => route('home')
+                'redirect_url' => url('/')
             ]);
         }
 
-        return redirect(route('home'))
+        return redirect(url('/'))
                         ->with('success', 'Đã đăng xuất thành công.');
     }
 

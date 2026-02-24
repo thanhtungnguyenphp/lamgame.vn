@@ -9,7 +9,7 @@
     <section class="breadcrumb-section">
         <div class="container">
             <nav class="breadcrumb">
-                <a href="{{ route('home') }}">Trang chủ</a>
+                <a href="{{ url('/') }}">Trang chủ</a>
                 <span class="separator">›</span>
                 <a href="{{ route('forum.index') }}">Forum</a>
                 <span class="separator">›</span>

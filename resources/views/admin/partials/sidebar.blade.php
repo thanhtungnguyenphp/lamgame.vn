@@ -41,7 +41,7 @@
     </ul>
 
     <div class="sidebar-footer">
-        <a href="{{ route('home') }}" class="sidebar-menu__link">
+        <a href="{{ url('/') }}" class="sidebar-menu__link">
             <i class="icon-arrow-left"></i>
             <span>Về trang chủ</span>
         </a>
