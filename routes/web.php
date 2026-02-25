@@ -27,6 +27,9 @@ Route::post('lien-he', [LamGamePageController::class, 'submitContact'])->name('l
 Route::get('blog', [LamGamePageController::class, 'blog'])->name('lamgame.blog');
 Route::get('blog/{slug}', [LamGamePageController::class, 'blogShow'])->name('blog.show');
 
+// Landing Page routes
+Route::get('p/{slug}', [\App\Http\Controllers\LandingPageController::class, 'show'])->name('landing-page.show');
+
 // Seller routes
 Route::prefix('seller')->name('seller.')->middleware('theme')->group(function () {
     Route::get('register', [App\Http\Controllers\SellerController::class, 'showRegisterForm'])->name('register');
@@ -172,6 +175,16 @@ Route::get('ai-images/{path}', function($path) {
 
 
 Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_url')], function () {
+
+    // Landing Pages Management
+    Route::prefix('landing-pages')->name('admin.landing-pages.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\LandingPageController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\LandingPageController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\LandingPageController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [\App\Http\Controllers\Admin\LandingPageController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [\App\Http\Controllers\Admin\LandingPageController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\App\Http\Controllers\Admin\LandingPageController::class, 'destroy'])->name('destroy');
+    });
 
     // Blog Edit Route Override - Intercept before package routes
     Route::get('blog/edit/{id}', [App\Http\Controllers\Admin\BlogController::class, 'edit'])
