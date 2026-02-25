@@ -22,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
             \App\Models\Product::class
         );
 
+        // Merge landing pages menu into Bagisto admin sidebar
+        $this->mergeConfigFrom(base_path('config/menu-landing.php'), 'menu.admin');
+
         // Enable Debugbar only when the package exists and IP is allowed.
         $allowedIPs = array_map('trim', explode(',', (string) config('app.debug_allowed_ips')));
         $allowedIPs = array_filter($allowedIPs);

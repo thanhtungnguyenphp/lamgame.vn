@@ -38,6 +38,13 @@
                 <span>Cài Đặt</span>
             </a>
         </li>
+
+        <li class="sidebar-menu__item">
+            <a href="{{ route('admin.landing-pages.index') }}" class="sidebar-menu__link {{ request()->routeIs('admin.landing-pages.*') ? 'active' : '' }}">
+                <i class="icon-home"></i>
+                <span>Landing Pages</span>
+            </a>
+        </li>
     </ul>
 
     <div class="sidebar-footer">

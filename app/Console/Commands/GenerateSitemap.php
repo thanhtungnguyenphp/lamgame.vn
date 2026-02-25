@@ -7,6 +7,7 @@ use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\SitemapIndex;
 use Spatie\Sitemap\Tags\Url;
 use App\Models\Blog;
+use App\Models\LandingPage;
 use Carbon\Carbon;
 
 class GenerateSitemap extends Command
@@ -26,13 +27,15 @@ class GenerateSitemap extends Command
             $this->generateJobsSitemap();
             $this->generateBlogsSitemap();
             $this->generateForumSitemap();
+            $this->generateLandingPagesSitemap();
 
             // Create sitemap index
             $index = SitemapIndex::create()
                 ->add($baseUrl . '/sitemap-pages.xml')
                 ->add($baseUrl . '/sitemap-jobs.xml')
                 ->add($baseUrl . '/sitemap-blogs.xml')
-                ->add($baseUrl . '/sitemap-forum.xml');
+                ->add($baseUrl . '/sitemap-forum.xml')
+                ->add($baseUrl . '/sitemap-landing.xml');
 
             $index->writeToFile(public_path('sitemap.xml'));
 
@@ -129,5 +132,24 @@ class GenerateSitemap extends Command
 
         $sitemap->writeToFile(public_path('sitemap-forum.xml'));
         $this->info("✅ Forum sitemap: {$posts->count()} URLs");
+    }
+
+    private function generateLandingPagesSitemap()
+    {
+        $sitemap = Sitemap::create();
+
+        $pages = LandingPage::active()->select('slug', 'updated_at')->get();
+
+        foreach ($pages as $page) {
+            $sitemap->add(
+                Url::create('/p/' . $page->slug)
+                    ->setLastModificationDate(Carbon::parse($page->updated_at))
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
+                    ->setPriority(0.8)
+            );
+        }
+
+        $sitemap->writeToFile(public_path('sitemap-landing.xml'));
+        $this->info("✅ Landing pages sitemap: {$pages->count()} URLs");
     }
 }
