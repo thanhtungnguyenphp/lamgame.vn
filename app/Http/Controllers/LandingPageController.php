@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LandingPage;
+use App\Models\M7Match;
 use Illuminate\Http\Request;
 
 class LandingPageController extends Controller
@@ -15,15 +16,21 @@ class LandingPageController extends Controller
 
         $templateView = "lamgame.landing.{$page->template}";
 
-        // Fallback to general if template view doesn't exist
         if (!view()->exists($templateView)) {
             $templateView = 'lamgame.landing.general';
         }
 
-        return view($templateView, [
+        $data = [
             'page'             => $page,
             'page_title'       => $page->meta_title ?: $page->name,
             'page_description' => $page->meta_description ?: $page->hero_subtitle,
-        ]);
+        ];
+
+        // Pass matches for mini-game template
+        if ($page->template === 'mini-game') {
+            $data['matches'] = M7Match::forPage($page->id)->orderBy('match_at')->get();
+        }
+
+        return view($templateView, $data);
     }
 }
