@@ -30,6 +30,10 @@ Route::get('blog/{slug}', [LamGamePageController::class, 'blogShow'])->name('blo
 // Landing Page routes
 Route::get('p/{slug}', [\App\Http\Controllers\LandingPageController::class, 'show'])->name('landing-page.show');
 
+// M7 Mini Game
+Route::post('m7/predict', [\App\Http\Controllers\M7PredictionController::class, 'store'])->name('m7.predict');
+Route::get('m7/leaderboard', [\App\Http\Controllers\M7PredictionController::class, 'leaderboard'])->name('m7.leaderboard');
+
 // Seller routes
 Route::prefix('seller')->name('seller.')->middleware('theme')->group(function () {
     Route::get('register', [App\Http\Controllers\SellerController::class, 'showRegisterForm'])->name('register');
