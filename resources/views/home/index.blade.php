@@ -78,13 +78,6 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-optimized-banner.css') }}">
     <style>
-    /* Dynamic Banner Styles */
-    .bg.custom-image {
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
-
     /* Fallback banner styles */
     .banner-fallback {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -221,7 +214,11 @@
                         <div class="slide" data-banner-id="{{ $banner['id'] }}">
                             <a href="{{ $banner['link'] }}" class="slide-link" title="{{ $banner['title'] }}" target="{{ $banner['target'] }}" onclick="trackBannerClick({{ $banner['id'] }})">
                                 @if($banner['image'])
-                                    <div class="bg custom-image" style="background-image: url('{{ $banner['image'] }}');"></div>
+                                    <img class="slide-img" 
+                                         src="{{ $banner['image'] }}" 
+                                         alt="{{ $banner['title'] }}"
+                                         loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
+                                         style="object-position: {{ $banner['focal_point'] ?? 'center 30%' }}">
                                 @else
                                     <div class="bg {{ $banner['css_classes'] }}"></div>
                                 @endif

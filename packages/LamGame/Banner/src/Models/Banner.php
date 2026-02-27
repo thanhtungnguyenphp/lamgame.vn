@@ -39,6 +39,7 @@ class Banner extends TranslatableModel
         'css_classes',
         'attributes',
         'settings',
+        'focal_point',
         'clicks_count',
         'impressions_count',
     ];
