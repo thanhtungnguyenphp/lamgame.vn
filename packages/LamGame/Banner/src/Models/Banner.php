@@ -244,7 +244,7 @@ class Banner extends TranslatableModel
             return $this->image;
         }
 
-        return Storage::url($this->image);
+        return Storage::disk('public')->url($this->image);
     }
 
     /**

@@ -4,11 +4,11 @@ namespace LamGame\Banner\Http\Controllers\Admin;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use LamGame\Banner\Models\Banner;
 use LamGame\Banner\Repositories\BannerRepository;
 use Webkul\Admin\Http\Controllers\Controller;
-use Webkul\Admin\DataGrids\DataGrid;
 use Webkul\Core\Models\Channel;
 
 class BannerController extends Controller
@@ -100,6 +100,8 @@ class BannerController extends Controller
             
             $banner = $this->bannerRepository->create($validatedData);
 
+            $this->uploadImage($request, $banner);
+
             // Clear banner cache
             $this->bannerRepository->clearAllCache();
 
@@ -150,11 +152,15 @@ class BannerController extends Controller
      */
     public function update(Request $request, int $id): RedirectResponse
     {
+        \Log::info('=== BANNER UPDATE HIT ===', ['id' => $id, 'all_input_keys' => array_keys($request->all()), 'all_files' => array_keys($request->allFiles())]);
+
         $validatedData = $this->validateBannerData($request, $id);
 
         try {
             $banner = $this->bannerRepository->findOrFail($id);
             $this->bannerRepository->update($validatedData, $id);
+
+            $this->uploadImage($request, $banner);
 
             // Clear banner cache
             $this->bannerRepository->clearBannerCache($banner);
@@ -164,6 +170,7 @@ class BannerController extends Controller
             return redirect()->route('admin.banners.index');
 
         } catch (\Exception $e) {
+            \Log::error('Banner update failed', ['id' => $id, 'error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             session()->flash('error', trans('banner::app.admin.banners.update-error'));
 
             return redirect()->back()->withInput();
@@ -318,7 +325,6 @@ class BannerController extends Controller
             
             'title' => 'nullable|string|max:255',
             'content' => 'nullable|string',
-            'image' => 'nullable|file|image|max:5120',
             'image_alt' => 'nullable|string|max:255',
             'link' => 'nullable|url|max:255',
             'target' => 'nullable|in:_self,_blank',
@@ -328,7 +334,6 @@ class BannerController extends Controller
             'settings' => 'nullable|string|max:500',
         ];
 
-        // Add unique rule for name if creating new banner
         if (!$id) {
             $rules['name'] = 'required|string|max:255|unique:banners,name';
         } else {
@@ -337,23 +342,26 @@ class BannerController extends Controller
 
         $validatedData = $request->validate($rules);
 
-        // Handle status checkbox (if not checked, it won't be in request)
         $validatedData['status'] = $request->has('status') ? 1 : 0;
-        
-        // Set default values
         $validatedData['sort_order'] = $validatedData['sort_order'] ?? 0;
         $validatedData['target'] = $validatedData['target'] ?? '_self';
 
-        // Handle image upload if present
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $path = $image->store('banners', 'public');
-            $validatedData['image'] = $path;
-        } else {
-            // Remove image key if no file uploaded
-            unset($validatedData['image']);
-        }
-
         return $validatedData;
+    }
+
+    /**
+     * Upload banner image (single file input).
+     */
+    private function uploadImage(Request $request, Banner $banner): void
+    {
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($banner->image) {
+                Storage::disk('public')->delete($banner->image);
+            }
+
+            $banner->image = $request->file('image')->store('banners', 'public');
+            $banner->save();
+        }
     }
 }
