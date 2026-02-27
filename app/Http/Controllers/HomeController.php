@@ -947,6 +947,7 @@ class HomeController extends Controller
                         'css_classes' => $banner['css_classes'],
                         'is_active' => $banner['is_active'],
                         'sort_order' => $banner['sort_order'] ?? 0,
+                        'focal_point' => $banner['focal_point'] ?? 'center 30%',
                     ];
                 }
                 

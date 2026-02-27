@@ -261,6 +261,7 @@ class BannerRepository extends Repository
             'image' => $banner->image_url,
             'responsive_images' => $banner->responsive_images,
             'image_alt' => $banner->image_alt,
+            'focal_point' => $banner->focal_point ?? 'center 30%',
             'link' => $banner->link,
             'target' => $banner->target,
             'css_classes' => $banner->css_classes_string,
