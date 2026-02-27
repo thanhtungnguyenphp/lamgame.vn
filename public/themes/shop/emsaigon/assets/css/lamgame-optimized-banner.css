@@ -88,10 +88,11 @@
   position:absolute;
   inset:0;
   background:linear-gradient(
-    to right,
-    rgba(10,15,22,0.85) 0%,
-    rgba(10,15,22,0.4) 50%,
-    rgba(10,15,22,0.15) 100%
+    to top,
+    rgba(10,15,22,0.92) 0%,
+    rgba(10,15,22,0.6) 35%,
+    rgba(10,15,22,0.15) 60%,
+    transparent 100%
   );
   z-index:1;
 }
@@ -100,9 +101,9 @@
   position:relative;
   z-index:2;
   text-align:left;
-  padding:0 20px;
-  max-width:600px;
-  margin:0 0 0 5%;
+  padding:0 60px 28px;
+  max-width:700px;
+  width:100%;
 }
 
 .content h1{
@@ -220,11 +221,11 @@
   position:absolute;
   left:0;
   right:0;
-  bottom:16px;
+  bottom:8px;
   display:flex;
   gap:8px;
   justify-content:center;
-  z-index:3;
+  z-index:4;
 }
 
 .dot{
@@ -254,59 +255,62 @@
     aspect-ratio:16/9;
     min-height:280px;
   }
-
-  .overlay{
-    background:linear-gradient(
-      to top,
-      rgba(10,15,22,0.9) 0%,
-      rgba(10,15,22,0.3) 60%,
-      transparent 100%
-    );
-  }
   
   .content{
     text-align:center;
-    margin:0 auto;
-    max-width:90%;
-    padding:0 16px;
+    max-width:100%;
+    padding:0 20px 20px;
   }
 
-  .btns{
-    justify-content:center;
-  }
-  
   .content h1{
-    font-size:clamp(24px,6vw,32px);
+    font-size:clamp(20px,5vw,28px);
   }
   
   .content p{
-    font-size:clamp(14px,4vw,18px);
+    font-size:clamp(13px,3.5vw,16px);
     max-width:100%;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
   }
   
   .btns{
-    flex-direction:column;
-    align-items:center;
-    gap:10px;
+    justify-content:center;
+    gap:8px;
   }
   
   .btn{
-    min-width:280px;
+    min-width:auto;
+    padding:8px 20px;
+    font-size:13px;
+    height:38px;
+  }
+
+  .slide-link{
+    align-items:flex-end;
+    justify-content:center;
   }
 }
 
 @media (max-width: 480px) {
   .hero-optimized{
-    aspect-ratio:4/3;
-    min-height:260px;
+    aspect-ratio:16/10;
+    min-height:240px;
+  }
+
+  .content{
+    padding:0 16px 16px;
   }
   
   .content h1{
-    margin-bottom:8px;
+    font-size:clamp(18px,5vw,24px);
+    margin-bottom:6px;
   }
   
   .content p{
-    margin-bottom:16px;
+    margin-bottom:10px;
+    -webkit-line-clamp:1;
   }
 }
 
@@ -317,8 +321,8 @@
   text-decoration: none;
   color: inherit;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-end;
+  justify-content: flex-start;
   transition: all 0.3s ease;
   border-radius: 0;
   overflow: hidden;
@@ -334,11 +338,10 @@
 }
 
 .slide-link:hover .content {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
 }
 
 .slide-link:hover .btn {
-  transform: translateY(2px);
   filter: brightness(1.1);
 }
 
