@@ -1,0 +1,387 @@
+/* Mobile-Specific CSS Optimizations for LamGame.vn
+ * Optimized for mobile-first approach with performance enhancements
+ * Last updated: October 2024
+ */
+
+/* === CRITICAL CSS FOR ABOVE-THE-FOLD CONTENT === */
+
+/* Header and Logo Optimizations */
+.header {
+    /* CSS containment for better performance */
+    contain: layout style;
+    /* Optimize rendering with proper layering */
+    will-change: transform;
+    /* Ensure consistent positioning */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.lamgame-logo,
+.footer-logo {
+    /* Enhanced performance optimizations */
+    contain: layout style;
+    will-change: transform;
+    /* Force hardware acceleration */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    /* Optimize image rendering */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+/* Mobile Touch Targets - WCAG Compliance */
+.mobile-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+}
+
+/* Mobile Menu Brand Logo Optimization */
+.mobile-menu-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    /* Ensure proper touch target for brand */
+    min-height: 44px;
+}
+
+.mobile-menu-brand .mobile-logo {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+    max-height: 32px;
+    /* Performance optimizations */
+    contain: layout style;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* Enhanced mobile logo sizing with better breakpoints */
+@media (max-width: 320px) {
+    /* Very small devices - Galaxy Fold, etc. */
+    .lamgame-logo {
+        height: 24px !important;
+        max-height: 24px;
+    }
+    
+    .footer-logo {
+        height: 32px !important;
+        max-height: 32px;
+    }
+}
+
+@media (min-width: 321px) and (max-width: 374px) {
+    /* Small mobile devices */
+    .lamgame-logo {
+        height: clamp(26px, 7vw, 30px) !important;
+        max-height: 30px;
+    }
+}
+
+@media (min-width: 375px) and (max-width: 413px) {
+    /* iPhone SE, iPhone 12/13 mini */
+    .lamgame-logo {
+        height: clamp(30px, 8vw, 35px) !important;
+        max-height: 35px;
+    }
+}
+
+@media (min-width: 414px) and (max-width: 480px) {
+    /* iPhone 11 Pro, iPhone 12/13 Pro */
+    .lamgame-logo {
+        height: clamp(32px, 8.5vw, 38px) !important;
+        max-height: 38px;
+    }
+}
+
+/* === NAVIGATION OPTIMIZATIONS === */
+
+/* Mobile menu performance */
+.mobile-menu {
+    /* Optimize scrolling performance */
+    -webkit-overflow-scrolling: touch;
+    /* Contain paint operations */
+    contain: paint;
+    /* Reduce composite layers */
+    will-change: transform, opacity;
+}
+
+.mobile-menu-transition {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+               opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hamburger menu optimizations */
+.mobile-toggle {
+    /* Ensure proper touch target */
+    padding: 12px;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Optimize tap response */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    -webkit-touch-callout: none;
+    user-select: none;
+}
+
+/* === FOOTER OPTIMIZATIONS === */
+
+/* Footer accordion performance */
+.footer-accordion {
+    contain: layout style;
+    /* Optimize accordion animations */
+    will-change: height;
+}
+
+.footer-accordion-content {
+    /* Optimize scrolling if needed */
+    -webkit-overflow-scrolling: touch;
+    /* Contain paint operations */
+    contain: paint;
+}
+
+/* Social icons touch optimization */
+.social-icons a {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Optimize tap response */
+    -webkit-tap-highlight-color: rgba(106, 76, 147, 0.2);
+}
+
+/* === PERFORMANCE OPTIMIZATIONS === */
+
+/* Reduce layout thrashing */
+.performance-optimized {
+    contain: layout style paint;
+    /* Minimize repaints */
+    will-change: transform, opacity;
+    /* Force layer creation for complex elements */
+    transform: translateZ(0);
+}
+
+/* Image loading optimizations */
+.lazy-image {
+    /* Smooth loading transition */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.lazy-image.loaded {
+    opacity: 1;
+}
+
+/* Intersection Observer optimization */
+.observe-intersection {
+    contain: layout;
+}
+
+/* === ACCESSIBILITY ENHANCEMENTS === */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .lamgame-logo {
+        filter: contrast(1.2);
+    }
+    
+    .footer-logo {
+        filter: contrast(1.1);
+    }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .lamgame-logo,
+    .footer-logo,
+    .mobile-menu-transition,
+    .lazy-image {
+        transition: none !important;
+        animation: none !important;
+        will-change: auto;
+    }
+    
+    .mobile-toggle span {
+        transition: none !important;
+    }
+}
+
+/* Focus management for keyboard navigation */
+.mobile-focus-visible:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* === VIEWPORT SPECIFIC OPTIMIZATIONS === */
+
+/* iPhone SE (375px) specific optimizations */
+@media (width: 375px) {
+    .header-content {
+        padding: 0.75rem 0;
+    }
+    
+    .lamgame-logo {
+        height: 32px !important;
+        max-height: 32px;
+    }
+}
+
+/* iPhone 12/13 (390px) specific optimizations */
+@media (width: 390px) {
+    .lamgame-logo {
+        height: 34px !important;
+        max-height: 34px;
+    }
+}
+
+/* Samsung Galaxy (360px) specific optimizations */
+@media (width: 360px) {
+    .lamgame-logo {
+        height: 30px !important;
+        max-height: 30px;
+    }
+    
+    .footer-accordion {
+        border-radius: 8px;
+    }
+}
+
+/* === LANDSCAPE ORIENTATION OPTIMIZATIONS === */
+
+@media (orientation: landscape) and (max-height: 500px) {
+    /* Landscape mobile optimization */
+    .lamgame-logo {
+        height: clamp(24px, 5vh, 32px) !important;
+        max-height: 32px;
+    }
+    
+    .header {
+        padding: 0.5rem 0;
+    }
+    
+    .mobile-menu {
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+}
+
+/* === CRITICAL CSS LOADING OPTIMIZATION === */
+
+/* Above-the-fold styles for immediate rendering */
+.critical-above-fold {
+    /* Ensure immediate visibility */
+    display: block;
+    visibility: visible;
+    /* Prevent layout shift */
+    min-height: 50px;
+}
+
+/* Below-the-fold lazy loading */
+.below-fold {
+    /* Optimize for lazy loading */
+    content-visibility: auto;
+    contain-intrinsic-size: 200px;
+}
+
+/* === TYPOGRAPHY OPTIMIZATIONS === */
+
+/* Vietnamese text rendering optimization */
+.vietnamese-text {
+    /* Optimize Vietnamese diacritics rendering */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Mobile-specific font sizing */
+@media (max-width: 480px) {
+    .mobile-text-sm { font-size: 0.875rem; line-height: 1.4; }
+    .mobile-text-xs { font-size: 0.75rem; line-height: 1.3; }
+    .mobile-text-base { font-size: 1rem; line-height: 1.5; }
+}
+
+/* === CONNECTION-AWARE OPTIMIZATIONS === */
+
+/* Slow connection optimizations */
+@media (prefers-reduced-data: reduce) {
+    .lamgame-logo {
+        /* Use smaller images on slow connections */
+        image-rendering: pixelated;
+    }
+    
+    .lazy-image {
+        /* Delay non-critical images */
+        loading: lazy;
+    }
+    
+    .footer-accordion {
+        /* Reduce animations on slow connections */
+        transition: none;
+    }
+}
+
+/* === CONTAINER QUERIES (Future-proofing) === */
+
+/* When container queries are supported */
+@supports (container-type: inline-size) {
+    .logo-container {
+        container-type: inline-size;
+    }
+    
+    @container (max-width: 200px) {
+        .lamgame-logo {
+            height: 20px !important;
+            max-height: 20px;
+        }
+    }
+    
+    @container (min-width: 300px) {
+        .lamgame-logo {
+            height: 35px !important;
+            max-height: 35px;
+        }
+    }
+}
+
+/* === DEBUG HELPERS (Remove in production) === */
+
+/* Uncomment for debugging layout issues */
+/*
+.debug-mobile * {
+    outline: 1px solid red;
+}
+
+.debug-touch-targets .mobile-touch-target {
+    background: rgba(255, 0, 0, 0.2);
+}
+*/
+
+/* === PRINT STYLES FOR MOBILE === */
+
+@media print {
+    .lamgame-logo,
+    .footer-logo {
+        /* Ensure logo prints correctly */
+        height: auto !important;
+        max-height: 2cm;
+        width: auto;
+        filter: none;
+        transform: none;
+        contain: none;
+        will-change: auto;
+    }
+    
+    .mobile-menu,
+    .mobile-toggle {
+        display: none;
+    }
+}

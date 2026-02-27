@@ -162,15 +162,72 @@ footer h3 {
   box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
 }
 
-/* Logo Hover Effects */
-.brand img {
+/* Brand Logo Optimizations - Mobile First */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   transition: all 0.3s ease;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.brand img {
+  /* Mobile first - 40px height */
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  object-position: center;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+}
+
+/* Brand logo specific class for 80px height */
+.brand img.brand-logo {
+  height: 80px;
+  max-height: 80px;
+  width: auto;
 }
 
 .brand:hover img {
-  transform: scale(1.05);
-  filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.2));
+  transform: scale(1.02);
+  filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.15));
+}
+
+/* Progressive enhancement for larger screens */
+@media (min-width: 481px) {
+  .brand img {
+    height: 50px;
+  }
+  
+  .brand img.brand-logo {
+    height: 80px;
+    max-height: 80px;
+  }
+}
+
+@media (min-width: 769px) {
+  .brand img {
+    height: 60px;
+  }
+  
+  .brand img.brand-logo {
+    height: 80px;
+    max-height: 80px;
+  }
+  
+  .brand:hover img {
+    transform: scale(1.05);
+  }
+}
+
+@media (min-width: 1025px) {
+  .brand img {
+    height: 80px;
+  }
+  
+  .brand img.brand-logo {
+    height: 80px;
+    max-height: 80px;
+  }
 }
 
 /* Theme Color Updates */
@@ -244,15 +301,15 @@ body {
   }
 }
 
-/* Logo Image Fallback */
-.brand img[src*="lamgame-horizontal.svg"] {
-  height: 48px;
+/* Optimized Logo Support */
+.brand .logo-picture {
+  display: inline-block;
+  line-height: 0;
 }
 
-.brand img[src*="lamgame-logo.png"] {
-  height: 48px;
-  width: 48px;
-  object-fit: contain;
+.brand .lamgame-logo {
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
 }
 
 /* Focus States for Accessibility */
