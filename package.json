@@ -3,8 +3,9 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
+    "sync:assets": "cp -r resources/themes/emsaigon/assets/css/*.css public/themes/shop/emsaigon/assets/css/ && cp -r resources/themes/emsaigon/assets/js/lamgame-*.js public/themes/shop/emsaigon/assets/js/",
     "dev": "vite",
-    "prod": "npm run build"
+    "prod": "npm run build && npm run sync:assets"
   },
   "devDependencies": {
     "@popperjs/core": "^2.11.6",

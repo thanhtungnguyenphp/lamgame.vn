@@ -1,0 +1,218 @@
+/* Brand Logo Optimization CSS - Mobile First Approach */
+
+/* Base brand logo styles - Mobile First */
+.brand-logo-optimized {
+  /* Mobile base: 30px height */
+  height: 30px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+  
+  /* Performance optimizations */
+  will-change: transform, filter;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Brand container optimization */
+.brand-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  height: 50px; /* Mobile container height for 30px logo */
+  overflow: hidden;
+}
+
+/* Interactive states */
+.brand-logo-optimized:hover {
+  transform: scale(1.02);
+  filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.15));
+}
+
+.brand-logo-optimized:focus {
+  outline: 2px solid var(--lamgame-primary, #667eea);
+  outline-offset: 2px;
+}
+
+/* Progressive Enhancement - Tablet Portrait (481px+) */
+@media (min-width: 481px) {
+  .brand-logo-optimized {
+    height: 40px;
+  }
+  
+  .brand-container {
+    height: 60px;
+  }
+}
+
+/* Tablet Landscape (769px+) */
+@media (min-width: 769px) {
+  .brand-logo-optimized {
+    height: 50px;
+  }
+  
+  .brand-container {
+    height: 70px;
+  }
+  
+  .brand-logo-optimized:hover {
+    transform: scale(1.04);
+  }
+}
+
+/* Desktop (1025px+) - Full 60px height */
+@media (min-width: 1025px) {
+  .brand-logo-optimized {
+    height: 60px;
+    max-height: 60px;
+  }
+  
+  .brand-container {
+    height: 80px;
+  }
+  
+  .brand-logo-optimized:hover {
+    transform: scale(1.05);
+  }
+}
+
+/* Large Desktop (1441px+) */
+@media (min-width: 1441px) {
+  .brand-logo-optimized {
+    height: 60px; /* Keep at 60px even on large screens */
+  }
+}
+
+/* High DPI Display Optimization */
+@media (-webkit-min-device-pixel-ratio: 2), 
+       (min-device-pixel-ratio: 2), 
+       (min-resolution: 192dpi),
+       (min-resolution: 2dppx) {
+  .brand-logo-optimized {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .brand-logo-optimized {
+    filter: brightness(0.95) drop-shadow(0 2px 4px rgba(255, 255, 255, 0.05));
+  }
+  
+  .brand-logo-optimized:hover {
+    filter: brightness(1) drop-shadow(0 4px 8px rgba(102, 126, 234, 0.25));
+  }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo-optimized {
+    transition: none;
+    will-change: auto;
+  }
+  
+  .brand-logo-optimized:hover {
+    transform: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .brand-logo-optimized {
+    height: 2.5cm;
+    max-height: none;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+  
+  .brand-container {
+    height: auto;
+  }
+}
+
+/* Loading States */
+.brand-logo-optimized[loading="lazy"] {
+  opacity: 0;
+  animation: logoFadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes logoFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Error States */
+.brand-logo-optimized[alt]:empty::before {
+  content: attr(alt);
+  display: inline-block;
+  padding: 8px 16px;
+  background: rgba(102, 126, 234, 0.1);
+  color: var(--lamgame-primary, #667eea);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Specific brand logo utilities */
+.brand-logo-60 {
+  height: 60px !important;
+  max-height: 60px !important;
+  /* Super-trimmed aspect ratio */
+  aspect-ratio: 1265 / 200;
+}
+
+.brand-logo-mobile-optimized {
+  height: clamp(30px, 10vw, 60px);
+  aspect-ratio: 1265 / 200;
+}
+
+/* Header integration */
+.header .brand-container {
+  min-height: 50px;
+}
+
+@media (min-width: 769px) {
+  .header .brand-container {
+    min-height: 70px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .header .brand-container {
+    min-height: 80px;
+  }
+}
+
+/* Sticky header adjustments */
+.header.sticky .brand-logo-optimized,
+.header.scrolled .brand-logo-optimized {
+  height: 25px;
+  transition: height 0.3s ease;
+}
+
+@media (min-width: 769px) {
+  .header.sticky .brand-logo-optimized,
+  .header.scrolled .brand-logo-optimized {
+    height: 35px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .header.sticky .brand-logo-optimized,
+  .header.scrolled .brand-logo-optimized {
+    height: 45px;
+  }
+}
