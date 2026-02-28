@@ -218,7 +218,7 @@
                                          src="{{ $banner['image'] }}" 
                                          alt="{{ $banner['title'] }}"
                                          loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
-                                         style="object-position: {{ $banner['focal_point'] ?? 'center 30%' }}">
+                                         style="object-position: {{ $banner['focal_point'] ?? 'center center' }}">
                                 @else
                                     <div class="bg {{ $banner['css_classes'] }}"></div>
                                 @endif
