@@ -76,7 +76,7 @@
 @endpush
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-optimized-banner.css') }}">
+    <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-optimized-banner.css') }}?v={{ time() }}">
     <style>
     /* Fallback banner styles */
     .banner-fallback {
