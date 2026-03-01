@@ -1,0 +1,271 @@
+{
+  "info": {
+    "name": "LottoLive API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Lotto Live - API xổ số Việt Nam (truyền thống 3 miền + Vietlot)"
+  },
+  "variable": [
+    {"key": "base_url", "value": "http://localhost:8080/api/v1"}
+  ],
+  "item": [
+    {
+      "name": "1. Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/health", "host": ["{{base_url}}"], "path": ["lottery", "health"]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Response OK', () => { const j = pm.response.json(); pm.expect(j.status).to.eql('ok'); pm.expect(j).to.have.property('version'); pm.expect(j).to.have.property('sources'); });"]}}]
+        }
+      ]
+    },
+    {
+      "name": "2. XS Truyền Thống",
+      "item": [
+        {
+          "name": "Miền Nam - Hôm nay",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/traditional?region=mien-nam", "host": ["{{base_url}}"], "path": ["lottery", "traditional"], "query": [{"key": "region", "value": "mien-nam"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Data valid', () => { const j = pm.response.json(); pm.expect(j.status).to.eql('ok'); pm.expect(j.data.region).to.eql('mien-nam'); pm.expect(j.data.results).to.be.an('array'); j.data.results.forEach(r => { pm.expect(r).to.have.property('province'); pm.expect(r).to.have.property('province_code'); pm.expect(r.prizes).to.have.property('giai_db'); }); });"]}}]
+        },
+        {
+          "name": "Miền Trung - Hôm nay",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/traditional?region=mien-trung", "host": ["{{base_url}}"], "path": ["lottery", "traditional"], "query": [{"key": "region", "value": "mien-trung"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Region mien-trung', () => pm.expect(pm.response.json().data.region).to.eql('mien-trung'));"]}}]
+        },
+        {
+          "name": "Miền Bắc - Hôm nay",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/traditional?region=mien-bac", "host": ["{{base_url}}"], "path": ["lottery", "traditional"], "query": [{"key": "region", "value": "mien-bac"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Region mien-bac', () => pm.expect(pm.response.json().data.region).to.eql('mien-bac'));"]}}]
+        },
+        {
+          "name": "Miền Nam - Ngày cụ thể",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/traditional?region=mien-nam&date=2026-02-27", "host": ["{{base_url}}"], "path": ["lottery", "traditional"], "query": [{"key": "region", "value": "mien-nam"}, {"key": "date", "value": "2026-02-27"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Date match', () => pm.expect(pm.response.json().data.date).to.eql('2026-02-27'));"]}}]
+        },
+        {
+          "name": "Lọc theo tỉnh - Vĩnh Long",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/traditional?region=mien-nam&date=2026-02-27&province=VL", "host": ["{{base_url}}"], "path": ["lottery", "traditional"], "query": [{"key": "region", "value": "mien-nam"}, {"key": "date", "value": "2026-02-27"}, {"key": "province", "value": "VL"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Filtered VL', () => { const r = pm.response.json().data.results; r.forEach(i => pm.expect(i.province_code).to.eql('VL')); });"]}}]
+        },
+        {
+          "name": "[Error] Region không hợp lệ",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/traditional?region=invalid", "host": ["{{base_url}}"], "path": ["lottery", "traditional"], "query": [{"key": "region", "value": "invalid"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Error INVALID_REGION', () => pm.expect(pm.response.json().error.code).to.eql('INVALID_REGION'));"]}}]
+        },
+        {
+          "name": "[Error] Ngày không hợp lệ",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/traditional?region=mien-nam&date=abc", "host": ["{{base_url}}"], "path": ["lottery", "traditional"], "query": [{"key": "region", "value": "mien-nam"}, {"key": "date", "value": "abc"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Error INVALID_DATE', () => pm.expect(pm.response.json().error.code).to.eql('INVALID_DATE'));"]}}]
+        },
+        {
+          "name": "[Error] Thiếu region",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/traditional", "host": ["{{base_url}}"], "path": ["lottery", "traditional"]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));"]}}]
+        }
+      ]
+    },
+    {
+      "name": "3. Vietlot",
+      "item": [
+        {
+          "name": "Mega 6/45 - Mới nhất",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/vietlot?game=mega645", "host": ["{{base_url}}"], "path": ["lottery", "vietlot"], "query": [{"key": "game", "value": "mega645"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Mega645 valid', () => { const d = pm.response.json().data; pm.expect(d.game).to.eql('mega645'); pm.expect(d.numbers).to.be.an('array').with.lengthOf(6); pm.expect(d).to.have.property('jackpot'); });"]}}]
+        },
+        {
+          "name": "Power 6/55 - Mới nhất",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/vietlot?game=power655", "host": ["{{base_url}}"], "path": ["lottery", "vietlot"], "query": [{"key": "game", "value": "power655"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Power655 valid', () => { const d = pm.response.json().data; pm.expect(d.game).to.eql('power655'); pm.expect(d).to.have.property('power_number'); pm.expect(d).to.have.property('jackpot_1'); pm.expect(d).to.have.property('jackpot_2'); });"]}}]
+        },
+        {
+          "name": "Max 3D - Mới nhất",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/vietlot?game=max3d", "host": ["{{base_url}}"], "path": ["lottery", "vietlot"], "query": [{"key": "game", "value": "max3d"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Max3D valid', () => { const d = pm.response.json().data; pm.expect(d.game).to.eql('max3d'); pm.expect(d).to.have.property('numbers_a'); pm.expect(d).to.have.property('numbers_b'); });"]}}]
+        },
+        {
+          "name": "Max 3D Pro - Mới nhất",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/vietlot?game=max3d_pro", "host": ["{{base_url}}"], "path": ["lottery", "vietlot"], "query": [{"key": "game", "value": "max3d_pro"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Max3D Pro valid', () => { const d = pm.response.json().data; pm.expect(d.game).to.eql('max3d_pro'); pm.expect(d.numbers).to.be.an('array'); });"]}}]
+        },
+        {
+          "name": "Keno - Kỳ mới nhất",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/vietlot?game=keno&period=latest", "host": ["{{base_url}}"], "path": ["lottery", "vietlot"], "query": [{"key": "game", "value": "keno"}, {"key": "period", "value": "latest"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Keno valid', () => { const d = pm.response.json().data; pm.expect(d.game).to.eql('keno'); pm.expect(d.numbers).to.be.an('array').with.lengthOf(20); pm.expect(d).to.have.property('stats'); });"]}}]
+        },
+        {
+          "name": "Keno - Theo ngày",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/vietlot?game=keno&date=2026-02-27", "host": ["{{base_url}}"], "path": ["lottery", "vietlot"], "query": [{"key": "game", "value": "keno"}, {"key": "date", "value": "2026-02-27"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Has periods', () => pm.expect(pm.response.json().data.periods).to.be.an('array'));"]}}]
+        },
+        {
+          "name": "Keno - Kỳ cụ thể",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/vietlot?game=keno&period=256", "host": ["{{base_url}}"], "path": ["lottery", "vietlot"], "query": [{"key": "game", "value": "keno"}, {"key": "period", "value": "256"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Period 256', () => pm.expect(pm.response.json().data.period).to.eql('256'));"]}}]
+        },
+        {
+          "name": "Mega 6/45 - Ngày cụ thể",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/vietlot?game=mega645&date=2026-02-27", "host": ["{{base_url}}"], "path": ["lottery", "vietlot"], "query": [{"key": "game", "value": "mega645"}, {"key": "date", "value": "2026-02-27"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Date match', () => pm.expect(pm.response.json().data.date).to.eql('2026-02-27'));"]}}]
+        },
+        {
+          "name": "[Error] Game không hợp lệ",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/vietlot?game=invalid", "host": ["{{base_url}}"], "path": ["lottery", "vietlot"], "query": [{"key": "game", "value": "invalid"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));", "pm.test('Error INVALID_GAME', () => pm.expect(pm.response.json().error.code).to.eql('INVALID_GAME'));"]}}]
+        },
+        {
+          "name": "[Error] Thiếu game",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/vietlot", "host": ["{{base_url}}"], "path": ["lottery", "vietlot"]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 400', () => pm.response.to.have.status(400));"]}}]
+        }
+      ]
+    },
+    {
+      "name": "4. Kết quả mới nhất",
+      "item": [
+        {
+          "name": "Tất cả kết quả",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/latest", "host": ["{{base_url}}"], "path": ["lottery", "latest"]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Has all data', () => { const d = pm.response.json().data; pm.expect(d.traditional).to.have.property('mien_nam'); pm.expect(d.traditional).to.have.property('mien_trung'); pm.expect(d.traditional).to.have.property('mien_bac'); pm.expect(d.vietlot).to.have.property('mega645'); pm.expect(d.vietlot).to.have.property('power655'); pm.expect(d.vietlot).to.have.property('keno'); });"]}}]
+        },
+        {
+          "name": "Chỉ truyền thống",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/latest?include=traditional", "host": ["{{base_url}}"], "path": ["lottery", "latest"], "query": [{"key": "include", "value": "traditional"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Has traditional', () => pm.expect(pm.response.json().data).to.have.property('traditional'));"]}}]
+        },
+        {
+          "name": "Chỉ Vietlot",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/latest?include=vietlot", "host": ["{{base_url}}"], "path": ["lottery", "latest"], "query": [{"key": "include", "value": "vietlot"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Has vietlot', () => pm.expect(pm.response.json().data).to.have.property('vietlot'));"]}}]
+        }
+      ]
+    },
+    {
+      "name": "5. Lịch quay số",
+      "item": [
+        {
+          "name": "Lịch hôm nay",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/schedule", "host": ["{{base_url}}"], "path": ["lottery", "schedule"]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Schedule valid', () => { const d = pm.response.json().data; pm.expect(d).to.have.property('date'); pm.expect(d).to.have.property('day_of_week'); pm.expect(d).to.have.property('traditional'); pm.expect(d).to.have.property('vietlot'); });"]}}]
+        },
+        {
+          "name": "Lịch ngày cụ thể",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/schedule?date=2026-02-27", "host": ["{{base_url}}"], "path": ["lottery", "schedule"], "query": [{"key": "date", "value": "2026-02-27"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Date & day match', () => { const d = pm.response.json().data; pm.expect(d.date).to.eql('2026-02-27'); pm.expect(d.day_of_week).to.eql('friday'); });"]}}]
+        },
+        {
+          "name": "Lịch chỉ truyền thống",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/schedule?type=traditional", "host": ["{{base_url}}"], "path": ["lottery", "schedule"], "query": [{"key": "type", "value": "traditional"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Has traditional', () => pm.expect(pm.response.json().data).to.have.property('traditional'));"]}}]
+        },
+        {
+          "name": "Lịch chỉ Vietlot",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{base_url}}/lottery/schedule?type=vietlot", "host": ["{{base_url}}"], "path": ["lottery", "schedule"], "query": [{"key": "type", "value": "vietlot"}]},
+            "header": [{"key": "Accept", "value": "application/json"}]
+          },
+          "event": [{"listen": "test", "script": {"exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));", "pm.test('Has vietlot', () => pm.expect(pm.response.json().data).to.have.property('vietlot'));"]}}]
+        }
+      ]
+    }
+  ]
+}

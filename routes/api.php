@@ -54,6 +54,9 @@ Route::middleware('auth:sanctum')->prefix('ai')->group(function () {
 // Include authentication routes
 require __DIR__ . '/api/auth.php';
 
+// Include lottery routes
+require __DIR__ . '/api/lottery.php';
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
