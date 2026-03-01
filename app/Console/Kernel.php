@@ -21,6 +21,20 @@ class Kernel extends ConsoleKernel
         $schedule->command('google:push-index --type=all --limit=20')
             ->everySixHours()
             ->appendOutputTo(storage_path('logs/google-index.log'));
+
+        // --- Lottery Scraping ---
+        // XS Truyền thống — scrape 5 phút sau giờ quay
+        $schedule->job(new \App\Jobs\ScrapeTraditionalLottery('mien-nam'))->dailyAt('16:20');
+        $schedule->job(new \App\Jobs\ScrapeTraditionalLottery('mien-trung'))->dailyAt('17:20');
+        $schedule->job(new \App\Jobs\ScrapeTraditionalLottery('mien-bac'))->dailyAt('18:20');
+
+        // Vietlot (Mega, Power, Max3D, Max3D Pro) — sau 18:00
+        $schedule->job(new \App\Jobs\ScrapeVietlotLottery())->dailyAt('18:05');
+
+        // Keno — mỗi 10 phút trong khung giờ quay
+        $schedule->job(new \App\Jobs\ScrapeVietlotLottery('keno'))
+            ->everyTenMinutes()
+            ->between('6:00', '22:00');
     }
 
     /**
