@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Cache;
 
 class LotteryService
 {
-    public function getTraditional(string $region, ?string $date = null, ?string $provinceCode = null): array
+    public function getTraditional(string $region, ?string $date = null, ?string $provinceCode = null): ?array
     {
         $date = $date ?: Carbon::today()->toDateString();
         $cacheKey = "lottery:traditional:{$region}:{$date}" . ($provinceCode ? ":{$provinceCode}" : '');

@@ -1,0 +1,50 @@
+<?php
+
+use App\Models\LotteryDraw;
+use App\Models\LotteryProvince;
+use App\Models\LotteryResult;
+use Illuminate\Database\Migrations\Migration;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        $json = file_get_contents(database_path('seeders/data/lottery_mien_nam_7days.json'));
+        $draws = json_decode($json, true);
+
+        // Cache province code → id map
+        $provinceMap = LotteryProvince::pluck('id', 'code')->toArray();
+
+        foreach ($draws as $d) {
+            $draw = LotteryDraw::updateOrCreate(
+                ['type' => $d['type'], 'region' => $d['region'], 'date' => $d['date'], 'game' => null],
+                [
+                    'draw_time'  => $d['draw_time'],
+                    'status'     => $d['status'],
+                    'source'     => $d['source'],
+                    'scraped_at' => now(),
+                ]
+            );
+
+            foreach ($d['results'] as $r) {
+                $provinceId = $provinceMap[$r['province_code']] ?? null;
+                if (!$provinceId) continue;
+
+                LotteryResult::updateOrCreate(
+                    ['draw_id' => $draw->id, 'province_id' => $provinceId],
+                    ['prize_data' => $r['prize_data']]
+                );
+            }
+        }
+    }
+
+    public function down(): void
+    {
+        $dates = ['2026-02-23', '2026-02-24', '2026-02-25', '2026-02-26', '2026-02-27', '2026-02-28', '2026-03-01'];
+
+        LotteryDraw::where('type', 'traditional')
+            ->where('region', 'mien-nam')
+            ->whereIn('date', $dates)
+            ->each(fn ($draw) => $draw->delete()); // cascade deletes results
+    }
+};
