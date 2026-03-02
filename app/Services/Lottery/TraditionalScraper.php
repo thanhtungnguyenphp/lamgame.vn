@@ -87,10 +87,9 @@ class TraditionalScraper
 
     /**
      * Parse HTML từ xoso.com.vn
-     * Trả về array of ['province_code' => ..., 'prizes' => [...]]
      *
-     * NOTE: Cần cài ext-dom. Logic parse phụ thuộc vào cấu trúc HTML thực tế.
-     * Đây là skeleton — cần điều chỉnh selectors khi test với HTML thật.
+     * Miền Nam/Trung: nhiều province, thứ tự rows: giải 8 → 7 → ... → ĐB
+     * Miền Bắc: 1 đài (Hà Nội), thứ tự rows: ĐB → 1 → 2 → ... → 7, không có prize-col header
      */
     private function parseHtml(string $html, string $region): array
     {
@@ -98,57 +97,89 @@ class TraditionalScraper
         @$dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
         $xpath = new \DOMXPath($dom);
 
-        $results = [];
+        if ($region === 'mien-bac') {
+            return $this->parseMienBac($xpath);
+        }
 
-        // Tìm tên tỉnh từ header columns
+        return $this->parseMienNamTrung($xpath, $region);
+    }
+
+    private function parseMienBac(\DOMXPath $xpath): array
+    {
+        $prizeKeys = ['giai_db', 'giai_1', 'giai_2', 'giai_3', 'giai_4', 'giai_5', 'giai_6', 'giai_7'];
+        $rows = $xpath->query("//table[contains(@class,'table-result')]//tr[td]");
+
+        $prizes = [];
+        $prizeIndex = 0;
+
+        foreach ($rows as $row) {
+            $cell = $xpath->query(".//td[not(contains(@class,'number-prize'))]", $row)->item(0);
+            if (!$cell) continue;
+            if ($prizeIndex >= count($prizeKeys)) break;
+
+            $text = trim($cell->textContent);
+            if ($text === '...' || $text === '') {
+                $prizes[$prizeKeys[$prizeIndex]] = [];
+            } else {
+                $prizes[$prizeKeys[$prizeIndex]] = array_values(array_filter(
+                    preg_split('/\s+/', $text),
+                    fn ($n) => preg_match('/^\d+$/', $n)
+                ));
+            }
+            $prizeIndex++;
+        }
+
+        if (empty(array_filter($prizes))) return [];
+
+        return [['province_code' => 'HN', 'prizes' => $prizes]];
+    }
+
+    private function parseMienNamTrung(\DOMXPath $xpath, string $region): array
+    {
         $provinceNodes = $xpath->query("//th[contains(@class,'prize-col')]//h3//a");
-        $provinceCodes = [];
         $provinceMap = $this->getProvinceNameToCodeMap($region);
+        $provinceCodes = [];
 
         foreach ($provinceNodes as $node) {
             $name = trim($node->textContent);
             $code = $provinceMap[$name] ?? $this->fuzzyMatchProvince($name, $provinceMap);
-            if ($code) {
-                $provinceCodes[] = $code;
-            }
+            if ($code) $provinceCodes[] = $code;
         }
 
         if (empty($provinceCodes)) return [];
 
-        // Parse prize rows
-        $prizeKeys = ['giai_db', 'giai_1', 'giai_2', 'giai_3', 'giai_4', 'giai_5', 'giai_6', 'giai_7', 'giai_8'];
-        $rows = $xpath->query("//table[contains(@class,'result')]//tr");
+        $numProvinces = count($provinceCodes);
+        $prizeKeys = ['giai_8', 'giai_7', 'giai_6', 'giai_5', 'giai_4', 'giai_3', 'giai_2', 'giai_1', 'giai_db'];
 
-        $prizeData = array_fill(0, count($provinceCodes), []);
+        $rows = $xpath->query("//table[contains(@class,'table-result')]//tr[td]");
+        $prizeData = array_fill(0, $numProvinces, []);
         $prizeIndex = 0;
 
         foreach ($rows as $row) {
-            $cells = $xpath->query(".//td[contains(@class,'number') or @data-loto]", $row);
-            if ($cells->length === 0) continue;
             if ($prizeIndex >= count($prizeKeys)) break;
+            $cells = $xpath->query(".//td", $row);
+            if ($cells->length < $numProvinces) continue;
 
             $key = $prizeKeys[$prizeIndex];
-            $colIndex = 0;
 
-            foreach ($cells as $cell) {
-                if ($colIndex >= count($provinceCodes)) break;
-                $numbers = array_filter(
-                    array_map('trim', preg_split('/[\s,]+/', trim($cell->textContent))),
-                    fn ($n) => $n !== ''
-                );
-                $prizeData[$colIndex][$key] = array_values($numbers);
-                $colIndex++;
+            for ($col = 0; $col < $numProvinces; $col++) {
+                $text = trim($cells->item($col)->textContent);
+                if ($text === '...' || $text === '') {
+                    $prizeData[$col][$key] = [];
+                    continue;
+                }
+                $prizeData[$col][$key] = array_values(array_filter(
+                    preg_split('/\s+/', $text),
+                    fn ($n) => preg_match('/^\d+$/', $n)
+                ));
             }
-
             $prizeIndex++;
         }
 
+        $results = [];
         foreach ($provinceCodes as $i => $code) {
-            if (!empty($prizeData[$i])) {
-                $results[] = [
-                    'province_code' => $code,
-                    'prizes'        => $prizeData[$i],
-                ];
+            if (!empty(array_filter($prizeData[$i]))) {
+                $results[] = ['province_code' => $code, 'prizes' => $prizeData[$i]];
             }
         }
 
@@ -157,16 +188,24 @@ class TraditionalScraper
 
     private function getProvinceNameToCodeMap(string $region): array
     {
-        return LotteryProvince::byRegion($region)
-            ->pluck('code', 'name')
-            ->toArray();
+        $map = LotteryProvince::byRegion($region)->pluck('code', 'name')->toArray();
+
+        // Alias cho tên viết tắt trên xoso.com.vn
+        $aliases = [
+            'TPHCM' => 'HCM', 'TP.HCM' => 'HCM', 'Hồ Chí Minh' => 'HCM',
+            'Bình Dương' => 'BD', 'Vũng Tàu' => 'VT', 'Bạc Liêu' => 'BL',
+            'Đắk Lắk' => 'DLK', 'Đắk Nông' => 'DNO',
+        ];
+
+        return array_merge($map, $aliases);
     }
 
     private function fuzzyMatchProvince(string $name, array $map): ?string
     {
         $name = mb_strtolower($name);
         foreach ($map as $provinceName => $code) {
-            if (mb_strpos(mb_strtolower($provinceName), $name) !== false || mb_strpos($name, mb_strtolower($provinceName)) !== false) {
+            if (mb_strpos(mb_strtolower($provinceName), $name) !== false
+                || mb_strpos($name, mb_strtolower($provinceName)) !== false) {
                 return $code;
             }
         }
