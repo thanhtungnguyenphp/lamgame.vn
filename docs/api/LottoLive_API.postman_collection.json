@@ -5,7 +5,7 @@
     "description": "Lotto Live - API xổ số Việt Nam (truyền thống 3 miền + Vietlot)"
   },
   "variable": [
-    {"key": "base_url", "value": "http://localhost:8080/api/v1"}
+    {"key": "base_url", "value": "http://lamgame.vn/api/v1"}
   ],
   "item": [
     {
