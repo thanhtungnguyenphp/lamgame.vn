@@ -33,6 +33,7 @@ class LandingPage extends Model
         'event-countdown'  => 'Sự kiện / Giải đấu (có countdown)',
         'product-launch'   => 'Ra mắt Game / Sản phẩm',
         'mini-game'        => 'Mini Game / Dự đoán',
+        'app-lotto-live'   => 'Giới thiệu App Lotto Live',
     ];
 
     // --- Scopes ---
