@@ -112,3 +112,6 @@ CLEANUP_SUMMARY.md
 # Local config files
 docker-compose.yml
 docker/nginx/lamgame.conf
+
+# Firebase credentials
+storage/app/firebase-credentials.json
