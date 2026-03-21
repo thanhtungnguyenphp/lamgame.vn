@@ -17,6 +17,12 @@ RUN pecl install redis && docker-php-ext-enable redis
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Node.js (for Vite build & asset sync)
+COPY --from=node:20-slim /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:20-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+
 # Opcache defaults tuned for dev (validation enabled)
 RUN { \
   echo 'opcache.enable=1'; \

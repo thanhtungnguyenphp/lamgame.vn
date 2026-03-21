@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Services\Lottery\LotteryNotificationService;
 use App\Services\Lottery\VietlotScraper;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -20,12 +22,20 @@ class ScrapeVietlotLottery implements ShouldQueue
         private ?string $game = null,
     ) {}
 
-    public function handle(VietlotScraper $scraper): void
+    public function handle(VietlotScraper $scraper, LotteryNotificationService $notifyService): void
     {
         $games = $this->game ? [$this->game] : config('lottery.games');
+        $date = Carbon::today()->toDateString();
 
         foreach ($games as $game) {
-            $scraper->scrape($game);
+            $success = $scraper->scrape($game);
+
+            if ($success) {
+                // Không push FCM cho Keno (quá nhiều kỳ/ngày)
+                if ($game !== 'keno') {
+                    $notifyService->notifyVietlotResult($game, $date);
+                }
+            }
         }
     }
 }

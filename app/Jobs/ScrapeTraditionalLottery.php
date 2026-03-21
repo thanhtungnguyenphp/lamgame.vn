@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Services\Lottery\LotteryNotificationService;
 use App\Services\Lottery\TraditionalScraper;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -21,8 +23,18 @@ class ScrapeTraditionalLottery implements ShouldQueue
         private ?string $date = null,
     ) {}
 
-    public function handle(TraditionalScraper $scraper): void
+    public function handle(TraditionalScraper $scraper, LotteryNotificationService $notifyService): void
     {
-        $scraper->scrape($this->region, $this->date);
+        $date = $this->date ?: Carbon::today()->toDateString();
+
+        $success = $scraper->scrape($this->region, $this->date);
+
+        if ($success) {
+            // Gửi FCM push thông báo có KQXS mới
+            $notifyService->notifyTraditionalResult($this->region, $date);
+
+            // Tự động dò vé số pending cho region + date này
+            CheckUserTickets::dispatch($this->region, $date);
+        }
     }
 }
