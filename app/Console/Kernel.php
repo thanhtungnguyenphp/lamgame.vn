@@ -20,26 +20,33 @@ class Kernel extends ConsoleKernel
             ->appendOutputTo(storage_path('logs/google-index.log'));
 
         // =============================================
-        // Lottery Scraping — retry mỗi 5 phút trong khung giờ
-        // Job tự skip nếu đã có kết quả (cache flag)
+        // LOTTERY SCRAPING
+        // Retry mỗi 5 phút trong khung giờ.
+        // Command tự skip nếu đã có kết quả (cache flag).
         // =============================================
 
-        // Miền Nam: quay 16:15, scrape 16:20 → 17:00 (retry 8 lần)
-        $schedule->job(new \App\Jobs\ScrapeTraditionalLottery('mien-nam'))
+        // Miền Nam: quay 16:15 → scrape 16:35 ~ 17:15
+        $schedule->command('lottery:scrape --region=mien-nam')
             ->everyFiveMinutes()
-            ->between('16:20', '17:00');
+            ->between('16:35', '17:15')
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/lottery-scrape.log'));
 
-        // Miền Trung: quay 17:15, scrape 17:20 → 18:00
-        $schedule->job(new \App\Jobs\ScrapeTraditionalLottery('mien-trung'))
+        // Miền Trung: quay 17:15 → scrape 17:35 ~ 18:15
+        $schedule->command('lottery:scrape --region=mien-trung')
             ->everyFiveMinutes()
-            ->between('17:20', '18:00');
+            ->between('17:35', '18:15')
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/lottery-scrape.log'));
 
-        // Miền Bắc: quay 18:15, scrape 18:20 → 19:00
-        $schedule->job(new \App\Jobs\ScrapeTraditionalLottery('mien-bac'))
+        // Miền Bắc: quay 18:15 → scrape 18:35 ~ 19:15
+        $schedule->command('lottery:scrape --region=mien-bac')
             ->everyFiveMinutes()
-            ->between('18:20', '19:00');
+            ->between('18:35', '19:15')
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/lottery-scrape.log'));
 
-        // Vietlot (Mega, Power, Max3D, Max3D Pro): quay 18:00, scrape 18:05 → 18:45
+        // Vietlot (Mega, Power, Max3D, Max3D Pro): quay 18:00 → scrape 18:05 ~ 18:45
         $schedule->job(new \App\Jobs\ScrapeVietlotLottery())
             ->everyFiveMinutes()
             ->between('18:05', '18:45');
