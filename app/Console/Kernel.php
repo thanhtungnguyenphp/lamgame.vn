@@ -7,9 +7,6 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * Define the application's command schedule.
-     */
     protected function schedule(Schedule $schedule): void
     {
         // Generate sitemap daily at 2 AM
@@ -22,14 +19,30 @@ class Kernel extends ConsoleKernel
             ->everySixHours()
             ->appendOutputTo(storage_path('logs/google-index.log'));
 
-        // --- Lottery Scraping ---
-        // XS Truyền thống — scrape 5 phút sau giờ quay
-        $schedule->job(new \App\Jobs\ScrapeTraditionalLottery('mien-nam'))->dailyAt('16:20');
-        $schedule->job(new \App\Jobs\ScrapeTraditionalLottery('mien-trung'))->dailyAt('17:20');
-        $schedule->job(new \App\Jobs\ScrapeTraditionalLottery('mien-bac'))->dailyAt('18:20');
+        // =============================================
+        // Lottery Scraping — retry mỗi 5 phút trong khung giờ
+        // Job tự skip nếu đã có kết quả (cache flag)
+        // =============================================
 
-        // Vietlot (Mega, Power, Max3D, Max3D Pro) — sau 18:00
-        $schedule->job(new \App\Jobs\ScrapeVietlotLottery())->dailyAt('18:05');
+        // Miền Nam: quay 16:15, scrape 16:20 → 17:00 (retry 8 lần)
+        $schedule->job(new \App\Jobs\ScrapeTraditionalLottery('mien-nam'))
+            ->everyFiveMinutes()
+            ->between('16:20', '17:00');
+
+        // Miền Trung: quay 17:15, scrape 17:20 → 18:00
+        $schedule->job(new \App\Jobs\ScrapeTraditionalLottery('mien-trung'))
+            ->everyFiveMinutes()
+            ->between('17:20', '18:00');
+
+        // Miền Bắc: quay 18:15, scrape 18:20 → 19:00
+        $schedule->job(new \App\Jobs\ScrapeTraditionalLottery('mien-bac'))
+            ->everyFiveMinutes()
+            ->between('18:20', '19:00');
+
+        // Vietlot (Mega, Power, Max3D, Max3D Pro): quay 18:00, scrape 18:05 → 18:45
+        $schedule->job(new \App\Jobs\ScrapeVietlotLottery())
+            ->everyFiveMinutes()
+            ->between('18:05', '18:45');
 
         // Keno — mỗi 10 phút trong khung giờ quay
         $schedule->job(new \App\Jobs\ScrapeVietlotLottery('keno'))
@@ -37,9 +50,6 @@ class Kernel extends ConsoleKernel
             ->between('6:00', '22:00');
     }
 
-    /**
-     * Register the commands for the application.
-     */
     protected function commands(): void
     {
         $this->load(__DIR__.'/Commands');
