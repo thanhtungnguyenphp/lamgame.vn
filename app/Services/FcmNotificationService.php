@@ -20,24 +20,26 @@ class FcmNotificationService
 
     public function sendToTopic(string $topic, array $notification, array $data = []): bool
     {
-        return $this->send([
-            'message' => [
-                'topic'        => $topic,
-                'notification' => $notification,
-                'data'         => $this->stringifyData($data),
-            ],
-        ]);
+        $message = [
+            'topic'        => $topic,
+            'notification' => $notification,
+        ];
+        if (!empty($data)) {
+            $message['data'] = $this->stringifyData($data);
+        }
+        return $this->send(['message' => $message]);
     }
 
     public function sendToToken(string $token, array $notification, array $data = []): bool
     {
-        return $this->send([
-            'message' => [
-                'token'        => $token,
-                'notification' => $notification,
-                'data'         => $this->stringifyData($data),
-            ],
-        ]);
+        $message = [
+            'token'        => $token,
+            'notification' => $notification,
+        ];
+        if (!empty($data)) {
+            $message['data'] = $this->stringifyData($data);
+        }
+        return $this->send(['message' => $message]);
     }
 
     private function send(array $payload): bool
