@@ -115,3 +115,15 @@ docker/nginx/lamgame.conf
 
 # Firebase credentials
 storage/app/firebase-credentials.json
+
+# Docker data (local only)
+docker/mysql/data/
+docker/meilisearch/data/
+
+# Docker & build
+docker/
+Makefile
+DOCKER.md
+
+# Database backups
+database/backups/

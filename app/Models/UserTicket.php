@@ -9,6 +9,7 @@ class UserTicket extends Model
     protected $fillable = [
         'ticket_id', 'fcm_token', 'numbers', 'region',
         'province_code', 'draw_date', 'status', 'matched_prizes', 'notified_at',
+        'firebase_uid', 'client_id',
     ];
 
     protected $casts = [
