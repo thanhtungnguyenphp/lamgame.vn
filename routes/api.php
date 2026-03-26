@@ -57,6 +57,9 @@ require __DIR__ . '/api/auth.php';
 // Include lottery routes
 require __DIR__ . '/api/lottery.php';
 
+// Include subscription routes
+require __DIR__ . '/api/subscription.php';
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

@@ -53,7 +53,9 @@ return Application::configure(basePath: dirname(__DIR__))
          * Register middleware aliases
          */
         $middleware->alias([
-            'seller' => \App\Http\Middleware\CheckSeller::class,
+            'seller'        => \App\Http\Middleware\CheckSeller::class,
+            'quota'         => \App\Http\Middleware\CheckSubscriptionQuota::class,
+            'firebase.auth' => \App\Http\Middleware\FirebaseAuth::class,
         ]);
     })
     ->withSchedule(function (Schedule $schedule) {
