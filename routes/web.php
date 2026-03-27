@@ -22,6 +22,16 @@ Route::get('source-game/{slug}', [LamGamePageController::class, 'sourceGameDetai
 // Seller public profile
 Route::get('seller/{slug}', [App\Http\Controllers\SellerProfileController::class, 'show'])->name('seller.profile');
 
+// Collections
+Route::middleware('customer')->prefix('collections')->name('collections.')->group(function () {
+    Route::get('/', [App\Http\Controllers\CollectionController::class, 'index'])->name('index');
+    Route::post('/', [App\Http\Controllers\CollectionController::class, 'store'])->name('store');
+    Route::post('{id}/items', [App\Http\Controllers\CollectionController::class, 'addItem'])->name('add-item');
+    Route::delete('{id}/items/{productId}', [App\Http\Controllers\CollectionController::class, 'removeItem'])->name('remove-item');
+    Route::delete('{id}', [App\Http\Controllers\CollectionController::class, 'destroy'])->name('destroy');
+});
+Route::get('collection/{slug}', [App\Http\Controllers\CollectionController::class, 'show'])->name('collections.show');
+
 // Contact routes
 Route::get('lien-he', [LamGamePageController::class, 'lienHe'])->name('lamgame.lien-he');
 Route::post('lien-he', [LamGamePageController::class, 'submitContact'])->name('lamgame.lien-he.submit');
@@ -49,6 +59,10 @@ Route::prefix('seller')->name('seller.')->middleware('theme')->group(function ()
         
         // Products
         Route::resource('products', App\Http\Controllers\SellerProductController::class);
+
+        // Product Versions
+        Route::get('products/{product}/versions', [App\Http\Controllers\SellerVersionController::class, 'index'])->name('products.versions');
+        Route::post('products/{product}/versions', [App\Http\Controllers\SellerVersionController::class, 'store'])->name('products.versions.store');
         
         // Orders
         Route::get('orders', [App\Http\Controllers\SellerController::class, 'orders'])->name('orders.index');

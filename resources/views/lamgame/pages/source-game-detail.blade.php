@@ -2,6 +2,34 @@
 
 @section('page_title', $page_title)
 @section('page_description', $page_description)
+@section('og_image', $sourceGame['image'] ?? asset('assets/logos/png/logo-square-512.png'))
+
+@push('meta')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": "{{ $sourceGame['title'] }}",
+    "description": "{{ Str::limit(strip_tags($sourceGame['description'] ?? ''), 200) }}",
+    "url": "{{ url()->current() }}",
+    @if($sourceGame['image'] ?? null)"image": "{{ $sourceGame['image'] }}",@endif
+    "programmingLanguage": "{{ $sourceGame['programming_language'] ?? '' }}",
+    "offers": {
+        "@type": "Offer",
+        "price": "{{ $sourceGame['price'] ?? 0 }}",
+        "priceCurrency": "VND",
+        "availability": "https://schema.org/InStock"
+    }
+    @if(($sourceGame['rating'] ?? 0) > 0)
+    ,"aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ $sourceGame['rating'] }}",
+        "reviewCount": "{{ $sourceGame['review_count'] ?? 1 }}"
+    }
+    @endif
+}
+</script>
+@endpush
 
 @push('styles')
 <style>
