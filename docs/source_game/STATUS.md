@@ -83,17 +83,15 @@ docs/source_game/
 | A3 | **Email config** | SMTP smtp2go đã config sẵn | ✅ Done |
 | A4 | **Test end-to-end flow** | Seller, product, listeners, routes — all verified | ✅ Done |
 
-### ⏭️ Sprint B — Seller Profile + Reviews (tiếp theo)
+### ✅ Sprint B — Seller Profile + Reviews (hoàn thành 2026-03-27)
 
-Tạo social proof và khả năng khám phá seller.
+| # | Task | Mô tả | Trạng thái |
+|---|------|-------|-----------|
+| B1 | **Seller Profile Page** | `/seller/{slug}` — shop info, stats, product grid | ✅ Done |
+| B2 | **Reviews/Rating** | Reviews list + form đánh giá + star rating UI | ✅ Done |
+| B3 | **Wishlist** | Nút yêu thích toggle trên source game detail | ✅ Done |
 
-| # | Task | Mô tả | Effort |
-|---|------|-------|--------|
-| B1 | **Seller Profile Page** | `/seller/{slug}` — thông tin, sản phẩm, thống kê | 4-5h |
-| B2 | **Reviews/Rating** | Form đánh giá, rating 1-5 sao, hiển thị trên detail page | 3-4h |
-| B3 | **Wishlist** | Nút yêu thích, danh sách wishlist trong account | 2-3h |
-
-### 🟢 Sprint C — Growth features (1-2 tuần)
+### ⏭️ Sprint C — Growth features
 
 | # | Task | Mô tả | Effort |
 |---|------|-------|--------|
