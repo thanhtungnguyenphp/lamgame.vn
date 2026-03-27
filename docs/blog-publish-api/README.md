@@ -302,3 +302,4 @@ curl -X POST https://lamgame.vn/api/blog/status \
 | 2026-03-27 | #5 Scheduled publish + blog:publish-scheduled |
 | 2026-03-27 | #6 Image rewrite regex (7 patterns)           |
 | 2026-03-27 | #7 Tách rate limit publish/status              |
+| 2026-03-27 | ✅ Hoàn thành tất cả 8 task, push `f8fdff7`   |
