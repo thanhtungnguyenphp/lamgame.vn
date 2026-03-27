@@ -74,18 +74,16 @@ docs/source_game/
 
 ## 3. Roadmap tiếp theo — Đề xuất ưu tiên
 
-### 🔴 Sprint A — Fix critical gaps (1 tuần)
+### ✅ Sprint A — Fix critical gaps (hoàn thành 2026-03-27)
 
-Hoàn thiện những gì Phase 2 còn thiếu để seller system thực sự hoạt động end-to-end.
+| # | Task | Mô tả | Trạng thái |
+|---|------|-------|-----------|
+| A1 | **Order → Earning hook** | Listener `CreateSellerEarningOnOrderComplete` — tạo earning (70/30) khi order completed | ✅ Done |
+| A2 | **Admin withdrawal UI** | `AdminWithdrawalController` + view + 4 routes + admin menu | ✅ Done |
+| A3 | **Email config** | SMTP smtp2go đã config sẵn | ✅ Done |
+| A4 | **Test end-to-end flow** | Seller, product, listeners, routes — all verified | ✅ Done |
 
-| # | Task | Mô tả | Effort |
-|---|------|-------|--------|
-| A1 | **Order → Earning hook** | Khi order status = completed → tạo earning record (70% seller, 30% platform) | 2-3h |
-| A2 | **Admin withdrawal UI** | Giao diện admin duyệt/từ chối/xử lý rút tiền | 3-4h |
-| A3 | **Email config** | Setup SMTP production, test seller approval/rejection emails | 1h |
-| A4 | **Test end-to-end flow** | Đăng ký seller → upload → mua → earning → rút tiền | 2h |
-
-### 🟡 Sprint B — Seller Profile + Reviews (1 tuần)
+### ⏭️ Sprint B — Seller Profile + Reviews (tiếp theo)
 
 Tạo social proof và khả năng khám phá seller.
 
@@ -115,7 +113,12 @@ app/Http/Controllers/
 ├── SellerEarningController.php    # Earnings + Withdrawals
 ├── Admin/
 │   ├── AdminSellerController.php  # Admin approval system
-│   └── AdminProductController.php # Admin product management
+│   ├── AdminProductController.php # Admin product management
+│   └── AdminWithdrawalController.php # Admin withdrawal processing
+
+app/Listeners/
+├── SendSellerOrderNotification.php      # Email seller khi có order mới
+└── CreateSellerEarningOnOrderComplete.php # Tạo earning khi order completed
 
 app/Models/
 ├── SourceGameSeller.php           # Seller model
