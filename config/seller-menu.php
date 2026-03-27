@@ -36,4 +36,11 @@ return [
         'sort'  => 4,
         'icon'  => '',
     ],
+    [
+        'key'   => 'sellers.withdrawals',
+        'name'  => 'Rút tiền',
+        'route' => 'admin.withdrawals.index',
+        'sort'  => 5,
+        'icon'  => '',
+    ],
 ];

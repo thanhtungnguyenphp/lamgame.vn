@@ -15,7 +15,13 @@ Route::middleware(['web', 'admin'])->prefix('admin')->name('admin.')->group(func
     
     // Companies Management
     Route::resource('companies', CompanyController::class);
-    
+
+    // Withdrawals Management
+    Route::get('withdrawals', [\App\Http\Controllers\Admin\AdminWithdrawalController::class, 'index'])->name('withdrawals.index');
+    Route::post('withdrawals/{id}/approve', [\App\Http\Controllers\Admin\AdminWithdrawalController::class, 'approve'])->name('withdrawals.approve');
+    Route::post('withdrawals/{id}/complete', [\App\Http\Controllers\Admin\AdminWithdrawalController::class, 'complete'])->name('withdrawals.complete');
+    Route::post('withdrawals/{id}/reject', [\App\Http\Controllers\Admin\AdminWithdrawalController::class, 'reject'])->name('withdrawals.reject');
+
     // Settings
     Route::get('/settings', function() {
         return view('admin.settings.index');

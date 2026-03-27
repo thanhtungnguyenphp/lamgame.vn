@@ -51,7 +51,7 @@ class SourceGameEarning extends Model
                 continue;
             }
 
-            $seller = SourceGameSeller::find($product->company_id);
+            $seller = SourceGameSeller::find($product->seller_id);
             
             if (!$seller) {
                 continue;
