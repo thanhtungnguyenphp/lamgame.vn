@@ -48,6 +48,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Auto-hash API token when creating admin
+        \Webkul\User\Models\Admin::observe(\App\Observers\AdminObserver::class);
+
         // Force HTTPS for all URLs when behind proxy (Cloudflare)
         if (config('app.env') === 'production' || request()->header('CF-Visitor')) {
             URL::forceScheme('https');

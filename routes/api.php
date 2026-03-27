@@ -63,6 +63,8 @@ require __DIR__ . '/api/subscription.php';
 // Blog Publish API (key-based auth)
 Route::prefix('blog')->name('api.blog.')->middleware('api.key')->group(function () {
     Route::post('/publish', [\App\Http\Controllers\Api\BlogPublishController::class, 'publish'])->middleware('throttle:10,1')->name('publish');
+    Route::post('/update/{slug}', [\App\Http\Controllers\Api\BlogPublishController::class, 'update'])->middleware('throttle:10,1')->name('update');
+    Route::delete('/delete/{slug}', [\App\Http\Controllers\Api\BlogPublishController::class, 'destroy'])->middleware('throttle:10,1')->name('delete');
     Route::post('/status', [\App\Http\Controllers\Api\BlogPublishController::class, 'status'])->middleware('throttle:60,1')->name('status');
 });
 
