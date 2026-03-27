@@ -61,9 +61,9 @@ require __DIR__ . '/api/lottery.php';
 require __DIR__ . '/api/subscription.php';
 
 // Blog Publish API (key-based auth)
-Route::prefix('blog')->name('api.blog.')->middleware('throttle:30,1')->group(function () {
-    Route::post('/publish', [\App\Http\Controllers\Api\BlogPublishController::class, 'publish'])->name('publish');
-    Route::post('/status', [\App\Http\Controllers\Api\BlogPublishController::class, 'status'])->name('status');
+Route::prefix('blog')->name('api.blog.')->middleware('api.key')->group(function () {
+    Route::post('/publish', [\App\Http\Controllers\Api\BlogPublishController::class, 'publish'])->middleware('throttle:10,1')->name('publish');
+    Route::post('/status', [\App\Http\Controllers\Api\BlogPublishController::class, 'status'])->middleware('throttle:60,1')->name('status');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

@@ -56,10 +56,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'seller'        => \App\Http\Middleware\CheckSeller::class,
             'quota'         => \App\Http\Middleware\CheckSubscriptionQuota::class,
             'firebase.auth' => \App\Http\Middleware\FirebaseAuth::class,
+            'api.key'       => \App\Http\Middleware\ApiKeyAuth::class,
         ]);
     })
     ->withSchedule(function (Schedule $schedule) {
-        //
+        $schedule->command('blog:publish-scheduled')->everyFiveMinutes();
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
