@@ -74,5 +74,8 @@ class AppServiceProvider extends ServiceProvider
         
         // Send email notification to seller when new order is placed
         \Event::listen('checkout.order.save.after', \App\Listeners\SendSellerOrderNotification::class);
+
+        // Create seller earnings when order is completed
+        \Event::listen('sales.order.update-status.after', \App\Listeners\CreateSellerEarningOnOrderComplete::class);
     }
 }

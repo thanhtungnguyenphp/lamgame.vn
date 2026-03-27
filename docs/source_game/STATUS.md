@@ -32,9 +32,9 @@
 
 | # | Vấn đề | Mức độ | Ghi chú |
 |---|--------|--------|---------|
-| 1 | Order completion hook → tạo earning record | 🔴 Cao | Khi order complete, chưa tự tạo earning cho seller |
-| 2 | Admin withdrawal processing UI | 🔴 Cao | Admin chưa có giao diện duyệt/xử lý rút tiền |
-| 3 | Email SMTP chưa config production | 🟡 Trung | Seller approval/rejection email chưa gửi được |
+| 1 | Order completion hook → tạo earning record | ✅ Done | Listener `CreateSellerEarningOnOrderComplete` on `sales.order.update-status.after` |
+| 2 | Admin withdrawal processing UI | ✅ Done | `AdminWithdrawalController` + view + 4 routes + admin menu |
+| 3 | Email SMTP chưa config production | ✅ Done | smtp2go đã config sẵn |
 | 4 | Virus scanning cho uploaded files | 🟢 Thấp | ClamAV chưa tích hợp |
 
 ### 📋 Chưa bắt đầu (từ kế hoạch Phase 3-4)
