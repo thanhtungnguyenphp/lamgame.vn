@@ -36,6 +36,41 @@
                         </div>
                     @endif
                 </div>
+
+                <!-- Wishlist Button -->
+                <div style="margin-top: 1.5rem;">
+                    @auth('customer')
+                        @php
+                            $wishlistItem = \Illuminate\Support\Facades\DB::table('wishlist_items')
+                                ->where('product_id', $product->id)
+                                ->where('customer_id', auth('customer')->id())
+                                ->first();
+                        @endphp
+                        @if($wishlistItem)
+                            <form action="{{ route('shop.api.customers.account.wishlist.destroy', $wishlistItem->id) }}"
+                                  method="POST" style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" style="background: rgba(239,68,68,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 0.6rem 1.5rem; border-radius: 25px; cursor: pointer; font-size: 0.95rem; backdrop-filter: blur(10px);">
+                                    ❤️ Đã yêu thích
+                                </button>
+                            </form>
+                        @else
+                            <form action="{{ route('shop.api.customers.account.wishlist.store') }}"
+                                  method="POST" style="display: inline;">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                <button type="submit" style="background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 0.6rem 1.5rem; border-radius: 25px; cursor: pointer; font-size: 0.95rem; backdrop-filter: blur(10px);">
+                                    🤍 Yêu thích
+                                </button>
+                            </form>
+                        @endif
+                    @else
+                        <a href="{{ route('shop.customer.session.index') }}" style="background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 0.6rem 1.5rem; border-radius: 25px; text-decoration: none; font-size: 0.95rem; backdrop-filter: blur(10px);">
+                            🤍 Yêu thích
+                        </a>
+                    @endauth
+                </div>
             </div>
         </div>
     </div>
@@ -276,8 +311,35 @@
                                     <p class="rating-text">Dựa trên {{ $reviewHelper->getTotalFeedback($product) }} đánh giá</p>
                                 </div>
                             </div>
-                            <div class="reviews-placeholder">
-                                <p>💭 Chi tiết đánh giá sẽ được hiển thị ở đây trong tương lai.</p>
+
+                            @php
+                                $reviews = \Webkul\Product\Models\ProductReview::where('product_id', $product->id)
+                                    ->where('status', 'approved')
+                                    ->orderBy('created_at', 'desc')
+                                    ->take(20)
+                                    ->get();
+                            @endphp
+
+                            <div style="margin-top: 1.5rem;">
+                                @foreach($reviews as $review)
+                                    <div style="border-bottom: 1px solid #eee; padding: 1rem 0;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                            <div>
+                                                <strong>{{ $review->name }}</strong>
+                                                <span style="color: #f59e0b; margin-left: 0.5rem;">
+                                                    @for($i = 1; $i <= 5; $i++)
+                                                        {{ $i <= $review->rating ? '★' : '☆' }}
+                                                    @endfor
+                                                </span>
+                                            </div>
+                                            <span style="color: #999; font-size: 0.85rem;">{{ $review->created_at->format('d/m/Y') }}</span>
+                                        </div>
+                                        @if($review->title)
+                                            <p style="font-weight: 600; margin-bottom: 0.25rem;">{{ $review->title }}</p>
+                                        @endif
+                                        <p style="color: #555;">{{ $review->comment }}</p>
+                                    </div>
+                                @endforeach
                             </div>
                         @else
                             <div class="no-reviews-state">
@@ -286,6 +348,41 @@
                                 <p>Hãy là người đầu tiên đánh giá sản phẩm này!</p>
                             </div>
                         @endif
+
+                        <!-- Review Form -->
+                        @auth('customer')
+                            <div style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 10px;">
+                                <h4 style="margin-bottom: 1rem;">✍️ Viết đánh giá</h4>
+                                <form action="{{ route('shop.api.products.reviews.store', $product->id) }}" method="POST">
+                                    @csrf
+                                    <div style="margin-bottom: 1rem;">
+                                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Đánh giá sao</label>
+                                        <div id="star-rating" style="font-size: 1.5rem; cursor: pointer;">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <span onclick="setRating({{ $i }})" onmouseover="hoverRating({{ $i }})" onmouseout="resetHover()" style="color: #ddd; transition: color 0.2s;">★</span>
+                                            @endfor
+                                        </div>
+                                        <input type="hidden" name="rating" id="rating-input" value="5" required>
+                                    </div>
+                                    <div style="margin-bottom: 1rem;">
+                                        <input type="text" name="title" placeholder="Tiêu đề đánh giá" required
+                                               style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem;">
+                                    </div>
+                                    <div style="margin-bottom: 1rem;">
+                                        <textarea name="comment" rows="3" placeholder="Nhận xét của bạn..." required
+                                                  style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; resize: vertical;"></textarea>
+                                    </div>
+                                    <input type="hidden" name="name" value="{{ auth('customer')->user()->name }}">
+                                    <button type="submit" style="background: #2c5f41; color: white; padding: 0.75rem 2rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                        Gửi đánh giá
+                                    </button>
+                                </form>
+                            </div>
+                        @else
+                            <div style="margin-top: 2rem; text-align: center; padding: 1.5rem; background: #f8f9fa; border-radius: 10px;">
+                                <p><a href="{{ route('shop.customer.session.index') }}" style="color: #2c5f41; font-weight: 600;">Đăng nhập</a> để viết đánh giá</p>
+                            </div>
+                        @endauth
                     </div>
                 </div>
             </div>
@@ -826,6 +923,21 @@
 @pushOnce('scripts')
     <!-- Tab JavaScript -->
     <script>
+        let currentRating = 5;
+        function setRating(n) {
+            currentRating = n;
+            document.getElementById('rating-input').value = n;
+            updateStars(n);
+        }
+        function hoverRating(n) { updateStars(n); }
+        function resetHover() { updateStars(currentRating); }
+        function updateStars(n) {
+            document.querySelectorAll('#star-rating span').forEach((s, i) => {
+                s.style.color = i < n ? '#f59e0b' : '#ddd';
+            });
+        }
+        document.addEventListener('DOMContentLoaded', () => updateStars(5));
+
         function showTab(event, tabName) {
             // Hide all tab panels
             document.querySelectorAll('.tab-panel').forEach(panel => {

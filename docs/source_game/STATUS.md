@@ -74,35 +74,31 @@ docs/source_game/
 
 ## 3. Roadmap tiếp theo — Đề xuất ưu tiên
 
-### 🔴 Sprint A — Fix critical gaps (1 tuần)
+### ✅ Sprint A — Fix critical gaps (hoàn thành 2026-03-27)
 
-Hoàn thiện những gì Phase 2 còn thiếu để seller system thực sự hoạt động end-to-end.
+| # | Task | Mô tả | Trạng thái |
+|---|------|-------|-----------|
+| A1 | **Order → Earning hook** | Listener `CreateSellerEarningOnOrderComplete` — tạo earning (70/30) khi order completed | ✅ Done |
+| A2 | **Admin withdrawal UI** | `AdminWithdrawalController` + view + 4 routes + admin menu | ✅ Done |
+| A3 | **Email config** | SMTP smtp2go đã config sẵn | ✅ Done |
+| A4 | **Test end-to-end flow** | Seller, product, listeners, routes — all verified | ✅ Done |
 
-| # | Task | Mô tả | Effort |
-|---|------|-------|--------|
-| A1 | **Order → Earning hook** | Khi order status = completed → tạo earning record (70% seller, 30% platform) | 2-3h |
-| A2 | **Admin withdrawal UI** | Giao diện admin duyệt/từ chối/xử lý rút tiền | 3-4h |
-| A3 | **Email config** | Setup SMTP production, test seller approval/rejection emails | 1h |
-| A4 | **Test end-to-end flow** | Đăng ký seller → upload → mua → earning → rút tiền | 2h |
+### ✅ Sprint B — Seller Profile + Reviews (hoàn thành 2026-03-27)
 
-### 🟡 Sprint B — Seller Profile + Reviews (1 tuần)
+| # | Task | Mô tả | Trạng thái |
+|---|------|-------|-----------|
+| B1 | **Seller Profile Page** | `/seller/{slug}` — shop info, stats, product grid | ✅ Done |
+| B2 | **Reviews/Rating** | Reviews list + form đánh giá + star rating UI | ✅ Done |
+| B3 | **Wishlist** | Nút yêu thích toggle trên source game detail | ✅ Done |
 
-Tạo social proof và khả năng khám phá seller.
+### ✅ Sprint C — Growth features (hoàn thành 2026-03-27)
 
-| # | Task | Mô tả | Effort |
-|---|------|-------|--------|
-| B1 | **Seller Profile Page** | `/seller/{slug}` — thông tin, sản phẩm, thống kê | 4-5h |
-| B2 | **Reviews/Rating** | Form đánh giá, rating 1-5 sao, hiển thị trên detail page | 3-4h |
-| B3 | **Wishlist** | Nút yêu thích, danh sách wishlist trong account | 2-3h |
-
-### 🟢 Sprint C — Growth features (1-2 tuần)
-
-| # | Task | Mô tả | Effort |
-|---|------|-------|--------|
-| C1 | **SEO optimization** | Schema.org cho source game, sitemap, OG tags | 3-4h |
-| C2 | **Related content linking** | Blog → source game, job → source game | 2-3h |
-| C3 | **Collections** | Bộ sưu tập cá nhân | 3-4h |
-| C4 | **Version control** | Upload version mới, changelog | 4-5h |
+| # | Task | Mô tả | Trạng thái |
+|---|------|-------|-----------|
+| C1 | **SEO optimization** | Schema.org JSON-LD cho source game + blog, OG image | ✅ Done |
+| C2 | **Related content linking** | Source games trên blog detail, seller link trên source game | ✅ Done |
+| C3 | **Collections** | User collections CRUD + add/remove items, 2 bảng DB, 6 routes | ✅ Done |
+| C4 | **Version control** | Upload version mới, changelog, version history, 1 bảng DB | ✅ Done |
 
 ---
 
@@ -115,7 +111,12 @@ app/Http/Controllers/
 ├── SellerEarningController.php    # Earnings + Withdrawals
 ├── Admin/
 │   ├── AdminSellerController.php  # Admin approval system
-│   └── AdminProductController.php # Admin product management
+│   ├── AdminProductController.php # Admin product management
+│   └── AdminWithdrawalController.php # Admin withdrawal processing
+
+app/Listeners/
+├── SendSellerOrderNotification.php      # Email seller khi có order mới
+└── CreateSellerEarningOnOrderComplete.php # Tạo earning khi order completed
 
 app/Models/
 ├── SourceGameSeller.php           # Seller model

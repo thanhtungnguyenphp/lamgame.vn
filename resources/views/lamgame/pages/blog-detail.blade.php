@@ -6,6 +6,22 @@
 @section('og_image', $blog->featured_image ?? asset('assets/logos/png/logo-square-512.png'))
 @section('twitter_card', 'summary_large_image')
 
+@push('meta')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "{{ $blog->name }}",
+    "description": "{{ Str::limit(strip_tags($blog->short_description ?? $blog->description ?? ''), 200) }}",
+    "url": "{{ url()->current() }}",
+    @if($blog->src)"image": "{{ asset('storage/' . $blog->src) }}",@endif
+    "datePublished": "{{ $blog->published_at ?? $blog->created_at }}",
+    "author": {"@type": "Person", "name": "{{ $blog->author ?? 'LAMGAME' }}"},
+    "publisher": {"@type": "Organization", "name": "LAMGAME", "url": "https://lamgame.vn"}
+}
+</script>
+@endpush
+
 @if($page_keywords)
 @section('meta_keywords', $page_keywords)
 @endif
@@ -219,9 +235,40 @@
                         </div>
                     </div>
                     @endif
-                </div>
 
-                <!-- Sidebar -->
+                    <!-- Related Source Games -->
+                    @php
+                        $relatedSources = \Illuminate\Support\Facades\DB::table('products')
+                            ->join('product_flat', 'products.id', '=', 'product_flat.product_id')
+                            ->leftJoin('product_images', function ($join) {
+                                $join->on('products.id', '=', 'product_images.product_id')
+                                    ->whereRaw('product_images.id = (select min(id) from product_images where product_id = products.id)');
+                            })
+                            ->where('products.type', 'downloadable')
+                            ->where('product_flat.locale', 'vi')
+                            ->where('product_flat.status', 1)
+                            ->inRandomOrder()
+                            ->limit(3)
+                            ->select('product_flat.name', 'product_flat.url_key', 'product_flat.price', 'product_images.path as image')
+                            ->get();
+                    @endphp
+                    @if($relatedSources->count())
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: #f0fdf4; border-radius: 12px; border: 1px solid #bbf7d0;">
+                        <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">🎮 Source Game có thể bạn quan tâm</h3>
+                        <div style="display: grid; gap: 0.75rem;">
+                            @foreach($relatedSources as $sg)
+                            <a href="{{ route('lamgame.source-game.detail', $sg->url_key) }}" style="display: flex; gap: 0.75rem; text-decoration: none; color: inherit; padding: 0.5rem; border-radius: 8px; background: white;">
+                                <img src="{{ $sg->image ? asset('storage/' . $sg->image) : asset('images/placeholder-game.svg') }}" style="width: 60px; height: 45px; object-fit: cover; border-radius: 6px;">
+                                <div>
+                                    <p style="font-weight: 600; font-size: 0.9rem;">{{ Str::limit($sg->name, 40) }}</p>
+                                    <p style="color: #2c5f41; font-weight: 700; font-size: 0.85rem;">{{ $sg->price > 0 ? number_format($sg->price) . 'đ' : 'Miễn phí' }}</p>
+                                </div>
+                            </a>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                </div>
                 <div class="col-lg-4">
                     <div class="sidebar">
                         <!-- Categories -->
