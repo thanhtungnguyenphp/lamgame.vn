@@ -1,0 +1,160 @@
+# Source Game Marketplace & Seller System — Trạng thái & Roadmap
+
+**Cập nhật:** 2026-03-27
+**Tài liệu trước:** 2025-12-23 (Phase 2 completed)
+
+---
+
+## 1. Trạng thái hiện tại
+
+### ✅ Đã hoàn thành
+
+| Module | Chi tiết | Routes |
+|--------|----------|--------|
+| **Source Game Listing** | Browse, search, sort, phân trang, filter category | `/source-game` |
+| **Source Game Detail** | Images, downloadable links, attributes, related products | `/source-game/{slug}` |
+| **Checkout/Download** | Cart → Payment → Download (Bagisto core) | `/checkout/*` |
+| **Seller Registration** | Form đăng ký (cá nhân/doanh nghiệp), upload logo/banner | `seller/register` |
+| **Admin Approval** | Duyệt/từ chối/suspend seller, email notification | `admin/sellers/*` (8 routes) |
+| **Seller Dashboard** | Stats cards, revenue chart (Chart.js), recent orders, quick actions | `seller/dashboard` |
+| **Product Upload** | CRUD sản phẩm downloadable, multi-file upload, validation | `seller/products/*` (7 routes) |
+| **Revenue Sharing** | Commission 30%, earnings tracking | `seller/earnings` |
+| **Withdrawal System** | Request rút tiền (min 100k VND), bank info | `seller/withdrawals/*` (3 routes) |
+| **Middleware** | `CheckSeller` — bảo vệ routes, kiểm tra status | Registered |
+| **Admin Menu** | Menu Sellers trong admin panel | Config-based |
+| **Layout** | Custom account layout tích hợp seller navigation | Component |
+
+**Database:** 3 bảng custom (`source_game_sellers`, `source_game_earnings`, `source_game_withdrawals`) + `seller_id` column trên `products`
+
+**Thống kê:** 26 routes, 1 seller đăng ký, 1 product có seller_id
+
+### 🔴 Chưa hoàn thành (từ Phase 2)
+
+| # | Vấn đề | Mức độ | Ghi chú |
+|---|--------|--------|---------|
+| 1 | Order completion hook → tạo earning record | 🔴 Cao | Khi order complete, chưa tự tạo earning cho seller |
+| 2 | Admin withdrawal processing UI | 🔴 Cao | Admin chưa có giao diện duyệt/xử lý rút tiền |
+| 3 | Email SMTP chưa config production | 🟡 Trung | Seller approval/rejection email chưa gửi được |
+| 4 | Virus scanning cho uploaded files | 🟢 Thấp | ClamAV chưa tích hợp |
+
+### 📋 Chưa bắt đầu (từ kế hoạch Phase 3-4)
+
+| # | Feature | Phase | Mô tả |
+|---|---------|-------|-------|
+| 1 | Wishlist | 3 | Yêu thích source game |
+| 2 | Collections | 3 | Bộ sưu tập cá nhân |
+| 3 | Reviews/Rating | 3 | Đánh giá + rating 1-5 sao |
+| 4 | Seller Profile Page | 3 | Trang `/seller/{slug}` công khai |
+| 5 | Version Control | 3 | Upload version mới, changelog |
+| 6 | License Management | 3 | Personal/Commercial/Open Source |
+| 7 | Enhanced Preview | 3 | WebGL embed, video, code viewer |
+| 8 | Analytics & Insights | 3 | Product + seller analytics |
+| 9 | Performance Optimization | 4 | Caching, DB tuning, Lighthouse 95+ |
+| 10 | SEO & Marketing | 4 | Schema.org, sitemap, email campaigns |
+
+---
+
+## 2. Cấu trúc tài liệu
+
+```
+docs/source_game/
+├── README.md              ← Tổng quan dự án (index)
+├── STATUS.md              ← File này — trạng thái & roadmap
+├── 01_TONG_QUAN.md        ← Phân tích chức năng tổng quan
+├── 02_KY_THUAT.md         ← Database schema, API spec, workflows
+├── 03_KE_HOACH_PHAT_TRIEN.md ← Kế hoạch 4 phases chi tiết
+├── 04_TOI_UU_HOA.md       ← Chiến lược tối ưu hóa
+├── TODO.md                ← Danh sách feature cần làm (detail page)
+├── QUICK_REFERENCE.md     ← Tham chiếu nhanh cho developer
+├── layout/                ← Mockup giao diện
+└── _archive/              ← Báo cáo hoàn thành cũ (9 files, chỉ tham khảo)
+```
+
+---
+
+## 3. Roadmap tiếp theo — Đề xuất ưu tiên
+
+### 🔴 Sprint A — Fix critical gaps (1 tuần)
+
+Hoàn thiện những gì Phase 2 còn thiếu để seller system thực sự hoạt động end-to-end.
+
+| # | Task | Mô tả | Effort |
+|---|------|-------|--------|
+| A1 | **Order → Earning hook** | Khi order status = completed → tạo earning record (70% seller, 30% platform) | 2-3h |
+| A2 | **Admin withdrawal UI** | Giao diện admin duyệt/từ chối/xử lý rút tiền | 3-4h |
+| A3 | **Email config** | Setup SMTP production, test seller approval/rejection emails | 1h |
+| A4 | **Test end-to-end flow** | Đăng ký seller → upload → mua → earning → rút tiền | 2h |
+
+### 🟡 Sprint B — Seller Profile + Reviews (1 tuần)
+
+Tạo social proof và khả năng khám phá seller.
+
+| # | Task | Mô tả | Effort |
+|---|------|-------|--------|
+| B1 | **Seller Profile Page** | `/seller/{slug}` — thông tin, sản phẩm, thống kê | 4-5h |
+| B2 | **Reviews/Rating** | Form đánh giá, rating 1-5 sao, hiển thị trên detail page | 3-4h |
+| B3 | **Wishlist** | Nút yêu thích, danh sách wishlist trong account | 2-3h |
+
+### 🟢 Sprint C — Growth features (1-2 tuần)
+
+| # | Task | Mô tả | Effort |
+|---|------|-------|--------|
+| C1 | **SEO optimization** | Schema.org cho source game, sitemap, OG tags | 3-4h |
+| C2 | **Related content linking** | Blog → source game, job → source game | 2-3h |
+| C3 | **Collections** | Bộ sưu tập cá nhân | 3-4h |
+| C4 | **Version control** | Upload version mới, changelog | 4-5h |
+
+---
+
+## 4. Cấu trúc code hiện tại
+
+```
+app/Http/Controllers/
+├── SellerController.php           # Registration, dashboard, orders, analytics
+├── SellerProductController.php    # Product CRUD (downloadable)
+├── SellerEarningController.php    # Earnings + Withdrawals
+├── Admin/
+│   ├── AdminSellerController.php  # Admin approval system
+│   └── AdminProductController.php # Admin product management
+
+app/Models/
+├── SourceGameSeller.php           # Seller model
+├── SourceGameEarning.php          # Earning model
+└── SourceGameWithdrawal.php       # Withdrawal model
+
+app/Http/Middleware/
+└── CheckSeller.php                # Seller auth middleware
+
+resources/views/seller/            # Seller views (register, dashboard, products, etc.)
+resources/views/admin/sellers/     # Admin seller views
+```
+
+---
+
+## 5. Database Schema tóm tắt
+
+```
+source_game_sellers
+├── customer_id (FK → customers)
+├── shop_name, shop_slug, shop_description
+├── logo, banner
+├── contact_email, contact_phone, website
+├── business_type (individual/company), tax_id
+├── bank_name, bank_account, bank_holder
+├── status (pending/active/rejected/suspended/banned)
+├── total_products, total_sales, total_earnings, rating_average
+└── approved_at, approved_by
+
+source_game_earnings
+├── seller_id, order_id, order_item_id, product_id
+├── total_amount, platform_fee (30%), seller_amount (70%)
+├── status (pending/completed/refunded)
+└── completed_at
+
+source_game_withdrawals
+├── seller_id
+├── amount, bank_name, bank_account, bank_holder
+├── status (pending/processing/completed/rejected)
+├── admin_note, processed_at, processed_by
+└── transaction_reference
+```
