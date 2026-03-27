@@ -91,14 +91,14 @@ docs/source_game/
 | B2 | **Reviews/Rating** | Reviews list + form đánh giá + star rating UI | ✅ Done |
 | B3 | **Wishlist** | Nút yêu thích toggle trên source game detail | ✅ Done |
 
-### ⏭️ Sprint C — Growth features
+### ✅ Sprint C — Growth features (hoàn thành 2026-03-27)
 
-| # | Task | Mô tả | Effort |
-|---|------|-------|--------|
-| C1 | **SEO optimization** | Schema.org cho source game, sitemap, OG tags | 3-4h |
-| C2 | **Related content linking** | Blog → source game, job → source game | 2-3h |
-| C3 | **Collections** | Bộ sưu tập cá nhân | 3-4h |
-| C4 | **Version control** | Upload version mới, changelog | 4-5h |
+| # | Task | Mô tả | Trạng thái |
+|---|------|-------|-----------|
+| C1 | **SEO optimization** | Schema.org JSON-LD cho source game + blog, OG image | ✅ Done |
+| C2 | **Related content linking** | Source games trên blog detail, seller link trên source game | ✅ Done |
+| C3 | **Collections** | User collections CRUD + add/remove items, 2 bảng DB, 6 routes | ✅ Done |
+| C4 | **Version control** | Upload version mới, changelog, version history, 1 bảng DB | ✅ Done |
 
 ---
 
