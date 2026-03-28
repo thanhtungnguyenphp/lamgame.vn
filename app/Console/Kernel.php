@@ -19,8 +19,8 @@ class Kernel extends ConsoleKernel
             ->everySixHours()
             ->appendOutputTo(storage_path('logs/google-index.log'));
 
-        // Ping sitemap to Google + Bing after sitemap regeneration
-        $schedule->command('google:push-index --type=ping-sitemap')
+        // IndexNow: notify Bing/Yandex about new/updated content
+        $schedule->command('google:push-index --type=indexnow --limit=20')
             ->dailyAt('02:15')
             ->appendOutputTo(storage_path('logs/google-index.log'));
 

@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Http;
 
 class PushToGoogleIndex extends Command
 {
-    protected $signature = 'google:push-index {--type=all : Type to push (jobs|ping-sitemap|all)} {--limit=10 : Number of URLs to push}';
-    protected $description = 'Push job URLs to Google Indexing API + ping sitemap for other content';
+    protected $signature = 'google:push-index {--type=all : Type to push (jobs|indexnow|all)} {--limit=10 : Number of URLs to push}';
+    protected $description = 'Push jobs to Google Indexing API + notify Bing/Yandex via IndexNow';
 
     private $serviceAccountFile;
     private $accessToken;
@@ -21,29 +21,28 @@ class PushToGoogleIndex extends Command
         switch ($type) {
             case 'jobs':
                 return $this->pushJobs($limit);
-            case 'ping-sitemap':
-                return $this->pingSitemap();
+            case 'indexnow':
+                return $this->pushIndexNow($limit);
             case 'all':
             default:
                 $this->pushJobs($limit);
-                $this->pingSitemap();
+                $this->pushIndexNow($limit);
                 return 0;
         }
     }
 
     /**
      * Google Indexing API — CHỈ dùng cho JobPosting schema.
-     * https://developers.google.com/search/apis/indexing-api/v3/quickstart
      */
     private function pushJobs($limit)
     {
-        $this->info('📋 Pushing job posts (Indexing API)...');
+        $this->info('📋 Pushing job posts (Google Indexing API)...');
 
         $this->serviceAccountFile = storage_path('app/google-service-account.json');
 
         if (!file_exists($this->serviceAccountFile)) {
-            $this->warn('⚠️  Google service account file not found, skipping Indexing API.');
-            $this->info('📝 Create: ' . $this->serviceAccountFile);
+            $this->warn('⚠️  Service account not found: ' . $this->serviceAccountFile);
+            $this->info('📖 Guide: https://developers.google.com/search/apis/indexing-api/v3/prereqs');
             return 1;
         }
 
@@ -89,31 +88,70 @@ class PushToGoogleIndex extends Command
     }
 
     /**
-     * Ping sitemap — cách chính thống để thông báo Google về content mới
-     * (blogs, source games, sellers, landing pages, v.v.)
+     * IndexNow — thông báo Bing/Yandex về URLs mới/cập nhật.
+     * Google không hỗ trợ IndexNow, nhưng sitemap lastmod + Search Console là đủ.
+     * https://www.indexnow.org/documentation
      */
-    private function pingSitemap()
+    private function pushIndexNow($limit)
     {
-        $this->info('🔔 Pinging sitemap to search engines...');
+        $this->info('🔔 Pushing URLs via IndexNow (Bing/Yandex)...');
 
-        $sitemapUrl = config('app.url') . '/sitemap.xml';
+        $key = config('services.indexnow.key');
+        $host = parse_url(config('app.url'), PHP_URL_HOST);
 
-        $engines = [
-            'Google' => 'https://www.google.com/ping?sitemap=' . urlencode($sitemapUrl),
-            'Bing/IndexNow' => 'https://www.bing.com/ping?sitemap=' . urlencode($sitemapUrl),
-        ];
+        if (empty($key)) {
+            $this->warn('⚠️  IndexNow key not set. Add INDEXNOW_KEY to .env');
+            $this->info('📖 Generate key at: https://www.bing.com/indexnow');
+            return 1;
+        }
 
-        foreach ($engines as $name => $pingUrl) {
-            try {
-                $response = Http::timeout(10)->get($pingUrl);
-                if ($response->successful()) {
-                    $this->info("✅ {$name}: pinged OK");
-                } else {
-                    $this->warn("⚠️  {$name}: HTTP {$response->status()}");
-                }
-            } catch (\Exception $e) {
-                $this->error("❌ {$name}: {$e->getMessage()}");
+        // Collect recent URLs from all content types
+        $urls = collect();
+
+        // Source games
+        \DB::table('products as p')
+            ->join('product_flat as pf', fn($j) => $j->on('p.id', '=', 'pf.product_id')->where('pf.locale', '=', 'vi'))
+            ->where('p.type', 'downloadable')->where('pf.status', 1)->where('pf.visible_individually', 1)
+            ->select('pf.url_key', 'p.updated_at')
+            ->orderBy('p.updated_at', 'desc')->limit($limit)
+            ->get()
+            ->each(fn($p) => $p->url_key ? $urls->push(config('app.url') . '/source-game/' . $p->url_key) : null);
+
+        // Blogs
+        \App\Models\Blog::published()
+            ->select('slug', 'updated_at')
+            ->orderBy('updated_at', 'desc')->limit($limit)
+            ->get()
+            ->each(fn($b) => $urls->push(config('app.url') . '/blog/' . $b->slug));
+
+        // Jobs
+        \DB::table('products as p')
+            ->join('product_flat as pf', fn($j) => $j->on('p.id', '=', 'pf.product_id')->where('pf.locale', '=', 'vi'))
+            ->where('p.type', 'job')->where('pf.status', 1)->where('pf.visible_individually', 1)
+            ->select('pf.url_key', 'p.updated_at')
+            ->orderBy('p.updated_at', 'desc')->limit($limit)
+            ->get()
+            ->each(fn($j) => $j->url_key ? $urls->push(config('app.url') . '/viec-lam/' . $j->url_key) : null);
+
+        if ($urls->isEmpty()) {
+            $this->info('No URLs to push.');
+            return 0;
+        }
+
+        try {
+            $response = Http::timeout(15)->post('https://api.indexnow.org/indexnow', [
+                'host' => $host,
+                'key' => $key,
+                'urlList' => $urls->unique()->values()->all(),
+            ]);
+
+            if ($response->successful() || $response->status() === 202) {
+                $this->info("✅ IndexNow: {$urls->count()} URLs submitted (HTTP {$response->status()})");
+            } else {
+                $this->error("❌ IndexNow: HTTP {$response->status()} — {$response->body()}");
             }
+        } catch (\Exception $e) {
+            $this->error("❌ IndexNow error: {$e->getMessage()}");
         }
 
         return 0;
@@ -122,31 +160,27 @@ class PushToGoogleIndex extends Command
     private function getAccessToken()
     {
         try {
-            $serviceAccount = json_decode(file_get_contents($this->serviceAccountFile), true);
-
+            $sa = json_decode(file_get_contents($this->serviceAccountFile), true);
             $now = time();
-            $jwtHeader = base64_encode(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
-            $jwtPayload = base64_encode(json_encode([
-                'iss' => $serviceAccount['client_email'],
+            $header = base64_encode(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
+            $payload = base64_encode(json_encode([
+                'iss' => $sa['client_email'],
                 'scope' => 'https://www.googleapis.com/auth/indexing',
                 'aud' => 'https://oauth2.googleapis.com/token',
-                'exp' => $now + 3600,
-                'iat' => $now,
+                'exp' => $now + 3600, 'iat' => $now,
             ]));
-
-            $jwtSignature = '';
-            openssl_sign($jwtHeader . '.' . $jwtPayload, $jwtSignature, $serviceAccount['private_key'], 'SHA256');
+            $sig = '';
+            openssl_sign("{$header}.{$payload}", $sig, $sa['private_key'], 'SHA256');
 
             $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
                 'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-                'assertion' => $jwtHeader . '.' . $jwtPayload . '.' . base64_encode($jwtSignature),
+                'assertion' => "{$header}.{$payload}." . base64_encode($sig),
             ]);
 
             if ($response->successful()) {
                 $this->accessToken = $response->json()['access_token'];
                 return true;
             }
-
             $this->error('Token error: ' . $response->body());
             return false;
         } catch (\Exception $e) {
@@ -162,11 +196,9 @@ class PushToGoogleIndex extends Command
                 'Authorization' => 'Bearer ' . $this->accessToken,
                 'Content-Type' => 'application/json',
             ])->post('https://indexing.googleapis.com/v3/urlNotifications:publish', [
-                'url' => $url,
-                'type' => 'URL_UPDATED',
+                'url' => $url, 'type' => 'URL_UPDATED',
             ])->successful();
         } catch (\Exception $e) {
-            $this->error('Push error: ' . $e->getMessage());
             return false;
         }
     }
