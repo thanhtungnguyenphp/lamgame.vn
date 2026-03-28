@@ -61,6 +61,18 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (Schedule $schedule) {
         $schedule->command('blog:publish-scheduled')->everyFiveMinutes();
+
+        $schedule->command('sitemap:generate')
+            ->dailyAt('02:00')
+            ->appendOutputTo(storage_path('logs/sitemap.log'));
+
+        $schedule->command('google:push-index --type=jobs --limit=20')
+            ->everySixHours()
+            ->appendOutputTo(storage_path('logs/google-index.log'));
+
+        $schedule->command('google:push-index --type=indexnow --limit=20')
+            ->dailyAt('02:15')
+            ->appendOutputTo(storage_path('logs/google-index.log'));
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
