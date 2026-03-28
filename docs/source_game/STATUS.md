@@ -1,7 +1,7 @@
 # Source Game Marketplace & Seller System — Trạng thái & Roadmap
 
-**Cập nhật:** 2026-03-27
-**Tài liệu trước:** 2025-12-23 (Phase 2 completed)
+**Cập nhật:** 2026-03-28
+**Tài liệu trước:** 2026-03-27 (Sprint A/B/C completed)
 
 ---
 
@@ -23,82 +23,115 @@
 | **Middleware** | `CheckSeller` — bảo vệ routes, kiểm tra status | Registered |
 | **Admin Menu** | Menu Sellers trong admin panel | Config-based |
 | **Layout** | Custom account layout tích hợp seller navigation | Component |
+| **Seller Profile Page** | `/seller/{slug}` — shop info, stats, product grid | Sprint B |
+| **Reviews/Rating** | Reviews list + form đánh giá + star rating UI | Sprint B |
+| **Wishlist** | Nút yêu thích toggle trên source game detail | Sprint B |
+| **SEO JSON-LD** | Schema.org cho source game + blog, OG image | Sprint C |
+| **Related Content** | Source games trên blog detail, seller link trên source game | Sprint C |
+| **Collections** | User collections CRUD + add/remove items, 2 bảng DB, 6 routes | Sprint C |
+| **Version Control** | Upload version mới, changelog, version history, 1 bảng DB | Sprint C |
 
-**Database:** 3 bảng custom (`source_game_sellers`, `source_game_earnings`, `source_game_withdrawals`) + `seller_id` column trên `products`
-
-**Thống kê:** 26 routes, 1 seller đăng ký, 1 product có seller_id
-
-### 🔴 Chưa hoàn thành (từ Phase 2)
-
-| # | Vấn đề | Mức độ | Ghi chú |
-|---|--------|--------|---------|
-| 1 | Order completion hook → tạo earning record | ✅ Done | Listener `CreateSellerEarningOnOrderComplete` on `sales.order.update-status.after` |
-| 2 | Admin withdrawal processing UI | ✅ Done | `AdminWithdrawalController` + view + 4 routes + admin menu |
-| 3 | Email SMTP chưa config production | ✅ Done | smtp2go đã config sẵn |
-| 4 | Virus scanning cho uploaded files | 🟢 Thấp | ClamAV chưa tích hợp |
-
-### 📋 Chưa bắt đầu (từ kế hoạch Phase 3-4)
-
-| # | Feature | Phase | Mô tả |
-|---|---------|-------|-------|
-| 1 | Wishlist | 3 | Yêu thích source game |
-| 2 | Collections | 3 | Bộ sưu tập cá nhân |
-| 3 | Reviews/Rating | 3 | Đánh giá + rating 1-5 sao |
-| 4 | Seller Profile Page | 3 | Trang `/seller/{slug}` công khai |
-| 5 | Version Control | 3 | Upload version mới, changelog |
-| 6 | License Management | 3 | Personal/Commercial/Open Source |
-| 7 | Enhanced Preview | 3 | WebGL embed, video, code viewer |
-| 8 | Analytics & Insights | 3 | Product + seller analytics |
-| 9 | Performance Optimization | 4 | Caching, DB tuning, Lighthouse 95+ |
-| 10 | SEO & Marketing | 4 | Schema.org, sitemap, email campaigns |
+**Database:** 6 bảng custom + `seller_id` column trên `products`
+**Thống kê:** 26+ routes, 1 seller, 4 source game products
 
 ---
 
-## 2. Cấu trúc tài liệu
+## 2. Sprint D — SEO Technical & Indexing (hoàn thành 2026-03-28)
 
-```
-docs/source_game/
-├── README.md              ← Tổng quan dự án (index)
-├── STATUS.md              ← File này — trạng thái & roadmap
-├── 01_TONG_QUAN.md        ← Phân tích chức năng tổng quan
-├── 02_KY_THUAT.md         ← Database schema, API spec, workflows
-├── 03_KE_HOACH_PHAT_TRIEN.md ← Kế hoạch 4 phases chi tiết
-├── 04_TOI_UU_HOA.md       ← Chiến lược tối ưu hóa
-├── TODO.md                ← Danh sách feature cần làm (detail page)
-├── QUICK_REFERENCE.md     ← Tham chiếu nhanh cho developer
-├── layout/                ← Mockup giao diện
-└── _archive/              ← Báo cáo hoàn thành cũ (9 files, chỉ tham khảo)
-```
+### Vấn đề phát hiện
+
+| # | Vấn đề | Mức độ |
+|---|--------|--------|
+| 1 | Sitemap cũ (13/01/2026), thiếu source game + seller URLs | 🔴 Critical |
+| 2 | `GenerateSitemap` command có sẵn nhưng thiếu source game products + seller profiles | 🔴 Critical |
+| 3 | Google Indexing API dùng sai — push blogs + source games (chỉ hỗ trợ JobPosting) | 🔴 Critical |
+| 4 | Google ping sitemap deprecated từ 2023 (trả 404) | 🔴 Critical |
+| 5 | Source game listing thiếu `rel=prev/next` cho pagination | 🟡 Medium |
+| 6 | Laravel scheduler trong `Kernel.php` không được load (Laravel 11 dùng `bootstrap/app.php`) | 🔴 Critical |
+| 7 | Cron jobs trên host trùng với Laravel scheduler | 🟡 Medium |
+
+### Đã fix
+
+| # | Task | Giải pháp | Commit |
+|---|------|-----------|--------|
+| D1 | **Sitemap source game + sellers** | Thêm `generateSourceGameSitemap()` + `generateSellerSitemap()` vào `GenerateSitemap.php`, tạo 7 sub-sitemaps + sitemap index | `885de05` |
+| D2 | **Pagination SEO** | Thêm `rel=prev/next` vào `source-game.blade.php` qua `@push('pagination_links')` | `885de05` |
+| D3 | **Fix Indexing API** | Restrict Google Indexing API chỉ cho jobs (JobPosting schema). Bỏ push blogs/source games | `78fe453` |
+| D4 | **Replace ping sitemap** | Bỏ deprecated Google/Bing ping. Thay bằng IndexNow protocol (Bing/Yandex) — batch submit URLs | `78fe453` |
+| D5 | **Fix Laravel scheduler** | Chuyển tất cả schedules từ `Kernel.php` sang `bootstrap/app.php` (Laravel 11) | `e2db10e`, `a4f6ee1` |
+| D6 | **Lottery schedules** | Thêm 5 lottery scrape schedules vào `bootstrap/app.php` | `a4f6ee1` |
+| D7 | **Cleanup cron trùng** | Xóa 7 cron jobs trùng trên host (sitemap + lottery) | Manual on server |
+
+### Files thay đổi
+
+| File | Loại | Mô tả |
+|------|------|-------|
+| `app/Console/Commands/GenerateSitemap.php` | Modified | +2 methods: source game + seller sitemaps |
+| `app/Console/Commands/PushToGoogleIndex.php` | Rewritten | Jobs-only Indexing API + IndexNow cho content khác |
+| `config/services.php` | Modified | Thêm `indexnow.key` config |
+| `bootstrap/app.php` | Modified | Thêm tất cả schedules (SEO + lottery) |
+| `app/Console/Kernel.php` | Unchanged | Giữ lại nhưng không được load bởi Laravel 11 |
+| `resources/views/lamgame/pages/source-game.blade.php` | Modified | Thêm `rel=prev/next` pagination |
+
+### Kết quả deploy (production)
+
+| Item | Trạng thái |
+|------|-----------|
+| Sitemap regenerated (7 sub-sitemaps) | ✅ 4 source games, 1 seller |
+| IndexNow submit | ✅ 34 URLs (HTTP 202) |
+| Google Indexing API (jobs) | ✅ 3/3 success |
+| Google Service Account verified | ✅ Owner in Search Console |
+| IndexNow key + verification file | ✅ Deployed |
+| Laravel scheduler (14 schedules) | ✅ All registered |
+| Host cron cleaned | ✅ 7 duplicates removed |
+
+### Scheduler tổng hợp (production)
+
+| Schedule | Thời gian | Mô tả |
+|----------|-----------|-------|
+| `blog:publish-scheduled` | */5 min | Auto-publish bài scheduled |
+| `sitemap:generate` | 02:00 daily | Tạo lại sitemap index + 7 sub-sitemaps |
+| `google:push-index --type=jobs` | */6h | Push jobs lên Google Indexing API |
+| `google:push-index --type=indexnow` | 02:15 daily | Submit URLs mới lên Bing/Yandex |
+| `lottery:scrape --region=mien-nam` | */5 min, 16:35-17:15 | Scrape KQXS Miền Nam |
+| `lottery:scrape --region=mien-trung` | */5 min, 17:35-18:15 | Scrape KQXS Miền Trung |
+| `lottery:scrape --region=mien-bac` | */5 min, 18:35-19:15 | Scrape KQXS Miền Bắc |
+| `ScrapeVietlotLottery` | */5 min, 18:05-18:45 | Scrape Vietlot (Mega, Power, Max3D) |
+| `ScrapeVietlotLottery(keno)` | */10 min, 06:00-22:00 | Scrape Keno |
 
 ---
 
-## 3. Roadmap tiếp theo — Đề xuất ưu tiên
+## 3. SEO On-Page — Trạng thái
 
-### ✅ Sprint A — Fix critical gaps (hoàn thành 2026-03-27)
+### ✅ Đã có
 
-| # | Task | Mô tả | Trạng thái |
-|---|------|-------|-----------|
-| A1 | **Order → Earning hook** | Listener `CreateSellerEarningOnOrderComplete` — tạo earning (70/30) khi order completed | ✅ Done |
-| A2 | **Admin withdrawal UI** | `AdminWithdrawalController` + view + 4 routes + admin menu | ✅ Done |
-| A3 | **Email config** | SMTP smtp2go đã config sẵn | ✅ Done |
-| A4 | **Test end-to-end flow** | Seller, product, listeners, routes — all verified | ✅ Done |
+| Item | Chi tiết |
+|------|----------|
+| Canonical URL | Tự động strip query params |
+| `noindex` paginated | `page > 1` → `noindex, follow` |
+| `rel=prev/next` | Source game listing pagination |
+| JSON-LD | `SoftwareSourceCode` (source game), `Article` (blog) |
+| Open Graph + Twitter Card | Đầy đủ trên tất cả pages |
+| robots.txt | Block admin, seller, checkout, query params |
+| Trailing slash redirect 301 | `.htaccess` |
+| `index.php` redirect 301 | `.htaccess` |
+| HTTPS force | `URL::forceScheme('https')` |
+| Gzip compression | `.htaccess` mod_deflate |
+| Static file caching | 7 ngày cho images, CSS, JS |
+| Sitemap index | 7 sub-sitemaps, auto-generate daily |
+| IndexNow | Bing/Yandex batch URL submission |
+| Google Indexing API | Jobs (JobPosting) only |
 
-### ✅ Sprint B — Seller Profile + Reviews (hoàn thành 2026-03-27)
+### 📋 Chưa làm
 
-| # | Task | Mô tả | Trạng thái |
-|---|------|-------|-----------|
-| B1 | **Seller Profile Page** | `/seller/{slug}` — shop info, stats, product grid | ✅ Done |
-| B2 | **Reviews/Rating** | Reviews list + form đánh giá + star rating UI | ✅ Done |
-| B3 | **Wishlist** | Nút yêu thích toggle trên source game detail | ✅ Done |
-
-### ✅ Sprint C — Growth features (hoàn thành 2026-03-27)
-
-| # | Task | Mô tả | Trạng thái |
-|---|------|-------|-----------|
-| C1 | **SEO optimization** | Schema.org JSON-LD cho source game + blog, OG image | ✅ Done |
-| C2 | **Related content linking** | Source games trên blog detail, seller link trên source game | ✅ Done |
-| C3 | **Collections** | User collections CRUD + add/remove items, 2 bảng DB, 6 routes | ✅ Done |
-| C4 | **Version control** | Upload version mới, changelog, version history, 1 bảng DB | ✅ Done |
+| Item | Mức độ | Mô tả |
+|------|--------|-------|
+| www → non-www redirect | 🟡 Medium | `.htaccess` hoặc nginx config |
+| Virus scanning (ClamAV) | 🟢 Low | Upload file scanning |
+| License Management | 📋 Phase 3 | Personal/Commercial/Open Source |
+| Enhanced Preview | 📋 Phase 3 | WebGL embed, video, code viewer |
+| Analytics & Insights | 📋 Phase 3 | Product + seller analytics |
+| Performance Optimization | 📋 Phase 4 | Caching, DB tuning, Lighthouse 95+ |
 
 ---
 
@@ -114,20 +147,24 @@ app/Http/Controllers/
 │   ├── AdminProductController.php # Admin product management
 │   └── AdminWithdrawalController.php # Admin withdrawal processing
 
-app/Listeners/
-├── SendSellerOrderNotification.php      # Email seller khi có order mới
-└── CreateSellerEarningOnOrderComplete.php # Tạo earning khi order completed
+app/Console/Commands/
+├── GenerateSitemap.php            # 7 sub-sitemaps + sitemap index
+├── PushToGoogleIndex.php          # Google Indexing API (jobs) + IndexNow
+├── LotteryScrapeCommand.php       # Scrape KQXS truyền thống
+└── PublishScheduledBlogs.php      # Auto-publish scheduled blogs
 
-app/Models/
-├── SourceGameSeller.php           # Seller model
-├── SourceGameEarning.php          # Earning model
-└── SourceGameWithdrawal.php       # Withdrawal model
+app/Jobs/
+├── ScrapeTraditionalLottery.php   # Queue job scrape XS truyền thống
+├── ScrapeVietlotLottery.php       # Queue job scrape Vietlot
+└── CheckUserTickets.php           # Tự động dò vé
 
-app/Http/Middleware/
-└── CheckSeller.php                # Seller auth middleware
-
-resources/views/seller/            # Seller views (register, dashboard, products, etc.)
-resources/views/admin/sellers/     # Admin seller views
+app/Services/Lottery/
+├── TraditionalScraper.php         # Scrape xoso.com.vn
+├── VietlotScraper.php             # Scrape vietlott.vn
+├── LotteryNotificationService.php # FCM push notifications
+├── LotteryCheckService.php        # Dò vé logic
+├── LotteryService.php             # Core lottery service
+└── LotteryStatisticsService.php   # Thống kê xổ số
 ```
 
 ---
@@ -135,27 +172,10 @@ resources/views/admin/sellers/     # Admin seller views
 ## 5. Database Schema tóm tắt
 
 ```
-source_game_sellers
-├── customer_id (FK → customers)
-├── shop_name, shop_slug, shop_description
-├── logo, banner
-├── contact_email, contact_phone, website
-├── business_type (individual/company), tax_id
-├── bank_name, bank_account, bank_holder
-├── status (pending/active/rejected/suspended/banned)
-├── total_products, total_sales, total_earnings, rating_average
-└── approved_at, approved_by
-
-source_game_earnings
-├── seller_id, order_id, order_item_id, product_id
-├── total_amount, platform_fee (30%), seller_amount (70%)
-├── status (pending/completed/refunded)
-└── completed_at
-
-source_game_withdrawals
-├── seller_id
-├── amount, bank_name, bank_account, bank_holder
-├── status (pending/processing/completed/rejected)
-├── admin_note, processed_at, processed_by
-└── transaction_reference
+source_game_sellers          # Seller info + status
+source_game_earnings         # Revenue sharing 70/30
+source_game_withdrawals      # Withdrawal requests
+source_game_versions         # Version control + changelog
+user_collections             # User collections
+collection_items             # Collection ↔ Product mapping
 ```
