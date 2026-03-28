@@ -3,6 +3,20 @@
 @section('page_title', $page_title ?? 'Source Game - Kho Mã Nguồn Game - Làm Game')
 @section('page_description', $page_description ?? 'Kho source code game, thuê lập trình viên game, chia sẻ ý tưởng game. Cộng đồng game developer Việt Nam.')
 
+@push('pagination_links')
+@php
+    $currentPage = $pagination['current_page'] ?? 1;
+    $hasMore = $pagination['has_more'] ?? false;
+    $baseUrl = route('lamgame.source-game');
+@endphp
+@if($currentPage > 1)
+    <link rel="prev" href="{{ $currentPage == 2 ? $baseUrl : $baseUrl . '?page=' . ($currentPage - 1) }}">
+@endif
+@if($hasMore)
+    <link rel="next" href="{{ $baseUrl . '?page=' . ($currentPage + 1) }}">
+@endif
+@endpush
+
 @section('content')
 <div class="sg-page">
     {{-- Hero compact --}}

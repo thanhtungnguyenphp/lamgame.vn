@@ -8,6 +8,7 @@ use Spatie\Sitemap\SitemapIndex;
 use Spatie\Sitemap\Tags\Url;
 use App\Models\Blog;
 use App\Models\LandingPage;
+use App\Models\SourceGameSeller;
 use Carbon\Carbon;
 
 class GenerateSitemap extends Command
@@ -28,6 +29,8 @@ class GenerateSitemap extends Command
             $this->generateBlogsSitemap();
             $this->generateForumSitemap();
             $this->generateLandingPagesSitemap();
+            $this->generateSourceGameSitemap();
+            $this->generateSellerSitemap();
 
             // Create sitemap index
             $index = SitemapIndex::create()
@@ -35,7 +38,9 @@ class GenerateSitemap extends Command
                 ->add($baseUrl . '/sitemap-jobs.xml')
                 ->add($baseUrl . '/sitemap-blogs.xml')
                 ->add($baseUrl . '/sitemap-forum.xml')
-                ->add($baseUrl . '/sitemap-landing.xml');
+                ->add($baseUrl . '/sitemap-landing.xml')
+                ->add($baseUrl . '/sitemap-source-game.xml')
+                ->add($baseUrl . '/sitemap-sellers.xml');
 
             $index->writeToFile(public_path('sitemap.xml'));
 
@@ -56,7 +61,7 @@ class GenerateSitemap extends Command
         $sitemap->add(Url::create('/viec-lam-game')->setLastModificationDate(Carbon::now())->setChangeFrequency(Url::CHANGE_FREQUENCY_HOURLY)->setPriority(0.9));
         $sitemap->add(Url::create('/blog')->setLastModificationDate(Carbon::now())->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)->setPriority(0.9));
         $sitemap->add(Url::create('/forum')->setLastModificationDate(Carbon::now())->setChangeFrequency(Url::CHANGE_FREQUENCY_HOURLY)->setPriority(0.8));
-        $sitemap->add(Url::create('/source-game')->setLastModificationDate(Carbon::now())->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)->setPriority(0.7));
+        $sitemap->add(Url::create('/source-game')->setLastModificationDate(Carbon::now())->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)->setPriority(0.8));
         $sitemap->add(Url::create('/lien-he')->setLastModificationDate(Carbon::now())->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)->setPriority(0.5));
 
         $sitemap->writeToFile(public_path('sitemap-pages.xml'));
@@ -151,5 +156,57 @@ class GenerateSitemap extends Command
 
         $sitemap->writeToFile(public_path('sitemap-landing.xml'));
         $this->info("✅ Landing pages sitemap: {$pages->count()} URLs");
+    }
+
+    private function generateSourceGameSitemap()
+    {
+        $sitemap = Sitemap::create();
+
+        $products = \DB::table('products as p')
+            ->join('product_flat as pf', function ($join) {
+                $join->on('p.id', '=', 'pf.product_id')->where('pf.locale', '=', 'vi');
+            })
+            ->where('p.type', 'downloadable')
+            ->where('pf.status', 1)
+            ->where('pf.visible_individually', 1)
+            ->select('pf.url_key', 'p.updated_at')
+            ->get();
+
+        foreach ($products as $product) {
+            if (!empty($product->url_key)) {
+                $sitemap->add(
+                    Url::create('/source-game/' . rawurlencode($product->url_key))
+                        ->setLastModificationDate(Carbon::parse($product->updated_at))
+                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                        ->setPriority(0.8)
+                );
+            }
+        }
+
+        $sitemap->writeToFile(public_path('sitemap-source-game.xml'));
+        $this->info("✅ Source game sitemap: {$products->count()} URLs");
+    }
+
+    private function generateSellerSitemap()
+    {
+        $sitemap = Sitemap::create();
+
+        $sellers = SourceGameSeller::where('status', 'active')
+            ->select('shop_slug', 'updated_at')
+            ->get();
+
+        foreach ($sellers as $seller) {
+            if (!empty($seller->shop_slug)) {
+                $sitemap->add(
+                    Url::create('/seller/' . rawurlencode($seller->shop_slug))
+                        ->setLastModificationDate(Carbon::parse($seller->updated_at))
+                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                        ->setPriority(0.6)
+                );
+            }
+        }
+
+        $sitemap->writeToFile(public_path('sitemap-sellers.xml'));
+        $this->info("✅ Sellers sitemap: {$sellers->count()} URLs");
     }
 }

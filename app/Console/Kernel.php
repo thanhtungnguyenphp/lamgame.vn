@@ -15,8 +15,13 @@ class Kernel extends ConsoleKernel
             ->appendOutputTo(storage_path('logs/sitemap.log'));
 
         // Push new content to Google Index every 6 hours
-        $schedule->command('google:push-index --type=all --limit=20')
+        $schedule->command('google:push-index --type=jobs --limit=20')
             ->everySixHours()
+            ->appendOutputTo(storage_path('logs/google-index.log'));
+
+        // Ping sitemap to Google + Bing after sitemap regeneration
+        $schedule->command('google:push-index --type=ping-sitemap')
+            ->dailyAt('02:15')
             ->appendOutputTo(storage_path('logs/google-index.log'));
 
         // =============================================
