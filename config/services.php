@@ -83,4 +83,8 @@ return [
     'firebase' => [
         'project_id' => env('FIREBASE_PROJECT_ID'),
     ],
+
+    'indexnow' => [
+        'key' => env('INDEXNOW_KEY'),
+    ],
 ];
