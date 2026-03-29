@@ -76,40 +76,49 @@ class FcmNotificationService
      */
     private function getAccessToken(): ?string
     {
-        return Cache::remember('fcm_access_token', 3500, function () {
-            if (!file_exists($this->credentialsPath)) {
-                Log::warning('Firebase credentials file not found: ' . $this->credentialsPath);
+        $cached = Cache::get('fcm_access_token');
+        if ($cached) return $cached;
+
+        if (!file_exists($this->credentialsPath)) {
+            Log::warning('Firebase credentials file not found: ' . $this->credentialsPath);
+            return null;
+        }
+
+        try {
+            $creds = json_decode(file_get_contents($this->credentialsPath), true);
+
+            $tokenUri = $creds['token_uri'] ?? null;
+            if (!$tokenUri) {
+                Log::error('Firebase credentials missing token_uri');
                 return null;
             }
 
-            try {
-                $creds = json_decode(file_get_contents($this->credentialsPath), true);
+            $now = time();
+            $jwt = $this->createJwt([
+                'iss'   => $creds['client_email'],
+                'scope' => 'https://www.googleapis.com/auth/firebase.messaging',
+                'aud'   => $tokenUri,
+                'iat'   => $now,
+                'exp'   => $now + 3600,
+            ], $creds['private_key']);
 
-                $now = time();
-                $jwt = $this->createJwt([
-                    'iss'   => $creds['client_email'],
-                    'scope' => 'https://www.googleapis.com/auth/firebase.messaging',
-                    'aud'   => $creds['token_uri'],
-                    'iat'   => $now,
-                    'exp'   => $now + 3600,
-                ], $creds['private_key']);
+            $response = Http::asForm()->post($tokenUri, [
+                'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                'assertion'  => $jwt,
+            ]);
 
-                $response = Http::asForm()->post($creds['token_uri'], [
-                    'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-                    'assertion'  => $jwt,
-                ]);
-
-                if ($response->successful()) {
-                    return $response->json('access_token');
-                }
-
-                Log::error('Firebase OAuth2 token failed', ['body' => $response->body()]);
-                return null;
-            } catch (\Exception $e) {
-                Log::error('Firebase auth failed', ['error' => $e->getMessage()]);
-                return null;
+            if ($response->successful()) {
+                $token = $response->json('access_token');
+                Cache::put('fcm_access_token', $token, 3500);
+                return $token;
             }
-        });
+
+            Log::error('Firebase OAuth2 token failed', ['status' => $response->status(), 'body' => $response->body()]);
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Firebase auth failed', ['error' => $e->getMessage()]);
+            return null;
+        }
     }
 
     /**

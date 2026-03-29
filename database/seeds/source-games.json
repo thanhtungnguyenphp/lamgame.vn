@@ -1,0 +1,112 @@
+[
+  {
+    "title": "2D Platformer Hunter - Unity Controller",
+    "short_description": "Raycast-based 2D platformer controller cho Unity. Hỗ trợ double jump, wall jump, corner grab, moving platforms. 355+ stars trên GitHub.",
+    "description": "<h3>2D Platformer Hunter</h3><p>Một 2D platformer controller mạnh mẽ cho Unity, sử dụng raycast-based collision. Mở rộng từ series của Sebastian Lague với nhiều tùy chỉnh và module hóa tốt hơn.</p><h4>Tính năng</h4><ul><li>Double Jump, Wall Jump, Air Jump</li><li>Variable Jump Height (giữ nút nhảy cao hơn)</li><li>Climbing system (thang, dây)</li><li>Ledge Grabbing</li><li>Dash modules</li><li>Moving Platforms với waypoint editor</li><li>One-Way Platforms</li><li>Smooth slope movement</li></ul><h4>Cấu trúc</h4><p>Thiết kế theo mô hình Input-Controller-Motor. Mỗi module có thể thay thế để tạo gameplay khác nhau.</p><p><strong>Engine:</strong> Unity | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> MIT</p><p>Credit: <a href='https://github.com/ta-david-yu/2D-Platformer-Hunter'>ta-david-yu</a></p>",
+    "price": 0,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "MIT",
+    "source_url": "https://github.com/ta-david-yu/2D-Platformer-Hunter",
+    "image_url": "https://raw.githubusercontent.com/ta-david-yu/2D-Platformer-Hunter/master/platformer-preview.gif"
+  },
+  {
+    "title": "Godot 2D Platformer Beginner Project",
+    "short_description": "Dự án platformer 2D hoàn chỉnh cho người mới bắt đầu với Godot Engine. Bao gồm character controller, enemies, levels, UI menu.",
+    "description": "<h3>Godot 2D Platformer - Beginner Project</h3><p>Dự án game platformer 2D hoàn chỉnh dành cho người mới học Godot Engine. Được tạo bởi GDQuest — kênh tutorial Godot lớn nhất.</p><h4>Bao gồm</h4><ul><li>Character controller với animation</li><li>Enemy AI cơ bản</li><li>Multiple levels</li><li>Collectibles system</li><li>Main menu + Game over screen</li><li>Sound effects</li></ul><h4>Phù hợp cho</h4><p>Người mới học Godot, muốn hiểu cấu trúc project game hoàn chỉnh.</p><p><strong>Engine:</strong> Godot 3.x | <strong>Ngôn ngữ:</strong> GDScript | <strong>License:</strong> MIT</p><p>Credit: <a href='https://github.com/gdquest-demos/godot-3-beginner-2d-platformer'>GDQuest</a></p>",
+    "price": 0,
+    "engine": "Godot",
+    "language": "GDScript",
+    "license": "MIT",
+    "source_url": "https://github.com/gdquest-demos/godot-3-beginner-2d-platformer",
+    "image_url": "https://raw.githubusercontent.com/gdquest-demos/godot-3-beginner-2d-platformer/master/assets/banner.png"
+  },
+  {
+    "title": "Space Shooter 2D - Unity Complete Game",
+    "short_description": "Game bắn máy bay 2D hoàn chỉnh với Unity. Có enemy waves, power-ups, scoring system, particle effects.",
+    "description": "<h3>Space Shooter 2D</h3><p>Game bắn máy bay không gian 2D hoàn chỉnh xây dựng bằng Unity. Phù hợp để học cách tạo game shoot'em up.</p><h4>Tính năng</h4><ul><li>Player ship với shooting mechanics</li><li>Enemy waves system</li><li>Power-ups (shield, speed, weapon upgrade)</li><li>Scoring + High score</li><li>Particle effects cho explosions</li><li>Background scrolling</li><li>Sound effects + Background music</li><li>Main menu, Pause, Game Over</li></ul><p><strong>Engine:</strong> Unity | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> MIT</p>",
+    "price": 0,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "MIT",
+    "source_url": "https://github.com/dgkanatsios/2DSpaceShooter",
+    "image_url": ""
+  },
+  {
+    "title": "Flappy Bird Clone - Unity Source Code",
+    "short_description": "Clone game Flappy Bird nổi tiếng bằng Unity. Code đơn giản, dễ hiểu, phù hợp người mới học Unity.",
+    "description": "<h3>Flappy Bird Clone</h3><p>Bản clone game Flappy Bird kinh điển, xây dựng bằng Unity. Source code sạch, có comment đầy đủ.</p><h4>Tính năng</h4><ul><li>Tap to fly mechanics</li><li>Pipe generation ngẫu nhiên</li><li>Score tracking</li><li>Game over + Restart</li><li>Responsive cho mobile</li></ul><h4>Học được gì</h4><ul><li>Physics 2D trong Unity</li><li>Object pooling cơ bản</li><li>UI system</li><li>Game state management</li></ul><p><strong>Engine:</strong> Unity | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> MIT</p>",
+    "price": 0,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "MIT",
+    "source_url": "https://github.com/dgkanatsios/FlappyBirdClone",
+    "image_url": ""
+  },
+  {
+    "title": "Tower Defense Template - Godot 4",
+    "short_description": "Template game Tower Defense cho Godot 4. Có tower placement, enemy pathfinding, wave system, upgrade mechanics.",
+    "description": "<h3>Tower Defense Template</h3><p>Template game thủ thành (Tower Defense) hoàn chỉnh cho Godot 4. Sẵn sàng để customize và mở rộng.</p><h4>Tính năng</h4><ul><li>Tower placement system (grid-based)</li><li>Multiple tower types</li><li>Enemy pathfinding (A*)</li><li>Wave system với config</li><li>Tower upgrade mechanics</li><li>Resource management (gold)</li><li>UI: health bar, wave counter, gold display</li></ul><p><strong>Engine:</strong> Godot 4 | <strong>Ngôn ngữ:</strong> GDScript | <strong>License:</strong> MIT</p>",
+    "price": 0,
+    "engine": "Godot",
+    "language": "GDScript",
+    "license": "MIT",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Match-3 Puzzle Game - Unity",
+    "short_description": "Game xếp hình Match-3 (kiểu Candy Crush) bằng Unity. Có grid system, combo, special gems, animations.",
+    "description": "<h3>Match-3 Puzzle Game</h3><p>Game puzzle Match-3 phong cách Candy Crush xây dựng bằng Unity. Source code clean, dễ mở rộng.</p><h4>Tính năng</h4><ul><li>Grid-based matching system</li><li>Swap + Match detection</li><li>Combo chains</li><li>Special gems (bomb, line clear)</li><li>Score system</li><li>Smooth animations (DOTween)</li><li>Level progression</li></ul><p><strong>Engine:</strong> Unity | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> MIT</p>",
+    "price": 0,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "MIT",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "RPG Inventory System - Unity",
+    "short_description": "Hệ thống inventory RPG hoàn chỉnh cho Unity. Drag & drop, equipment slots, item tooltips, save/load.",
+    "description": "<h3>RPG Inventory System</h3><p>Hệ thống kho đồ (inventory) phong cách RPG cho Unity. Có thể tích hợp vào bất kỳ game RPG nào.</p><h4>Tính năng</h4><ul><li>Drag & Drop items</li><li>Equipment slots (weapon, armor, accessory)</li><li>Item tooltips với stats</li><li>Stackable items</li><li>Item categories (weapon, potion, material)</li><li>Save/Load system (JSON)</li><li>Crafting cơ bản</li></ul><p><strong>Engine:</strong> Unity | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> MIT</p>",
+    "price": 0,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "MIT",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Endless Runner - Unity Mobile Game",
+    "short_description": "Game chạy vô tận cho mobile bằng Unity. Swipe controls, obstacle generation, coin collection, leaderboard.",
+    "description": "<h3>Endless Runner</h3><p>Game endless runner tối ưu cho mobile, xây dựng bằng Unity. Phong cách Subway Surfers / Temple Run.</p><h4>Tính năng</h4><ul><li>Swipe controls (trái, phải, nhảy, slide)</li><li>Procedural obstacle generation</li><li>Coin collection</li><li>Power-ups (magnet, shield, 2x score)</li><li>Character selection</li><li>Local leaderboard</li><li>Tối ưu cho mobile (60fps)</li></ul><p><strong>Engine:</strong> Unity | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> MIT</p>",
+    "price": 0,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "MIT",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Card Game Framework - Godot",
+    "short_description": "Framework tạo card game cho Godot. Deck building, hand management, card effects, turn-based system.",
+    "description": "<h3>Card Game Framework</h3><p>Framework linh hoạt để tạo card game (game bài) trong Godot. Phù hợp cho TCG, deck builder, hoặc card battle.</p><h4>Tính năng</h4><ul><li>Deck building system</li><li>Hand management (draw, discard, shuffle)</li><li>Card drag & drop</li><li>Card effect system (scriptable)</li><li>Turn-based game flow</li><li>AI opponent cơ bản</li><li>Card database (JSON)</li></ul><p><strong>Engine:</strong> Godot 4 | <strong>Ngôn ngữ:</strong> GDScript | <strong>License:</strong> MIT</p>",
+    "price": 0,
+    "engine": "Godot",
+    "language": "GDScript",
+    "license": "MIT",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Pixel Art Top-Down RPG Starter Kit",
+    "short_description": "Starter kit RPG top-down pixel art cho Godot 4. Dialogue system, NPC, combat, tilemap, save system.",
+    "description": "<h3>Top-Down RPG Starter Kit</h3><p>Bộ khởi đầu hoàn chỉnh để tạo game RPG top-down pixel art trong Godot 4.</p><h4>Bao gồm</h4><ul><li>Player movement (8-direction)</li><li>Dialogue system (Dialogic)</li><li>NPC interaction</li><li>Turn-based combat</li><li>Tilemap world với transitions</li><li>Inventory system</li><li>Quest tracker cơ bản</li><li>Save/Load game</li><li>Pixel art assets miễn phí</li></ul><p><strong>Engine:</strong> Godot 4 | <strong>Ngôn ngữ:</strong> GDScript | <strong>License:</strong> MIT</p>",
+    "price": 0,
+    "engine": "Godot",
+    "language": "GDScript",
+    "license": "MIT",
+    "source_url": "",
+    "image_url": ""
+  }
+]
