@@ -3,6 +3,11 @@
 **Cập nhật:** 2026-03-29
 **Tài liệu trước:** 2026-03-28 (Sprint D — SEO Technical & Indexing)
 
+## Changelog 29/03/2026
+- Fix FCM: credentials typo `ttoken_uri`, cache null token, data object cast
+- Fix Vietlot Scraper: URL mới, browser UA, implement Keno + Lotto parser
+- AI Subscription Plans: 3 gói (Free/Pro/Business), migration seed, tài liệu
+
 ---
 
 ## 1. Trạng thái hiện tại
@@ -195,19 +200,34 @@ collection_items             # Collection ↔ Product mapping
 | Sprint D — SEO Technical & Indexing | ✅ Done (28/03) | Sitemap, IndexNow, scheduler fix, pagination SEO |
 | Blog Publish API — Hardening | ✅ Done (27/03) | 8/8 cải tiến, 12/12 tests passed |
 | SEO On-Page | ✅ Done | Canonical, JSON-LD, OG, robots.txt, gzip, caching |
+| FCM Push Notification | ✅ Fixed (29/03) | Fix credentials typo, cache null token, data object cast |
+| Vietlot Scraper | ✅ Code fixed (29/03) | URL mới + browser UA + Keno/Lotto parser. Server cần proxy (Cloudflare block) |
+| AI Subscription Plans | ✅ Done (29/03) | 3 gói (Free/Pro $9/Business $29), migration + tài liệu. Chờ PayPal Billing Plans + migrate production |
 | Lemon Squeezy Integration | ⏸️ Tạm hoãn | Chờ multi-language |
 
 ### 🗓️ Roadmap sắp tới
 
-#### Q2/2026 (Tháng 4-6) — Ưu tiên cao
+#### Ngay bây giờ — AI Subscription Go-live
+
+| # | Task | Ước tính | Ưu tiên | Trạng thái |
+|---|------|----------|---------|-----------|
+| 1 | **Chạy migration production** (subscription tables) | 5 phút | 🔴 P0 | ⬜ |
+| 2 | **Tạo PayPal Billing Plans** (Pro + Business) | 1 giờ | 🔴 P0 | ⬜ |
+| 3 | **Cập nhật paypal_plan_id vào DB** | 10 phút | 🔴 P0 | ⬜ |
+| 4 | **Config .env production** (PayPal subscription credentials) | 30 phút | 🔴 P0 | ⬜ |
+| 5 | **Thêm endpoint use-quota** cho AI service | 1 giờ | 🔴 P0 | ⬜ |
+| 6 | **Verify PayPal webhook signature** | 2 giờ | 🟡 P1 | ⬜ |
+| 7 | **Test end-to-end sandbox** | 2 giờ | 🟡 P1 | ⬜ |
+
+#### Q2/2026 (Tháng 4-6) — Sau khi subscription live
 
 | # | Task | Ước tính | Ưu tiên | Ghi chú |
 |---|------|----------|---------|---------|
-| 1 | **Multi-language** (đa ngôn ngữ) | 1-2 tuần | 🔴 P0 | Prerequisite cho Lemon Squeezy |
-| 2 | **Lemon Squeezy integration** | 10-14 ngày | 🔴 P0 | Cổng thanh toán quốc tế, license key, MoR thuế. 4 phases (setup → backend → frontend → testing) |
-| 3 | **www → non-www redirect** | 1 ngày | 🟡 P1 | .htaccess hoặc nginx config |
-| 4 | **License Management** | 2 tuần | 🟡 P1 | Personal/Commercial/Open Source, license key generation, verification API |
-| 5 | **Enhanced Preview** | 2 tuần | 🟡 P1 | WebGL embed, video player, code viewer, 3D model viewer |
+| 8 | **Multi-language** (đa ngôn ngữ) | 1-2 tuần | 🟡 P1 | Prerequisite cho Lemon Squeezy |
+| 9 | **Lemon Squeezy integration** | 10-14 ngày | 🟡 P1 | Cổng thanh toán quốc tế, license key, MoR thuế |
+| 10 | **www → non-www redirect** | 1 ngày | 🟡 P1 | .htaccess hoặc nginx config |
+| 11 | **License Management** | 2 tuần | 🟡 P1 | Personal/Commercial/Open Source, license key generation, verification API |
+| 12 | **Enhanced Preview** | 2 tuần | 🟡 P1 | WebGL embed, video player, code viewer, 3D model viewer |
 
 #### Q3/2026 (Tháng 7-9) — Phase 3 Advanced Features
 
