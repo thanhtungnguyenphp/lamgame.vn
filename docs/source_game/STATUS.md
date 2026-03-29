@@ -1,7 +1,7 @@
 # Source Game Marketplace & Seller System — Trạng thái & Roadmap
 
-**Cập nhật:** 2026-03-28
-**Tài liệu trước:** 2026-03-27 (Sprint A/B/C completed)
+**Cập nhật:** 2026-03-29
+**Tài liệu trước:** 2026-03-28 (Sprint D — SEO Technical & Indexing)
 
 ---
 
@@ -179,3 +179,85 @@ source_game_versions         # Version control + changelog
 user_collections             # User collections
 collection_items             # Collection ↔ Product mapping
 ```
+
+---
+
+## 6. ROADMAP — Đánh giá & Định hướng phát triển (29/03/2026)
+
+### 📊 Tổng kết tiến độ
+
+| Phase / Module | Trạng thái | Hoàn thành |
+|----------------|-----------|------------|
+| Checkout & Giỏ hàng | ✅ Done | 18/18 tasks (100%) |
+| Phase 1 — Foundation (listing, detail, cart, download) | ✅ Done | — |
+| Phase 2 — Seller System (4 sprints) | ✅ Done | Registration, upload, dashboard, revenue/withdrawal |
+| Sprint A/B/C — Seller profile, reviews, wishlist, SEO JSON-LD, collections, version control | ✅ Done | — |
+| Sprint D — SEO Technical & Indexing | ✅ Done (28/03) | Sitemap, IndexNow, scheduler fix, pagination SEO |
+| Blog Publish API — Hardening | ✅ Done (27/03) | 8/8 cải tiến, 12/12 tests passed |
+| SEO On-Page | ✅ Done | Canonical, JSON-LD, OG, robots.txt, gzip, caching |
+| Lemon Squeezy Integration | ⏸️ Tạm hoãn | Chờ multi-language |
+
+### 🗓️ Roadmap sắp tới
+
+#### Q2/2026 (Tháng 4-6) — Ưu tiên cao
+
+| # | Task | Ước tính | Ưu tiên | Ghi chú |
+|---|------|----------|---------|---------|
+| 1 | **Multi-language** (đa ngôn ngữ) | 1-2 tuần | 🔴 P0 | Prerequisite cho Lemon Squeezy |
+| 2 | **Lemon Squeezy integration** | 10-14 ngày | 🔴 P0 | Cổng thanh toán quốc tế, license key, MoR thuế. 4 phases (setup → backend → frontend → testing) |
+| 3 | **www → non-www redirect** | 1 ngày | 🟡 P1 | .htaccess hoặc nginx config |
+| 4 | **License Management** | 2 tuần | 🟡 P1 | Personal/Commercial/Open Source, license key generation, verification API |
+| 5 | **Enhanced Preview** | 2 tuần | 🟡 P1 | WebGL embed, video player, code viewer, 3D model viewer |
+
+#### Q3/2026 (Tháng 7-9) — Phase 3 Advanced Features
+
+| # | Task | Ước tính | Ưu tiên | Ghi chú |
+|---|------|----------|---------|---------|
+| 6 | **Analytics & Insights** | 2 tuần | 🟡 P1 | Product analytics, seller analytics, admin dashboard |
+| 7 | **Virus scanning (ClamAV)** | 3-5 ngày | 🟢 P2 | Upload file scanning |
+| 8 | **Email marketing / Abandoned cart** | 1-2 tuần | 🟢 P2 | Nếu dùng LS thì có sẵn |
+| 9 | **Affiliate program** | 2 tuần | 🟢 P2 | Nếu dùng LS thì có sẵn |
+
+#### Q4/2026 (Tháng 10-12) — Phase 4 Optimization
+
+| # | Task | Ước tính | Ưu tiên | Ghi chú |
+|---|------|----------|---------|---------|
+| 10 | **Performance Optimization** | 2 tuần | 🟡 P1 | Redis caching, DB tuning, CDN, Lighthouse 95+ |
+| 11 | **Marketing tools** | 2 tuần | 🟢 P2 | Discount codes, promotional banners, social sharing |
+| 12 | **Mobile App** (optional) | 3 tháng | 🟢 P2 | React Native, iOS + Android |
+
+### 🎯 Mục tiêu theo giai đoạn
+
+| Giai đoạn | Sellers | Source Games | Transactions/tháng | Revenue/tháng |
+|-----------|---------|-------------|-------------------|---------------|
+| Hiện tại (03/2026) | 1 | 4 | — | — |
+| Cuối Q2/2026 | 20+ | 100+ | 50+ | — |
+| Cuối Q3/2026 | 50+ | 300+ | 200+ | $5,000+ |
+| Cuối Q4/2026 | 100+ | 500+ | 500+ | $20,000+ |
+
+### 📈 Số liệu hiện tại
+
+- **Routes:** 26+ (seller/source game)
+- **Database:** 6 bảng custom + `seller_id` trên products
+- **Products:** 4 source games, 1 seller
+- **Scheduled tasks:** 14 (SEO + lottery + blog)
+- **Infrastructure:** Docker (lamgame-php + lamgame-web + nginx)
+- **Sitemap:** 7 sub-sitemaps, auto-generate daily
+- **IndexNow:** 34 URLs submitted (HTTP 202)
+
+### ⚠️ Rủi ro & Lưu ý
+
+| Rủi ro | Mức độ | Giải pháp |
+|--------|--------|-----------|
+| Lemon Squeezy xác minh chậm (1-3 ngày) | 🟡 Medium | Đăng ký sớm, song song với dev |
+| Tỷ giá USD/VND chênh lệch qua LS | 🟡 Medium | Hiển thị giá USD rõ ràng |
+| Low seller adoption | 🔴 High | Marketing, incentives, onboarding hướng dẫn |
+| File upload security (chưa có virus scan) | 🟡 Medium | Ưu tiên ClamAV trong Q3 |
+| Admin withdrawal processing chưa có UI | 🟡 Medium | Cần build trước khi có withdrawal thực |
+
+### 📝 Quyết định cần đưa ra
+
+1. **Multi-language scope:** Hỗ trợ bao nhiêu ngôn ngữ? (EN + VI? Thêm ngôn ngữ khác?)
+2. **Lemon Squeezy vs Stripe direct:** LS phí cao hơn (5%+$0.50) nhưng bao gồm MoR/thuế. Stripe rẻ hơn (2.9%+$0.30) nhưng tự xử lý thuế. Quyết định dựa trên volume dự kiến.
+3. **Mobile app:** Có cần trong 2026 không? Hay focus web trước?
+4. **Pricing strategy:** Giá tối thiểu source game bao nhiêu? (LS phí cố định $0.50 không phù hợp sản phẩm <$5)
