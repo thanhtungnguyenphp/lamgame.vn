@@ -49,6 +49,11 @@ class FcmNotificationService
 
         $url = "https://fcm.googleapis.com/v1/projects/{$this->projectId}/messages:send";
 
+        // Force data as JSON object (not array) for FCM v1 API
+        if (isset($payload['message']['data'])) {
+            $payload['message']['data'] = (object) $payload['message']['data'];
+        }
+
         try {
             $response = Http::withHeaders([
                 'Authorization' => "Bearer {$token}",
