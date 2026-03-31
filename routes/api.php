@@ -66,6 +66,9 @@ Route::prefix('blog')->name('api.blog.')->middleware('api.key')->group(function 
     Route::post('/update/{slug}', [\App\Http\Controllers\Api\BlogPublishController::class, 'update'])->middleware('throttle:10,1')->name('update');
     Route::delete('/delete/{slug}', [\App\Http\Controllers\Api\BlogPublishController::class, 'destroy'])->middleware('throttle:10,1')->name('delete');
     Route::post('/status', [\App\Http\Controllers\Api\BlogPublishController::class, 'status'])->middleware('throttle:60,1')->name('status');
+    Route::post('/status/{slug}', [\App\Http\Controllers\Api\BlogPublishController::class, 'changeStatus'])->middleware('throttle:10,1')->name('change-status');
+    Route::get('/list', [\App\Http\Controllers\Api\BlogPublishController::class, 'list'])->middleware('throttle:60,1')->name('list');
+    Route::get('/detail/{slug}', [\App\Http\Controllers\Api\BlogPublishController::class, 'detail'])->middleware('throttle:60,1')->name('detail');
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

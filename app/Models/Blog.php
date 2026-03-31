@@ -11,6 +11,18 @@ class Blog extends Model
 {
     use HasFactory, SoftDeletes;
 
+    const STATUS_DRAFT     = 'draft';
+    const STATUS_SCHEDULED = 'scheduled';
+    const STATUS_PUBLISHED = 'published';
+    const STATUS_ARCHIVED  = 'archived';
+
+    const VALID_STATUSES = [
+        self::STATUS_DRAFT,
+        self::STATUS_SCHEDULED,
+        self::STATUS_PUBLISHED,
+        self::STATUS_ARCHIVED,
+    ];
+
     protected $table = 'blogs';
 
     protected $fillable = [
@@ -35,7 +47,6 @@ class Blog extends Model
     ];
 
     protected $casts = [
-        'status' => 'boolean',
         'allow_comments' => 'boolean',
         'published_at' => 'datetime',
         'created_at' => 'datetime',
@@ -55,7 +66,7 @@ class Blog extends Model
      */
     public function scopePublished($query)
     {
-        return $query->where('status', 1)
+        return $query->where('status', self::STATUS_PUBLISHED)
                     ->where('published_at', '<=', now());
     }
 

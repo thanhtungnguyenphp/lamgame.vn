@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Webbycrown\BlogBagisto\Models\Blog;
+use App\Models\Blog;
 use Webbycrown\BlogBagisto\Models\Category;
 use Webbycrown\BlogBagisto\Models\Tag;
 
@@ -87,7 +87,7 @@ class BlogPublishController extends Controller
                     'author_id'         => $admin->id,
                     'locale'            => 'vi',
                     'channels'          => '1',
-                    'status'            => $publishAt->isFuture() ? 0 : 1,
+                    'status'            => $publishAt->isFuture() ? Blog::STATUS_SCHEDULED : Blog::STATUS_PUBLISHED,
                     'allow_comments'    => 1,
                     'meta_title'        => $request->meta_title ?? $request->title,
                     'meta_description'  => $request->meta_description ?? '',
@@ -144,7 +144,7 @@ class BlogPublishController extends Controller
             'meta_description'  => 'nullable|string',
             'meta_keywords'     => 'nullable|string',
             'published_at'      => 'nullable|date',
-            'status'            => 'nullable|boolean',
+            'status'            => 'nullable|string|in:draft,scheduled,published,archived',
             'thumbnail'         => 'nullable|file|mimes:jpg,jpeg,png,webp,svg|max:5120',
             'images'            => 'nullable|array',
             'images.*'          => 'file|mimes:jpg,jpeg,png,webp,gif,svg|max:10240',
@@ -161,7 +161,7 @@ class BlogPublishController extends Controller
                 if ($request->filled('short_description')) $data['short_description'] = $request->short_description;
                 if ($request->filled('meta_description'))  $data['meta_description'] = $request->meta_description;
                 if ($request->filled('meta_keywords'))     $data['meta_keywords'] = $request->meta_keywords;
-                if ($request->has('status'))                $data['status'] = $request->boolean('status') ? 1 : 0;
+                if ($request->filled('status'))                $data['status'] = $request->status;
 
                 if ($request->filled('category')) {
                     $categoryId = $this->resolveCategory($request->category);
@@ -176,8 +176,8 @@ class BlogPublishController extends Controller
                 if ($request->filled('published_at')) {
                     $publishAt = Carbon::parse($request->published_at);
                     $data['published_at'] = $publishAt;
-                    if (! $request->has('status')) {
-                        $data['status'] = $publishAt->isFuture() ? 0 : 1;
+                    if (! $request->filled('status')) {
+                        $data['status'] = $publishAt->isFuture() ? Blog::STATUS_SCHEDULED : Blog::STATUS_PUBLISHED;
                     }
                 }
 
@@ -266,12 +266,171 @@ class BlogPublishController extends Controller
         ]);
 
         $slugs = $request->input('slugs');
-        $existing = Blog::whereIn('slug', $slugs)->pluck('slug')->toArray();
+        $blogs = Blog::whereIn('slug', $slugs)->get(['slug', 'status']);
+
+        $result = [
+            'status'    => 'success',
+            'published' => [],
+            'pending'   => [],
+            'draft'     => [],
+            'scheduled' => [],
+            'archived'  => [],
+        ];
+
+        $foundSlugs = [];
+        foreach ($blogs as $blog) {
+            $foundSlugs[] = $blog->slug;
+            match ($blog->status) {
+                Blog::STATUS_PUBLISHED => $result['published'][] = $blog->slug,
+                Blog::STATUS_DRAFT     => $result['draft'][] = $blog->slug,
+                Blog::STATUS_SCHEDULED => $result['scheduled'][] = $blog->slug,
+                Blog::STATUS_ARCHIVED  => $result['archived'][] = $blog->slug,
+                default                => $result['pending'][] = $blog->slug,
+            };
+        }
+
+        // Slugs not found in DB go to pending
+        $result['pending'] = array_merge(
+            $result['pending'],
+            array_values(array_diff($slugs, $foundSlugs))
+        );
+
+        return response()->json($result);
+    }
+
+    public function changeStatus(Request $request, string $slug)
+    {
+        $blog = Blog::where('slug', $slug)->first();
+        if (! $blog) {
+            return response()->json(['status' => 'error', 'message' => 'Article not found'], 404);
+        }
+
+        $request->validate([
+            'status' => 'required|string|in:draft,scheduled,published,archived',
+        ], [
+            'status.in' => 'Status must be one of: draft, scheduled, published, archived',
+        ]);
+
+        $newStatus = $request->status;
+
+        // Business rules
+        if ($newStatus === Blog::STATUS_SCHEDULED && (! $blog->published_at || ! $blog->published_at->isFuture())) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Scheduled status requires published_at to be a future date',
+            ], 422);
+        }
+
+        if ($newStatus === Blog::STATUS_PUBLISHED && ! $blog->published_at) {
+            $blog->published_at = now();
+        }
+
+        if ($newStatus === Blog::STATUS_DRAFT) {
+            $blog->published_at = null;
+        }
+
+        $blog->status = $newStatus;
+        $blog->save();
+
+        $this->logAction($request, 'change_status', $slug, $blog->id, ['status' => $newStatus]);
 
         return response()->json([
-            'status' => 'ok',
-            'published' => $existing,
-            'pending'   => array_values(array_diff($slugs, $existing)),
+            'status' => 'success',
+            'message' => "Article status updated to {$newStatus}",
+        ]);
+    }
+
+    public function list(Request $request)
+    {
+        $request->validate([
+            'page'     => 'nullable|integer|min:1',
+            'per_page' => 'nullable|integer|min:1|max:100',
+            'status'   => 'nullable|string|in:draft,scheduled,published,archived',
+            'category' => 'nullable|string',
+            'search'   => 'nullable|string|max:200',
+        ]);
+
+        $query = Blog::query();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('category')) {
+            $cat = \Webbycrown\BlogBagisto\Models\Category::whereRaw('LOWER(name) = ?', [strtolower($request->category)])->first();
+            if ($cat) {
+                $query->where('default_category', $cat->id);
+            } else {
+                $query->whereRaw('0 = 1'); // no results
+            }
+        }
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->where(function ($q) use ($s) {
+                $q->where('name', 'LIKE', "%{$s}%")
+                  ->orWhere('slug', 'LIKE', "%{$s}%");
+            });
+        }
+
+        $perPage = $request->integer('per_page', 20);
+        $paginated = $query->orderByDesc('updated_at')
+            ->select(['slug', 'name', 'status', 'default_category', 'published_at', 'updated_at'])
+            ->paginate($perPage);
+
+        $data = $paginated->getCollection()->map(function ($blog) {
+            $cat = $blog->default_category ? \Webbycrown\BlogBagisto\Models\Category::find($blog->default_category) : null;
+            return [
+                'slug'         => $blog->slug,
+                'title'        => $blog->name,
+                'status'       => $blog->status,
+                'category'     => $cat?->name,
+                'published_at' => $blog->published_at?->toDateString(),
+                'updated_at'   => $blog->updated_at?->toIso8601String(),
+            ];
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'data'   => $data,
+            'meta'   => [
+                'current_page' => $paginated->currentPage(),
+                'last_page'    => $paginated->lastPage(),
+                'per_page'     => $paginated->perPage(),
+                'total'        => $paginated->total(),
+            ],
+        ]);
+    }
+
+    public function detail(Request $request, string $slug)
+    {
+        $blog = Blog::where('slug', $slug)->first();
+        if (! $blog) {
+            return response()->json(['status' => 'error', 'message' => 'Article not found'], 404);
+        }
+
+        $cat = $blog->default_category ? \Webbycrown\BlogBagisto\Models\Category::find($blog->default_category) : null;
+        $tagIds = $blog->tags ? explode(',', $blog->tags) : [];
+        $tagNames = $tagIds ? \Webbycrown\BlogBagisto\Models\Tag::whereIn('id', $tagIds)->pluck('name')->toArray() : [];
+
+        return response()->json([
+            'status' => 'success',
+            'data'   => [
+                'slug'              => $blog->slug,
+                'title'             => $blog->name,
+                'description'       => $blog->description,
+                'short_description' => $blog->short_description,
+                'category'          => $cat?->name,
+                'tags'              => $tagNames,
+                'meta_title'        => $blog->meta_title,
+                'meta_description'  => $blog->meta_description,
+                'meta_keywords'     => $blog->meta_keywords,
+                'status'            => $blog->status,
+                'published_at'      => $blog->published_at?->toDateString(),
+                'thumbnail_url'     => $blog->src ? asset('storage/' . $blog->src) : null,
+                'created_at'        => $blog->created_at?->toIso8601String(),
+                'updated_at'        => $blog->updated_at?->toIso8601String(),
+            ],
         ]);
     }
 
