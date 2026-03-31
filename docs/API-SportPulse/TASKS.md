@@ -3,240 +3,130 @@
 > Branch: `feat/APISportPulse`
 > Base URL: `https://lamgame.vn/api/v1/sport`
 > Ngày tạo: 2026-03-31
+> Cập nhật: 2026-03-31 17:55
 
 ---
 
-## Phân tích tổng quan
+## Tiến độ tổng quan
 
-Tài liệu yêu cầu 26 endpoints chia thành 7 nhóm. Backend sẽ tích hợp vào hệ thống Laravel hiện có (lamgame.vn), sử dụng Firebase Auth cho user endpoints, throttle middleware cho rate limiting.
-
-### Kiến trúc
-
-```
-Flutter App → lamgame.vn/api/v1/sport/* → Laravel Controllers → MySQL + Cache
-                                              │
-                                              ├── FirebaseAuth middleware (user endpoints)
-                                              ├── Cache layer (Redis/file) cho data thể thao
-                                              └── FCM push notifications
-```
-
-### Database tables mới cần tạo
-
-| Table | Mô tả |
-|-------|-------|
-| `sports` | Danh sách môn thể thao |
-| `leagues` | Giải đấu |
-| `teams` | Đội |
-| `league_team` | Pivot: đội thuộc giải nào |
-| `matches` | Trận đấu |
-| `match_events` | Sự kiện trận (bàn thắng, thẻ, thay người) |
-| `match_lineups` | Đội hình |
-| `standings` | Bảng xếp hạng |
-| `highlights` | Video highlight |
-| `sport_articles` | Bài viết tổng kết/bình luận |
-| `user_sport_profiles` | Profile thể thao user (favorites, notification settings) |
-| `user_reminders` | Nhắc nhở trận đấu |
-| `user_fcm_tokens` | FCM tokens (có thể dùng chung bảng hiện có) |
+| Phase | Trạng thái | Ngày hoàn thành |
+|-------|-----------|-----------------|
+| Phase 1 — Foundation | ✅ DONE | 2026-03-31 |
+| Phase 2–8 — API Endpoints | ✅ DONE (code sẵn trong Phase 1) | 2026-03-31 |
+| Phase 9 — Crawl Data | 🔜 Tiếp tục ngày mai | — |
+| Phase 10 — Push Notifications | ⬜ Chưa bắt đầu | — |
 
 ---
 
-## PHASE 1: Foundation (Database + Models + Routes) ✅ DONE
+## PHASE 1: Foundation ✅ DONE (2026-03-31)
 
-### Task 1.1 — Migration & Models ✅
-- [x] Migration: `sports`, `leagues`, `teams`, `league_team`
-- [x] Migration: `matches`, `match_events`, `match_lineups`
-- [x] Migration: `standings`
-- [x] Migration: `highlights`, `sport_articles`
-- [x] Migration: `user_sport_profiles`, `user_reminders`
-- [x] Models với relationships, casts, scopes (12 models)
+- [x] 3 migrations: 13 tables (sports, leagues, teams, league_team, sport_matches, match_events, match_lineups, standings, sport_highlights, sport_articles, user_sport_profiles, user_sport_reminders, user_sport_fcm_tokens)
+- [x] 12 Eloquent models (`App\Models\Sport\*`)
+- [x] 7 controllers với full implementation (không phải stub)
+- [x] 26 routes (19 public + 8 Firebase Auth)
+- [x] Seeder: 5 sports, 15 leagues, 20 teams
+- [x] Migrate + test local: 13/13 tests passed
+- [x] Deploy production: OK
+- [x] Tài liệu: API Guide + Postman Collection
 
-### Task 1.2 — Routes & Controller stubs ✅
-- [x] Tạo `routes/api/sport.php` (26 routes)
-- [x] Include trong `routes/api.php`
-- [x] 7 controllers với full implementation
-
-### Task 1.3 — Seeder data cơ bản ✅
-- [x] Seed sports (5 môn)
-- [x] Seed leagues (15 giải)
-- [x] Seed teams (20 đội) + league_team pivots
-
----
-
-## PHASE 2: Sports & Leagues (4 endpoints)
-
-### Task 2.1 — GET `/sports`
-- [ ] `SportController@index`
-- [ ] Response: id, name, icon, order
-- [ ] Cache 24h
-
-### Task 2.2 — GET `/leagues`
-- [ ] `LeagueController@index`
-- [ ] Query params: sport, country, season
-- [ ] Cache 1h
-
-### Task 2.3 — GET `/leagues/{id}/standings`
-- [ ] `LeagueController@standings`
-- [ ] Response: rank, team, played, won, drawn, lost, GF, GA, GD, points, form
-- [ ] Cache 5 phút
-
-### Task 2.4 — GET `/leagues/{id}/top-scorers`
-- [ ] `LeagueController@topScorers`
-- [ ] Cache 1h
+### Commits
+| Commit | Mô tả |
+|--------|-------|
+| `d1ceaee` | docs: update domain, add TASKS.md |
+| `b4afc1e` | feat: Phase 1 — models, controllers, routes, seeder |
+| `762ae4d` | docs: API guide + test results |
+| `19e0362` | docs: Postman collection 26 endpoints |
+| `19312a0` | docs: crawl data plan |
 
 ---
 
-## PHASE 3: Matches — Core (7 endpoints)
+## PHASE 9: Crawl & Tổng hợp Data 🔜 NGÀY MAI
 
-### Task 3.1 — GET `/matches/live`
-- [ ] `MatchController@live`
-- [ ] Filter: sport
-- [ ] Cache 30s (trận live cần refresh nhanh)
+> Chi tiết: `docs/API-SportPulse/04_CRAWL_PLAN.md`
 
-### Task 3.2 — GET `/matches/schedule`
-- [ ] `MatchController@schedule`
-- [ ] Query: date (required), sport, league_id
-- [ ] Group by league
-- [ ] Cache 5 phút
+### Task 9.1 — Migration thêm cột tracking + crawl_logs
+- [ ] Thêm `external_id`, `source`, `synced_at` vào `sport_matches`
+- [ ] Thêm `external_ids` JSON vào `teams`
+- [ ] Thêm `source_url` unique vào `sport_highlights`, `sport_articles`
+- [ ] Tạo bảng `sport_crawl_logs`
 
-### Task 3.3 — GET `/matches/results`
-- [ ] `MatchController@results`
-- [ ] Query: date, sport, league_id, page, limit
-- [ ] Pagination
-- [ ] Cache 5 phút
+### Task 9.2 — SportDataService (base class)
+- [ ] HTTP client (Guzzle) với retry, timeout
+- [ ] Logging vào `sport_crawl_logs`
+- [ ] Dedup helper methods
 
-### Task 3.4 — GET `/matches/{id}`
-- [ ] `MatchController@show`
-- [ ] Include: stats (possession, shots, corners, fouls, cards)
-- [ ] Cache 1 phút (live) / 1h (finished)
+### Task 9.3 — Team ID mapping
+- [ ] Map 20 teams → external_ids (API-Football, TheSportsDB, BallDontLie)
+- [ ] Migration seed external_ids
 
-### Task 3.5 — GET `/matches/{id}/events`
-- [ ] `MatchController@events`
-- [ ] Types: goal, own_goal, penalty_goal, penalty_miss, yellow_card, red_card, second_yellow, substitution, var_decision
-- [ ] Cache 30s
+### Task 9.4 — `sport:sync-fixtures` (P0)
+- [ ] Crawl lịch thi đấu từ API-Football
+- [ ] Chạy 06:00 hàng ngày
+- [ ] updateOrCreate by external_id
 
-### Task 3.6 — GET `/matches/{id}/lineups`
-- [ ] `MatchController@lineups`
-- [ ] Response: formation, starting XI, substitutes
-- [ ] Cache 5 phút
+### Task 9.5 — `sport:sync-live` (P0)
+- [ ] Crawl tỉ số trực tiếp mỗi 30s
+- [ ] Chỉ chạy khi có trận live (cache flag)
+- [ ] Dispatch goal notification khi score thay đổi
 
-### Task 3.7 — GET `/matches/{id}/h2h`
-- [ ] `MatchController@h2h`
-- [ ] Response: total, wins, draws, recent matches
-- [ ] Cache 1h
+### Task 9.6 — `sport:sync-standings` (P1)
+- [ ] Crawl BXH 2 lần/ngày (02:00, 14:00)
+- [ ] updateOrCreate by league_id + team_id
 
----
+### Task 9.7 — `sport:sync-lineups` + `sync-events` (P1)
+- [ ] Lineups: 30 phút trước kick-off
+- [ ] Events: mỗi 30s cùng live scores
 
-## PHASE 4: Content (4 endpoints)
+### Task 9.8 — `sport:sync-highlights` (P2)
+- [ ] Crawl Scorebat API mỗi 6h
+- [ ] Dedup by video_url
+- [ ] Fuzzy match team name → match_id
 
-### Task 4.1 — GET `/highlights`
-- [ ] `HighlightController@index`
-- [ ] Query: sport, league_id, match_id, page, limit
-- [ ] Pagination
+### Task 9.9 — `sport:sync-articles` (P2)
+- [ ] Parse RSS: VnExpress Thể thao, Bongda24h
+- [ ] Filter keyword match 15 leagues / 20 teams
+- [ ] Dedup by source_url
 
-### Task 4.2 — GET `/articles`
-- [ ] `ArticleController@index`
-- [ ] Query: type (recap/preview/opinion/roundup), sport, page, limit
+### Task 9.10 — `sport:cleanup`
+- [ ] Xóa data cũ > 90 ngày (matches finished, old articles)
+- [ ] Chạy weekly
 
-### Task 4.3 — GET `/articles/{id}`
-- [ ] `ArticleController@show`
-- [ ] Include: related_matches
+### Task 9.11 — Scheduler config + test
+- [ ] Đăng ký API keys (API-Football, TheSportsDB, BallDontLie)
+- [ ] Config scheduler trong bootstrap/app.php
+- [ ] Test end-to-end trên local
 
-### Task 4.4 — GET `/discover`
-- [ ] `DiscoverController@index`
-- [ ] Feed xen kẽ highlight + article, sort by created_at DESC
-- [ ] Query: sport, page, limit
+**Ước lượng: ~6 ngày**
 
 ---
 
-## PHASE 5: Teams (2 endpoints)
+## PHASE 10: Push Notifications ⬜
 
-### Task 5.1 — GET `/teams/{id}`
-- [ ] `TeamController@show`
-- [ ] Include: leagues
-- [ ] Cache 1h
+### Task 10.1 — Notification jobs
+- [ ] `SendMatchStartNotification`
+- [ ] `SendGoalNotification`
+- [ ] `SendMatchEndNotification`
+- [ ] `SendMatchReminderNotification` (check mỗi phút)
+- [ ] `SendHighlightNotification`
 
-### Task 5.2 — GET `/teams/{id}/matches`
-- [ ] `TeamController@matches`
-- [ ] Query: status (scheduled/finished/all), page, limit
-
----
-
-## PHASE 6: User & Favorites (8 endpoints, Firebase Auth)
-
-### Task 6.1 — GET `/user/profile`
-- [ ] `SportUserController@profile`
-- [ ] Middleware: `firebase.auth`
-- [ ] Response: favorites, notification_settings, is_premium
-
-### Task 6.2 — PUT `/user/favorites`
-- [ ] `SportUserController@updateFavorites`
-- [ ] Request: favorite_teams[], favorite_sports[]
-
-### Task 6.3 — PUT `/user/notification-settings`
-- [ ] `SportUserController@updateNotificationSettings`
-- [ ] Request: live_score, match_reminder, highlights, favorite_teams_only
-
-### Task 6.4 — POST `/user/reminders`
-- [ ] `ReminderController@store`
-- [ ] Request: match_id, remind_before_minutes
-
-### Task 6.5 — DELETE `/user/reminders/{match_id}`
-- [ ] `ReminderController@destroy`
-
-### Task 6.6 — GET `/user/reminders`
-- [ ] `ReminderController@index`
-
-### Task 6.7 — DELETE `/user/account`
-- [ ] `SportUserController@deleteAccount`
-
-### Task 6.8 — POST `/user/fcm-token`
-- [ ] `SportUserController@registerFcmToken`
-- [ ] Request: token, platform
+**Ước lượng: ~1 ngày**
 
 ---
 
-## PHASE 7: Search (1 endpoint)
+## Việc cần chuẩn bị trước ngày mai
 
-### Task 7.1 — GET `/search`
-- [ ] `SearchController@index`
-- [ ] Query: q (min 2 chars), type (team/league/match/all)
-- [ ] LIKE search trên teams.name, leagues.name, matches (home/away team name)
-
----
-
-## PHASE 8: Push Notifications (server-side)
-
-### Task 8.1 — Notification jobs
-- [ ] `SendMatchStartNotification` job
-- [ ] `SendGoalNotification` job
-- [ ] `SendMatchEndNotification` job
-- [ ] `SendMatchReminderNotification` job (scheduled, check mỗi phút)
-- [ ] `SendHighlightNotification` job
-
----
-
-## Thứ tự triển khai đề xuất
-
-| Thứ tự | Phase | Ước lượng | Lý do ưu tiên |
-|--------|-------|-----------|----------------|
-| 1 | Phase 1 — Foundation | 1 ngày | Nền tảng cho tất cả |
-| 2 | Phase 2 — Sports & Leagues | 0.5 ngày | Data tĩnh, đơn giản |
-| 3 | Phase 3 — Matches | 1.5 ngày | Core feature, nhiều endpoint nhất |
-| 4 | Phase 5 — Teams | 0.5 ngày | Đơn giản, phụ thuộc Phase 3 |
-| 5 | Phase 4 — Content | 1 ngày | Highlight + articles |
-| 6 | Phase 6 — User | 1 ngày | Cần Firebase Auth |
-| 7 | Phase 7 — Search | 0.5 ngày | Đơn giản |
-| 8 | Phase 8 — Push | 1 ngày | Cần test với device thật |
-
-**Tổng ước lượng: ~7 ngày**
+- [ ] Đăng ký API key: https://dashboard.api-football.com/ (free 100 req/ngày)
+- [ ] Đăng ký BallDontLie: https://app.balldontlie.io/ (free)
+- [ ] Thêm vào `.env`: `API_FOOTBALL_KEY`, `BALLDONTLIE_KEY`
 
 ---
 
 ## Ghi chú kỹ thuật
 
-- Tất cả endpoints public (không cần auth) dùng `throttle:60,1`
-- User endpoints dùng `firebase.auth` middleware (đã có sẵn)
-- Cache strategy: Redis nếu có, fallback file cache
-- Pagination mặc định: `limit=20, max=50`
-- Response format thống nhất: `{ "data": ..., "pagination": { page, limit, total } }`
-- CDN assets: `https://lamgame.vn/storage/sport/` (teams logos, league logos, highlights, articles)
+- Tất cả endpoints public dùng `throttle:60,1`
+- User endpoints dùng `firebase.auth` middleware
+- Cache: Redis (đã có `lg-redis` container)
+- Pagination: `limit=20, max=50`
+- Response format: `{ "data": ..., "pagination": { page, limit, total } }`
+- CDN assets: `https://lamgame.vn/storage/sport/`
+- Postman: `docs/API-SportPulse/SportPulse_API.postman_collection.json`
