@@ -60,6 +60,9 @@ require __DIR__ . '/api/lottery.php';
 // Include subscription routes
 require __DIR__ . '/api/subscription.php';
 
+// Include sport routes
+require __DIR__ . '/api/sport.php';
+
 // Blog Publish API (key-based auth)
 Route::prefix('blog')->name('api.blog.')->middleware('api.key')->group(function () {
     Route::post('/publish', [\App\Http\Controllers\Api\BlogPublishController::class, 'publish'])->middleware('throttle:10,1')->name('publish');
