@@ -40,27 +40,25 @@ Flutter App → lamgame.vn/api/v1/sport/* → Laravel Controllers → MySQL + Ca
 
 ---
 
-## PHASE 1: Foundation (Database + Models + Routes)
+## PHASE 1: Foundation (Database + Models + Routes) ✅ DONE
 
-### Task 1.1 — Migration & Models
-Tạo migrations và Eloquent models cho tất cả tables.
+### Task 1.1 — Migration & Models ✅
+- [x] Migration: `sports`, `leagues`, `teams`, `league_team`
+- [x] Migration: `matches`, `match_events`, `match_lineups`
+- [x] Migration: `standings`
+- [x] Migration: `highlights`, `sport_articles`
+- [x] Migration: `user_sport_profiles`, `user_reminders`
+- [x] Models với relationships, casts, scopes (12 models)
 
-- [ ] Migration: `sports`, `leagues`, `teams`, `league_team`
-- [ ] Migration: `matches`, `match_events`, `match_lineups`
-- [ ] Migration: `standings`
-- [ ] Migration: `highlights`, `sport_articles`
-- [ ] Migration: `user_sport_profiles`, `user_reminders`
-- [ ] Models với relationships, casts, scopes
+### Task 1.2 — Routes & Controller stubs ✅
+- [x] Tạo `routes/api/sport.php` (26 routes)
+- [x] Include trong `routes/api.php`
+- [x] 7 controllers với full implementation
 
-### Task 1.2 — Routes & Controller stubs
-- [ ] Tạo `routes/api/sport.php`
-- [ ] Include trong `routes/api.php`
-- [ ] Tạo controller stubs cho 7 nhóm
-
-### Task 1.3 — Seeder data cơ bản
-- [ ] Seed sports (5 môn)
-- [ ] Seed leagues chính (EPL, La Liga, Serie A, Bundesliga, Ligue 1, UCL, V-League, NBA, Grand Slams, UFC, VCS)
-- [ ] Seed teams phổ biến (top 20 CLB bóng đá + NBA teams)
+### Task 1.3 — Seeder data cơ bản ✅
+- [x] Seed sports (5 môn)
+- [x] Seed leagues (15 giải)
+- [x] Seed teams (20 đội) + league_team pivots
 
 ---
 
