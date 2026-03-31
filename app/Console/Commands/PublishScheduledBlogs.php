@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Webbycrown\BlogBagisto\Models\Blog;
+use App\Models\Blog;
 
 class PublishScheduledBlogs extends Command
 {
@@ -12,9 +12,9 @@ class PublishScheduledBlogs extends Command
 
     public function handle(): int
     {
-        $count = Blog::where('status', 0)
+        $count = Blog::where('status', 'scheduled')
             ->where('published_at', '<=', now())
-            ->update(['status' => 1]);
+            ->update(['status' => 'published']);
 
         $this->info("Published {$count} scheduled blog(s).");
 

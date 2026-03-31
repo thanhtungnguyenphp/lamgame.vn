@@ -122,7 +122,7 @@ class BlogRepository extends \Webbycrown\BlogBagisto\Repositories\BlogRepository
 
         $blogs = DB::table('blogs')
             ->where('published_at', '<=', Carbon::now()->format('Y-m-d'))
-            ->where('status', 1)
+            ->where('status', 'published')
             ->where('locale', $locale)
             ->orderBy('id', 'DESC')
             ->paginate(12);
@@ -140,7 +140,7 @@ class BlogRepository extends \Webbycrown\BlogBagisto\Repositories\BlogRepository
         $blog = DB::table('blogs')
             ->whereSlug($id)
             ->where('published_at', '<=', Carbon::now()->format('Y-m-d'))
-            ->where('status', 1)
+            ->where('status', 'published')
             ->first();
 
         return $blog;
@@ -161,7 +161,7 @@ class BlogRepository extends \Webbycrown\BlogBagisto\Repositories\BlogRepository
         $blogs = DB::table('blogs')
             ->where('published_at', '<=', Carbon::now()->format('Y-m-d'))
             ->where('default_category', $categoryId['id'])
-            ->where('status', 1)
+            ->where('status', 'published')
             ->where('locale', $locale)
             ->orderBy('id', 'DESC')
             ->paginate(12);

@@ -1,0 +1,150 @@
+{
+	"info": {
+		"name": "Blog Publish API v0.3",
+		"description": "LAMGAME Blog Publish API — Article Status System\nBase URL: https://lamgame.vn/api/blog\nAuth: X-Api-Key header",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{"key": "baseUrl", "value": "https://lamgame.vn/api/blog"},
+		{"key": "apiKey", "value": "YOUR_API_KEY_HERE"},
+		{"key": "testSlug", "value": "bai-viet-test"}
+	],
+	"item": [
+		{
+			"name": "1. Publish — Tạo bài mới",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "X-Api-Key", "value": "{{apiKey}}"},
+					{"key": "Accept", "value": "application/json"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "title", "value": "Hướng dẫn Unity cơ bản", "type": "text"},
+						{"key": "slug", "value": "{{testSlug}}", "type": "text"},
+						{"key": "description", "value": "<p>Nội dung bài viết HTML...</p>", "type": "text"},
+						{"key": "category", "value": "Game Development", "type": "text"},
+						{"key": "tags[]", "value": "unity", "type": "text"},
+						{"key": "tags[]", "value": "tutorial", "type": "text"},
+						{"key": "meta_title", "value": "Hướng dẫn Unity cho người mới", "type": "text"},
+						{"key": "meta_description", "value": "Bài viết hướng dẫn Unity từ A-Z", "type": "text"},
+						{"key": "meta_keywords", "value": "unity, game dev, tutorial", "type": "text"},
+						{"key": "short_description", "value": "Mô tả ngắn bài viết", "type": "text"},
+						{"key": "published_at", "value": "", "type": "text", "disabled": true, "description": "Để trống = now. Ngày tương lai = scheduled"},
+						{"key": "thumbnail", "type": "file", "src": "", "disabled": true},
+						{"key": "images[]", "type": "file", "src": "", "disabled": true}
+					]
+				},
+				"url": {"raw": "{{baseUrl}}/publish", "host": ["{{baseUrl}}"], "path": ["publish"]},
+				"description": "Tạo bài viết mới. Status tự động: published (nếu published_at <= now) hoặc scheduled (nếu published_at > now).\n\nResponse 201: thành công\nResponse 409: slug đã tồn tại\nResponse 422: validation fail"
+			}
+		},
+		{
+			"name": "2. Update — Cập nhật bài",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "X-Api-Key", "value": "{{apiKey}}"},
+					{"key": "Accept", "value": "application/json"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "title", "value": "Tiêu đề mới (cập nhật)", "type": "text"},
+						{"key": "description", "value": "<p>Nội dung đã cập nhật...</p>", "type": "text", "disabled": true},
+						{"key": "status", "value": "published", "type": "text", "disabled": true, "description": "draft | scheduled | published | archived"},
+						{"key": "category", "value": "", "type": "text", "disabled": true},
+						{"key": "tags[]", "value": "", "type": "text", "disabled": true},
+						{"key": "thumbnail", "type": "file", "src": "", "disabled": true}
+					]
+				},
+				"url": {"raw": "{{baseUrl}}/update/{{testSlug}}", "host": ["{{baseUrl}}"], "path": ["update", "{{testSlug}}"]},
+				"description": "Partial update — chỉ gửi field cần thay đổi."
+			}
+		},
+		{
+			"name": "3. Delete — Xóa bài",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{"key": "X-Api-Key", "value": "{{apiKey}}"},
+					{"key": "Accept", "value": "application/json"}
+				],
+				"url": {"raw": "{{baseUrl}}/delete/{{testSlug}}", "host": ["{{baseUrl}}"], "path": ["delete", "{{testSlug}}"]},
+				"description": "Xóa bài viết + toàn bộ file liên quan."
+			}
+		},
+		{
+			"name": "4. Check Status — Kiểm tra nhiều slug",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "X-Api-Key", "value": "{{apiKey}}"},
+					{"key": "Content-Type", "value": "application/json"},
+					{"key": "Accept", "value": "application/json"}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"slugs\": [\"bai-viet-1\", \"bai-viet-2\", \"slug-khong-ton-tai\"]\n}",
+					"options": {"raw": {"language": "json"}}
+				},
+				"url": {"raw": "{{baseUrl}}/status", "host": ["{{baseUrl}}"], "path": ["status"]},
+				"description": "Kiểm tra trạng thái nhiều slug cùng lúc.\n\nResponse trả 5 mảng: published, pending, draft, scheduled, archived.\nSlug không tồn tại → pending."
+			}
+		},
+		{
+			"name": "5. Change Status — Đổi trạng thái 1 bài",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "X-Api-Key", "value": "{{apiKey}}"},
+					{"key": "Content-Type", "value": "application/json"},
+					{"key": "Accept", "value": "application/json"}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"status\": \"published\"\n}",
+					"options": {"raw": {"language": "json"}}
+				},
+				"url": {"raw": "{{baseUrl}}/status/{{testSlug}}", "host": ["{{baseUrl}}"], "path": ["status", "{{testSlug}}"]},
+				"description": "Đổi trạng thái bài viết.\n\nGiá trị hợp lệ: draft, scheduled, published, archived\n\nBusiness rules:\n- scheduled: yêu cầu published_at là ngày tương lai\n- published: tự set published_at = now() nếu chưa có\n- draft: xóa published_at\n- archived: giữ nguyên published_at"
+			}
+		},
+		{
+			"name": "6. List — Danh sách bài viết",
+			"request": {
+				"method": "GET",
+				"header": [
+					{"key": "X-Api-Key", "value": "{{apiKey}}"},
+					{"key": "Accept", "value": "application/json"}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/list?page=1&per_page=20",
+					"host": ["{{baseUrl}}"],
+					"path": ["list"],
+					"query": [
+						{"key": "page", "value": "1"},
+						{"key": "per_page", "value": "20"},
+						{"key": "status", "value": "published", "disabled": true, "description": "draft | scheduled | published | archived"},
+						{"key": "category", "value": "Game Development", "disabled": true},
+						{"key": "search", "value": "unity", "disabled": true}
+					]
+				},
+				"description": "Danh sách bài viết có phân trang.\n\nFilter: status, category (exact match), search (LIKE trong title + slug).\nSắp xếp: updated_at DESC."
+			}
+		},
+		{
+			"name": "7. Detail — Chi tiết bài viết",
+			"request": {
+				"method": "GET",
+				"header": [
+					{"key": "X-Api-Key", "value": "{{apiKey}}"},
+					{"key": "Accept", "value": "application/json"}
+				],
+				"url": {"raw": "{{baseUrl}}/detail/{{testSlug}}", "host": ["{{baseUrl}}"], "path": ["detail", "{{testSlug}}"]},
+				"description": "Lấy chi tiết đầy đủ một bài viết: content, SEO fields, tags, category, thumbnail URL."
+			}
+		}
+	]
+}
