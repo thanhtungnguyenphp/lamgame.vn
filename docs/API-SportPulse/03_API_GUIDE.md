@@ -265,6 +265,9 @@ Xóa tài khoản và toàn bộ data liên quan.
 
 ## Test Results (Local)
 
+**Postman Collection:** `docs/API-SportPulse/SportPulse_API.postman_collection.json`
+Import vào Postman, set variable `firebaseToken` nếu cần test user endpoints.
+
 | # | Test | Status | HTTP |
 |---|------|--------|------|
 | 1 | GET /sports | ✅ | 200 |
