@@ -1,155 +1,166 @@
-<!-- SEO Meta Content -->
-@push('meta')
-    <meta
-        name="description"
-        content="@lang('shop::app.customers.reset-password.title')"
-    />
+@extends('layouts.master')
 
-    <meta
-        name="keywords"
-        content="@lang('shop::app.customers.reset-password.title')"
-    />
-@endPush
+@section('page_title', 'Đặt lại mật khẩu - LAMGAME')
 
-<x-shop::layouts
-    :has-header="false"
-    :has-feature="false"
-    :has-footer="false"
->
-    <!-- Page Title -->
-    <x-slot:title>
-        @lang('shop::app.customers.reset-password.title')
-    </x-slot>
+@push('styles')
+<style>
+    .auth-container {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem 0;
+    }
+    .auth-card {
+        background: white;
+        padding: 3rem 2rem;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 400px;
+        margin: 2rem 1rem;
+    }
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .auth-header h1 {
+        color: #6a4c93;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+    .auth-header p { color: #666; }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+        box-sizing: border-box;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #6a4c93;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
+    }
+    .form-control.error { border-color: #e74c3c; }
+    .error-message {
+        color: #e74c3c;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: block;
+    }
+    .success-message {
+        color: #27ae60;
+        text-align: center;
+        padding: 0.75rem;
+        background: #d4edda;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+    .btn-primary {
+        width: 100%;
+        background: linear-gradient(135deg, #6a4c93, #8b6bb1);
+        color: white;
+        border: none;
+        padding: 0.875rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(106, 76, 147, 0.3);
+    }
+    .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+    .auth-links { text-align: center; margin-top: 2rem; }
+    .auth-links a { color: #6a4c93; text-decoration: none; font-weight: 500; }
+    .auth-links a:hover { text-decoration: underline; }
+</style>
+@endpush
 
-    <div class="container mt-20 max-1180:px-5 max-md:mt-12">
-        {!! view_render_event('bagisto.shop.customers.reset_password.logo.before') !!}
-        
-        <!-- Company Logo -->
-        <div class="flex items-center gap-x-14 max-[1180px]:gap-x-9">
-            <a
-                href="{{ route('shop.home.index') }}"
-                class="m-[0_auto_20px_auto]"
-                aria-label="@lang('shop::app.customers.reset-password.bagisto')"
-            >
-                <img
-                    src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
-                    alt="{{ config('app.name') }}"
-                    width="131"
-                    height="29"
-                >
-            </a>
+@section('content')
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>🔑 Đặt lại mật khẩu</h1>
+            <p>Nhập mật khẩu mới cho tài khoản của bạn</p>
         </div>
 
-        {!! view_render_event('bagisto.shop.customers.reset_password.logo.after') !!}
+        @if(session('success'))
+            <div class="success-message">{{ session('success') }}</div>
+        @endif
 
-        <!-- Form Container -->
-        <div class="m-auto w-full max-w-[870px] rounded-xl border border-zinc-200 p-16 px-[90px] max-md:px-8 max-md:py-8 max-sm:border-none max-sm:p-0">
-            <h1 class="font-dmserif text-4xl max-md:text-3xl max-sm:text-xl">
-                @lang('shop::app.customers.reset-password.title')
-            </h1>
+        @if(session('error'))
+            <div class="error-message" style="text-align:center;margin-bottom:1rem;padding:0.75rem;background:#f8d7da;border-radius:8px">{{ session('error') }}</div>
+        @endif
 
-            {!! view_render_event('bagisto.shop.customers.reset_password.before') !!}
+        <form id="resetForm" action="{{ route('shop.customers.reset_password.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="token" value="{{ $token }}">
 
-            <div class="mt-14 rounded max-sm:mt-8">
-                <!-- Form Container-->
-                <x-shop::form :action="route('shop.customers.reset_password.store')" >
-                    <x-shop::form.control-group.control
-                        type="hidden"
-                        name="token"
-                        :value="$token"
-                    />
-
-                    {!! view_render_event('bagisto.shop.customers.reset_password_form_controls.before') !!}
-
-                    <!-- Email -->
-                    <x-shop::form.control-group>
-                        <x-shop::form.control-group.label class="required">
-                            @lang('shop::app.customers.reset-password.email')
-                        </x-shop::form.control-group.label>
-
-                        <x-shop::form.control-group.control
-                            type="email"
-                            class="px-6 py-4 max-md:py-3 max-sm:py-1.5"
-                            id="email"
-                            name="email"
-                            rules="required|email"
-                            :value="old('email')"
-                            :label="trans('shop::app.customers.reset-password.email')"
-                            placeholder="email@example.com"
-                            :aria-label="trans('shop::app.customers.reset-password.email')"
-                            aria-required="true"
-                        />
-
-                        <x-shop::form.control-group.error control-name="email" />
-                    </x-shop::form.control-group>
-
-                    <!-- Password -->
-                    <x-shop::form.control-group class="mb-6">
-                        <x-shop::form.control-group.label class="required">
-                            @lang('shop::app.customers.reset-password.password')
-                        </x-shop::form.control-group.label>
-
-                        <x-shop::form.control-group.control
-                            type="password"
-                            class="px-6 py-4 max-md:py-3 max-sm:py-1.5"
-                            name="password"
-                            rules="required|min:6"
-                            value=""
-                            :label="trans('shop::app.customers.reset-password.password')"
-                            :placeholder="trans('shop::app.customers.reset-password.password')"
-                            ref="password"
-                            :aria-label="trans('shop::app.customers.reset-password.password')"
-                            aria-required="true"
-                        />
-
-                        <x-shop::form.control-group.error control-name="password" />
-                    </x-shop::form.control-group>
-
-                    <!-- Confirm Password -->
-                    <x-shop::form.control-group class="mb-6">
-                        <x-shop::form.control-group.label>
-                            @lang('shop::app.customers.reset-password.confirm-password')
-                        </x-shop::form.control-group.label>
-
-                        <x-shop::form.control-group.control
-                            type="password"
-                            class="px-6 py-4 max-md:py-3 max-sm:py-1.5"
-                            name="password_confirmation"
-                            rules="confirmed:@password"
-                            value=""
-                            :label="trans('shop::app.customers.reset-password.confirm-password')"
-                            :placeholder="trans('shop::app.customers.reset-password.confirm-password')"
-                            :aria-label="trans('shop::app.customers.reset-password.confirm-password')"
-                            aria-required="true"
-                        />
-
-                        <x-shop::form.control-group.error control-name="password" />
-                    </x-shop::form.control-group>
-
-                    {!! view_render_event('bagisto.shop.customers.reset_password_form_controls.after') !!}
-
-                    {!! view_render_event('bagisto.shop.customers.reset_password.submit_button.before') !!}
-
-                    <!-- Submit Button -->
-                    <div class="mt-8 flex flex-wrap items-center gap-9 max-sm:justify-center max-sm:text-center">
-                        <button
-                            class="primary-button m-0 mx-auto block w-full max-w-[374px] rounded-2xl px-11 py-4 text-center text-base max-md:rounded-lg max-md:py-3 max-sm:py-1.5 ltr:ml-0 rtl:mr-0"
-                            type="submit"
-                        >
-                            @lang('shop::app.customers.reset-password.submit-btn-title')
-                        </button>
-                    </div>
-
-                    {!! view_render_event('bagisto.shop.customers.reset_password.submit_button.after') !!}
-                </x-shop::form>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email"
+                       class="form-control {{ $errors->has('email') ? 'error' : '' }}"
+                       value="{{ old('email', $email ?? request('email')) }}"
+                       placeholder="nhap@email.com" required>
+                @if($errors->has('email'))
+                    <span class="error-message">{{ $errors->first('email') }}</span>
+                @endif
             </div>
 
-            {!! view_render_event('bagisto.shop.customers.reset_password.after') !!}
+            <div class="form-group">
+                <label for="password">Mật khẩu mới</label>
+                <input type="password" id="password" name="password"
+                       class="form-control {{ $errors->has('password') ? 'error' : '' }}"
+                       placeholder="Tối thiểu 6 ký tự" required minlength="6">
+                @if($errors->has('password'))
+                    <span class="error-message">{{ $errors->first('password') }}</span>
+                @endif
+            </div>
 
+            <div class="form-group">
+                <label for="password_confirmation">Xác nhận mật khẩu</label>
+                <input type="password" id="password_confirmation" name="password_confirmation"
+                       class="form-control" placeholder="Nhập lại mật khẩu" required minlength="6">
+            </div>
+
+            <button type="submit" class="btn-primary" id="resetBtn">Đặt lại mật khẩu</button>
+        </form>
+
+        <div class="auth-links">
+            <p><a href="{{ route('shop.customer.session.index') }}">← Quay lại đăng nhập</a></p>
         </div>
-
-        <p class="mb-4 mt-8 text-center text-xs text-zinc-500">
-            @lang('shop::app.customers.reset-password.footer', ['current_year'=> date('Y') ])
-        </p>
     </div>
-</x-shop::layouts>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('resetForm');
+    var btn = document.getElementById('resetBtn');
+    form.addEventListener('submit', function() {
+        btn.disabled = true;
+        btn.textContent = 'Đang xử lý...';
+        setTimeout(function() { btn.disabled = false; btn.textContent = 'Đặt lại mật khẩu'; }, 10000);
+    });
+});
+</script>
+@endpush
