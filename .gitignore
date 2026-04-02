@@ -110,7 +110,11 @@ CLEANUP_SUMMARY.md
 # Local config files (keep docker config tracked)
 # Override global gitignore
 !docker-compose.yml
-!docker/nginx/lamgame.conf
+
+# Local dev config — do not track to avoid overwriting server
+docker/nginx/lamgame.conf
+docker/nginx/ssl/
+docker/php/php.ini
 
 # Firebase credentials
 storage/app/firebase-credentials.json
