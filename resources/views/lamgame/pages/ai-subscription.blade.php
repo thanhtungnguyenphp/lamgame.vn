@@ -23,6 +23,12 @@
 @section('content')
 <div id="ai-subscription-app">
     {{-- Hero --}}
+    @if(session('success'))
+    <div style="background:#166534;color:#4ade80;text-align:center;padding:12px;font-weight:600">✅ {{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+    <div style="background:#7f1d1d;color:#fca5a5;text-align:center;padding:12px;font-weight:600">❌ {{ session('error') }}</div>
+    @endif
     <section style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);padding:60px 0;text-align:center;color:#fff">
         <div class="container">
             <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:12px">🤖 AI Tools cho Game Developer</h1>
@@ -113,6 +119,16 @@
         const btnStyle = highlight ? 'background:#3b82f6;color:#fff;' : 'background:#1e293b;color:#fff;';
         const btnText = parseFloat(p.price) === 0 ? 'Bắt đầu miễn phí' : 'Đăng ký ' + p.name;
 
+        @if($customer)
+        var btnHtml = '<form method="POST" action="{{ route("lamgame.ai-subscribe") }}">'
+            + '<input type="hidden" name="_token" value="{{ csrf_token() }}">'
+            + '<input type="hidden" name="plan" value="' + p.slug + '">'
+            + '<button type="submit" style="width:100%;padding:12px;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;' + btnStyle + '">' + btnText + '</button>'
+            + '</form>';
+        @else
+        var btnHtml = '<a href="{{ route("shop.customer.session.index") }}" style="display:block;width:100%;padding:12px;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;' + btnStyle + '">' + btnText + '</a>';
+        @endif
+
         return '<div style="background:#fff;border-radius:16px;padding:32px 24px;text-align:center;' + border + '">'
             + badge
             + '<h3 style="font-size:1.3rem;font-weight:700;margin-bottom:8px">' + p.name + '</h3>'
@@ -123,7 +139,7 @@
             + '<li style="padding:6px 0">✦ Debug: ' + formatLimit(p.features.ai_debug) + '</li>'
             + '<li style="padding:6px 0">✦ Model: ' + p.features.ai_model + '</li>'
             + '</ul>'
-            + '<button onclick="doSubscribe(\'' + p.slug + '\')" style="width:100%;padding:12px;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;' + btnStyle + '">' + btnText + '</button>'
+            + btnHtml
             + '</div>';
     }
 
@@ -133,34 +149,6 @@
             grid.innerHTML = d.data.map((p, i) => planCard(p, i === 1)).join('');
         }
     }).catch(() => {});
-
-    window.doSubscribe = function(plan) {
-        const token = localStorage.getItem('lg_access_token');
-        if (!token) {
-            if (confirm('Bạn cần đăng nhập để đăng ký gói. Chuyển đến trang đăng nhập?')) {
-                window.location.href = '{{ url("/customer/login") }}';
-            }
-            return;
-        }
-
-        fetch(API + '/subscribe', {
-            method: 'POST',
-            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-            body: JSON.stringify({ plan: plan })
-        })
-        .then(r => r.json())
-        .then(d => {
-            if (d.data && d.data.approval_url) {
-                window.location.href = d.data.approval_url;
-            } else if (d.data && d.data.status === 'active') {
-                alert('🎉 Đăng ký gói ' + plan.toUpperCase() + ' thành công!');
-                location.reload();
-            } else {
-                alert(d.error?.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
-            }
-        })
-        .catch(() => alert('Không thể kết nối server.'));
-    };
 })();
 </script>
 @endsection
