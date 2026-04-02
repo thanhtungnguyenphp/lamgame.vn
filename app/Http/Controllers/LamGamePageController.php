@@ -787,10 +787,38 @@ class LamGamePageController extends Controller
      */
     public function aiSubscription()
     {
+        $customer = Auth::guard('customer')->user();
+
         return view('lamgame.pages.ai-subscription', [
             'page_title' => 'AI Tools cho Game Developer - Làm Game',
             'page_description' => 'Công cụ AI hỗ trợ lập trình game: Code Generate, Debug, Unit Test, Asset Generate. Gói Free, Pro $9/tháng, Business $29/tháng.',
+            'customer' => $customer,
         ]);
+    }
+
+    /**
+     * Subscribe to AI plan (server-side, session auth)
+     */
+    public function aiSubscribe(Request $request)
+    {
+        $request->validate(['plan' => 'required|in:free,pro,business']);
+
+        $customer = Auth::guard('customer')->user();
+        $service = app(\App\Services\SubscriptionService::class);
+        $planSlug = $request->input('plan');
+
+        if ($planSlug === 'free') {
+            $service->subscribeFree($customer->id);
+            return redirect()->route('lamgame.ai-subscription')->with('success', 'Đăng ký gói Free thành công!');
+        }
+
+        $result = $service->createPaypalSubscription($customer->id, $planSlug);
+
+        if (!$result || !($result['approval_url'] ?? null)) {
+            return redirect()->route('lamgame.ai-subscription')->with('error', 'Không thể tạo subscription. Vui lòng thử lại.');
+        }
+
+        return redirect($result['approval_url']);
     }
 
     /**
