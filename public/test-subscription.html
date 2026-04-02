@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Test — LamGame</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; max-width: 900px; margin: 0 auto; }
+        h1 { color: #38bdf8; margin-bottom: 8px; }
+        h2 { color: #94a3b8; font-size: 14px; margin-bottom: 24px; }
+        .section { background: #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+        .section h3 { color: #38bdf8; margin-bottom: 12px; font-size: 16px; }
+        label { display: block; color: #94a3b8; font-size: 13px; margin-bottom: 4px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #334155; border-radius: 8px; background: #0f172a; color: #e2e8f0; font-size: 14px; margin-bottom: 12px; }
+        button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-right: 8px; margin-bottom: 8px; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-green { background: #22c55e; color: white; }
+        .btn-yellow { background: #eab308; color: #0f172a; }
+        .btn-red { background: #ef4444; color: white; }
+        .btn-gray { background: #475569; color: white; }
+        button:hover { opacity: 0.85; }
+        pre { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; font-size: 13px; overflow-x: auto; white-space: pre-wrap; max-height: 400px; overflow-y: auto; margin-top: 8px; }
+        .status { padding: 6px 12px; border-radius: 6px; display: inline-block; font-size: 13px; font-weight: 600; }
+        .status-ok { background: #166534; color: #4ade80; }
+        .status-err { background: #7f1d1d; color: #fca5a5; }
+        .status-wait { background: #713f12; color: #fde047; }
+        .row { display: flex; gap: 12px; flex-wrap: wrap; }
+        .row > * { flex: 1; min-width: 200px; }
+        #token-display { font-size: 12px; color: #64748b; word-break: break-all; margin-top: 4px; }
+        .log-entry { border-bottom: 1px solid #334155; padding: 8px 0; }
+        .log-entry:last-child { border: none; }
+        .log-time { color: #64748b; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<h1>🧪 Subscription Test Console</h1>
+<h2>LamGame.vn — PayPal Sandbox E2E Test</h2>
+
+<!-- Step 1: Login -->
+<div class="section">
+    <h3>① Đăng nhập lấy Token</h3>
+    <div class="row">
+        <div><label>Email</label><input type="email" id="email" value=""></div>
+        <div><label>Password</label><input type="password" id="password" value=""></div>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Đăng nhập</button>
+    <span id="login-status"></span>
+    <div id="token-display"></div>
+</div>
+
+<!-- Step 2: View Plans -->
+<div class="section">
+    <h3>② Xem Plans</h3>
+    <button class="btn-gray" onclick="getPlans()">GET /plans</button>
+    <pre id="plans-result">Chưa test</pre>
+</div>
+
+<!-- Step 3: Subscribe -->
+<div class="section">
+    <h3>③ Đăng ký gói</h3>
+    <div class="row">
+        <div>
+            <label>Chọn gói</label>
+            <select id="plan-select">
+                <option value="free">Free ($0)</option>
+                <option value="pro">Pro ($9/tháng)</option>
+                <option value="business">Business ($29/tháng)</option>
+            </select>
+        </div>
+    </div>
+    <button class="btn-green" onclick="doSubscribe()">POST /subscribe</button>
+    <pre id="subscribe-result">Chưa test</pre>
+</div>
+
+<!-- Step 4: Check Status -->
+<div class="section">
+    <h3>④ Kiểm tra trạng thái</h3>
+    <button class="btn-gray" onclick="getStatus()">GET /status</button>
+    <button class="btn-gray" onclick="getUsage()">GET /usage</button>
+    <div class="row">
+        <div><pre id="status-result">Chưa test</pre></div>
+        <div><pre id="usage-result">Chưa test</pre></div>
+    </div>
+</div>
+
+<!-- Step 5: Quota -->
+<div class="section">
+    <h3>⑤ Test Quota (cho AI service)</h3>
+    <div class="row">
+        <div>
+            <label>Feature</label>
+            <select id="feature-select">
+                <option value="ai_concept">ai_concept</option>
+                <option value="ai_generate">ai_generate</option>
+                <option value="ai_debug">ai_debug</option>
+                <option value="ai_test">ai_test</option>
+                <option value="ai_asset">ai_asset</option>
+                <option value="ai_code_review">ai_code_review</option>
+            </select>
+        </div>
+    </div>
+    <button class="btn-yellow" onclick="checkQuota()">POST /check-quota</button>
+    <button class="btn-red" onclick="useQuota()">POST /use-quota (trừ 1)</button>
+    <pre id="quota-result">Chưa test</pre>
+</div>
+
+<!-- Step 6: Cancel -->
+<div class="section">
+    <h3>⑥ Hủy Subscription</h3>
+    <button class="btn-red" onclick="doCancel()">POST /cancel</button>
+    <pre id="cancel-result">Chưa test</pre>
+</div>
+
+<!-- Log -->
+<div class="section">
+    <h3>📋 Request Log</h3>
+    <button class="btn-gray" onclick="document.getElementById('log').innerHTML=''">Xóa log</button>
+    <div id="log" style="margin-top:8px"></div>
+</div>
+
+<script>
+const BASE = 'https://lamgame.vn/api/v1/subscription';
+const AUTH_URL = 'https://lamgame.vn/api/auth/login';
+let TOKEN = '';
+
+function statusBadge(ok) {
+    return `<span class="status ${ok ? 'status-ok' : 'status-err'}">${ok ? '✅ OK' : '❌ FAIL'}</span>`;
+}
+
+function log(method, url, status, data) {
+    const el = document.getElementById('log');
+    const time = new Date().toLocaleTimeString();
+    el.innerHTML = `<div class="log-entry"><span class="log-time">${time}</span> <b>${method}</b> ${url} → <b>${status}</b></div>` + el.innerHTML;
+}
+
+async function api(method, url, body = null) {
+    const opts = {
+        method,
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    };
+    if (TOKEN) opts.headers['Authorization'] = `Bearer ${TOKEN}`;
+    if (body) opts.body = JSON.stringify(body);
+
+    const res = await fetch(url, opts);
+    const text = await res.text();
+    let json;
+    try { json = JSON.parse(text); } catch { json = text; }
+    log(method, url.replace('https://lamgame.vn', ''), res.status, json);
+    return { status: res.status, data: json };
+}
+
+async function doLogin() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const el = document.getElementById('login-status');
+    const td = document.getElementById('token-display');
+
+    if (!email || !password) { el.innerHTML = statusBadge(false) + ' Nhập email & password'; return; }
+
+    el.innerHTML = '<span class="status status-wait">⏳ Đang đăng nhập...</span>';
+    const r = await api('POST', AUTH_URL, { email, password, device_name: 'subscription-test' });
+
+    if (r.data?.data?.access_token) {
+        TOKEN = r.data.data.access_token;
+        el.innerHTML = statusBadge(true) + ` ${r.data.data.user?.name || email}`;
+        td.textContent = 'Token: ' + TOKEN.substring(0, 20) + '...';
+    } else {
+        el.innerHTML = statusBadge(false) + ' ' + (r.data?.message || 'Login failed');
+        td.textContent = '';
+    }
+}
+
+async function getPlans() {
+    const r = await api('GET', `${BASE}/plans`);
+    document.getElementById('plans-result').textContent = JSON.stringify(r.data, null, 2);
+}
+
+async function doSubscribe() {
+    if (!TOKEN) { alert('Đăng nhập trước!'); return; }
+    const plan = document.getElementById('plan-select').value;
+    const el = document.getElementById('subscribe-result');
+
+    el.textContent = '⏳ Đang xử lý...';
+    const r = await api('POST', `${BASE}/subscribe`, { plan });
+    el.textContent = JSON.stringify(r.data, null, 2);
+
+    // Nếu có approval_url (gói paid) → mở PayPal
+    if (r.data?.data?.approval_url) {
+        if (confirm('Mở PayPal Sandbox để approve?\n\nDùng tài khoản sandbox buyer để test.')) {
+            window.open(r.data.data.approval_url, '_blank');
+        }
+    }
+}
+
+async function getStatus() {
+    if (!TOKEN) { alert('Đăng nhập trước!'); return; }
+    const r = await api('GET', `${BASE}/status`);
+    document.getElementById('status-result').textContent = JSON.stringify(r.data, null, 2);
+}
+
+async function getUsage() {
+    if (!TOKEN) { alert('Đăng nhập trước!'); return; }
+    const r = await api('GET', `${BASE}/usage`);
+    document.getElementById('usage-result').textContent = JSON.stringify(r.data, null, 2);
+}
+
+async function checkQuota() {
+    if (!TOKEN) { alert('Đăng nhập trước!'); return; }
+    const feature = document.getElementById('feature-select').value;
+    const r = await api('POST', `${BASE}/check-quota`, { feature });
+    document.getElementById('quota-result').textContent = JSON.stringify(r.data, null, 2);
+}
+
+async function useQuota() {
+    if (!TOKEN) { alert('Đăng nhập trước!'); return; }
+    const feature = document.getElementById('feature-select').value;
+    const r = await api('POST', `${BASE}/use-quota`, { feature });
+    document.getElementById('quota-result').textContent = JSON.stringify(r.data, null, 2);
+}
+
+async function doCancel() {
+    if (!TOKEN) { alert('Đăng nhập trước!'); return; }
+    if (!confirm('Xác nhận hủy subscription?')) return;
+    const r = await api('POST', `${BASE}/cancel`);
+    document.getElementById('cancel-result').textContent = JSON.stringify(r.data, null, 2);
+}
+</script>
+
+</body>
+</html>
