@@ -80,10 +80,8 @@ Thumbs.db
 !.env.example
 
 # Docker
-docker-compose.yml
 docker-compose.override.yml
 Makefile
-docker/nginx/lamgame.conf
 
 # Node
 npm-debug.log*
@@ -109,9 +107,10 @@ cleanup-backups/
 CLEANUP_SUMMARY.md
 *export*.sql
 
-# Local config files
-docker-compose.yml
-docker/nginx/lamgame.conf
+# Local config files (keep docker config tracked)
+# Override global gitignore
+!docker-compose.yml
+!docker/nginx/lamgame.conf
 
 # Firebase credentials
 storage/app/firebase-credentials.json
@@ -120,8 +119,10 @@ storage/app/firebase-credentials.json
 docker/mysql/data/
 docker/meilisearch/data/
 
-# Docker & build
-docker/
+# Docker — ignore data & build, keep config
+docker/mysql/
+docker/meilisearch/
+docker/php/Dockerfile
 Makefile
 DOCKER.md
 

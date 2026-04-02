@@ -17,5 +17,7 @@ Route::prefix('v1/subscription')->name('api.subscription.')->group(function () {
         Route::get('/status', [SubscriptionController::class, 'status'])->name('status');
         Route::post('/cancel', [SubscriptionController::class, 'cancel'])->name('cancel');
         Route::get('/usage', [SubscriptionController::class, 'usage'])->name('usage');
+        Route::post('/check-quota', [SubscriptionController::class, 'checkQuota'])->name('check-quota');
+        Route::post('/use-quota', [SubscriptionController::class, 'useQuota'])->name('use-quota');
     });
 });

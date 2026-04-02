@@ -1,6 +1,6 @@
 # AI Tools Subscription Plans — LamGame.vn
 
-**Cập nhật:** 2026-03-29
+**Cập nhật:** 2026-04-02
 
 ---
 
@@ -179,10 +179,12 @@ subscription_usages       — quota tracking per user per feature per month
 | GET | `/api/v1/subscription/plans` | Public | Danh sách gói |
 | POST | `/api/v1/subscription/subscribe` | Auth | Đăng ký gói |
 | GET | `/api/v1/subscription/status` | Auth | Trạng thái subscription |
-| GET | `/api/v1/subscription/usage` | Auth | Quota đã dùng |
+| GET | `/api/v1/subscription/usage` | Auth | Quota đã dùng (tất cả features) |
+| POST | `/api/v1/subscription/check-quota` | Auth | Kiểm tra quota 1 feature `{feature}` |
+| POST | `/api/v1/subscription/use-quota` | Auth | Trừ quota 1 feature `{feature}` |
 | POST | `/api/v1/subscription/cancel` | Auth | Hủy subscription |
 | GET | `/api/v1/subscription/paypal/return` | Public | PayPal callback |
-| POST | `/api/v1/subscription/webhook` | Public | PayPal webhook |
+| POST | `/api/v1/subscription/webhook` | Public | PayPal webhook (verified signature) |
 
 ---
 
@@ -192,12 +194,12 @@ subscription_usages       — quota tracking per user per feature per month
 
 | # | Task | Ước tính | Trạng thái |
 |---|------|----------|-----------|
-| 1 | Tạo PayPal Billing Plans (Pro + Business) | 1 giờ | ⬜ |
-| 2 | Cập nhật `paypal_plan_id` vào DB | 10 phút | ⬜ |
-| 3 | Config `.env` production (PayPal credentials) | 30 phút | ⬜ |
-| 4 | Chạy migration production | 5 phút | ⬜ |
-| 5 | Thêm endpoint `POST /use-quota` cho AI service gọi | 1 giờ | ⬜ |
-| 6 | Verify PayPal webhook signature | 2 giờ | ⬜ |
+| 1 | Tạo PayPal Billing Plans (Pro + Business) | 1 giờ | ✅ Done (02/04) — Pro: `P-06S19361AU003084UNHHA4XY`, Business: `P-6GY50545CA5254507NHHA42I` |
+| 2 | Cập nhật `paypal_plan_id` vào DB | 10 phút | ✅ Done (02/04) — migration `2026_04_02_130000` |
+| 3 | Config `.env` production (PayPal credentials) | 30 phút | ✅ Done (02/04) — sandbox mode |
+| 4 | Chạy migration production | 5 phút | ⬜ Chờ deploy |
+| 5 | Thêm endpoint `POST /use-quota` cho AI service gọi | 1 giờ | ✅ Done (02/04) |
+| 6 | Verify PayPal webhook signature | 2 giờ | ✅ Done (02/04) |
 | 7 | Test end-to-end (sandbox) | 2 giờ | ⬜ |
 | 8 | Switch sang PayPal production | 30 phút | ⬜ |
 
