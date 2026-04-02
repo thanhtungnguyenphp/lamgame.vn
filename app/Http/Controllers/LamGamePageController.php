@@ -783,6 +783,17 @@ class LamGamePageController extends Controller
     }
 
     /**
+     * Show AI Tools Subscription page
+     */
+    public function aiSubscription()
+    {
+        return view('lamgame.pages.ai-subscription', [
+            'page_title' => 'AI Tools cho Game Developer - Làm Game',
+            'page_description' => 'Công cụ AI hỗ trợ lập trình game: Code Generate, Debug, Unit Test, Asset Generate. Gói Free, Pro $9/tháng, Business $29/tháng.',
+        ]);
+    }
+
+    /**
      * Show Source Game page
      */
     public function sourceGame(Request $request)

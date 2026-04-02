@@ -45,6 +45,7 @@ Route::controller(\App\Http\Controllers\LamGamePageController::class)->group(fun
     
     // New Pages
     Route::get('source-game', 'sourceGame')->name('lamgame.source-game');
+    Route::get('ai-tools', 'aiSubscription')->name('lamgame.ai-subscription');
     Route::get('cong-dong', 'congDong')->name('lamgame.cong-dong');
     Route::get('cong-dong/chia-se-y-tuong', 'chiaSeyTuong')->name('lamgame.chia-se-y-tuong');
     Route::post('cong-dong/tao-y-tuong', 'taoYTuong')->name('lamgame.tao-y-tuong');
