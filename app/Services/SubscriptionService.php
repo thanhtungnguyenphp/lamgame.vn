@@ -180,6 +180,35 @@ class SubscriptionService
     }
 
     /**
+     * Verify PayPal webhook signature.
+     */
+    public function verifyWebhookSignature(Request $request): bool
+    {
+        $webhookId = config('subscription.paypal.webhook_id');
+        if (!$webhookId) {
+            Log::warning('PAYPAL_WEBHOOK_ID not configured, skipping verification');
+            return true; // Cho qua nếu chưa config (dev mode)
+        }
+
+        $token = $this->getPaypalAccessToken();
+        if (!$token) return false;
+
+        $baseUrl = config('subscription.paypal.base_url');
+
+        $response = Http::withToken($token)->post("{$baseUrl}/v1/notifications/verify-webhook-signature", [
+            'auth_algo'         => $request->header('PAYPAL-AUTH-ALGO'),
+            'cert_url'          => $request->header('PAYPAL-CERT-URL'),
+            'transmission_id'   => $request->header('PAYPAL-TRANSMISSION-ID'),
+            'transmission_sig'  => $request->header('PAYPAL-TRANSMISSION-SIG'),
+            'transmission_time' => $request->header('PAYPAL-TRANSMISSION-TIME'),
+            'webhook_id'        => $webhookId,
+            'webhook_event'     => $request->all(),
+        ]);
+
+        return $response->successful() && ($response->json('verification_status') === 'SUCCESS');
+    }
+
+    /**
      * Xử lý PayPal webhook event.
      */
     public function handleWebhook(array $event): void

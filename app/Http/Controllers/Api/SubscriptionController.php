@@ -8,6 +8,7 @@ use App\Models\SubscriptionUsage;
 use App\Services\SubscriptionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SubscriptionController extends Controller
 {
@@ -162,6 +163,42 @@ class SubscriptionController extends Controller
     }
 
     /**
+     * POST /subscription/check-quota — AI service kiểm tra quota trước khi xử lý
+     */
+    public function checkQuota(Request $request): JsonResponse
+    {
+        $request->validate(['feature' => 'required|string|max:50']);
+
+        $quota = $this->service->checkQuota($request->user()->id, $request->input('feature'));
+
+        return response()->json(['status' => 'ok', 'data' => $quota]);
+    }
+
+    /**
+     * POST /subscription/use-quota — AI service trừ quota sau khi xử lý thành công
+     */
+    public function useQuota(Request $request): JsonResponse
+    {
+        $request->validate(['feature' => 'required|string|max:50']);
+
+        $userId = $request->user()->id;
+        $feature = $request->input('feature');
+        $success = $this->service->useQuota($userId, $feature);
+
+        if (!$success) {
+            $quota = $this->service->checkQuota($userId, $feature);
+            return response()->json([
+                'status' => 'error',
+                'error'  => ['code' => 'QUOTA_EXCEEDED', 'message' => 'Hết quota.', 'quota' => $quota],
+            ], 403);
+        }
+
+        $quota = $this->service->checkQuota($userId, $feature);
+
+        return response()->json(['status' => 'ok', 'data' => ['success' => true, 'remaining' => $quota['limit'] === -1 ? -1 : max(0, $quota['limit'] - $quota['used'])]]);
+    }
+
+    /**
      * GET /subscription/paypal/return — PayPal redirect sau approve
      */
     public function paypalReturn(Request $request): JsonResponse
@@ -179,10 +216,15 @@ class SubscriptionController extends Controller
     }
 
     /**
-     * POST /subscription/webhook — PayPal webhook
+     * POST /subscription/webhook — PayPal webhook (có verify signature)
      */
     public function webhook(Request $request): JsonResponse
     {
+        if (!$this->service->verifyWebhookSignature($request)) {
+            Log::warning('PayPal webhook signature verification failed');
+            return response()->json(['status' => 'error'], 400);
+        }
+
         $this->service->handleWebhook($request->all());
         return response()->json(['status' => 'ok']);
     }
