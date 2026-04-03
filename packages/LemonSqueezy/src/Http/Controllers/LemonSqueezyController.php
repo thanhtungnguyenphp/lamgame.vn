@@ -1,0 +1,226 @@
+<?php
+
+namespace LemonSqueezy\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use LemonSqueezy\Models\LemonSqueezyTransaction;
+use Webkul\Checkout\Facades\Cart;
+use Webkul\Sales\Repositories\InvoiceRepository;
+use Webkul\Sales\Repositories\OrderRepository;
+
+class LemonSqueezyController
+{
+    public function __construct(
+        protected OrderRepository $orderRepository,
+        protected InvoiceRepository $invoiceRepository,
+    ) {}
+
+    /**
+     * Tạo checkout session trên Lemon Squeezy.
+     */
+    public function createCheckout(Request $request)
+    {
+        $cart = Cart::getCart();
+
+        if (! $cart) {
+            return response()->json(['error' => 'Cart is empty'], 400);
+        }
+
+        $customer = auth()->guard('customer')->user();
+
+        // Convert VND → USD cents
+        $usdRate = (int) (core()->getConfigData('sales.payment_methods.lemonsqueezy.usd_rate') ?: env('LEMON_SQUEEZY_USD_RATE', 25000));
+        $priceUsdCents = max(100, (int) round(($cart->grand_total / $usdRate) * 100));
+
+        $apiKey = core()->getConfigData('sales.payment_methods.lemonsqueezy.api_key') ?: env('LEMON_SQUEEZY_API_KEY');
+        $storeId = core()->getConfigData('sales.payment_methods.lemonsqueezy.store_id') ?: env('LEMON_SQUEEZY_STORE');
+        $variantId = core()->getConfigData('sales.payment_methods.lemonsqueezy.default_variant_id') ?: env('LEMON_SQUEEZY_DEFAULT_VARIANT_ID');
+
+        if (! $apiKey || ! $storeId || ! $variantId) {
+            Log::error('LemonSqueezy: missing config');
+            return response()->json(['error' => 'Payment gateway not configured'], 500);
+        }
+
+        $productName = mb_substr($cart->items->pluck('name')->implode(', '), 0, 200);
+
+        $response = Http::withToken($apiKey)
+            ->accept('application/vnd.api+json')
+            ->contentType('application/vnd.api+json')
+            ->timeout(15)
+            ->post('https://api.lemonsqueezy.com/v1/checkouts', [
+                'data' => [
+                    'type'       => 'checkouts',
+                    'attributes' => [
+                        'custom_price'    => $priceUsdCents,
+                        'product_options' => [
+                            'name'         => 'LamGame Order #' . $cart->id,
+                            'description'  => $productName,
+                            'redirect_url' => route('lemonsqueezy.checkout.success'),
+                        ],
+                        'checkout_options' => [
+                            'embed' => true,
+                            'logo'  => true,
+                        ],
+                        'checkout_data' => [
+                            'email'  => $customer?->email ?? $cart->billing_address?->email,
+                            'name'   => $customer?->name ?? $cart->billing_address?->first_name,
+                            'custom' => [
+                                'cart_id'     => (string) $cart->id,
+                                'customer_id' => (string) ($customer?->id ?? ''),
+                            ],
+                        ],
+                    ],
+                    'relationships' => [
+                        'store'   => ['data' => ['type' => 'stores', 'id' => (string) $storeId]],
+                        'variant' => ['data' => ['type' => 'variants', 'id' => (string) $variantId]],
+                    ],
+                ],
+            ]);
+
+        if ($response->successful()) {
+            return response()->json([
+                'checkout_url' => $response->json('data.attributes.url'),
+            ]);
+        }
+
+        Log::error('LemonSqueezy checkout error', [
+            'status' => $response->status(),
+            'body'   => $response->json(),
+        ]);
+
+        return response()->json(['error' => 'Không thể tạo phiên thanh toán'], 500);
+    }
+
+    /**
+     * Xử lý webhook từ Lemon Squeezy.
+     */
+    public function handleWebhook(Request $request)
+    {
+        $secret = core()->getConfigData('sales.payment_methods.lemonsqueezy.signing_secret')
+            ?: env('LEMON_SQUEEZY_SIGNING_SECRET');
+
+        $signature = $request->header('X-Signature');
+        $payload = $request->getContent();
+
+        if (! $secret || ! $signature || ! hash_equals(hash_hmac('sha256', $payload, $secret), $signature)) {
+            Log::warning('LemonSqueezy webhook: invalid signature');
+            return response('Unauthorized', 403);
+        }
+
+        $event = $request->input('meta.event_name');
+        $data = $request->input('data', []);
+        $customData = $request->input('meta.custom_data', []);
+
+        Log::info("LemonSqueezy webhook: {$event}", ['ls_order_id' => $data['id'] ?? null]);
+
+        match ($event) {
+            'order_created'  => $this->handleOrderCreated($data, $customData, $payload),
+            'order_refunded' => $this->handleOrderRefunded($data, $customData),
+            default          => null,
+        };
+
+        return response('OK', 200);
+    }
+
+    public function success()
+    {
+        return redirect()->route('shop.checkout.onepage.success');
+    }
+
+    protected function handleOrderCreated(array $data, array $customData, string $rawPayload): void
+    {
+        $lsOrderId = (string) ($data['id'] ?? '');
+        $cartId = $customData['cart_id'] ?? null;
+
+        if (! $cartId || ! $lsOrderId) {
+            Log::warning('LemonSqueezy webhook: missing cart_id or ls_order_id');
+            return;
+        }
+
+        // Idempotency check
+        if (LemonSqueezyTransaction::where('ls_order_id', $lsOrderId)->exists()) {
+            Log::info('LemonSqueezy webhook: duplicate, skipping', ['ls_order_id' => $lsOrderId]);
+            return;
+        }
+
+        $cart = \Webkul\Checkout\Models\Cart::find($cartId);
+
+        if (! $cart) {
+            Log::warning('LemonSqueezy webhook: cart not found', ['cart_id' => $cartId]);
+            return;
+        }
+
+        $attrs = $data['attributes'] ?? [];
+
+        // Record transaction first (idempotency lock)
+        $transaction = LemonSqueezyTransaction::create([
+            'ls_order_id'     => $lsOrderId,
+            'cart_id'         => $cartId,
+            'customer_id'     => $customData['customer_id'] ?? null,
+            'status'          => 'pending',
+            'amount_usd_cents' => $attrs['total'] ?? 0,
+            'amount_vnd'      => $cart->grand_total,
+            'currency'        => $attrs['currency'] ?? 'USD',
+            'receipt_url'     => $attrs['urls']['receipt'] ?? $attrs['receipt_url'] ?? null,
+            'webhook_payload' => json_decode($rawPayload, true),
+        ]);
+
+        try {
+            Cart::setCart($cart);
+            $order = $this->orderRepository->create(Cart::prepareDataForOrder());
+
+            if ($order) {
+                // Auto invoice
+                $invoiceData = ['order_id' => $order->id];
+                foreach ($order->items as $item) {
+                    $invoiceData['invoice']['items'][$item->id] = $item->qty_to_invoice;
+                }
+                $this->invoiceRepository->create($invoiceData, 'paid', 'completed');
+
+                Cart::deActivateCart();
+
+                $transaction->update([
+                    'order_id' => $order->id,
+                    'status'   => 'paid',
+                ]);
+
+                Log::info('LemonSqueezy order created', [
+                    'order_id'    => $order->id,
+                    'ls_order_id' => $lsOrderId,
+                ]);
+            }
+        } catch (\Exception $e) {
+            $transaction->update(['status' => 'failed']);
+
+            Log::error('LemonSqueezy order creation failed', [
+                'ls_order_id' => $lsOrderId,
+                'error'       => $e->getMessage(),
+            ]);
+        }
+    }
+
+    protected function handleOrderRefunded(array $data, array $customData): void
+    {
+        $lsOrderId = (string) ($data['id'] ?? '');
+
+        $transaction = LemonSqueezyTransaction::where('ls_order_id', $lsOrderId)->first();
+
+        if (! $transaction || ! $transaction->order_id) {
+            return;
+        }
+
+        $order = $this->orderRepository->find($transaction->order_id);
+
+        if ($order) {
+            $order->update(['status' => 'closed']);
+            $transaction->update(['status' => 'refunded']);
+
+            Log::info('LemonSqueezy order refunded', [
+                'order_id'    => $order->id,
+                'ls_order_id' => $lsOrderId,
+            ]);
+        }
+    }
+}

@@ -118,6 +118,15 @@
                                 {!! view_render_event('bagisto.shop.checkout.onepage.summary.paypal_smart_button.after') !!}
                             </template>
 
+                            <template v-else-if="cart.payment_method == 'lemonsqueezy'">
+                                {!! view_render_event('bagisto.shop.checkout.onepage.summary.lemonsqueezy.before') !!}
+
+                                <!-- Lemon Squeezy Button Vue Component -->
+                                <v-lemon-squeezy-button></v-lemon-squeezy-button>
+
+                                {!! view_render_event('bagisto.shop.checkout.onepage.summary.lemonsqueezy.after') !!}
+                            </template>
+
                             <template v-else>
                                 <x-shop::button
                                     type="button"
