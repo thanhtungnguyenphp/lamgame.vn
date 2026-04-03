@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('attribute_options', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('attribute_id')->index('attribute_options_attribute_id_foreign');
+            $table->string('admin_name')->nullable();
+            $table->integer('sort_order')->nullable();
+            $table->string('swatch_value')->nullable();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('attribute_options');
+    }
+};

@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('product_cross_sells', function (Blueprint $table) {
+            $table->foreign(['child_id'])->references(['id'])->on('products')->onUpdate('no action')->onDelete('cascade');
+            $table->foreign(['parent_id'])->references(['id'])->on('products')->onUpdate('no action')->onDelete('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('product_cross_sells', function (Blueprint $table) {
+            $table->dropForeign('product_cross_sells_child_id_foreign');
+            $table->dropForeign('product_cross_sells_parent_id_foreign');
+        });
+    }
+};

@@ -15,6 +15,6 @@ class LemonSqueezy extends Payment
 
     public function getImage()
     {
-        return bagisto_asset('images/lemonsqueezy.svg', 'shop');
+        return asset('images/payment/lemonsqueezy.svg');
     }
 }

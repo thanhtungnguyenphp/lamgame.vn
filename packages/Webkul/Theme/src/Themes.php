@@ -44,7 +44,7 @@ class Themes
      */
     public function __construct()
     {
-        if (! Str::contains(request()->url(), config('app.admin_url').'/')) {
+        if (Str::contains(request()->url(), config('app.admin_url').'/')) {
             $this->defaultThemeCode = Config::get('themes.admin-default', null);
         } else {
             $this->defaultThemeCode = Config::get('themes.shop-default', null);
