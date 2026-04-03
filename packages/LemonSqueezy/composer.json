@@ -1,0 +1,19 @@
+{
+    "name": "lamgame/lemonsqueezy",
+    "description": "Lemon Squeezy payment gateway for Bagisto",
+    "type": "library",
+    "license": "MIT",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "LemonSqueezy\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LemonSqueezy\\Providers\\LemonSqueezyServiceProvider"
+            ]
+        }
+    }
+}
