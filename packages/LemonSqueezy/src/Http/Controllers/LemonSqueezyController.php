@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use LemonSqueezy\Models\LemonSqueezyTransaction;
 use Webkul\Checkout\Facades\Cart;
+use Webkul\Sales\Transformers\OrderResource;
 use Webkul\Sales\Repositories\InvoiceRepository;
 use Webkul\Sales\Repositories\OrderRepository;
 
@@ -30,9 +31,9 @@ class LemonSqueezyController
 
         $customer = auth()->guard('customer')->user();
 
-        // Convert VND → USD cents
-        $usdRate = (int) (core()->getConfigData('sales.payment_methods.lemonsqueezy.usd_rate') ?: env('LEMON_SQUEEZY_USD_RATE', 25000));
-        $priceUsdCents = max(100, (int) round(($cart->grand_total / $usdRate) * 100));
+        // Store currency = VND → custom_price tính bằng VND cents (đơn vị nhỏ nhất)
+        // VND không có phần thập phân nên 1 VND = 100 cents trong LS
+        $priceVndCents = max(1317200, (int) ($cart->grand_total * 100));
 
         $apiKey = core()->getConfigData('sales.payment_methods.lemonsqueezy.api_key') ?: env('LEMON_SQUEEZY_API_KEY');
         $storeId = core()->getConfigData('sales.payment_methods.lemonsqueezy.store_id') ?: env('LEMON_SQUEEZY_STORE');
@@ -53,7 +54,7 @@ class LemonSqueezyController
                 'data' => [
                     'type'       => 'checkouts',
                     'attributes' => [
-                        'custom_price'    => $priceUsdCents,
+                        'custom_price'    => $priceVndCents,
                         'product_options' => [
                             'name'         => 'LamGame Order #' . $cart->id,
                             'description'  => $productName,
@@ -169,7 +170,8 @@ class LemonSqueezyController
 
         try {
             Cart::setCart($cart);
-            $order = $this->orderRepository->create(Cart::prepareDataForOrder());
+            $data = (new OrderResource($cart))->jsonSerialize();
+            $order = $this->orderRepository->create($data);
 
             if ($order) {
                 // Auto invoice
@@ -177,7 +179,7 @@ class LemonSqueezyController
                 foreach ($order->items as $item) {
                     $invoiceData['invoice']['items'][$item->id] = $item->qty_to_invoice;
                 }
-                $this->invoiceRepository->create($invoiceData, 'paid', 'completed');
+                $this->invoiceRepository->create($invoiceData);
 
                 Cart::deActivateCart();
 
