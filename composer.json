@@ -100,6 +100,7 @@
             "Webkul\\User\\": "packages/Webkul/User/src",
             "Webkul\\Menu\\": "packages/Webkul/Menu/src",
             "LamGame\\Banner\\": "packages/LamGame/Banner/src",
+            "LemonSqueezy\\": "packages/LemonSqueezy/src",
             "Webkul\\JobManagement\\": "packages/Webkul/JobManagement/src"
         }
     },

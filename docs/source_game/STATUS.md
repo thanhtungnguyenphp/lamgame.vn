@@ -1,7 +1,23 @@
 # Source Game Marketplace & Seller System — Trạng thái & Roadmap
 
-**Cập nhật:** 2026-03-29
-**Tài liệu trước:** 2026-03-28 (Sprint D — SEO Technical & Indexing)
+**Cập nhật:** 2026-04-03
+**Tài liệu trước:** 2026-04-02 (Bỏ multi-language, roadmap Q2-Q4)
+
+## Changelog 03/04/2026
+- Lemon Squeezy: Phase 2 Backend + Phase 3 Frontend hoàn thành
+  - Package `packages/LemonSqueezy/` — Payment class, Controller, Routes, Migration, Model
+  - Vue component `v-lemon-squeezy-button` tích hợp vào checkout (giống PayPal Smart Button)
+  - Lemon.js overlay + fallback redirect, EventServiceProvider inject blade
+  - Idempotency tracking qua `lemon_squeezy_transactions` table
+  - Webhook handler: verify HMAC, auto-create order + invoice, refund handling
+  - Currency conversion VND→USD, CSRF exclusion, env config
+- Tiếp theo: Phase 1 (đăng ký LS account) → Phase 4 (Testing)
+
+## Changelog 02/04/2026
+- Quyết định: Bỏ multi-language khỏi scope hiện tại (không cần thiết)
+- Lemon Squeezy không còn phụ thuộc multi-language, có thể triển khai trực tiếp
+- SportPulse API: Phase 1 hoàn thành (31/03), Phase 9 crawl data đang chờ
+- Cập nhật roadmap Q2-Q4/2026
 
 ## Changelog 29/03/2026
 - Fix FCM: credentials typo `ttoken_uri`, cache null token, data object cast
@@ -203,7 +219,11 @@ collection_items             # Collection ↔ Product mapping
 | FCM Push Notification | ✅ Fixed (29/03) | Fix credentials typo, cache null token, data object cast |
 | Vietlot Scraper | ✅ Code fixed (29/03) | URL mới + browser UA + Keno/Lotto parser. Server cần proxy (Cloudflare block) |
 | AI Subscription Plans | ✅ Done (29/03) | 3 gói (Free/Pro $9/Business $29), migration + tài liệu. Chờ PayPal Billing Plans + migrate production |
-| Lemon Squeezy Integration | ⏸️ Tạm hoãn | Chờ multi-language |
+| SportPulse API — Phase 1 | ✅ Done (31/03) | 13 tables, 12 models, 7 controllers, 26 routes, deploy production OK |
+| SportPulse API — Phase 9 Crawl | 🔜 Tiếp theo | 11 tasks, ~6 ngày. Cần API keys |
+| SportPulse API — Phase 10 Push | ⬜ Chưa bắt đầu | 5 notification jobs, ~1 ngày |
+| Multi-language | ❌ Loại khỏi scope | Không cần thiết cho giai đoạn hiện tại |
+| Lemon Squeezy Integration | 🔧 Phase 2+3 Done | Backend + Frontend hoàn thành. Chờ đăng ký LS account → Testing |
 
 ### 🗓️ Roadmap sắp tới
 
@@ -223,11 +243,12 @@ collection_items             # Collection ↔ Product mapping
 
 | # | Task | Ước tính | Ưu tiên | Ghi chú |
 |---|------|----------|---------|---------|
-| 8 | **Multi-language** (đa ngôn ngữ) | 1-2 tuần | 🟡 P1 | Prerequisite cho Lemon Squeezy |
-| 9 | **Lemon Squeezy integration** | 10-14 ngày | 🟡 P1 | Cổng thanh toán quốc tế, license key, MoR thuế |
-| 10 | **www → non-www redirect** | 1 ngày | 🟡 P1 | .htaccess hoặc nginx config |
-| 11 | **License Management** | 2 tuần | 🟡 P1 | Personal/Commercial/Open Source, license key generation, verification API |
-| 12 | **Enhanced Preview** | 2 tuần | 🟡 P1 | WebGL embed, video player, code viewer, 3D model viewer |
+| 8 | **SportPulse Phase 9 — Crawl Data** | 6 ngày | 🔴 P0 | 11 tasks: sync fixtures, live scores, standings, highlights, articles |
+| 9 | **SportPulse Phase 10 — Push Notifications** | 1 ngày | 🟡 P1 | 5 notification jobs |
+| 10 | **Lemon Squeezy integration** | 10-14 ngày | 🟡 P1 | Cổng thanh toán quốc tế, license key, MoR thuế |
+| 11 | **www → non-www redirect** | 1 ngày | 🟡 P1 | .htaccess hoặc nginx config |
+| 12 | **License Management** | 2 tuần | 🟡 P1 | Personal/Commercial/Open Source, license key generation, verification API |
+| 13 | **Enhanced Preview** | 2 tuần | 🟡 P1 | WebGL embed, video player, code viewer, 3D model viewer |
 
 #### Q3/2026 (Tháng 7-9) — Phase 3 Advanced Features
 
@@ -257,11 +278,11 @@ collection_items             # Collection ↔ Product mapping
 
 ### 📈 Số liệu hiện tại
 
-- **Routes:** 26+ (seller/source game)
-- **Database:** 6 bảng custom + `seller_id` trên products
+- **Routes:** 26+ (seller/source game) + 26 (SportPulse API)
+- **Database:** 6 bảng custom source game + 13 bảng sport + `seller_id` trên products
 - **Products:** 4 source games, 1 seller
 - **Scheduled tasks:** 14 (SEO + lottery + blog)
-- **Infrastructure:** Docker (lamgame-php + lamgame-web + nginx)
+- **Infrastructure:** Docker (lamgame-php + lamgame-web + nginx + Redis)
 - **Sitemap:** 7 sub-sitemaps, auto-generate daily
 - **IndexNow:** 34 URLs submitted (HTTP 202)
 
@@ -270,14 +291,17 @@ collection_items             # Collection ↔ Product mapping
 | Rủi ro | Mức độ | Giải pháp |
 |--------|--------|-----------|
 | Lemon Squeezy xác minh chậm (1-3 ngày) | 🟡 Medium | Đăng ký sớm, song song với dev |
-| Tỷ giá USD/VND chênh lệch qua LS | 🟡 Medium | Hiển thị giá USD rõ ràng |
 | Low seller adoption | 🔴 High | Marketing, incentives, onboarding hướng dẫn |
 | File upload security (chưa có virus scan) | 🟡 Medium | Ưu tiên ClamAV trong Q3 |
 | Admin withdrawal processing chưa có UI | 🟡 Medium | Cần build trước khi có withdrawal thực |
+| SportPulse API keys chưa đăng ký | 🟡 Medium | Cần API-Football + BallDontLie keys trước Phase 9 |
+
+### 📝 Quyết định đã đưa ra
+
+1. ~~**Multi-language scope**~~ → **Loại khỏi scope** (02/04/2026). Không cần thiết cho giai đoạn hiện tại. Lemon Squeezy có thể triển khai trực tiếp không cần multi-language.
 
 ### 📝 Quyết định cần đưa ra
 
-1. **Multi-language scope:** Hỗ trợ bao nhiêu ngôn ngữ? (EN + VI? Thêm ngôn ngữ khác?)
-2. **Lemon Squeezy vs Stripe direct:** LS phí cao hơn (5%+$0.50) nhưng bao gồm MoR/thuế. Stripe rẻ hơn (2.9%+$0.30) nhưng tự xử lý thuế. Quyết định dựa trên volume dự kiến.
-3. **Mobile app:** Có cần trong 2026 không? Hay focus web trước?
-4. **Pricing strategy:** Giá tối thiểu source game bao nhiêu? (LS phí cố định $0.50 không phù hợp sản phẩm <$5)
+1. **Lemon Squeezy vs Stripe direct:** LS phí cao hơn (5%+$0.50) nhưng bao gồm MoR/thuế. Stripe rẻ hơn (2.9%+$0.30) nhưng tự xử lý thuế. Quyết định dựa trên volume dự kiến.
+2. **Mobile app:** Có cần trong 2026 không? Hay focus web trước?
+3. **Pricing strategy:** Giá tối thiểu source game bao nhiêu? (LS phí cố định $0.50 không phù hợp sản phẩm <$5)

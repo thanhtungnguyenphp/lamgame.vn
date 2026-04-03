@@ -1,9 +1,11 @@
 # Kế hoạch tích hợp Lemon Squeezy — LamGame.vn
 
-> **Trạng thái:** ⏸️ TẠM HOÃN — Chờ hoàn thành chức năng đa ngôn ngữ
+> **Trạng thái:** 🔧 ĐANG TRIỂN KHAI — Phase 2+3 hoàn thành (03/04/2026). Chờ đăng ký LS → Testing.
 > **Ngày phân tích:** 2026-02-20
-> **Ưu tiên:** Sau khi multi-language hoàn tất
+> **Bắt đầu code:** 2026-04-03
+> **Ưu tiên:** P1
 > **Ước tính:** 10-14 ngày (bao gồm chờ xác minh LS)
+> **Task tracking:** `docs/checkout/LemonSqueezy/TASKS.md`
 
 ---
 
