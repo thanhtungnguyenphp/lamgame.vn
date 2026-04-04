@@ -9,10 +9,10 @@
 
 | Phase | Trạng thái | Ngày |
 |-------|-----------|------|
-| Phase 1 — Setup & Đăng ký LS | ⬜ Chờ đăng ký | — |
+| Phase 1 — Setup & Đăng ký LS | ✅ DONE | 2026-04-03 |
 | Phase 2 — Backend Package | ✅ DONE | 2026-04-03 |
 | Phase 3 — Frontend Checkout UI | ✅ DONE | 2026-04-03 |
-| Phase 4 — Testing & Go-live | ⬜ Chưa bắt đầu | — |
+| Phase 4 — Testing & Go-live | 🔧 IN PROGRESS | 2026-04-03 |
 
 ---
 
@@ -20,12 +20,12 @@
 
 | Task | Mô tả | Trạng thái |
 |------|--------|------------|
-| LS-001 | Tạo tài khoản + store "LamGame" trên lemonsqueezy.com | ⬜ |
-| LS-002 | Xác minh danh tính (CCCD) — duyệt 1-3 ngày | ⬜ |
-| LS-003 | Thiết lập bank payout (ngân hàng VN) | ⬜ |
-| LS-004 | Tạo API key (production + test) | ⬜ |
-| LS-005 | Thiết lập webhook → `https://lamgame.vn/api/webhooks/lemonsqueezy` | ⬜ |
-| LS-006 | Tạo 1 "generic" variant trên LS (dùng cho custom_price) | ⬜ |
+| LS-001 | Tạo tài khoản + store "LamGame" trên lemonsqueezy.com | ✅ Done |
+| LS-002 | Xác minh danh tính (CCCD) — duyệt 1-3 ngày | ✅ Done |
+| LS-003 | Thiết lập bank payout (ngân hàng VN) | ✅ Done |
+| LS-004 | Tạo API key (production + test) | ✅ Done |
+| LS-005 | Thiết lập webhook → `https://lamgame.vn/api/webhooks/lemonsqueezy` | ✅ Done |
+| LS-006 | Tạo 1 "generic" variant trên LS (dùng cho custom_price) | ✅ Done (ID: 1483177) |
 
 ---
 
@@ -71,11 +71,34 @@
 
 ---
 
-## Phase 4: Testing & Go-live (2-3 ngày)
+## Phase 4: Testing & Go-live (2-3 ngày) — 🔧 IN PROGRESS
+
+### Bugs phát hiện & fix (03/04/2026 tối)
+
+| # | Bug | Fix |
+|---|-----|-----|
+| 1 | Store currency = VND, `custom_price` phải là VND cents (không phải USD) | Bỏ convert VND→USD, dùng `$cart->grand_total * 100` |
+| 2 | `Cart::prepareDataForOrder()` không tồn tại trong Bagisto | Đổi thành `(new OrderResource($cart))->jsonSerialize()` |
+| 3 | `invoiceRepository->create()` truyền thừa params | Bỏ `'paid', 'completed'` |
+
+### Test results (03/04/2026 tối)
+
+| Test | Kết quả |
+|------|---------|
+| API key → LS Store | ✅ 200 OK |
+| Tạo checkout URL (VND cents) | ✅ 201 Created |
+| Migration lemon_squeezy_transactions | ✅ |
+| Webhook signature verify | ✅ |
+| Webhook routing + CSRF exclusion | ✅ |
+| Idempotency (duplicate skip) | ✅ |
+| Cart not found → log warning | ✅ |
+| Order creation (full cart) | ⬜ Cần test browser |
+
+### Tasks
 
 | Task | Mô tả | Trạng thái |
 |------|--------|------------|
-| LS-301 | Test mode card `4242 4242 4242 4242` | ⬜ |
+| LS-301 | Test mode card `4242 4242 4242 4242` | ⬜ Cần test browser |
 | LS-302 | Test webhook → tạo order Bagisto (ngrok cho local) | ⬜ |
 | LS-303 | Test refund flow | ⬜ |
 | LS-304 | Test guest + logged-in checkout | ⬜ |

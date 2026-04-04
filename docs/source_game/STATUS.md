@@ -1,9 +1,26 @@
 # Source Game Marketplace & Seller System — Trạng thái & Roadmap
 
-**Cập nhật:** 2026-04-03
+**Cập nhật:** 2026-04-03 (22:30)
 **Tài liệu trước:** 2026-04-02 (Bỏ multi-language, roadmap Q2-Q4)
 
-## Changelog 03/04/2026
+## Changelog 03/04/2026 — Buổi tối (Phase 4 Testing bắt đầu)
+- Lemon Squeezy Phase 4 Testing: bắt đầu, phát hiện và fix 3 bugs
+  - **Bug fix #1**: Store currency = VND → bỏ convert VND→USD, dùng VND cents trực tiếp (`custom_price`)
+  - **Bug fix #2**: `Cart::prepareDataForOrder()` không tồn tại → đổi thành `(new OrderResource($cart))->jsonSerialize()` (đúng Bagisto API)
+  - **Bug fix #3**: `invoiceRepository->create()` bỏ params thừa `'paid', 'completed'`
+- Test kết quả:
+  - ✅ API key kết nối LS thành công (Store "Lam Game", VN, VND)
+  - ✅ Tạo checkout URL thành công (VND cents)
+  - ✅ Migration `lemon_squeezy_transactions` chạy OK
+  - ✅ Webhook signature verify OK (HMAC SHA256)
+  - ✅ Webhook routing + CSRF exclusion OK
+  - ✅ Idempotency check OK (duplicate bị skip)
+  - ⬜ Order creation cần test trên browser (cart cần billing address đầy đủ)
+- Docker: fix mount lỗi `php.ini` + `lamgame.conf` (bị tạo thành thư mục thay vì file)
+- Branch: `feat/seller-payment` tạo từ `main` (pull 34 commits mới)
+- Tiếp theo: Test checkout flow đầy đủ trên browser → webhook từ LS thật
+
+## Changelog 03/04/2026 — Buổi sáng
 - Lemon Squeezy: Phase 2 Backend + Phase 3 Frontend hoàn thành
   - Package `packages/LemonSqueezy/` — Payment class, Controller, Routes, Migration, Model
   - Vue component `v-lemon-squeezy-button` tích hợp vào checkout (giống PayPal Smart Button)
@@ -223,7 +240,7 @@ collection_items             # Collection ↔ Product mapping
 | SportPulse API — Phase 9 Crawl | 🔜 Tiếp theo | 11 tasks, ~6 ngày. Cần API keys |
 | SportPulse API — Phase 10 Push | ⬜ Chưa bắt đầu | 5 notification jobs, ~1 ngày |
 | Multi-language | ❌ Loại khỏi scope | Không cần thiết cho giai đoạn hiện tại |
-| Lemon Squeezy Integration | 🔧 Phase 2+3 Done | Backend + Frontend hoàn thành. Chờ đăng ký LS account → Testing |
+| Lemon Squeezy Integration | 🔧 Phase 4 Testing | Backend + Frontend done. 3 bugs fixed. Cần test browser checkout flow |
 
 ### 🗓️ Roadmap sắp tới
 
