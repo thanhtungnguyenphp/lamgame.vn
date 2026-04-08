@@ -204,6 +204,7 @@
 @section('content')
     <!-- LamGame Dynamic Banner Section -->
     <section class="hero-optimized" id="hero-banner" aria-label="Banner chính LamGame.vn">
+        <h1 class="sr-only">LamGame.vn — Cộng đồng Game Developer Việt Nam</h1>
         @if(!empty($homepageBanners['banners']))
             <button class="arrow banner-arrow prev" aria-label="Slide trước" tabindex="0">◄</button>
             <button class="arrow banner-arrow next" aria-label="Slide sau" tabindex="0">►</button>
@@ -224,7 +225,7 @@
                                 @endif
                                 <div class="overlay"></div>
                                 <div class="content">
-                                    <h1>{{ $banner['title'] }}</h1>
+                                    <h2>{{ $banner['title'] }}</h2>
                                     <p>{{ $banner['content'] }}</p>
                                     <div class="btns">
                                         <span class="btn primary">Khám phá ngay</span>
