@@ -10,7 +10,7 @@ class LemonSqueezy extends Payment
 
     public function getRedirectUrl()
     {
-        return route('lemonsqueezy.checkout.create');
+        // No server-side redirect — checkout handled via JS overlay (Lemon.js)
     }
 
     public function getImage()
