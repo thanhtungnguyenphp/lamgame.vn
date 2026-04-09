@@ -123,10 +123,9 @@ storage/app/firebase-credentials.json
 docker/mysql/data/
 docker/meilisearch/data/
 
-# Docker — ignore data & build, keep config
+# Docker — ignore data volumes only
 docker/mysql/
 docker/meilisearch/
-docker/php/Dockerfile
 Makefile
 DOCKER.md
 
