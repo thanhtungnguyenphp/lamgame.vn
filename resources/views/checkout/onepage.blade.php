@@ -223,6 +223,17 @@
                     <!-- PayPal Smart Button -->
                     <div v-if="selectedPayment?.method === 'paypal_smart_button'" id="paypal-button-container" style="margin-top: 1rem;"></div>
                     
+                    <!-- Lemon Squeezy Button -->
+                    <button 
+                        v-else-if="selectedPayment?.method === 'lemonsqueezy'"
+                        class="btn-proceed" 
+                        style="background: #7c3aed;"
+                        @click="startLemonCheckout"
+                        :disabled="!canPlaceOrder || isPlacing"
+                    >
+                        @{{ isPlacing ? 'Đang xử lý...' : '💳 Thanh toán quốc tế (Visa, MC, PayPal)' }}
+                    </button>
+                    
                     <!-- Normal Place Order Button -->
                     <button 
                         v-else
@@ -250,6 +261,8 @@
 @if($paypalActive && $paypalClientId)
 <script src="https://www.paypal.com/sdk/js?client-id={{ $paypalClientId }}&currency={{ $currencyToUse }}" data-partner-attribution-id="Bagisto_Cart"></script>
 @endif
+
+<script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
 
 <script>
 const { createApp } = Vue;
@@ -294,6 +307,22 @@ createApp({
     },
     mounted() {
         this.loadData();
+        // Setup Lemon.js event handler
+        const checkLemon = () => {
+            if (window.LemonSqueezy) {
+                window.createLemonSqueezy?.();
+                window.LemonSqueezy.Setup({
+                    eventHandler: (event) => {
+                        if (event.event === 'Checkout.Success') {
+                            window.location.href = '/lemonsqueezy/success';
+                        }
+                    }
+                });
+            } else {
+                setTimeout(checkLemon, 300);
+            }
+        };
+        checkLemon();
     },
     methods: {
         async loadData() {
@@ -660,8 +689,40 @@ createApp({
             }
         },
         
+        async startLemonCheckout() {
+            if (!this.canPlaceOrder) return;
+            this.isPlacing = true;
+            try {
+                const res = await fetch('/lemonsqueezy/checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    credentials: 'same-origin'
+                });
+                const data = await res.json();
+                if (data.checkout_url) {
+                    if (window.LemonSqueezy) {
+                        window.LemonSqueezy.Url.Open(data.checkout_url);
+                    } else {
+                        window.location.href = data.checkout_url;
+                    }
+                } else {
+                    alert(data.error || 'Không thể tạo phiên thanh toán.');
+                }
+            } catch (e) {
+                console.error('Error:', e);
+                alert('Có lỗi xảy ra. Vui lòng thử lại.');
+            } finally {
+                this.isPlacing = false;
+            }
+        },
+
         async placeOrder() {
             if (!this.canPlaceOrder) return;
+            if (this.selectedPayment?.method === 'lemonsqueezy') return;
             this.isPlacing = true;
             try {
                 const res = await fetch('/api/checkout/onepage/orders', {

@@ -165,6 +165,13 @@ class OnepageController extends APIController
 
         $cart = Cart::getCart();
 
+        // Block direct order creation for JS-overlay payment methods
+        if (in_array($cart->payment?->method, ['lemonsqueezy'])) {
+            return response()->json([
+                'message' => 'Vui lòng sử dụng nút thanh toán quốc tế.',
+            ], 400);
+        }
+
         if ($redirectUrl = Payment::getRedirectUrl($cart)) {
             return new JsonResource([
                 'redirect'     => true,

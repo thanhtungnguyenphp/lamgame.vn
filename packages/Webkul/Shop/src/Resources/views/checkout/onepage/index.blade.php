@@ -107,7 +107,7 @@
 
                         <div
                             class="flex justify-end"
-                            v-if="canPlaceOrder"
+                            v-if="canPlaceOrder && cart && cart.payment_method"
                         >
                             <template v-if="cart.payment_method == 'paypal_smart_button'">
                                 {!! view_render_event('bagisto.shop.checkout.onepage.summary.paypal_smart_button.before') !!}
@@ -209,6 +209,8 @@
                             this.shippingMethods = data;
                         } else if (this.currentStep == 'payment') {
                             this.paymentMethods = data;
+                        } else if (this.currentStep == 'review' && data?.payment_method) {
+                            this.cart = {...this.cart, ...data};
                         }
 
                         this.getCart();
@@ -228,7 +230,28 @@
                     },
 
                     placeOrder() {
+                        if (['lemonsqueezy', 'paypal_smart_button'].includes(this.cart?.payment_method)) {
+                            return;
+                        }
+
                         this.isPlacingOrder = true;
+
+                        this.$axios.post('{{ route('shop.checkout.onepage.orders.store') }}')
+                            .then(response => {
+                                if (response.data.data.redirect) {
+                                    window.location.href = response.data.data.redirect_url;
+                                } else {
+                                    window.location.href = '{{ route('shop.checkout.onepage.success') }}';
+                                }
+
+                                this.isPlacingOrder = false;
+                            })
+                            .catch(error => {
+                                this.isPlacingOrder = false
+
+                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
+                            });
+                    }
 
                         this.$axios.post('{{ route('shop.checkout.onepage.orders.store') }}')
                             .then(response => {
@@ -250,4 +273,6 @@
             });
         </script>
     @endPushOnce
+
+    @include('lemonsqueezy::checkout.onepage.lemon-squeezy-button')
 </x-shop::layouts>
