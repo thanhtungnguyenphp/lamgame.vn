@@ -26,6 +26,14 @@ class LamGamePageController extends Controller
     }
 
     /**
+     * Show AI Tools subscription page
+     */
+    public function aiTools()
+    {
+        return view('lamgame.pages.ai-subscription');
+    }
+
+    /**
      * Show Lien he page
      */
     public function lienHe()

@@ -67,10 +67,10 @@ class LemonSqueezyController
                         'checkout_data' => [
                             'email'  => $customer?->email ?? $cart->billing_address?->email,
                             'name'   => $customer?->name ?? $cart->billing_address?->first_name,
-                            'custom' => [
+                            'custom' => array_filter([
                                 'cart_id'     => (string) $cart->id,
-                                'customer_id' => (string) ($customer?->id ?? ''),
-                            ],
+                                'customer_id' => $customer ? (string) $customer->id : null,
+                            ]),
                         ],
                     ],
                     'relationships' => [
@@ -125,8 +125,31 @@ class LemonSqueezyController
         return response('OK', 200);
     }
 
-    public function success()
+    public function success(Request $request)
     {
+        $cart = Cart::getCart();
+
+        // If webhook already processed and cart deactivated, order exists → success
+        if (! $cart) {
+            return redirect()->route('shop.checkout.onepage.success');
+        }
+
+        // Cart still active = webhook hasn't processed yet
+        // Wait briefly for webhook, then show pending message
+        $cartId = $cart->id;
+        $maxWait = 10; // seconds
+
+        for ($i = 0; $i < $maxWait; $i++) {
+            if (LemonSqueezyTransaction::where('cart_id', $cartId)->where('status', 'paid')->exists()) {
+                return redirect()->route('shop.checkout.onepage.success');
+            }
+            sleep(1);
+        }
+
+        // Webhook still pending — redirect to success anyway (webhook will process async)
+        // But log for monitoring
+        Log::warning('LemonSqueezy: success redirect before webhook confirmed', ['cart_id' => $cartId]);
+
         return redirect()->route('shop.checkout.onepage.success');
     }
 

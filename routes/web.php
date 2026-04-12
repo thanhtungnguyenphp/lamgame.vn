@@ -33,6 +33,9 @@ Route::middleware('customer')->prefix('collections')->name('collections.')->grou
 Route::get('collection/{slug}', [App\Http\Controllers\CollectionController::class, 'show'])->name('collections.show');
 
 // Contact routes
+// AI Tools / Subscription
+Route::get('ai-tools', [LamGamePageController::class, 'aiTools'])->name('lamgame.ai-tools');
+
 Route::get('lien-he', [LamGamePageController::class, 'lienHe'])->name('lamgame.lien-he');
 Route::post('lien-he', [LamGamePageController::class, 'submitContact'])->name('lamgame.lien-he.submit');
 
