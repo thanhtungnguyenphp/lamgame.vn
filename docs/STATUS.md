@@ -1,7 +1,7 @@
 # LAMGAME.VN — Trạng thái dự án & Task List
 
-> Cập nhật: 2026-04-14 13:35
-> Tiếp tục: LS refund test → switch production → monitor
+> Cập nhật: 2026-04-14 14:25
+> Tiếp tục: LS switch production key → monitor first real transaction
 
 ---
 
@@ -24,7 +24,7 @@
 | Vietlot Scraper | ✅ Code fixed | Server cần proxy (Cloudflare block) |
 | AI Subscription Plans | ✅ Sandbox PASSED + UI OK | 13/04 — subscribe, quota, cancel, pricing page OK |
 | SportPulse API — Phase 1-8 | ✅ Done | 13 tables, 26 routes |
-| **Lemon Squeezy — Phase 4 Testing** | ✅ e2e PASSED | Checkout + webhook + order + invoice OK 14/04 |
+| **Lemon Squeezy — Phase 4 Testing** | ✅ e2e + refund PASSED | Checkout, order, invoice, refund OK 14/04 |
 | **Docker local config** | ✅ Fixed | DB_HOST, traefik network, mysql service |
 | **Currency USD** | ✅ Fixed | Sửa USA → USD trong DB |
 | **SportPulse — Phase 9 Crawl** | 🔜 Tiếp theo | 11 tasks, ~6 ngày |
@@ -74,7 +74,7 @@
 
 | # | Task | Ước tính | Trạng thái |
 |---|------|---------|-----------|
-| 14 | Test refund flow (LS-303) | 30 phút | ⬜ |
+| 14 | Test refund flow (LS-303) | 30 phút | ✅ Done 14/04 — order→closed, txn→refunded |
 | 15 | Test mobile overlay vs redirect (LS-306) | 30 phút | ⬜ |
 
 ### 🟡 P1 — Sau khi bán được
@@ -141,7 +141,7 @@
 | Phase 1 — Setup & Đăng ký LS | ✅ Done |
 | Phase 2 — Backend Package | ✅ Done |
 | Phase 3 — Frontend (JS overlay) | ✅ Done |
-| Phase 4 — Testing & Go-live | ✅ e2e PASSED 14/04 — còn refund test + switch production |
+| Phase 4 — Testing & Go-live | ✅ e2e + refund PASSED 14/04 — còn switch production |
 
 Package: `packages/LemonSqueezy/` — Chi tiết: [checkout/LemonSqueezy/TASKS.md](checkout/LemonSqueezy/TASKS.md)
 
@@ -240,7 +240,7 @@ Guard: `customer`. Chi tiết: [auth/README.md](auth/README.md)
 
 | Ngày | Thay đổi |
 |------|---------|
-| 14/04 trưa | **Lemon Squeezy e2e test PASSED**: ngrok tunnel → checkout card 4242 → webhook verify OK → Order #9 created + invoice + cart deactivated. Fix bug: Cart thiếu billing/shipping address → auto-tạo `CartAddress` trong webhook handler. Fix `Cart::addresses()` không tồn tại → dùng `CartAddress::create()` trực tiếp |
+| 14/04 trưa | **Lemon Squeezy e2e + refund test PASSED**: ngrok tunnel → checkout card 4242 → webhook → Order #9 + invoice + cart deactivated. Refund webhook → order closed + txn refunded. Fix 2 bugs: auto-tạo CartAddress, dùng `CartAddress::create()` thay `Cart::addresses()` |
 | 14/04 sáng | Update docs + STATUS.md. Deploy production AI Subscription OK |
 | 13/04 tối | Fix trang `/ai-tools`: truyền `$customer` vào view, xóa duplicate `aiSubscribe()`, thêm route POST `ai-tools/subscribe`. Trang pricing render OK (3 cards + features table + FAQ) |
 | 13/04 chiều | **AI Subscription sandbox test PASSED**: subscribe Free/Pro OK, PayPal approve OK, quota check/use/exceed OK, cancel OK (cả DB + PayPal). Fix 2 bugs: `SubscriptionUsage::increment` conflict → `incrementUsage`, thêm `sanctum-customer` guard cho Customer auth. Tạo hướng dẫn deploy production |

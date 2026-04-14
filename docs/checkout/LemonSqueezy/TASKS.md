@@ -100,7 +100,7 @@
 |------|--------|------------|
 | LS-301 | Test mode card `4242 4242 4242 4242` | ✅ Done 14/04 |
 | LS-302 | Test webhook → tạo order Bagisto (ngrok cho local) | ✅ Done 14/04 — Order #9 |
-| LS-303 | Test refund flow | ⬜ |
+| LS-303 | Test refund flow | ✅ Done 14/04 — order→closed, txn→refunded |
 | LS-304 | Test guest + logged-in checkout | ✅ Guest overlay OK |
 | LS-305 | Test downloadable product — cấp download sau payment | ⬜ |
 | LS-306 | Test mobile (overlay vs redirect) | ⬜ |
