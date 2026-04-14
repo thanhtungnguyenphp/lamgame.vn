@@ -11,7 +11,7 @@ class SubscriptionUsage extends Model
     /**
      * Tăng usage cho 1 feature. Return false nếu đã hết quota.
      */
-    public static function increment(int $userId, string $feature, int $limit): bool
+    public static function incrementUsage(int $userId, string $feature, int $limit): bool
     {
         // -1 = unlimited
         if ($limit === -1) return true;

@@ -12,7 +12,7 @@ Route::prefix('v1/subscription')->name('api.subscription.')->group(function () {
     Route::post('/webhook', [SubscriptionController::class, 'webhook'])->name('webhook');
 
     // Protected (cần auth)
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('auth:sanctum-customer,customer')->group(function () {
         Route::post('/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
         Route::get('/status', [SubscriptionController::class, 'status'])->name('status');
         Route::post('/cancel', [SubscriptionController::class, 'cancel'])->name('cancel');

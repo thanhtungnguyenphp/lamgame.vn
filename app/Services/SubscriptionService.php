@@ -76,7 +76,7 @@ class SubscriptionService
             return $plan->features[$feature];
         }
 
-        return SubscriptionUsage::increment($userId, $feature, $limit);
+        return SubscriptionUsage::incrementUsage($userId, $feature, $limit);
     }
 
     /**

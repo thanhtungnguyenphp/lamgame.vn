@@ -30,7 +30,9 @@ class LamGamePageController extends Controller
      */
     public function aiTools()
     {
-        return view('lamgame.pages.ai-subscription');
+        return view('lamgame.pages.ai-subscription', [
+            'customer' => auth()->guard('customer')->user(),
+        ]);
     }
 
     /**
