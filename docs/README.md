@@ -1,6 +1,6 @@
 # LAMGAME.VN — Tài liệu dự án
 
-> Cập nhật: 2026-04-09
+> Cập nhật: 2026-04-14
 
 ## Tổng quan
 
