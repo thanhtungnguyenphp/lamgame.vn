@@ -1,7 +1,7 @@
 # LAMGAME.VN — Trạng thái dự án & Task List
 
-> Cập nhật: 2026-04-14 14:25
-> Tiếp tục: LS switch production key → monitor first real transaction
+> Cập nhật: 2026-04-15 16:42
+> Tiếp tục: Deploy LS-305/306 → switch production keys
 
 ---
 
@@ -29,6 +29,7 @@
 | **Currency USD** | ✅ Fixed | Sửa USA → USD trong DB |
 | **SportPulse — Phase 9 Crawl** | 🔜 Tiếp theo | 11 tasks, ~6 ngày |
 | SportPulse — Phase 10 Push | ⬜ Chưa bắt đầu | 5 notification jobs |
+| **Landing Page Lotto Live** | ✅ Done | Route `/lottolive`, seeder, template 15/04 |
 
 ---
 
@@ -62,7 +63,7 @@
 | 7 | Test checkout flow browser — card 4242 (LS-301) | 30 phút | ✅ Done 14/04 |
 | 8 | Test webhook → tạo order Bagisto (LS-302) | 30 phút | ✅ Done 14/04 — Order #9 created |
 | 9 | Test guest + logged-in checkout (LS-304) | 30 phút | ✅ Guest overlay OK |
-| 10 | Test downloadable product — cấp download (LS-305) | 30 phút | ⬜ |
+| 10 | Test downloadable product — cấp download (LS-305) | 30 phút | ✅ Code done 15/04 |
 | 11 | Chạy migration production (LS-307) | 5 phút | ✅ Done (deployed) |
 | 12 | Switch production API key (LS-308) | 10 phút | ⬜ |
 | 13 | Monitor first real transaction (LS-309) | — | ⬜ |
@@ -75,7 +76,7 @@
 | # | Task | Ước tính | Trạng thái |
 |---|------|---------|-----------|
 | 14 | Test refund flow (LS-303) | 30 phút | ✅ Done 14/04 — order→closed, txn→refunded |
-| 15 | Test mobile overlay vs redirect (LS-306) | 30 phút | ⬜ |
+| 15 | Test mobile overlay vs redirect (LS-306) | 30 phút | ✅ Code done 15/04 |
 
 ### 🟡 P1 — Sau khi bán được
 
@@ -240,6 +241,8 @@ Guard: `customer`. Chi tiết: [auth/README.md](auth/README.md)
 
 | Ngày | Thay đổi |
 |------|---------|
+| 15/04 chiều | **Landing Page Lotto Live done**: route `/lottolive`, seeder `LottoLiveLandingPageSeeder`, bổ sung screenshots gallery + safety tags vào template `app-lotto-live.blade.php`. Deploy OK |
+| 15/04 chiều | **LS-305 + LS-306 done**: (1) Downloadable product — thêm logging verify download links granted + revoke links on refund. (2) Mobile checkout — detect mobile → redirect thay vì overlay, disable embed mode trên LS API cho mobile. Sửa 3 files: `LemonSqueezyController.php`, `onepage.blade.php`, `lemon-squeezy-button.blade.php` |
 | 14/04 trưa | **Lemon Squeezy e2e + refund test PASSED**: ngrok tunnel → checkout card 4242 → webhook → Order #9 + invoice + cart deactivated. Refund webhook → order closed + txn refunded. Fix 2 bugs: auto-tạo CartAddress, dùng `CartAddress::create()` thay `Cart::addresses()` |
 | 14/04 sáng | Update docs + STATUS.md. Deploy production AI Subscription OK |
 | 13/04 tối | Fix trang `/ai-tools`: truyền `$customer` vào view, xóa duplicate `aiSubscribe()`, thêm route POST `ai-tools/subscribe`. Trang pricing render OK (3 cards + features table + FAQ) |

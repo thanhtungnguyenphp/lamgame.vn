@@ -85,7 +85,15 @@
                             throw new Error('No checkout URL');
                         }
 
-                        window.LemonSqueezy.Url.Open(checkoutUrl);
+                        // LS-306: Mobile → redirect (overlay UX kém trên mobile)
+                        const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent)
+                            || window.innerWidth < 768;
+
+                        if (!isMobile && window.LemonSqueezy) {
+                            window.LemonSqueezy.Url.Open(checkoutUrl);
+                        } else {
+                            window.location.href = checkoutUrl;
+                        }
                     } catch (error) {
                         const message = error.response?.data?.error || 'Có lỗi xảy ra. Vui lòng thử lại.';
 
