@@ -98,15 +98,25 @@
 
 | Task | Mô tả | Trạng thái |
 |------|--------|------------|
-| LS-301 | Test mode card `4242 4242 4242 4242` | ⬜ Cần test browser |
-| LS-302 | Test webhook → tạo order Bagisto (ngrok cho local) | ⬜ |
-| LS-303 | Test refund flow | ⬜ |
-| LS-304 | Test guest + logged-in checkout | ⬜ |
+| LS-301 | Test mode card `4242 4242 4242 4242` | ✅ Done 14/04 |
+| LS-302 | Test webhook → tạo order Bagisto (ngrok cho local) | ✅ Done 14/04 — Order #9 |
+| LS-303 | Test refund flow | ✅ Done 14/04 — order→closed, txn→refunded |
+| LS-304 | Test guest + logged-in checkout | ✅ Guest overlay OK |
 | LS-305 | Test downloadable product — cấp download sau payment | ⬜ |
 | LS-306 | Test mobile (overlay vs redirect) | ⬜ |
-| LS-307 | Chạy migration production | ⬜ |
+| LS-307 | Chạy migration production | ✅ Done (deployed) |
 | LS-308 | Switch production API key | ⬜ |
 | LS-309 | Monitor first real transaction | ⬜ |
+
+### Bugs fixed Phase 4
+
+| # | Bug | Fix | Ngày |
+|---|-----|-----|------|
+| 1 | Store currency = VND, `custom_price` phải là VND cents | Bỏ convert VND→USD, dùng `$cart->grand_total * 100` | 03/04 |
+| 2 | `Cart::prepareDataForOrder()` không tồn tại | Đổi thành `(new OrderResource($cart))->jsonSerialize()` | 03/04 |
+| 3 | `invoiceRepository->create()` truyền thừa params | Bỏ `'paid', 'completed'` | 03/04 |
+| 4 | Cart thiếu billing/shipping address → `address_type on null` | Auto-tạo `CartAddress` trong webhook handler | 14/04 |
+| 5 | `Cart::addresses()` không tồn tại | Dùng `CartAddress::create()` trực tiếp | 14/04 |
 
 ---
 

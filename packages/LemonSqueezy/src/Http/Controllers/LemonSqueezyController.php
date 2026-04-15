@@ -192,6 +192,43 @@ class LemonSqueezyController
         ]);
 
         try {
+            // Ensure cart has billing address (required by OrderResource)
+            if (! $cart->billing_address) {
+                $customer = $cart->customer_id ? \Webkul\Customer\Models\Customer::find($cart->customer_id) : null;
+                \Webkul\Checkout\Models\CartAddress::create([
+                    'cart_id'       => $cart->id,
+                    'address_type'  => 'cart_billing',
+                    'first_name'    => $customer->first_name ?? ($customData['name'] ?? 'Guest'),
+                    'last_name'     => $customer->last_name ?? '',
+                    'email'         => $customer->email ?? ($customData['email'] ?? 'guest@lamgame.vn'),
+                    'country'       => 'VN',
+                    'state'         => 'HCM',
+                    'city'          => 'Ho Chi Minh',
+                    'postcode'      => '700000',
+                    'address'       => json_encode(['Digital Delivery']),
+                    'phone'         => '0000000000',
+                ]);
+                $cart->load('billing_address');
+            }
+
+            if (! $cart->shipping_address) {
+                $b = $cart->billing_address;
+                \Webkul\Checkout\Models\CartAddress::create([
+                    'cart_id'       => $cart->id,
+                    'address_type'  => 'cart_shipping',
+                    'first_name'    => $b->first_name,
+                    'last_name'     => $b->last_name,
+                    'email'         => $b->email,
+                    'country'       => $b->country,
+                    'state'         => $b->state,
+                    'city'          => $b->city,
+                    'postcode'      => $b->postcode,
+                    'address'       => $b->address,
+                    'phone'         => $b->phone,
+                ]);
+                $cart->load('shipping_address');
+            }
+
             Cart::setCart($cart);
             $data = (new OrderResource($cart))->jsonSerialize();
             $order = $this->orderRepository->create($data);

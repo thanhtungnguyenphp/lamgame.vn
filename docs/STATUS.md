@@ -1,7 +1,7 @@
 # LAMGAME.VN — Trạng thái dự án & Task List
 
-> Cập nhật: 2026-04-13 16:30
-> Tiếp tục: AI Subscription sandbox PASSED ✅ → deploy production
+> Cập nhật: 2026-04-14 14:25
+> Tiếp tục: LS switch production key → monitor first real transaction
 
 ---
 
@@ -22,9 +22,9 @@
 | GA4 Tracking | ✅ Done | 7 event types |
 | FCM Push Notification | ✅ Fixed | 29/03 |
 | Vietlot Scraper | ✅ Code fixed | Server cần proxy (Cloudflare block) |
-| AI Subscription Plans | ✅ Sandbox PASSED | 13/04 — subscribe, quota, cancel OK |
+| AI Subscription Plans | ✅ Sandbox PASSED + UI OK | 13/04 — subscribe, quota, cancel, pricing page OK |
 | SportPulse API — Phase 1-8 | ✅ Done | 13 tables, 26 routes |
-| **Lemon Squeezy — Phase 4 Testing** | ✅ Checkout OK | Overlay mở, nhập thẻ OK. Cần test e2e |
+| **Lemon Squeezy — Phase 4 Testing** | ✅ e2e + refund PASSED | Checkout, order, invoice, refund OK 14/04 |
 | **Docker local config** | ✅ Fixed | DB_HOST, traefik network, mysql service |
 | **Currency USD** | ✅ Fixed | Sửa USA → USD trong DB |
 | **SportPulse — Phase 9 Crawl** | 🔜 Tiếp theo | 11 tasks, ~6 ngày |
@@ -46,30 +46,35 @@
 | 2 | Test e2e sandbox (subscribe → webhook → activate → use quota) | 1h | ✅ Done 13/04 |
 | 3 | Switch PayPal sang production mode (.env) | 15 phút | ⬜ Cần deploy |
 | 4 | Thêm route web `/ai-tools` trỏ tới trang subscription | 10 phút | ✅ Done |
-| 5 | Verify trang pricing hiển thị đúng 3 gói + nút Subscribe | 15 phút | ⬜ Cần deploy |
+| 5 | Verify trang pricing hiển thị đúng 3 gói + nút Subscribe | 15 phút | ✅ Done 13/04 |
 
 > PayPal Plans sandbox ✅, webhook verify ✅, use-quota ✅, cancel ✅
-> Bugs fixed 13/04: SubscriptionUsage::increment conflict, auth:sanctum guard cho Customer
+> Trang `/ai-tools` render OK: 3 pricing cards, features table, FAQ, nút Subscribe ✅
+> Bugs fixed 13/04: SubscriptionUsage::increment conflict, auth:sanctum guard, $customer undefined, duplicate aiSubscribe method
 > **Hướng dẫn deploy production:** [subscription/DEPLOY_PRODUCTION.md](subscription/DEPLOY_PRODUCTION.md)
+> **Chỉ còn:** tạo PayPal Live Plans + sửa .env production + migrate
 
 #### Bước 2: Lemon Squeezy Go-live — bán Source Game (~1 ngày)
 
 | # | Task | Ước tính | Trạng thái |
 |---|------|---------|-----------|
-| 6 | Setup ngrok/tunnel cho local webhook test | 15 phút | ⬜ |
-| 7 | Test checkout flow browser — card 4242 (LS-301) | 30 phút | 🔜 12/04 |
-| 8 | Test webhook → tạo order Bagisto (LS-302) | 30 phút | ⬜ |
+| 6 | Setup ngrok/tunnel cho local webhook test | 15 phút | ✅ Done 14/04 |
+| 7 | Test checkout flow browser — card 4242 (LS-301) | 30 phút | ✅ Done 14/04 |
+| 8 | Test webhook → tạo order Bagisto (LS-302) | 30 phút | ✅ Done 14/04 — Order #9 created |
 | 9 | Test guest + logged-in checkout (LS-304) | 30 phút | ✅ Guest overlay OK |
 | 10 | Test downloadable product — cấp download (LS-305) | 30 phút | ⬜ |
-| 11 | Chạy migration production (LS-307) | 5 phút | ⬜ |
+| 11 | Chạy migration production (LS-307) | 5 phút | ✅ Done (deployed) |
 | 12 | Switch production API key (LS-308) | 10 phút | ⬜ |
 | 13 | Monitor first real transaction (LS-309) | — | ⬜ |
+
+> e2e test PASSED 14/04: checkout → card 4242 → webhook → order #9 + invoice + cart deactivated ✅
+> Bug fixed: Cart thiếu billing/shipping address → auto-tạo trong webhook handler
 
 #### Bước 3: Test bổ sung (sau khi đã live)
 
 | # | Task | Ước tính | Trạng thái |
 |---|------|---------|-----------|
-| 14 | Test refund flow (LS-303) | 30 phút | ⬜ |
+| 14 | Test refund flow (LS-303) | 30 phút | ✅ Done 14/04 — order→closed, txn→refunded |
 | 15 | Test mobile overlay vs redirect (LS-306) | 30 phút | ⬜ |
 
 ### 🟡 P1 — Sau khi bán được
@@ -127,7 +132,7 @@
 | PayPal Smart Button | ✅ Done (sandbox tested) |
 | COD | ✅ Done |
 | Money Transfer | ✅ Done |
-| Lemon Squeezy (quốc tế) | 🔧 Phase 4 Testing |
+| Lemon Squeezy (quốc tế) | ✅ e2e PASSED 14/04 |
 
 ### 3.3 Lemon Squeezy Integration
 
@@ -136,7 +141,7 @@
 | Phase 1 — Setup & Đăng ký LS | ✅ Done |
 | Phase 2 — Backend Package | ✅ Done |
 | Phase 3 — Frontend (JS overlay) | ✅ Done |
-| Phase 4 — Testing & Go-live | 🔧 IN PROGRESS (9 tasks còn lại) |
+| Phase 4 — Testing & Go-live | ✅ e2e + refund PASSED 14/04 — còn switch production |
 
 Package: `packages/LemonSqueezy/` — Chi tiết: [checkout/LemonSqueezy/TASKS.md](checkout/LemonSqueezy/TASKS.md)
 
@@ -222,8 +227,8 @@ Guard: `customer`. Chi tiết: [auth/README.md](auth/README.md)
 
 | Metric | Giá trị |
 |--------|---------|
-| Routes | 52+ (26 seller/source game + 26 SportPulse) |
-| Database tables (custom) | 19 (6 source game + 13 sport) |
+| Routes | 62+ (26 seller/source game + 26 SportPulse + 9 subscription + API) |
+| Database tables (custom) | 23 (6 source game + 13 sport + 4 subscription) |
 | Source games | 4 |
 | Sellers | 1 |
 | Scheduled tasks | 14 |
@@ -235,6 +240,9 @@ Guard: `customer`. Chi tiết: [auth/README.md](auth/README.md)
 
 | Ngày | Thay đổi |
 |------|---------|
+| 14/04 trưa | **Lemon Squeezy e2e + refund test PASSED**: ngrok tunnel → checkout card 4242 → webhook → Order #9 + invoice + cart deactivated. Refund webhook → order closed + txn refunded. Fix 2 bugs: auto-tạo CartAddress, dùng `CartAddress::create()` thay `Cart::addresses()` |
+| 14/04 sáng | Update docs + STATUS.md. Deploy production AI Subscription OK |
+| 13/04 tối | Fix trang `/ai-tools`: truyền `$customer` vào view, xóa duplicate `aiSubscribe()`, thêm route POST `ai-tools/subscribe`. Trang pricing render OK (3 cards + features table + FAQ) |
 | 13/04 chiều | **AI Subscription sandbox test PASSED**: subscribe Free/Pro OK, PayPal approve OK, quota check/use/exceed OK, cancel OK (cả DB + PayPal). Fix 2 bugs: `SubscriptionUsage::increment` conflict → `incrementUsage`, thêm `sanctum-customer` guard cho Customer auth. Tạo hướng dẫn deploy production |
 | 12/04 đêm | Fix LS checkout: thêm button vào custom checkout page, fix guest checkout (customer_id null), block direct order creation, fix Lemon.js event handler. Fix Docker: DB_HOST, traefik network, thêm mysql service. Fix currency USA→USD. LS overlay mở OK || 09/04 chiều | Dọn dẹp docs (75→46 files), tạo STATUS.md master. Sắp xếp ưu tiên bán gói trước. Thêm route `/ai-tools` cho trang subscription |
 | 09/04 sáng | Merge feat/seller-payment → main. Fix LS checkout JS overlay. Fix SEO H1/CSS. Regenerate sitemaps |

@@ -334,3 +334,6 @@ AI Service gọi quota:
 ### Bugs đã fix:
 1. `SubscriptionUsage::increment()` conflict với `Model::increment()` → đổi thành `incrementUsage()`
 2. `auth:sanctum` guard trỏ tới `admins` → thêm `sanctum-customer` guard trong `config/auth.php`
+3. `$customer` undefined trong view `ai-subscription.blade.php` → truyền từ controller
+4. Duplicate `aiSubscribe()` method trong `LamGamePageController` → xóa bản thừa
+5. Route `lamgame.ai-subscribe` thiếu → thêm `POST ai-tools/subscribe` vào `web.php`
