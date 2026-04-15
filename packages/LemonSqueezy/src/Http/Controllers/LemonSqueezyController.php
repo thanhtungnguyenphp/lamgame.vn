@@ -46,6 +46,10 @@ class LemonSqueezyController
 
         $productName = mb_substr($cart->items->pluck('name')->implode(', '), 0, 200);
 
+        // LS-306: Detect mobile → disable embed for redirect-based checkout
+        $agent = $request->header('User-Agent', '');
+        $isMobile = (bool) preg_match('/Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i', $agent);
+
         $response = Http::withToken($apiKey)
             ->accept('application/vnd.api+json')
             ->contentType('application/vnd.api+json')
@@ -61,7 +65,7 @@ class LemonSqueezyController
                             'redirect_url' => route('lemonsqueezy.checkout.success'),
                         ],
                         'checkout_options' => [
-                            'embed' => true,
+                            'embed' => ! $isMobile,
                             'logo'  => true,
                         ],
                         'checkout_data' => [
@@ -243,6 +247,15 @@ class LemonSqueezyController
 
                 Cart::deActivateCart();
 
+                // LS-305: Verify downloadable links were granted
+                $downloadLinks = \Webkul\Sales\Models\DownloadableLinkPurchased::where('order_id', $order->id)->get();
+                if ($downloadLinks->isNotEmpty()) {
+                    Log::info('LemonSqueezy: downloadable links granted', [
+                        'order_id' => $order->id,
+                        'links'    => $downloadLinks->pluck('status', 'name')->toArray(),
+                    ]);
+                }
+
                 $transaction->update([
                     'order_id' => $order->id,
                     'status'   => 'paid',
@@ -278,6 +291,10 @@ class LemonSqueezyController
         if ($order) {
             $order->update(['status' => 'closed']);
             $transaction->update(['status' => 'refunded']);
+
+            // LS-305: Revoke downloadable links on refund
+            \Webkul\Sales\Models\DownloadableLinkPurchased::where('order_id', $order->id)
+                ->update(['status' => 'expired']);
 
             Log::info('LemonSqueezy order refunded', [
                 'order_id'    => $order->id,

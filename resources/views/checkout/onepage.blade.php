@@ -704,7 +704,11 @@ createApp({
                 });
                 const data = await res.json();
                 if (data.checkout_url) {
-                    if (window.LemonSqueezy) {
+                    // LS-306: Mobile → redirect (overlay UX kém trên mobile)
+                    const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent)
+                        || window.innerWidth < 768;
+
+                    if (!isMobile && window.LemonSqueezy) {
                         window.LemonSqueezy.Url.Open(data.checkout_url);
                     } else {
                         window.location.href = data.checkout_url;
