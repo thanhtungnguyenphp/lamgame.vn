@@ -46,6 +46,7 @@ Route::get('blog/{slug}', [LamGamePageController::class, 'blogShow'])->name('blo
 
 // Landing Page routes
 Route::get('p/{slug}', [\App\Http\Controllers\LandingPageController::class, 'show'])->name('landing-page.show');
+Route::get('lottolive', [\App\Http\Controllers\LandingPageController::class, 'show'])->defaults('slug', 'lottolive')->name('landing-page.lottolive');
 
 // M7 Mini Game
 Route::post('m7/predict', [\App\Http\Controllers\M7PredictionController::class, 'store'])->name('m7.predict');

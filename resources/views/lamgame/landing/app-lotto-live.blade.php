@@ -145,6 +145,36 @@
     </section>
     @endif
 
+    {{-- ===== SCREENSHOTS GALLERY ===== --}}
+    @if($page->getSection('screenshots'))
+    <section class="ll-screenshots">
+        <div class="container text-center">
+            <h2 class="ll-section-title">Giao diện ứng dụng</h2>
+            <p class="ll-section-sub">Thiết kế Material 3, hỗ trợ chế độ sáng/tối, tối ưu cho người dùng Việt Nam.</p>
+            <div class="ll-screenshots__scroll">
+                @foreach($page->getSection('screenshots') as $ss)
+                <img src="{{ $ss['image'] }}" alt="{{ $ss['alt'] ?? 'Lotto Live screenshot' }}" height="420" loading="lazy">
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
+    {{-- ===== SAFETY ===== --}}
+    @if($page->getSection('safety_tags'))
+    <section class="ll-safety">
+        <div class="container text-center">
+            <h2 class="ll-section-title">An toàn & Hợp pháp</h2>
+            <p class="ll-section-sub">Lotto Live là ứng dụng tra cứu thông tin xổ số kiến thiết. Không thực hiện bất kỳ giao dịch mua bán nào.</p>
+            <div class="ll-safety__tags">
+                @foreach($page->getSection('safety_tags') as $tag)
+                <span class="ll-safety__tag">{{ $tag }}</span>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
     {{-- ===== BODY CONTENT (from admin editor) ===== --}}
     @if($page->description)
     <section class="ll-content">
@@ -254,6 +284,23 @@
 .ll-content__body { max-width: 800px; margin: 0 auto; font-size: 1.05rem; line-height: 1.8; color: #E0E0E0; }
 .ll-content__body img { max-width: 100%; height: auto; border-radius: 8px; margin: 1rem 0; display: block; }
 
+/* ===== SECTION HELPERS ===== */
+.text-center { text-align: center; }
+.ll-section-sub { color: #E0E0E0; font-size: 1rem; margin-bottom: 2.5rem; max-width: 600px; }
+.text-center .ll-section-sub { margin-left: auto; margin-right: auto; }
+
+/* ===== SCREENSHOTS ===== */
+.ll-screenshots { padding: 5rem 0; background: rgba(255,255,255,0.04); }
+.ll-screenshots__scroll { display: flex; gap: 1rem; overflow-x: auto; padding: 1rem 0; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
+.ll-screenshots__scroll::-webkit-scrollbar { height: 6px; }
+.ll-screenshots__scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+.ll-screenshots__scroll img { height: 420px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); scroll-snap-align: start; flex-shrink: 0; }
+
+/* ===== SAFETY ===== */
+.ll-safety { padding: 5rem 0; background: #0d0d35; }
+.ll-safety__tags { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+.ll-safety__tag { background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.15); color: #4ade80; padding: 0.5rem 1rem; border-radius: 99px; font-size: 0.85rem; font-weight: 600; }
+
 /* ===== FOOTER CTA ===== */
 .ll-cta { padding: 5rem 0; text-align: center; background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%); }
 .ll-cta h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.75rem; }
@@ -274,6 +321,7 @@
     .ll-highlight__img img { max-width: 200px; }
     .ll-section-title { font-size: 1.6rem; }
     .ll-cta h2 { font-size: 1.6rem; }
+    .ll-screenshots__scroll img { height: 300px; }
 }
 </style>
 @endpush
