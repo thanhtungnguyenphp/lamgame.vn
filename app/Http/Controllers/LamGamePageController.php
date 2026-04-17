@@ -36,6 +36,20 @@ class LamGamePageController extends Controller
     }
 
     /**
+     * Show AI Tools dashboard (requires login)
+     */
+    public function aiToolsDashboard()
+    {
+        $customer = auth()->guard('customer')->user();
+        $token = $customer->createToken('ai-tools')->plainTextToken ?? '';
+
+        return view('lamgame.pages.ai-tools-dashboard', [
+            'customer' => $customer,
+            'token'    => $token,
+        ]);
+    }
+
+    /**
      * Show Lien he page
      */
     public function lienHe()

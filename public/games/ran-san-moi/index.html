@@ -1,0 +1,45 @@
+<html lang="vi">
+    <head>
+    <title>Rắn Săn Mồi - Chơi Miễn Phí | LamGame</title>
+    <meta property="og:title" content="Rắn Săn Mồi - Chơi Miễn Phí | LamGame">
+    <meta property="og:description" content="Game rắn săn mồi kinh điển online - Chơi miễn phí">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lamgame.vn/choi-game/ran-san-moi">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="description" content="Game rắn săn mồi kinh điển online - Chơi miễn phí">
+    <meta name="keywords" content="game rắn, snake game, game kinh điển, lamgame">
+    <style>
+        body {padding: 5px}
+        label {display: inline-block; width: 110px; padding: 5px; font-family: consolas}
+        #playerName {width: 250px; border: 1px solid grey; font-size: 16px; font-family: consolas}
+        #playerName:read-only {border: 1px solid rgba(0,0,0,0);}
+        #changePlayerNameButton {width: 120px}
+        #invalidPlayerNameLabel {color: red; display: none}
+    </style>
+    </head>
+    <body>
+        <div>
+            <input id="playerName" readonly="readonly"></input>
+            <button id="changePlayerNameButton">Đổi tên</button>
+            <label id="invalidPlayerNameLabel">Vui lòng nhập tên hợp lệ</label>
+        </div>
+        <div>
+            <label id="scoreLabel">Điểm: </label>
+            <label id="score"></label>
+            <label id="highScoreLabel">High Điểm: </label>
+            <label id="highScore"></label>
+        </div>
+        <div id="gameBoard"></div>
+        <p> <b>Hướng dẫn:</b> Ăn thức ăn xuất hiện. WASD hoặc phím mũi tên để di chuyển. Đừng chạm rìa hoặc cắn mình!</p>
+            <br/> Don't touch the edge of the screen or run into yourself.  
+        </p>
+        <script src="js/vendor/require.js"></script>
+        <script type="text/javascript">
+            require(['./js/common'], function (common) {
+              require(['main']);
+            });
+        </script>
+    <div style="text-align:center;padding:12px;background:#1A1A2E;color:#E0E0E0;font-size:13px"><a href="https://lamgame.vn" style="color:#FF6B35;text-decoration:none;font-weight:bold">🎮 LamGame</a> — Chơi thêm game miễn phí tại lamgame.vn</div>
+</body>
+</html>

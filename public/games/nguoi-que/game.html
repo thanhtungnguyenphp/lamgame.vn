@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Stick Hero</title>
+</head>
+<body>
+	<canvas id="cnv" width="400" height="500"></canvas>
+	<h3 style="color: blue;">Score: <span id="score">0</span></h3>
+	<h3 style="color: red; display: none;" id="gameover">Game Over. Press Enter to Restart</h3>
+	<h3>Use space key to move stick. Enter to restart. Shift to end game</h3>
+	<script type="text/javascript">
+
+		var canvas = document.getElementById("cnv");
+		var ctx = canvas.getContext("2d");
+
+		var steps = [];
+
+		var score = 0;
+
+		var gameEnded = false;
+
+		var rotateStick = false;
+
+		var gap = 0;
+
+		var max = 200;	//max gap
+
+		var min = 50;	//min gap
+
+		var moveBall = false;
+
+		var distBall = 0; //new x point the ball travels to . sx of stick
+
+		var nextStepOn = false; // move the steps for next round
+
+		var ball = {
+		  x: 80,
+		  y: 290,
+		  radius: 10,
+		  color: 'yellow',
+		  draw: function() {
+		    ctx.beginPath();
+		    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
+		    ctx.closePath();
+		    ctx.fillStyle = this.color;
+		    ctx.fill();
+		  }
+		};
+
+		var step = {
+			x : 50,
+			y : 300,
+			h : 250,
+			w : 50,
+			color : 'green',
+			draw : function(){
+				ctx.beginPath();
+		    	ctx.fillStyle = this.color;
+			    ctx.fillRect(this.x,this.y,this.w,this.h);
+			    ctx.closePath();
+			}
+		}
+
+		var stick = {
+			x : 100,
+			y : 300,
+			sx : 100,
+			sy : 300,
+			h : 0,
+			w : 5,
+			angle : 270,
+			color : 'red',
+			draw : function(){
+				ctx.beginPath();
+		    	ctx.strokeStyle = this.color;
+		    	ctx.moveTo(this.x, this.y);
+		    	ctx.lineWidth = this.w;
+		    	ctx.lineTo(this.sx,this.sy);
+		    	ctx.stroke();
+			    ctx.closePath();
+			}
+		}
+
+		/**
+		*	Draw all steps 
+		*/
+		function drawSteps(){	
+			for(var i=0;i<steps.length;i++){
+				steps[i].draw();
+			}
+		}
+
+		/**
+		*	Draw the ball
+		*/
+		function drawBall(){
+			if(!nextStepOn && moveBall && (ball.x < distBall /*|| ball.x < steps[1].x + steps[1].w*/)){
+				ball.x += 2;
+			}else if(!nextStepOn && ball.x > steps[1].x + steps[1].w){
+				moveBall = false; 
+				ball.y = ball.y + 5;
+				if(ball.y == 490){
+					stop();
+				}
+			}else if(!nextStepOn && ball.x == distBall/*steps[1].x + steps[1].w*/){
+				console.log(nextStepOn);
+				nextStepOn = true;
+			}	
+			ball.draw();			
+		}
+
+		function resetStick(){
+			stick.x = 100;
+			stick.y = 300;
+			stick.sx = 100;
+			stick.sy = 300;
+			stick.h = 0;
+			stick.w = 5;
+			stick.angle = 270;
+			rotateStick = false;
+		}
+
+		/**
+		*	Draw the stick
+		*/
+		function drawStick(){
+			if(rotateStick){
+				stick.sx = stick.x + Math.cos(stick.angle * Math.PI / 180) * stick.h;
+        		stick.sy = stick.y + Math.sin(stick.angle * Math.PI / 180) * stick.h;
+        		if(stick.angle == 360 && stick.h >= gap){
+        			rotateStick = false;
+        			moveBall = true;
+        			distBall = stick.sx;
+        			score++;
+        			
+        		}else if(stick.angle==450){
+        			stop();
+        		}
+        		else{
+        			stick.angle += 1;
+        		}
+        		
+        		stick.draw();
+			}else{
+				stick.draw();
+			}
+		}
+
+		/**
+		*	Add a new step value
+		*/
+		function addStep(){
+			if(steps.length > 0){
+				var lastStep = steps[steps.length-1];
+				var tempStep = Object.create(step);
+				gap = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 2;
+				tempStep.x = lastStep.x + lastStep.w + gap;
+				console.log(tempStep.x);
+				steps.push(tempStep);				
+			}else{
+				steps.push(Object.create(step));
+			}
+
+		}
+
+		function nextStep(){
+			if(nextStepOn){
+				resetStick();
+				for(var i=0;i<steps.length;i++){
+					steps[i].x -= 2;
+				}
+				ball.x -= 2;
+				if(steps[1].x == 50){
+					nextStepOn = false;
+					moveBall = false;
+					steps.shift();
+					addStep();
+				}
+			}
+		}
+
+
+		/**
+		*	Draw all items 
+		*/
+		function drawItems(){
+			nextStep();
+			drawSteps();
+			drawStick();
+			drawBall();
+		}
+
+
+		/**
+		*	Main play function with animation frame
+		*/
+		function play(){
+			clearCanvas();
+			drawItems();
+			updateScore();
+			if(!gameEnded)
+				interval = window.requestAnimationFrame(play);
+		}
+
+
+		//add the keydown for arrow key bindings
+		document.addEventListener('keydown', logKeyDown);
+		document.addEventListener('keyup', logKeyUp);
+
+		/**
+		*	Add key press bindings 
+		*/
+		function logKeyDown(e) {	
+	  		switch(e.keyCode){
+	  			case 32 : 
+	  					if(!rotateStick  && !nextStepOn && !moveBall) {
+	  						stick.sy -= 4;  stick.h += 4; 
+	  					}
+	  					break; //space
+	  			case 16 : stop(); break; //shift
+	  			case 13 : location.reload(); break; //enter
+	  		}
+
+		}
+		/**
+		*	Add key release bindings 
+		*/
+		function logKeyUp(e) {	
+	  		switch(e.keyCode){
+	  			case 32 : 
+	  					if(!nextStepOn){
+	  						rotateStick = true;
+	  					}
+	  					break;
+	  		}
+		}
+
+		/**
+		* Clear the canvas 	
+		*/
+		function clearCanvas(){
+			ctx.beginPath();
+			ctx.fillStyle="black";
+			ctx.fillRect(0,0,canvas.width,canvas.height);
+			ctx.closePath();
+		}
+
+		/**
+		* Update the score
+		*/
+		function updateScore(){
+			document.getElementById("score").innerHTML = score;
+		}
+
+		addStep();
+		addStep();
+
+		/**
+		* The play interval
+		*/
+		var interval = window.requestAnimationFrame(play);
+		/**
+		*	Stop the game
+		*/
+		function stop(){
+			document.getElementById("gameover").style.display = "block";
+			window.cancelAnimationFrame(interval);
+			gameEnded = true;
+		}
+
+
+	</script>	
+
+</body>
+</html>

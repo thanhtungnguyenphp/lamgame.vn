@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="vi" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ma Trận Ăn Điểm - Chơi Miễn Phí | LamGame</title>
+    <meta name="description" content="Game Pac-Man ăn điểm kinh điển - Chơi miễn phí trên trình duyệt, không cần cài đặt" />
+    <meta name="keywords" content="game pacman, ăn điểm, game arcade, game miễn phí, lamgame" />
+    <meta property="og:title" content="Ma Trận Ăn Điểm - LamGame" />
+    <meta property="og:description" content="Game Pac-Man ăn điểm kinh điển - Chơi miễn phí" />
+    <meta property="og:type" content="website" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <h1 class="title">🎮 Ma Trận Ăn Điểm</h1>
+        <div class="scoreboard">
+          <div class="score-label">Điểm: <span id="score">0</span></div>
+          <div class="lives-label">Mạng: <span id="lives">3</span></div>
+          <button id="restartBtn" class="restart-btn">Chơi lại 🔁</button>
+        </div>
+      </header>
+      <main class="game-container">
+        <canvas id="gameCanvas" width="560" height="620"></canvas>
+        <p class="hint">Dùng phím mũi tên hoặc WASD để di chuyển. Ăn hết điểm, tránh ma!</p>
+      </main>
+    </div>
+    <div class="lamgame-footer">
+      <a href="https://lamgame.vn">🎮 LamGame</a> — Chơi thêm game miễn phí tại lamgame.vn
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

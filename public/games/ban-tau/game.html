@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Arcade Shooter</title>
+</head>
+<body>
+	<img src="images\ppp.png" height="100px" width="100px" id="ppp" style="display: none;">
+	<canvas id="cnv" width="500" height="500"></canvas>
+	<h3 style="color: blue;">Score: <span id="score">0</span></h3>
+	<h3 style="color: red; display: none;" id="gameover">Game Over. Press Enter to Restart</h3>
+	<h3>Use arrow keys to move around. Use space key to shoot. Enter to restart. Shift to end game</h3>
+	<script type="text/javascript">
+
+		var canvas = document.getElementById("cnv");
+		var ctx = canvas.getContext("2d");
+		var gameEnded = false;
+		var score = 0;
+		var img = document.getElementById("ppp");
+
+		var bombs = [];
+		var targets = [];
+		var targetInterval = 1500;
+
+		var plane = {
+			x : 200,
+			y : 400,
+			h : 100,
+			w : 100,
+			direction : 0,
+			draw : function(){
+			 ctx.drawImage(img, this.x, this.y,this.w,this.h);
+
+			}
+		}
+
+		var bomb = {
+			x : 150,
+			y : 400,
+			h : 15,
+			w : 5,
+			color : 'red',
+			direction : 0,
+			draw : function(){
+			 	ctx.beginPath();
+		    	ctx.strokeStyle = this.color;
+		    	ctx.moveTo(this.x, this.y);
+		    	ctx.lineWidth = this.w;
+		    	ctx.lineTo(this.x,this.y-this.h);
+		    	ctx.stroke();
+			    ctx.closePath();
+			}
+		}
+
+		var target = {
+			x : 230,
+		  	y : 20,
+		    vy : -5,
+		  	radius : 10,
+		  	color : 'yellow',
+			 draw : function() {
+			    ctx.beginPath();
+			    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
+			    ctx.closePath();
+			    ctx.fillStyle = this.color;
+			    ctx.fill();
+			  }
+		}
+
+		/**
+		* 	Draw and move the plane
+		*/
+		function drawPlane(){
+			if(plane.direction > 0){
+				plane.x = plane.x + 5;
+				if(plane.x >= canvas.width-plane.w){
+					plane.x = canvas.width-plane.w;
+				}
+			}else if(plane.direction < 0){
+				 plane.x = plane.x - 5;
+				 if(plane.x <= 0){
+					plane.x = 0;
+				}
+			}
+			
+			plane.draw();
+		}
+
+		/**
+		*	Draw targets
+		*/
+		function drawTargets(){
+			for(var i=0; i < targets.length; i++){
+				var t = targets[i];
+				t.y += 1;
+				t.draw();
+			}
+		}
+
+		/**
+		*	Add new targets
+		*/
+		function addTarget(){
+			console.log('add')
+			var min = plane.w / 2;
+			var max = canvas.width - plane.w / 2;
+			var t = Object.create(target);
+			var tx = Math.floor(Math.random() * (max - min)) + min;
+			console.log(tx);
+			t.x = tx;
+			targets.push(t);
+
+		}
+
+		/**
+		*	Draw bombs
+		*/
+		function drawBombs(){
+			for(var i=0; i < bombs.length; i++){
+				var b = bombs[i];
+				b.y -= 1;
+				b.draw();
+				if(b.y + b.h <= 0){
+					bombs.splice(i, 1);
+				}
+				
+			}
+		}
+
+		function checkCollision(){
+			for(var i=0; i < bombs.length; i++){
+				var b = bombs[i];
+				for(var j=0; j < targets.length; j++){
+					var t = targets[j];
+					if(b.x >= t.x - t.radius && b.x <= t.x + t.radius){
+						if(b.y - b.h <= t.y){
+							score++;
+							bombs.splice(i, 1);
+							targets.splice(j, 1);
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		/**
+		*	Add a new bomb
+		*/ 
+		function fire(){
+			var b = Object.create(bomb);
+			b.x = plane.x + plane.w / 2;
+			b.y = plane.y;
+			bombs.push(b);
+		}
+
+		/**
+		* Clear the canvas 	
+		*/
+		function clearCanvas(){
+			ctx.beginPath();
+			ctx.fillStyle="black";
+			ctx.fillRect(0,0,canvas.width,canvas.height);
+			ctx.closePath();
+		}
+		/**
+		* Update the score
+		*/
+		function updateScore(){
+			document.getElementById("score").innerHTML = score;
+		}
+		//add the keydown for arrow key bindings
+		document.addEventListener('keydown', logKeyDown);
+		document.addEventListener('keyup', logKeyUp);
+
+		/**
+		*	Add key press bindings 
+		*/
+		function logKeyDown(e) {	
+	  		switch(e.keyCode){
+	  			case 39 : plane.direction = 1; break; //right
+	  			case 37 : plane.direction = -1; break; //left
+	  			case 16 : stop(); break; //shift
+	  			case 13 : location.reload(); break;//enter
+	  			case 32 : fire(); break; //space
+	  		}
+
+		}
+		/**
+		*	Add key release bindings 
+		*/
+		function logKeyUp(e) {	
+	  		plane.direction = 0;
+		}
+
+		/**
+		*	Draw all items 
+		*/
+		function drawItems(){
+			drawPlane();
+			drawBombs();
+			drawTargets();
+		}
+
+		/**
+		*	Main play function with animation frame
+		*/
+		function play(){
+			clearCanvas();
+			drawItems();
+			checkCollision();
+			updateScore();
+			if(!gameEnded){
+				interval = window.requestAnimationFrame(play);
+			}
+		}
+
+		/**
+		* The play interval
+		*/
+		var interval = window.requestAnimationFrame(play);
+
+		var targetInterval = setInterval(addTarget,targetInterval);
+		/**
+		*	Stop the game
+		*/
+		function stop(){
+			document.getElementById("gameover").style.display = "block";
+			window.cancelAnimationFrame(interval);
+			clearInterval(targetInterval);
+			gameEnded = true;
+		}
+
+	</script>
+</body>
+</html>

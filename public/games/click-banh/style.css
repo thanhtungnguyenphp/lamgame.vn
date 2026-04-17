@@ -1,0 +1,154 @@
+body {
+    vertical-align: top;
+    user-select: none;
+}
+
+#main_container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+p {
+    margin: 0;
+}
+
+
+/* Title */
+
+header {
+    border-bottom: 1vh solid #eee;
+}
+
+header h1 {
+    font-size: 42px;
+    margin-bottom: 5px;
+}
+
+
+/* Cookie */
+
+#cookie_container {
+    width: 46%;
+    margin: 0;
+    padding: 2% 2% 0 2%;
+    text-align: center;
+    display: inline-block;
+    float: left
+}
+
+#cookieQuantity {
+    font-size: 600%;
+}
+
+img#cookie {
+    cursor: pointer;
+    width: 98%;
+    max-width: 630px;
+    transition: all 0.2s;
+    margin: 40px auto 0 auto;
+}
+
+img#cookie:hover {
+    width: 100%;
+    max-width: 640px;
+}
+
+img#cookie:active {
+    width: 96%;
+    max-width: 620px;
+    padding-top: 5px;
+}
+
+.click_feedback {
+    position: absolute;
+    pointer-events: none;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 1px 1px 4px #222;
+    font-size: 24px;
+    animation-name: disspearup;
+    animation-duration: 2s;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
+}
+
+
+/* The animation code */
+
+@keyframes disspearup {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        transform: translate(0, -150px);
+    }
+}
+
+
+/* Shop */
+
+#shop_container {
+    width: 50%;
+    margin: 0;
+    display: inline-block;
+    float: right;
+}
+
+#shop_container ul#products {
+    list-style-type: none;
+    padding: 0 1vw;
+}
+
+.product {
+    background-color: #8BC34A;
+    margin-top: 60px;
+    padding: 15px;
+    cursor: pointer;
+    color: #fff;
+    transition: all 0.3s;
+    font-weight: bold;
+    height: 60px;
+}
+
+.product:hover {
+    background-color: #689F38;
+}
+
+.product:active {
+    background-color: #9CCC65;
+}
+
+.product .product_image {
+    position: relative;
+    top: -30px;
+    height: 120px;
+    margin-right: 10px;
+}
+
+.product .product_image, .product .product_text {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.product .product_title {
+    font-size: 24px;
+    font-weight: normal;
+}
+
+.product .product_name {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.product .product_price {
+    font-size: 20px;
+    background-image: url("img/cookie_icon.svg");
+    background-repeat: no-repeat;
+    padding-left: 26px;
+}
+
+.product .product_owned {
+    float: right;
+    font-size: 50px;
+}

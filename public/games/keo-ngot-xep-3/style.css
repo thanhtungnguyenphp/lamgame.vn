@@ -1,0 +1,18 @@
+body{background:#1A1A2E;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'Inter',sans-serif;color:#E0E0E0;flex-wrap:wrap}
+.grid{display:flex;flex-wrap:wrap;height:560px;width:560px;background:rgba(0,78,137,.3);padding:5px;border-radius:10px;box-shadow:0 0 18px rgba(255,107,53,.2);margin-left:80px;margin-top:50px}
+.grid div{height:70px;width:70px;background-size:cover;background-position:center;border-radius:5px;transition:transform .2s ease}
+.grid div:hover{transform:scale(1.05)}
+.scoreBoard{background:rgba(255,107,53,.15);border:1px solid #FF6B35;border-radius:20px;margin-top:200px;margin-left:200px;width:auto;height:auto;padding:20px;display:flex;flex-direction:column;justify-content:space-between;align-items:center;text-align:center;color:#FFD700}
+h3,h1{font-family:'Inter',sans-serif;text-transform:uppercase;margin:0}
+h1{margin-top:-5px;font-size:2rem}
+#modeSelection{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:#1A1A2E;font-family:'Inter',sans-serif;position:absolute;top:0;left:0;width:100%;z-index:10}
+#modeSelection h2{margin-bottom:10px;color:#FFD700;font-size:2rem}
+#modeSelection p{color:#E0E0E0;margin-bottom:20px}
+#modeSelection button{margin:10px;padding:12px 24px;font-size:16px;cursor:pointer;background:#FF6B35;border:none;border-radius:8px;color:#fff;font-weight:600}
+#modeSelection button:hover{background:#ff8555}
+#timer{font-size:18px;margin-top:10px;color:#E0E0E0}
+#changeMode{margin-top:10px;padding:8px 16px;background:#004E89;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+#changeMode:hover{background:#0066b3}
+.grid,.scoreBoard{display:none}
+.lamgame-footer{position:fixed;bottom:0;width:100%;text-align:center;padding:12px;color:#E0E0E0;font-size:13px;background:#1A1A2E}
+.lamgame-footer a{color:#FF6B35;text-decoration:none;font-weight:bold}

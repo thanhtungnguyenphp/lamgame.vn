@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi" lang="vi" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Game Sudoku điền số logic - Chơi miễn phí">
+    <meta name="keywords" content="sudoku online, game logic, điền số, lamgame">
+    <title>Sudoku Vui - Chơi Miễn Phí | LamGame</title>
+    <meta property="og:title" content="Sudoku Vui - Chơi Miễn Phí | LamGame">
+    <meta property="og:description" content="Game Sudoku điền số logic - Chơi miễn phí">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lamgame.vn/choi-game/sudoku-vui">
+
+    <!-- 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻-->
+    <!-- Also uploaded the demo of this code in a gif : https://c.tenor.com/x8v1oNUOmg4AAAAd/tenor.gif-->
+    <!-- 👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻-->
+
+    <!-- 👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻👇🏻-->
+    <!-- More html-css-js Games Calculators Games Cards Elements Projects on https://www.github.com/he-is-talha -->
+    <!-- 👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻👆🏻-->
+
+    
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Level selection screen -->
+      <div id="levelScreen" class="level-screen">
+        <h1>🔢 Sudoku Vui</h1>
+        <p>Chọn độ khó</p>
+        <div class="level-buttons">
+          <button type="button" data-level="easy" class="level-btn">Dễ</button>
+          <button type="button" data-level="medium" class="level-btn">Trung bình</button>
+          <button type="button" data-level="hard" class="level-btn">Khó</button>
+        </div>
+      </div>
+
+      <!-- Game screen -->
+      <div id="gameScreen" class="game-screen hidden">
+        <header class="header">
+          <h1>🔢 Sudoku Vui</h1>
+          <div class="toolbar">
+            <span class="timer" id="timer">0:00</span>
+            <span class="level-badge" id="levelBadge">Dễ</span>
+            <button type="button" id="newGameBtn" class="btn">Ván mới</button>
+            <button type="button" id="changeLevelBtn" class="btn btn-ghost">Đổi độ khó</button>
+          </div>
+        </header>
+
+        <main class="game-container">
+          <div class="board-wrapper">
+            <div id="board" class="board"></div>
+          </div>
+          <div class="number-pad" id="numberPad">
+            <button type="button" class="num-btn" data-num="1">1</button>
+            <button type="button" class="num-btn" data-num="2">2</button>
+            <button type="button" class="num-btn" data-num="3">3</button>
+            <button type="button" class="num-btn" data-num="4">4</button>
+            <button type="button" class="num-btn" data-num="5">5</button>
+            <button type="button" class="num-btn" data-num="6">6</button>
+            <button type="button" class="num-btn" data-num="7">7</button>
+            <button type="button" class="num-btn" data-num="8">8</button>
+            <button type="button" class="num-btn" data-num="9">9</button>
+            <button type="button" class="num-btn num-btn-clear" data-num="0">Xóa</button>
+          </div>
+        </main>
+
+        <div id="winOverlay" class="win-overlay hidden">
+          <div class="win-box">
+            <h2>Bạn giải xong! 🎉</h2>
+            <p class="win-time" id="winTime">Time: 0:00</p>
+            <button type="button" id="playAgainBtn" class="btn btn-large">Chơi lại</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  <div style="text-align:center;padding:12px;color:#E0E0E0;font-size:13px"><a href="https://lamgame.vn" style="color:#FF6B35;text-decoration:none;font-weight:bold">🎮 LamGame</a> — Chơi thêm game miễn phí tại lamgame.vn</div></body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reaction Tester</title>
+    <style>
+      *,
+      body {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        background-color: #c8f9fa;
+      }
+      canvas {
+        display: none;
+        width: 100vw;
+        height: 100vh;
+      }
+      .centered {
+        height: 500px;
+        width: 500px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-top: -100px;
+        margin-left: -200px;
+      }
+      .restart {
+        display: none;
+      }
+      .btn {
+        background-color: green;
+        padding: 1rem;
+        margin: 2rem;
+        font-size: large;
+      }
+      .orange {
+        background-color: orange;
+      }
+      .red {
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body onresize="resize()">
+    <canvas id="canvas" height="1000" width="1000"></canvas>
+    <div class="centered start">
+      <h3>Start the Game - Click on the Green highlighted tabs quickly</h3>
+      <button class="btn" onclick="event.stopPropagation(); start(1.5);">
+        Easy
+      </button>
+      <button class="btn orange" onclick="event.stopPropagation(); start(1.2);">
+        Medium
+      </button>
+      <button class="btn red" onclick="event.stopPropagation(); start(1);">
+        Hard
+      </button>
+    </div>
+    <div class="centered restart">
+      <h3>Your Score: <span id="score"></span></h3>
+      <button class="btn" onclick="event.stopPropagation(); location.reload();">
+        Restart
+      </button>
+    </div>
+
+    <script type="text/javascript">
+      // Constants
+      var canvas = document.querySelector("#canvas");
+      var ctx = canvas.getContext("2d");
+      const noOfXTiles = 4;
+      const noOfYTiles = 4;
+      const background = "#000000";
+      const padColour = "#c8f9fa";
+      const activePadColour = "#003d15";
+      const lineColour = "#5102fa";
+      var padList = [];
+      var activePad = 0;
+      var timer;
+      var score = 0;
+      var difficulty = 1;
+      var pad = {
+        x: 0,
+        y: 0,
+        h: 0,
+        w: 0,
+        color: padColour,
+        draw: function () {
+          ctx.beginPath();
+          ctx.fillStyle = this.color;
+          ctx.fillRect(this.x, this.y, this.w, this.h);
+          ctx.closePath();
+        },
+        isHit: function (cX, cY) {
+          return (
+            this.x <= cX &&
+            cX <= this.x + this.w &&
+            this.y <= cY &&
+            cY <= this.y + this.h
+          );
+        },
+      };
+
+      /**
+       * Resize(Redraw) the canvas to fit the whole browser size
+       */
+      function resize() {
+        var width = ctx.canvas.clientWidth;
+        var height = ctx.canvas.clientHeight;
+        ctx.canvas.width = width;
+        ctx.canvas.height = height;
+        ctx.beginPath();
+        ctx.fillStyle = background;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.closePath();
+        drawPad(height, width);
+        startTimer();
+      }
+
+      /**
+       * Start a game
+       * @param d game difficulty
+       */
+      function start(d) {
+        difficulty = d;
+        document.querySelector(".start").style.display = "none";
+        score = 0;
+        document.querySelector("#canvas").style.display = "block";
+        resize();
+        //capture mouse click event to check if correct pad was clicked
+        document.addEventListener("click", onDocumentClick);
+      }
+
+      /**
+       * End the game
+       */
+      function end() {
+        clearTimer();
+        document.querySelector(".restart").style.display = "block";
+        document.querySelector("#canvas").style.display = "none";
+        document.querySelector("#score").innerHTML = score;
+        //remove mouse click event to check if correct pad was clicked
+        document.removeEventListener("click", onDocumentClick);
+      }
+
+      /**
+       * On click of document
+       * @param e click event
+       */
+      function onDocumentClick(e) {
+        clearTimer();
+        isClickOnTarget(activePad, e.clientX, e.clientY) ? resize() : end();
+      }
+
+      /**
+       *  Start the timer
+       */
+      function startTimer() {
+        clearTimer();
+        timer = setTimeout(end, difficulty * 1000);
+      }
+
+      /**
+       * Clear the timer
+       */
+      function clearTimer() {
+        clearTimeout(timer);
+      }
+
+      /**
+       * Draw the pads
+       * @param h  height
+       * @param w  width
+       */
+      function drawPad(h, w) {
+        padList = [];
+        // get a random number between 0 and no of pads
+        activePad = Math.floor(Math.random() * noOfXTiles * noOfYTiles);
+        var tagWidth = w / noOfXTiles;
+        var tagHeight = h / noOfYTiles;
+        var current = 0;
+        //draw the pads
+        for (var i = 0; i < noOfXTiles; i++) {
+          for (var j = 0; j < noOfYTiles; j++) {
+            var p = Object.create(pad);
+            p.x = i * tagWidth;
+            p.y = j * tagHeight;
+            p.h = tagHeight;
+            p.w = tagWidth;
+            if (current == activePad) {
+              p.color = activePadColour;
+            }
+            current++;
+            p.draw();
+            padList.push(p);
+          }
+        }
+        //draw the horizontal lines
+        for (var i = noOfYTiles, x = 0; i > 0; i--) {
+          x += tagWidth;
+          ctx.beginPath();
+          ctx.strokeStyle = lineColour;
+          ctx.moveTo(x, 0);
+          ctx.lineWidth = 5;
+          ctx.lineTo(x, h);
+          ctx.stroke();
+          ctx.closePath();
+        }
+        //draw the vertical lines
+        for (var i = noOfXTiles, y = 0; i > 0; i--) {
+          y += tagHeight;
+          ctx.beginPath();
+          ctx.strokeStyle = lineColour;
+          ctx.moveTo(0, y);
+          ctx.lineWidth = 5;
+          ctx.lineTo(w, y);
+          ctx.stroke();
+          ctx.closePath();
+        }
+      }
+      /**
+       * Check if mouseclick event coordinate lie inside the active pad
+       * @param active current active pad index
+       * @param cX x coordinate of mouseclick
+       * @param cY y coordinate of mouseclick
+       */
+      function isClickOnTarget(active, cX, cY) {
+        var isHit = padList[active].isHit(cX, cY);
+        if (isHit) {
+          score++;
+        }
+        return isHit;
+      }
+    </script>
+  </body>
+</html>

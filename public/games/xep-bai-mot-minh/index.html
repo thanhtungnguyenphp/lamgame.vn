@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi" lang="vi" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="description" content="Game solitaire xếp bài miễn phí">
+    <meta name="keywords" content="solitaire,xếp bài,lamgame">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Xếp Bài Một Mình - Chơi Miễn Phí | LamGame</title>
+    <meta property="og:title" content="Xếp Bài Một Mình - Chơi Miễn Phí | LamGame">
+    <meta property="og:description" content="Game solitaire xếp bài miễn phí">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lamgame.vn/choi-game/xep-bai-mot-minh">
+
+
+
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Level selection -->
+      <div id="levelScreen" class="level-screen">
+        <h1>🃏 Xếp Bài Một Mình</h1>
+        <p>Choose difficulty</p>
+        <div class="level-buttons">
+          <button type="button" data-level="easy" class="level-btn">
+            <span class="level-name">Easy</span>
+            <span class="level-desc">Draw 1 · Unlimited undo · Hints</span>
+          </button>
+          <button type="button" data-level="medium" class="level-btn">
+            <span class="level-name">Medium</span>
+            <span class="level-desc">Draw 1 · 5 undos · Hints</span>
+          </button>
+          <button type="button" data-level="hard" class="level-btn">
+            <span class="level-name">Hard</span>
+            <span class="level-desc">Draw 3 · No undo · No hints</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Game screen -->
+      <div id="gameScreen" class="game-screen hidden">
+        <header class="header">
+          <h1>🃏 Xếp Bài Một Mình</h1>
+          <span class="level-badge" id="levelBadge">Easy</span>
+          <div class="header-actions">
+            <button type="button" id="hintBtn" class="btn btn-ghost" title="Hint">Hint</button>
+            <button type="button" id="undoBtn" class="btn btn-ghost" title="Undo">Undo <span id="undoCount"></span></button>
+            <button type="button" id="changeLevelBtn" class="btn btn-ghost">Level</button>
+            <button type="button" id="newGameBtn" class="btn">New Game</button>
+          </div>
+        </header>
+
+        <main class="game-container">
+          <div class="top-row">
+            <div class="stock-wrap">
+              <div id="stock" class="pile stock" aria-label="Stock"></div>
+              <div id="waste" class="pile waste" aria-label="Waste"></div>
+            </div>
+            <div id="foundations" class="foundations" aria-label="Foundations"></div>
+          </div>
+          <div id="tableau" class="tableau" aria-label="Tableau"></div>
+        </main>
+
+        <!-- Win overlay -->
+        <div id="winOverlay" class="win-overlay hidden">
+          <div class="win-box">
+            <h2>You win!</h2>
+            <p>Congratulations, you completed Solitaire.</p>
+            <div class="win-actions">
+              <button type="button" id="playAgainBtn" class="btn btn-large">Play Again</button>
+              <button type="button" id="changeLevelFromWinBtn" class="btn btn-ghost">Change Level</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  <div style="text-align:center;padding:12px;background:#1A1A2E;color:#E0E0E0;font-size:13px"><a href="https://lamgame.vn" style="color:#FF6B35;text-decoration:none;font-weight:bold">🎮 LamGame</a> — Chơi thêm game miễn phí</div>
+</body>
+</html>
