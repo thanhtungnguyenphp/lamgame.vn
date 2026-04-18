@@ -1,0 +1,16 @@
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at top,#1A1A2E 0%,#0a0a1a 55%,#000 100%);font-family:'Inter',system-ui,sans-serif;color:#f8f8ff}
+.wrapper{width:100%;max-width:620px;padding:16px;flex:1;display:flex;flex-direction:column;justify-content:center}
+.header{display:flex;flex-direction:column;gap:8px;align-items:center;margin-bottom:12px}
+.title{font-size:1.8rem;letter-spacing:1px;text-transform:uppercase;text-align:center;color:#FFD700}
+.scoreboard{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;font-size:.95rem}
+.score-label,.lives-label{background:rgba(0,78,137,.3);padding:6px 10px;border-radius:999px;border:1px solid rgba(255,107,53,.3)}
+.restart-btn{border:none;border-radius:999px;padding:6px 14px;background:#FF6B35;color:#fff;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.4);transition:transform .1s,background .15s}
+.restart-btn:hover{background:#ff8555}
+.restart-btn:active{transform:translateY(1px)}
+.game-container{display:flex;flex-direction:column;align-items:center;gap:8px}
+canvas{border-radius:8px;border:2px solid #FF6B35;background:#000016;box-shadow:0 0 18px rgba(255,107,53,.3);max-width:100%}
+.hint{font-size:.8rem;opacity:.75;text-align:center}
+.lamgame-footer{text-align:center;padding:12px;color:#E0E0E0;font-size:13px}
+.lamgame-footer a{color:#FF6B35;text-decoration:none;font-weight:bold}
+@media(max-width:520px){.title{font-size:1.4rem}canvas{width:100%;height:auto}}

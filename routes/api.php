@@ -60,6 +60,9 @@ require __DIR__ . '/api/lottery.php';
 // Include subscription routes
 require __DIR__ . '/api/subscription.php';
 
+// Include AI Tools routes
+require __DIR__ . '/api/ai-tools.php';
+
 // Include sport routes
 require __DIR__ . '/api/sport.php';
 

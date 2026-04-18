@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi" lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Game Simon Says rèn trí nhớ">
+    <meta name="keywords" content="simon says,trí nhớ,lamgame">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simon Nói - Chơi Miễn Phí | LamGame</title>
+    <meta property="og:title" content="Simon Nói - Chơi Miễn Phí | LamGame">
+    <meta property="og:description" content="Game Simon Says rèn trí nhớ">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lamgame.vn/choi-game/simon-noi">
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+
+
+  </head>
+  <body>
+    <h1>🎵 Simon Nói</h1>
+    <div id="game-container">
+      <div class="color-btn" id="green"></div>
+      <div class="color-btn" id="red"></div>
+      <div class="color-btn" id="yellow"></div>
+      <div class="color-btn" id="blue"></div>
+    </div>
+    <div id="game-status">
+      <p class="my-text" id="sequence" style="display: none;">
+        Current Sequence: <span id="sequence-display">-</span>
+      </p>
+      <p class="my-text" id="clicks" style="display: none;">
+        Click Count: <span id="click-count">0</span>
+      </p>
+      <p class="my-text" id="status" style="display: none;">
+        Game Status: <span id="status">Waiting...</span>
+      </p>
+    </div>
+    <button id="start-btn">Start Game</button>
+    <p id="level-message" style="display: none;"></p>
+  <div style="text-align:center;padding:12px;background:#1A1A2E;color:#E0E0E0;font-size:13px"><a href="https://lamgame.vn" style="color:#FF6B35;text-decoration:none;font-weight:bold">🎮 LamGame</a> — Chơi thêm game miễn phí</div>
+</body>
+</html>

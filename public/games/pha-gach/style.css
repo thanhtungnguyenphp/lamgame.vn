@@ -1,0 +1,13 @@
+:root{--background-color:#1A1A2E;--background-secondary-color:#0a0a1a;--canvas-color:#0d0d2b;--text-color:#fff;--sidebar-color:#004E89;--button-color:#FF6B35;--hover-color:#ff8555}
+*{box-sizing:border-box}
+body{background:var(--background-color);font-family:'Inter',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0}
+h1{font-size:2.5rem;color:#FFD700;margin:1rem}
+canvas{background-color:var(--canvas-color);display:block;border-radius:8px;width:800px;max-width:96%;border:2px solid #FF6B35;box-shadow:0 0 18px rgba(255,107,53,.3)}
+.btn{cursor:pointer;border:0;padding:.625rem 1.25rem;background:var(--button-color);color:#fff;border-radius:8px;font-family:inherit;font-size:1rem}
+.btn:hover{background:var(--hover-color)}
+.btn:active{transform:scale(.98)}
+.rules-btn{position:absolute;top:1.875rem;left:1.875rem}
+.rules{position:absolute;top:0;left:0;background:var(--sidebar-color);color:#fff;min-height:100vh;width:400px;padding:3rem;line-height:1.5;transform:translateX(-400px);transition:transform 1s ease-in-out}
+.rules.show{transform:translateX(0)}
+.lamgame-footer{padding:12px;color:#E0E0E0;font-size:13px}
+.lamgame-footer a{color:#FF6B35;text-decoration:none;font-weight:bold}

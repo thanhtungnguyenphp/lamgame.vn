@@ -131,3 +131,9 @@ DOCKER.md
 
 # Database backups
 database/backups/
+
+# II-Agent (cloned source — not committed)
+/docker/ii-agent/src/
+/docker/ii-agent/.env
+docker/ii-agent/.env.example
+docker/ii-agent/model_configs.yaml

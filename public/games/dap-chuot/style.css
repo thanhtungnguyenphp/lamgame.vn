@@ -1,0 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
+*,*:before,*:after{box-sizing:border-box}
+html{font-size:10px}
+body{padding:0;margin:0;font-family:'Inter',sans-serif;background:#1A1A2E;text-align:center;color:#fff;min-height:100vh}
+h1{font-size:4rem;margin:2rem 0 0;color:#FFD700}
+h2{font-size:2.5rem;color:#E0E0E0;margin:1.5rem}
+.score{background:rgba(255,107,53,.2);padding:0 2rem;border-radius:1rem;color:#FF6B35}
+.game{width:600px;height:400px;display:flex;flex-wrap:wrap;margin:0 auto}
+.hole{flex:1 0 33.33%;overflow:hidden;position:relative}
+.hole:after{display:block;background:url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/dirt.svg") bottom center no-repeat;background-size:contain;content:"";width:100%;height:70px;position:absolute;z-index:2;bottom:-30px}
+.mole{background:url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/mole.svg") bottom center no-repeat;background-size:60%;position:absolute;top:100%;width:100%;height:100%;transition:all .4s}
+.hole.up .mole{top:0}
+#start{font-family:'Inter',sans-serif;display:inline-block;border:0;background:#FF6B35;color:#fff;font-size:2rem;padding:1rem 2rem;cursor:pointer;margin:1rem;border-radius:8px}
+#start:hover{background:#ff8555}
+.lamgame-footer{padding:20px;color:#E0E0E0;font-size:13px}
+.lamgame-footer a{color:#FF6B35;text-decoration:none;font-weight:bold}

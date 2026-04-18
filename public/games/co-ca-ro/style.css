@@ -1,0 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+*{margin:0;padding:0;box-sizing:border-box;border:none;font-family:'Inter',sans-serif}
+body{width:100vw;min-height:100vh;background:#1A1A2E;color:#fff;display:flex;justify-content:center;align-items:center;flex-direction:column}
+h1{color:#FFD700;font-size:32px;padding:5px 50px;background:rgba(0,78,137,.3);border-radius:50px;margin-bottom:20px;letter-spacing:2px}
+.container{display:grid;grid-template-columns:repeat(3,auto);border:2px solid #FF6B35;border-radius:8px;overflow:hidden}
+.box{width:120px;height:120px;border:2px solid #004E89;display:flex;justify-content:center;align-items:center;cursor:pointer;font-size:25px;background:#1A1A2E}
+.box img{width:75px}
+.status{margin:20px 0;padding:10px 40px;border-radius:50px;font-size:20px;font-weight:500;background:rgba(255,107,53,.15);color:#FFD700}
+button{padding:10px 20px;font-size:20px;font-weight:500;color:#fff;background:#FF6B35;border-radius:8px;cursor:pointer;border:none}
+button:active{transform:scale(.9)}
+button:hover{background:#ff8555}
+.win{animation:winAnim ease-in-out 1s infinite}
+@keyframes winAnim{0%{background:#004E89}100%{background:#FF6B35}}
+.lamgame-footer{padding:20px;color:#E0E0E0;font-size:13px}
+.lamgame-footer a{color:#FF6B35;text-decoration:none;font-weight:bold}
