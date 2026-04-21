@@ -1,0 +1,112 @@
+[
+  {
+    "title": "Multiplayer Lobby System - Unity Netcode",
+    "short_description": "Hệ thống lobby multiplayer hoàn chỉnh cho Unity Netcode for GameObjects. Room creation, matchmaking, player sync.",
+    "description": "<h3>Multiplayer Lobby System</h3><p>Hệ thống lobby multiplayer sẵn sàng sử dụng cho Unity Netcode. Tích hợp Unity Relay + Lobby Services.</p><h4>Tính năng</h4><ul><li>Room creation & join</li><li>Player ready system</li><li>Host migration cơ bản</li><li>Chat trong lobby</li><li>Player sync (name, avatar, color)</li><li>Auto matchmaking</li></ul><p><strong>Engine:</strong> Unity 2022+ | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> Commercial</p>",
+    "price": 25000,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Save System Pro - Unity",
+    "short_description": "Hệ thống save/load game đa năng cho Unity. Hỗ trợ JSON, Binary, encryption, auto-save, multiple slots.",
+    "description": "<h3>Save System Pro</h3><p>Giải pháp save/load game toàn diện cho Unity. Dễ tích hợp, hỗ trợ nhiều format.</p><h4>Tính năng</h4><ul><li>JSON & Binary serialization</li><li>AES encryption</li><li>Auto-save với interval</li><li>Multiple save slots</li><li>Cloud save ready (interface)</li><li>Save migration giữa versions</li><li>Editor tools: save inspector</li></ul><p><strong>Engine:</strong> Unity | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> Commercial</p>",
+    "price": 25000,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Dialogue System - Godot 4 Plugin",
+    "short_description": "Plugin hội thoại cho Godot 4. Visual editor, branching dialogue, conditions, character portraits, localization.",
+    "description": "<h3>Dialogue System Plugin</h3><p>Plugin tạo hội thoại mạnh mẽ cho Godot 4 với visual editor.</p><h4>Tính năng</h4><ul><li>Visual dialogue editor (node-based)</li><li>Branching conversations</li><li>Conditions & variables</li><li>Character portraits + emotions</li><li>Typewriter effect</li><li>Localization support (CSV)</li><li>Signal-based events</li></ul><p><strong>Engine:</strong> Godot 4 | <strong>Ngôn ngữ:</strong> GDScript | <strong>License:</strong> Commercial</p>",
+    "price": 25000,
+    "engine": "Godot",
+    "language": "GDScript",
+    "license": "Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Phaser 3 Platformer Complete Game",
+    "short_description": "Game platformer hoàn chỉnh bằng Phaser 3. Tilemap levels, enemies, collectibles, mobile responsive.",
+    "description": "<h3>Phaser 3 Platformer</h3><p>Game platformer HTML5 hoàn chỉnh xây dựng bằng Phaser 3. Chạy trên mọi trình duyệt.</p><h4>Tính năng</h4><ul><li>Tilemap-based levels (Tiled editor)</li><li>Player physics + animations</li><li>Multiple enemy types</li><li>Collectibles + score</li><li>Level progression</li><li>Touch controls cho mobile</li><li>Responsive design</li></ul><p><strong>Engine:</strong> Phaser 3 | <strong>Ngôn ngữ:</strong> JavaScript | <strong>License:</strong> Commercial</p>",
+    "price": 25000,
+    "engine": "Phaser",
+    "language": "JavaScript",
+    "license": "Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "AI Behavior Tree - Unity",
+    "short_description": "Hệ thống Behavior Tree cho AI trong Unity. Visual editor, decorator nodes, parallel execution, debug view.",
+    "description": "<h3>AI Behavior Tree</h3><p>Framework Behavior Tree chuyên nghiệp cho game AI trong Unity.</p><h4>Tính năng</h4><ul><li>Visual node editor</li><li>Composite: Sequence, Selector, Parallel</li><li>Decorator: Repeater, Inverter, Cooldown</li><li>Blackboard system</li><li>Runtime debug visualization</li><li>Serializable trees (ScriptableObject)</li><li>Ví dụ: Patrol, Chase, Attack AI</li></ul><p><strong>Engine:</strong> Unity | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> Commercial</p>",
+    "price": 25000,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Puzzle Match-3 Mobile - Phaser 3",
+    "short_description": "Game Match-3 mobile-first bằng Phaser 3. Swap mechanics, combos, boosters, level editor JSON.",
+    "description": "<h3>Puzzle Match-3 Mobile</h3><p>Game puzzle Match-3 tối ưu cho mobile web, xây dựng bằng Phaser 3.</p><h4>Tính năng</h4><ul><li>Touch-optimized swap</li><li>Match detection + cascade</li><li>Combo multiplier</li><li>Boosters (bomb, rocket, rainbow)</li><li>Level config via JSON</li><li>Star rating system</li><li>Monetization-ready hooks</li></ul><p><strong>Engine:</strong> Phaser 3 | <strong>Ngôn ngữ:</strong> JavaScript | <strong>License:</strong> Commercial</p>",
+    "price": 25000,
+    "engine": "Phaser",
+    "language": "JavaScript",
+    "license": "Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Procedural Dungeon Generator - Godot 4",
+    "short_description": "Tạo dungeon ngẫu nhiên cho Godot 4. BSP algorithm, room templates, corridor generation, tilemap output.",
+    "description": "<h3>Procedural Dungeon Generator</h3><p>Công cụ tạo dungeon tự động cho game roguelike trong Godot 4.</p><h4>Tính năng</h4><ul><li>BSP (Binary Space Partition) algorithm</li><li>Room templates customizable</li><li>Corridor generation</li><li>Door placement</li><li>Enemy/item spawn points</li><li>Tilemap output</li><li>Seed-based generation (reproducible)</li></ul><p><strong>Engine:</strong> Godot 4 | <strong>Ngôn ngữ:</strong> GDScript | <strong>License:</strong> Commercial</p>",
+    "price": 25000,
+    "engine": "Godot",
+    "language": "GDScript",
+    "license": "Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Idle Clicker Game Template - Unity",
+    "short_description": "Template game idle/clicker cho Unity. Offline earnings, prestige system, upgrades, achievements.",
+    "description": "<h3>Idle Clicker Template</h3><p>Template game idle/clicker hoàn chỉnh cho Unity. Sẵn sàng reskin và publish.</p><h4>Tính năng</h4><ul><li>Click + auto-earn mechanics</li><li>Upgrade system (generators)</li><li>Offline earnings calculation</li><li>Prestige/rebirth system</li><li>Achievements</li><li>Big number formatting (K, M, B, T)</li><li>Save/Load</li><li>Ad-ready hooks</li></ul><p><strong>Engine:</strong> Unity | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> Commercial</p>",
+    "price": 25000,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Isometric Strategy Game Kit - Godot 4",
+    "short_description": "Kit game chiến thuật isometric cho Godot 4. Grid movement, turn-based combat, fog of war, unit management.",
+    "description": "<h3>Isometric Strategy Kit</h3><p>Bộ kit tạo game chiến thuật isometric (kiểu Fire Emblem) trong Godot 4.</p><h4>Tính năng</h4><ul><li>Isometric grid system</li><li>Turn-based combat</li><li>Unit movement + attack range</li><li>Fog of war</li><li>Terrain effects</li><li>Unit stats + leveling</li><li>AI opponent (minimax)</li><li>Map editor</li></ul><p><strong>Engine:</strong> Godot 4 | <strong>Ngôn ngữ:</strong> GDScript | <strong>License:</strong> Commercial</p>",
+    "price": 25000,
+    "engine": "Godot",
+    "language": "GDScript",
+    "license": "Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "HTML5 Quiz Game Engine",
+    "short_description": "Engine tạo game quiz/trivia bằng HTML5. JSON question bank, timer, leaderboard, categories, responsive.",
+    "description": "<h3>Quiz Game Engine</h3><p>Engine tạo game đố vui/trivia chạy trên web. Dễ customize nội dung qua JSON.</p><h4>Tính năng</h4><ul><li>JSON-based question bank</li><li>Multiple choice + True/False</li><li>Timer per question</li><li>Score + streak bonus</li><li>Categories</li><li>Leaderboard (localStorage)</li><li>Responsive mobile</li><li>Dễ embed vào website</li></ul><p><strong>Engine:</strong> Vanilla JS | <strong>Ngôn ngữ:</strong> JavaScript/HTML5 | <strong>License:</strong> Commercial</p>",
+    "price": 25000,
+    "engine": "HTML5",
+    "language": "JavaScript",
+    "license": "Commercial",
+    "source_url": "",
+    "image_url": ""
+  }
+]
