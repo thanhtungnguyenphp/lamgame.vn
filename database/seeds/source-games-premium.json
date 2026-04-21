@@ -1,0 +1,112 @@
+[
+  {
+    "title": "Complete RPG Framework - Unity",
+    "short_description": "Framework RPG đầy đủ cho Unity. Quest system, inventory, dialogue, combat, skill tree, crafting, save/load.",
+    "description": "<h3>Complete RPG Framework</h3><p>Framework RPG toàn diện cho Unity. Đủ hệ thống để xây dựng game RPG hoàn chỉnh.</p><h4>Hệ thống bao gồm</h4><ul><li>Quest system (main + side quests)</li><li>Inventory + Equipment</li><li>Dialogue system (branching)</li><li>Turn-based combat</li><li>Skill tree</li><li>Crafting system</li><li>Shop/merchant</li><li>Save/Load (multiple slots)</li><li>Mini-map</li><li>Day/night cycle</li></ul><p><strong>Engine:</strong> Unity 2022+ | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> Extended Commercial</p>",
+    "price": 50000,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "Extended Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Multiplayer FPS Kit - Unity Netcode",
+    "short_description": "Kit game FPS multiplayer cho Unity. Weapon system, hit detection, respawn, scoreboard, 3 maps.",
+    "description": "<h3>Multiplayer FPS Kit</h3><p>Bộ kit tạo game FPS multiplayer hoàn chỉnh với Unity Netcode for GameObjects.</p><h4>Tính năng</h4><ul><li>FPS controller (smooth movement)</li><li>Weapon system (rifle, shotgun, sniper, pistol)</li><li>Server-authoritative hit detection</li><li>Health + respawn system</li><li>Scoreboard + kill feed</li><li>3 maps mẫu</li><li>Lobby + team selection</li><li>Voice chat ready (Vivox hooks)</li></ul><p><strong>Engine:</strong> Unity 2022+ | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> Extended Commercial</p>",
+    "price": 50000,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "Extended Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Mobile Game Monetization SDK - Unity",
+    "short_description": "SDK monetization cho mobile game Unity. AdMob, Unity Ads, IAP, rewarded video, analytics, A/B testing.",
+    "description": "<h3>Mobile Monetization SDK</h3><p>SDK tích hợp sẵn các hệ thống kiếm tiền cho mobile game Unity.</p><h4>Tính năng</h4><ul><li>AdMob integration (banner, interstitial, rewarded)</li><li>Unity Ads fallback</li><li>In-App Purchase (IAP) wrapper</li><li>Rewarded video flow</li><li>No-ads IAP</li><li>Analytics events (Firebase)</li><li>A/B testing framework</li><li>GDPR consent dialog</li><li>Rate us popup</li></ul><p><strong>Engine:</strong> Unity | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> Extended Commercial</p>",
+    "price": 50000,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "Extended Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Metroidvania Template - Godot 4",
+    "short_description": "Template game Metroidvania cho Godot 4. Interconnected map, ability unlocks, boss fights, save stations.",
+    "description": "<h3>Metroidvania Template</h3><p>Template game Metroidvania hoàn chỉnh cho Godot 4. Lấy cảm hứng từ Hollow Knight.</p><h4>Tính năng</h4><ul><li>Interconnected world map</li><li>Ability unlock gates (double jump, dash, wall climb)</li><li>Combat system (melee + ranged)</li><li>Boss fights (3 bosses mẫu)</li><li>Save stations</li><li>Map reveal system</li><li>Particle effects</li><li>Controller support</li><li>Speedrun timer</li></ul><p><strong>Engine:</strong> Godot 4 | <strong>Ngôn ngữ:</strong> GDScript | <strong>License:</strong> Extended Commercial</p>",
+    "price": 50000,
+    "engine": "Godot",
+    "language": "GDScript",
+    "license": "Extended Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Real-Time Strategy (RTS) Framework - Godot 4",
+    "short_description": "Framework game RTS cho Godot 4. Unit control, building, resource gathering, fog of war, pathfinding, AI.",
+    "description": "<h3>RTS Framework</h3><p>Framework tạo game chiến thuật thời gian thực (RTS) trong Godot 4.</p><h4>Tính năng</h4><ul><li>Unit selection + group control</li><li>Building placement system</li><li>Resource gathering (gold, wood, food)</li><li>Tech tree</li><li>Fog of war</li><li>A* pathfinding (optimized)</li><li>Formation movement</li><li>AI opponent (3 difficulty levels)</li><li>Minimap</li></ul><p><strong>Engine:</strong> Godot 4 | <strong>Ngôn ngữ:</strong> GDScript | <strong>License:</strong> Extended Commercial</p>",
+    "price": 50000,
+    "engine": "Godot",
+    "language": "GDScript",
+    "license": "Extended Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Hyper Casual Game Pack - Phaser 3 (5 Games)",
+    "short_description": "Pack 5 game hyper casual HTML5 bằng Phaser 3. Stack tower, color switch, zigzag, tap timing, ball bounce.",
+    "description": "<h3>Hyper Casual Pack (5 Games)</h3><p>Bộ 5 game hyper casual HTML5 sẵn sàng publish. Tối ưu cho mobile web và WebView.</p><h4>5 Games</h4><ul><li>Stack Tower - Xếp tầng chính xác</li><li>Color Switch - Đổi màu qua cổng</li><li>ZigZag - Tap đổi hướng</li><li>Tap Timing - Nhấn đúng nhịp</li><li>Ball Bounce - Nảy bóng qua platforms</li></ul><h4>Chung</h4><ul><li>Responsive mobile</li><li>Score + best score</li><li>Share button</li><li>Ad placement hooks</li><li>Dễ reskin</li></ul><p><strong>Engine:</strong> Phaser 3 | <strong>Ngôn ngữ:</strong> JavaScript | <strong>License:</strong> Extended Commercial</p>",
+    "price": 50000,
+    "engine": "Phaser",
+    "language": "JavaScript",
+    "license": "Extended Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "2D Physics Puzzle Engine - Unity",
+    "short_description": "Engine game puzzle vật lý 2D cho Unity. Level editor, star rating, hints, 50+ levels mẫu.",
+    "description": "<h3>2D Physics Puzzle Engine</h3><p>Engine tạo game puzzle vật lý (kiểu Cut the Rope, Where's My Water) cho Unity.</p><h4>Tính năng</h4><ul><li>Physics-based gameplay</li><li>Built-in level editor</li><li>50+ levels mẫu</li><li>Star rating (1-3 stars)</li><li>Hint system</li><li>Undo/Redo</li><li>Level select screen</li><li>Particle effects</li><li>Sound manager</li></ul><p><strong>Engine:</strong> Unity | <strong>Ngôn ngữ:</strong> C# | <strong>License:</strong> Extended Commercial</p>",
+    "price": 50000,
+    "engine": "Unity",
+    "language": "C#",
+    "license": "Extended Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Survival Crafting Game Template - Godot 4",
+    "short_description": "Template game sinh tồn cho Godot 4. Crafting, building, hunger/thirst, day-night, procedural world.",
+    "description": "<h3>Survival Crafting Template</h3><p>Template game sinh tồn (kiểu Don't Starve) cho Godot 4.</p><h4>Tính năng</h4><ul><li>Crafting system (recipe-based)</li><li>Building/placement system</li><li>Hunger, thirst, health bars</li><li>Day/night cycle + temperature</li><li>Procedural world generation</li><li>Resource harvesting</li><li>Enemy AI (hostile creatures)</li><li>Inventory + hotbar</li><li>Campfire, cooking</li></ul><p><strong>Engine:</strong> Godot 4 | <strong>Ngôn ngữ:</strong> GDScript | <strong>License:</strong> Extended Commercial</p>",
+    "price": 50000,
+    "engine": "Godot",
+    "language": "GDScript",
+    "license": "Extended Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Multiplayer Card Battle Game - Phaser 3 + Node.js",
+    "short_description": "Game đấu bài multiplayer realtime. Phaser 3 frontend + Node.js/Socket.io backend. Deck building, ranked.",
+    "description": "<h3>Multiplayer Card Battle</h3><p>Game đấu bài online realtime với Phaser 3 (client) và Node.js (server).</p><h4>Tính năng</h4><ul><li>Real-time multiplayer (Socket.io)</li><li>Deck building</li><li>Card effects engine</li><li>Matchmaking</li><li>Ranked system (ELO)</li><li>Card collection + unlock</li><li>Replay system</li><li>Anti-cheat (server-authoritative)</li></ul><p><strong>Engine:</strong> Phaser 3 + Node.js | <strong>Ngôn ngữ:</strong> JavaScript | <strong>License:</strong> Extended Commercial</p>",
+    "price": 50000,
+    "engine": "Phaser + Node.js",
+    "language": "JavaScript",
+    "license": "Extended Commercial",
+    "source_url": "",
+    "image_url": ""
+  },
+  {
+    "title": "Game Analytics Dashboard - Laravel + Vue",
+    "short_description": "Dashboard analytics cho game. Player retention, DAU/MAU, revenue tracking, funnel analysis, event logging.",
+    "description": "<h3>Game Analytics Dashboard</h3><p>Hệ thống analytics self-hosted cho game developer. Laravel backend + Vue.js frontend.</p><h4>Tính năng</h4><ul><li>Player tracking SDK (Unity, Web, Godot)</li><li>DAU/MAU/WAU metrics</li><li>Retention cohort analysis</li><li>Revenue tracking</li><li>Funnel analysis</li><li>Custom event logging</li><li>Real-time dashboard</li><li>Export CSV/PDF</li><li>Multi-game support</li></ul><p><strong>Engine:</strong> Laravel + Vue.js | <strong>Ngôn ngữ:</strong> PHP/JavaScript | <strong>License:</strong> Extended Commercial</p>",
+    "price": 50000,
+    "engine": "Laravel",
+    "language": "PHP/JavaScript",
+    "license": "Extended Commercial",
+    "source_url": "",
+    "image_url": ""
+  }
+]
