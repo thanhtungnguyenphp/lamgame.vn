@@ -8,6 +8,7 @@ use App\Models\SubscriptionUsage;
 use App\Services\SubscriptionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class SubscriptionController extends Controller
@@ -205,9 +206,36 @@ class SubscriptionController extends Controller
     {
         $subscriptionId = $request->query('subscription_id');
 
-        if ($subscriptionId) {
-            $sub = $this->service->activateSubscription($subscriptionId);
+        if (!$subscriptionId) {
+            return response()->json(['status' => 'error', 'error' => 'Missing subscription_id'], 400);
         }
+
+        // Verify trạng thái trực tiếp với PayPal trước khi activate
+        $baseUrl = config('subscription.paypal.base_url');
+        $clientId = config('subscription.paypal.client_id');
+        $secret = config('subscription.paypal.client_secret');
+
+        $tokenResponse = Http::asForm()
+            ->withBasicAuth($clientId, $secret)
+            ->post("{$baseUrl}/v1/oauth2/token", ['grant_type' => 'client_credentials']);
+
+        if (!$tokenResponse->successful()) {
+            Log::error('PayPal return: failed to get access token');
+            return response()->json(['status' => 'error', 'error' => 'Payment verification failed'], 500);
+        }
+
+        $token = $tokenResponse->json('access_token');
+        $verifyResponse = Http::withToken($token)->get("{$baseUrl}/v1/billing/subscriptions/{$subscriptionId}");
+
+        if (!$verifyResponse->successful() || $verifyResponse->json('status') !== 'ACTIVE') {
+            Log::warning('PayPal return: subscription not active', [
+                'subscription_id' => $subscriptionId,
+                'paypal_status' => $verifyResponse->json('status'),
+            ]);
+            return response()->json(['status' => 'error', 'error' => 'Subscription not confirmed by PayPal'], 400);
+        }
+
+        $sub = $this->service->activateSubscription($subscriptionId);
 
         return response()->json([
             'status' => 'ok',

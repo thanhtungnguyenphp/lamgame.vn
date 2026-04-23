@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "vn.lamgame.lottolive",
+      "sha256_cert_fingerprints": [
+        "77:3B:D5:B8:08:C5:74:B6:76:9F:2A:13:9B:3F:E3:9E:53:08:BC:E3:CC:72:37:43:0E:3F:0B:4B:58:7C:DF:F8"
+      ]
+    }
+  }
+]

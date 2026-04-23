@@ -186,8 +186,8 @@ class SubscriptionService
     {
         $webhookId = config('subscription.paypal.webhook_id');
         if (!$webhookId) {
-            Log::warning('PAYPAL_WEBHOOK_ID not configured, skipping verification');
-            return true;
+            Log::error('PAYPAL_WEBHOOK_ID not configured — rejecting webhook');
+            return false;
         }
 
         // Thiếu PayPal headers → không phải request từ PayPal

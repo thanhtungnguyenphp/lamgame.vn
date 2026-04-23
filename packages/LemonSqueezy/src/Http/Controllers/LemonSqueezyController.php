@@ -31,9 +31,11 @@ class LemonSqueezyController
 
         $customer = auth()->guard('customer')->user();
 
-        // Store currency = VND → custom_price tính bằng VND cents (đơn vị nhỏ nhất)
-        // VND không có phần thập phân nên 1 VND = 100 cents trong LS
-        $priceVndCents = max(1317200, (int) ($cart->grand_total * 100));
+        if ($cart->grand_total <= 0) {
+            return response()->json(['error' => 'Invalid cart total'], 400);
+        }
+
+        $priceVndCents = (int) ($cart->grand_total * 100);
 
         $apiKey = core()->getConfigData('sales.payment_methods.lemonsqueezy.api_key') ?: env('LEMON_SQUEEZY_API_KEY');
         $storeId = core()->getConfigData('sales.payment_methods.lemonsqueezy.store_id') ?: env('LEMON_SQUEEZY_STORE');
@@ -133,28 +135,32 @@ class LemonSqueezyController
     {
         $cart = Cart::getCart();
 
-        // If webhook already processed and cart deactivated, order exists → success
-        if (! $cart) {
+        if (!$cart) {
             return redirect()->route('shop.checkout.onepage.success');
         }
 
-        // Cart still active = webhook hasn't processed yet
-        // Wait briefly for webhook, then show pending message
-        $cartId = $cart->id;
-        $maxWait = 10; // seconds
-
-        for ($i = 0; $i < $maxWait; $i++) {
-            if (LemonSqueezyTransaction::where('cart_id', $cartId)->where('status', 'paid')->exists()) {
-                return redirect()->route('shop.checkout.onepage.success');
-            }
-            sleep(1);
+        // Kiểm tra ngay nếu webhook đã xử lý
+        if (LemonSqueezyTransaction::where('cart_id', $cart->id)->where('status', 'paid')->exists()) {
+            return redirect()->route('shop.checkout.onepage.success');
         }
 
-        // Webhook still pending — redirect to success anyway (webhook will process async)
-        // But log for monitoring
-        Log::warning('LemonSqueezy: success redirect before webhook confirmed', ['cart_id' => $cartId]);
+        return view('lemonsqueezy::checkout.onepage.pending', [
+            'cartId'   => $cart->id,
+            'checkUrl' => route('lemonsqueezy.checkout.check'),
+        ]);
+    }
 
-        return redirect()->route('shop.checkout.onepage.success');
+    public function checkStatus(Request $request)
+    {
+        $cartId = $request->query('cart_id');
+
+        if (!$cartId) {
+            return response()->json(['ready' => false]);
+        }
+
+        $paid = LemonSqueezyTransaction::where('cart_id', $cartId)->where('status', 'paid')->exists();
+
+        return response()->json(['ready' => $paid]);
     }
 
     protected function handleOrderCreated(array $data, array $customData, string $rawPayload): void

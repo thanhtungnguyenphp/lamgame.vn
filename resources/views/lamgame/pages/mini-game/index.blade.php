@@ -60,7 +60,11 @@
                 <div class="mg-grid">
                     @foreach($games as $game)
                     <a href="{{ $game->url }}" class="mg-card">
-                        <div class="mg-card__icon">🎮</div>
+                        @if($game->thumbnail)
+                            <img src="{{ asset($game->thumbnail) }}" alt="{{ $game->title }}" class="mg-card__thumb" loading="lazy">
+                        @else
+                            <div class="mg-card__icon">🎮</div>
+                        @endif
                         <h3 class="mg-card__title">{{ $game->title }}</h3>
                         <p class="mg-card__desc">{{ Str::limit($game->description, 60) }}</p>
                         <span class="mg-card__cat">{{ $game->category_label }}</span>
@@ -86,12 +90,13 @@
 .mg-filter__select{padding:10px 16px;border:1px solid #ddd;border-radius:8px;font-size:14px}
 .mg-filter__btn{padding:10px 20px;background:#FF6B35;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
 .mg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;padding:10px 0}
-.mg-card{display:block;background:#fff;border:1px solid #eee;border-radius:12px;padding:20px;text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s}
+.mg-card{display:block;background:#fff;border:1px solid #eee;border-radius:12px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s}
 .mg-card:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,0,0,.1)}
-.mg-card__icon{font-size:2rem;margin-bottom:8px}
-.mg-card__title{font-size:1.05rem;font-weight:700;color:#1A1A2E;margin-bottom:6px}
-.mg-card__desc{font-size:.85rem;color:#666;line-height:1.4;margin-bottom:8px}
-.mg-card__cat{display:inline-block;font-size:.75rem;background:#f0f0f0;color:#555;padding:3px 10px;border-radius:20px}
+.mg-card__thumb{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.mg-card__icon{font-size:2rem;padding:20px 20px 8px}
+.mg-card__title{font-size:1.05rem;font-weight:700;color:#1A1A2E;margin-bottom:6px;padding:12px 16px 0}
+.mg-card__desc{font-size:.85rem;color:#666;line-height:1.4;margin-bottom:8px;padding:0 16px}
+.mg-card__cat{display:inline-block;font-size:.75rem;background:#f0f0f0;color:#555;padding:3px 10px;border-radius:20px;margin:0 16px 16px}
 .mg-pagination{text-align:center;padding:20px 0}
 </style>
 @endsection
