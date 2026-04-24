@@ -19,7 +19,7 @@
     {!! \App\Helpers\StructuredDataHelper::breadcrumb([
         ['name' => 'Trang chủ', 'url' => config('app.url')],
         ['name' => 'Việc làm Game', 'url' => config('app.url') . '/viec-lam-game'],
-        ['name' => $job->name, 'url' => config('app.url') . '/viec-lam/' . $job->url_key]
+        ['name' => $job->title ?? $job->name, 'url' => config('app.url') . '/viec-lam/' . $job->url_key]
     ]) !!}
     </script>
     <!-- Highlight Cards CSS -->

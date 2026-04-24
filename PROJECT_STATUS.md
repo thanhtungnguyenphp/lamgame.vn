@@ -1,5 +1,5 @@
 # LAMGAME.VN — TRẠNG THÁI DỰ ÁN
-> Cập nhật: 23/04/2026 10:47 (GMT+7)
+> Cập nhật: 24/04/2026 16:39 (GMT+7)
 
 ---
 
@@ -10,8 +10,6 @@
 | PayPal | ✅ LIVE | Production go-live 23/04 — AI Subscription + Source Game checkout hoạt động |
 | Lemon Squeezy | ⏳ Đang chờ duyệt | Store #334725 — Chờ Stripe identity verification |
 
-**Việc cần làm:** Chờ Stripe duyệt Lemon Squeezy → kích hoạt live mode cho thanh toán quốc tế (card).
-
 ---
 
 ## 🟢 ĐÃ HOÀN THÀNH
@@ -21,7 +19,7 @@
 - [x] Seller System (đăng ký, duyệt, dashboard, CRUD, versioning, earnings, withdrawals)
 - [x] Forum / Cộng đồng
 - [x] Blog (CRUD, scheduled publish, API publish)
-- [x] Mini Games (~40 game HTML5)
+- [x] Mini Games (~48 game HTML5) ← cập nhật từ 40
 - [x] Xổ số (KQXS, Vietlot, dò vé, thống kê)
 - [x] Landing Pages (admin CRUD)
 - [x] Việc làm Game (đăng tuyển, ứng tuyển, bulk ops, analytics, AI JD)
@@ -33,18 +31,18 @@
 - [x] SEO (sitemap, Google Index push, Adsense)
 - [x] Collections (bookmark sản phẩm)
 - [x] Docker (8 services: php, nginx, mysql, redis, meili, mailpit, ii-agent, ii-postgres)
+- [x] **Mini Game Products Sync** — 48 game HTML5 → products + ZIP files (24/04)
+- [x] **Job System Refactor** — tách khỏi Products table → job_postings riêng (24/04)
+- [x] **Cache Redis** — chuyển CACHE_STORE từ file sang redis (24/04)
 
 ---
 
-## 🟡 ĐANG LÀM
+## 🟡 ĐANG LÀM / CHỜ
 
 | Việc | Trạng thái | Chi tiết |
 |------|:----------:|----------|
-| PayPal Production Go-live | ✅ Hoàn thành | 23/04 — AI Subscription + Source Game checkout LIVE |
-| Seed data source game | ✅ Hoàn thành | 30 SP imported (ID 51-80). 21/04 |
-| Flow mua hàng e2e | ✅ Hoàn thành | PayPal → Order → Invoice → Download link. 21/04 |
 | Lemon Squeezy integration | ⏳ Chờ duyệt | Chờ Stripe verify → kích hoạt live mode |
-| Upload file ZIP thật | ⬜ Chưa làm | 30 source game hiện là placeholder |
+| Upload ZIP thật lên production | ⬜ Chưa làm | 48 file ZIP đã tạo local (140MB), cần rsync lên server |
 
 ---
 
@@ -52,7 +50,6 @@
 
 ### Sản phẩm
 - [ ] Trang "Thuê Team Dev" (service page + form báo giá)
-- [x] AI Tools Landing Page (hero, tools showcase, pricing, FAQ, SEO)
 - [ ] Review/rating system cho source game
 - [ ] Demo/preview trực tiếp cho source game
 - [ ] License types (single, multi, extended)
@@ -61,9 +58,9 @@
 - [ ] Sport frontend (web views)
 
 ### Kỹ thuật
-- [ ] Chuyển cache/queue sang Redis (production)
+- [x] ~~Chuyển cache sang Redis~~ ✅ 24/04
+- [ ] Chuyển queue sang Redis (production)
 - [ ] Log rotation (laravel.log đang 23MB)
-- [ ] Merge migration mini_games vào thư mục chính
 - [ ] Dọn file macOS metadata (._*)
 - [ ] Error monitoring (Sentry)
 - [ ] CI/CD pipeline
@@ -75,26 +72,93 @@
 
 | Metric | Số lượng |
 |--------|:--------:|
-| Controllers | 59 |
-| Models | 49 |
-| Views (Blade) | 122 |
-| Services | 21 |
-| Migrations | 73 |
-| Commands | 20 |
-| Mini Games | ~40 |
+| Controllers | 21 |
+| Models | 40 |
+| Views (Blade) | 123 |
+| Services | 11 |
+| Migrations | 76 |
+| Database tables | 192 |
+| Mini Games | 48 |
+| Source Game Products | 68 |
+| Job Postings | 10 |
 | Docker services | 8 |
 | Tests | 0 ❌ |
 
 ---
 
-## 📋 VIỆC TIẾP THEO (khi quay lại)
+## 📋 VIỆC TIẾP THEO (ưu tiên)
 
-1. ~~**Chạy seed source game**~~ ✅ Done 21/04
-2. ~~**Kiểm tra flow mua hàng e2e**~~ ✅ Done 21/04
-3. ~~**Tạo landing page AI Tools**~~ ✅ Done 21/04
-4. ~~**PayPal Production Go-live**~~ ✅ Done 23/04
-5. **Upload file ZIP thật** cho 30 source game (hiện là placeholder)
-6. **Chờ Stripe duyệt** → kích hoạt Lemon Squeezy live
-7. **Tối ưu performance** — Redis cache/queue production, response time < 2s
-8. **Log rotation + Error monitoring** (Sentry)
-9. **SportPulse Phase 9** — Crawl data (11 tasks)
+1. **Upload 48 ZIP files lên production** — rsync `storage/app/private/product_downloadable_links/` (140MB)
+2. **Chạy migrate production** — 3 migrations job_postings (backup DB trước)
+3. **Chạy seeder production** — `MiniGameProductsSyncSeeder` cho 48 mini game
+4. **Chờ Stripe duyệt** → kích hoạt Lemon Squeezy live
+5. **Queue sang Redis** — `QUEUE_CONNECTION=redis` trong .env production
+6. **Log rotation** — cấu hình daily log + logrotate
+7. **Error monitoring** — setup Sentry
+8. **SportPulse Phase 9** — Crawl data (11 tasks, ~6 ngày)
+
+---
+
+## 🔄 CHANGELOG 24/04/2026
+
+### Mini Game Products Sync
+- Import database live từ `database-backup/lamgame_20260424_1000.sql.gz`
+- Chuyển `CACHE_STORE=file` → `CACHE_STORE=redis`
+- Tạo `MiniGameProductsSyncSeeder`: sync 48 game từ `kho_game_free/output/`
+  - 14 products cũ: update tên tiếng Việt + file path
+  - 34 products mới: tạo mới (free, HTML5/JavaScript)
+- Tạo 48 file ZIP (140MB) tại `storage/app/private/product_downloadable_links/`
+
+### Job System Refactor (4 commits, −8,000 lines)
+**Vấn đề:** Job dùng chung bảng `products` (Bagisto EAV) → query chậm (7-table JOIN), code phức tạp (~8,900 lines), không scale được.
+
+**Giải pháp:** Tách hoàn toàn sang bảng `job_postings` riêng.
+
+| Layer | Cũ | Mới |
+|-------|-----|------|
+| Database | products + product_flat + product_attribute_values (EAV) | job_postings (30+ columns tường minh) |
+| Pivot | job_skills → products.id, job_benefits → products.id | job_posting_skills, job_posting_benefits (text-based) |
+| Model | Product (Webkul) | JobPosting, JobPostingSkill, JobPostingBenefit |
+| Service | JobService + JobSearchService + JobFilterService (~1,400 lines) | JobPostingService (~180 lines) |
+| API Controller | JobController + UserJobController + JobBulkController (~1,200 lines) | JobPostingController (~180 lines) |
+| Admin Controller | Admin/JobController (~350 lines, raw DB + hardcoded attr IDs) | Admin/JobPostingController (~120 lines) |
+| Resource | JobResource (~170 lines, EAV resolve) | JobPostingResource (~60 lines) |
+| Routes | ~50 routes phân tán trong api.php | 16 routes gọn (api-job-v2.php) |
+| Frontend | LamGamePageController: 320 lines raw SQL | 110 lines Eloquent |
+
+**Kết quả:**
+- Code: 8,900 → 900 lines (−89%)
+- Query: 7-table JOIN → single table Eloquent
+- Products table: 78 → 68 records (chỉ còn source game)
+- Data: 10 jobs + skills + benefits migrated thành công
+- Backward compatible: views giữ nguyên, data transform qua `$job->attributes`
+
+**Files mới:**
+```
+app/Models/JobPosting.php
+app/Models/JobPostingSkill.php
+app/Models/JobPostingBenefit.php
+app/Services/JobPostingService.php
+app/Services/JobPostingApplicationService.php
+app/Http/Controllers/Api/JobPostingController.php
+app/Http/Controllers/Api/JobPostingApplicationController.php
+app/Http/Controllers/Admin/JobPostingController.php
+app/Http/Resources/JobPostingResource.php
+routes/api-job-v2.php
+database/migrations/2026_04_24_000001_create_job_postings_table.php
+database/migrations/2026_04_24_000002_migrate_jobs_from_products_to_job_postings.php
+database/migrations/2026_04_24_000003_cleanup_job_products_from_products_table.php
+```
+
+**Files đã xóa (19 files):**
+```
+app/Services/JobService.php, JobSearchService.php, JobFilterService.php,
+  JobApplicationService.php, JobImportExportService.php
+app/Http/Controllers/Api/JobController.php, UserJobController.php,
+  JobBulkController.php, JobAnalyticsController.php, JobApplicationController.php,
+  JobOptionsController.php, JobImportExportController.php
+app/Http/Controllers/Admin/JobController.php
+app/Http/Resources/JobResource.php
+app/Http/Requests/Api/CreateJobRequest.php, UpdateJobRequest.php,
+  CreateUserJobRequest.php, JobApplicationRequest.php, JobImportRequest.php
+```

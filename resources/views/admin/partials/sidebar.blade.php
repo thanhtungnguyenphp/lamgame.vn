@@ -12,7 +12,7 @@
         </li>
 
         <li class="sidebar-menu__item">
-            <a href="{{ route('admin.jobs.index') }}" class="sidebar-menu__link {{ request()->routeIs('admin.jobs.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.job-postings.index') }}" class="sidebar-menu__link {{ request()->routeIs('admin.job-postings.*') ? 'active' : '' }}">
                 <i class="icon-briefcase"></i>
                 <span>Quản Lý Jobs</span>
             </a>
