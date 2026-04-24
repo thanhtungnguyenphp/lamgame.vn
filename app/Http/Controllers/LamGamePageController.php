@@ -252,168 +252,61 @@ class LamGamePageController extends Controller
      */
     public function viecLamGame(Request $request)
     {
-        // Get job search parameters
         $keyword = $request->get('keyword');
         $location = $request->get('location');
         $level = $request->get('level');
         $sort = $request->get('sort', 'newest');
-        $perPage = 10;
 
-        // Get job products from database
-        $jobsQuery = \DB::table('products as p')
-            ->leftJoin('product_flat as pf', function($join) {
-                $join->on('p.id', '=', 'pf.product_id')
-                     ->where('pf.locale', '=', 'vi');
-            })
-            ->leftJoin('companies as c', 'p.company_id', '=', 'c.id')
-            ->leftJoin('product_categories as pc', 'p.id', '=', 'pc.product_id')
-            ->leftJoin('category_translations as ct', function($join) {
-                $join->on('pc.category_id', '=', 'ct.category_id')
-                     ->where('ct.locale', '=', 'vi');
-            })
-            ->leftJoin('product_attribute_values as pav_deadline', function($join) {
-                $join->on('p.id', '=', 'pav_deadline.product_id')
-                     ->leftJoin('attributes as a_deadline', 'pav_deadline.attribute_id', '=', 'a_deadline.id')
-                     ->where('a_deadline.code', '=', 'application_deadline');
-            })
-            ->leftJoin('product_attribute_values as pav_email', function($join) {
-                $join->on('p.id', '=', 'pav_email.product_id')
-                     ->leftJoin('attributes as a_email', 'pav_email.attribute_id', '=', 'a_email.id')
-                     ->where('a_email.code', '=', 'contact_email');
-            })
-            // Left join to get the first product image (thumbnail)
-            ->leftJoin('product_images as pi', function($join) {
-                $join->on('p.id', '=', 'pi.product_id')
-                     ->where('pi.type', '=', 'images')
-                     ->whereRaw('pi.id = (SELECT MIN(id) FROM product_images WHERE product_id = p.id AND type = "images")');
-            })
-            ->where('p.type', 'job')
-            ->where('p.sku', 'LIKE', 'JOB_%')
-            ->where('pf.status', 1)
-            ->where('pf.visible_individually', 1)
-            ->select(
-                'p.id',
-                'p.sku',
-                'p.company_id',
-                'pf.name',
-                'pf.short_description',
-                'pf.description',
-                'pf.price',
-                'pf.url_key',
-                'ct.name as category_name',
-                'p.created_at',
-                'pav_deadline.text_value as application_deadline',
-                'pav_email.text_value as contact_email',
-                'pi.path as thumbnail',
-                'c.name as company_name',
-                'c.logo as company_logo'
-            );
+        $query = \App\Models\JobPosting::with('skills', 'benefits')
+            ->where('status', 'active');
 
-        // Apply search filters
         if ($keyword) {
-            $jobsQuery->where(function($query) use ($keyword) {
-                $query->where('pf.name', 'LIKE', '%' . $keyword . '%')
-                      ->orWhere('pf.short_description', 'LIKE', '%' . $keyword . '%')
-                      ->orWhere('pf.description', 'LIKE', '%' . $keyword . '%');
-            });
+            $query->search($keyword);
+        }
+        if ($location) {
+            $query->byLocation($location);
+        }
+        if ($level) {
+            $query->where('experience_level', 'like', "%{$level}%");
         }
 
-        if ($location && $location !== '') {
-            $jobsQuery->where('pf.short_description', 'LIKE', '%' . $location . '%');
-        }
-
-        // Apply sorting
         switch ($sort) {
             case 'salary-high':
-                $jobsQuery->orderBy('pf.price', 'desc');
+                $query->orderByRaw('salary_max DESC NULLS LAST');
                 break;
             case 'company':
-                $jobsQuery->orderBy('pf.name', 'asc');
+                $query->orderBy('company_name');
                 break;
-            case 'newest':
             default:
-                $jobsQuery->orderBy('p.created_at', 'desc');
-                break;
+                $query->orderByDesc('created_at');
         }
 
-        // Get paginated results
-        $jobs = $jobsQuery->paginate($perPage);
+        $jobs = $query->paginate(10);
 
-        // Get additional job attributes for each job and ensure url_key exists
+        // Transform for view compatibility
         foreach ($jobs as $job) {
-            $job->attributes = $this->getJobAttributes($job->id);
-            
-            // Parse job title from name (may contain company name as fallback)
-            $nameParts = explode(' - ', $job->name, 2);
-            $job->job_title = $nameParts[0] ?? $job->name;
-            
-            // Use company_name from database join, fallback to parsing or default
-            if (empty($job->company_name)) {
-                $job->company_name = $nameParts[1] ?? 'Công ty chưa xác định';
-            }
-            
-            // Add company logo URL from database
-            if ($job->company_logo) {
-                $path = 'company-logos/' . basename($job->company_logo);
-                if (\Storage::disk('public')->exists($path)) {
-                    try {
-                        $file = \Storage::disk('public')->get($path);
-                        $mimeType = \Storage::disk('public')->mimeType($path);
-                        $job->company_logo_url = 'data:' . $mimeType . ';base64,' . base64_encode($file);
-                    } catch (\Exception $e) {
-                        \Log::error('Failed to encode logo for job ' . $job->id . ': ' . $e->getMessage());
-                        $job->company_logo_url = null;
-                    }
-                } else {
-                    $job->company_logo_url = null;
-                }
-            } else {
-                $job->company_logo_url = null;
-            }
-            
-            // Add thumbnail URL with fallback
-            $job->thumbnail_url = $this->getJobThumbnailUrl($job->thumbnail);
-            
-            // Process description for safe HTML display in listing
+            $job->job_title = $job->title;
+            $job->url_key = $job->slug;
+            $job->company_logo_url = $job->company_logo ? asset('storage/' . $job->company_logo) : null;
             $job->processed_description = $this->processJobDescription($job->short_description, 150);
-
-            // Ensure url_key exists, if not create one from job title and id
-            if (empty($job->url_key)) {
-                $job->url_key = \Str::slug($job->job_title) . '-' . $job->id;
-            }
+            $job->category_name = null;
+            $job->attributes = [
+                'salary_range'     => $job->salary_range ?? 'Thỏa thuận',
+                'job_location'     => $job->location ?? 'Việt Nam',
+                'job_type'         => $job->job_type ?? 'Full-time',
+                'experience_level' => $job->experience_level,
+                'required_skills'  => $job->skills->pluck('skill_name')->implode(','),
+                'job_benefits'     => $job->benefits->pluck('benefit_name')->implode(','),
+            ];
         }
 
-        // Get job statistics for sidebar
-        $totalJobs = \DB::table('products as p')
-            ->leftJoin('product_flat as pf', function($join) {
-                $join->on('p.id', '=', 'pf.product_id')
-                     ->where('pf.locale', '=', 'vi');
-            })
-            ->where('p.type', 'job')
-            ->where('p.sku', 'LIKE', 'JOB_%')
-            ->where('pf.status', 1)
-            ->where('pf.visible_individually', 1)
-            ->count();
+        $totalJobs = \App\Models\JobPosting::where('status', 'active')->count();
 
-        // Get companies with job counts
-        $topCompanies = \DB::table('companies as c')
-            ->leftJoin('products as p', 'c.id', '=', 'p.company_id')
-            ->leftJoin('product_flat as pf', function($join) {
-                $join->on('p.id', '=', 'pf.product_id')
-                     ->where('pf.locale', '=', 'vi');
-            })
-            ->where('p.type', 'job')
-            ->where('p.sku', 'LIKE', 'JOB_%')
-            ->where('pf.status', 1)
-            ->where('c.status', 1)
-            ->select(
-                'c.id',
-                'c.name as company_name',
-                'c.logo',
-                \DB::raw('COUNT(p.id) as job_count')
-            )
-            ->groupBy('c.id', 'c.name', 'c.logo')
-            ->orderBy('job_count', 'desc')
+        $topCompanies = \App\Models\JobPosting::where('status', 'active')
+            ->whereNotNull('company_name')
+            ->select('company_name', 'company_logo', \DB::raw('COUNT(*) as job_count'))
+            ->groupBy('company_name', 'company_logo')
+            ->orderByDesc('job_count')
             ->take(5)
             ->get();
 
@@ -427,8 +320,8 @@ class LamGamePageController extends Controller
                 'keyword' => $keyword,
                 'location' => $location,
                 'level' => $level,
-                'sort' => $sort
-            ]
+                'sort' => $sort,
+            ],
         ]);
     }
 
@@ -574,165 +467,86 @@ class LamGamePageController extends Controller
      */
     public function jobDetail($slug)
     {
-        // Get job product from database by url_key (slug)
-
-        $job = \DB::table('products as p')
-            ->leftJoin('product_flat as pf', function($join) {
-                $join->on('p.id', '=', 'pf.product_id')
-                     ->where('pf.locale', '=', 'vi');
-            })
-            ->leftJoin('product_categories as pc', 'p.id', '=', 'pc.product_id')
-            ->leftJoin('category_translations as ct', function($join) {
-                $join->on('pc.category_id', '=', 'ct.category_id')
-                     ->where('ct.locale', '=', 'vi');
-            })
-            ->leftJoin('companies as c', 'p.company_id', '=', 'c.id')
-            ->leftJoin('product_attribute_values as pav_deadline', function($join) {
-                $join->on('p.id', '=', 'pav_deadline.product_id')
-                     ->leftJoin('attributes as a_deadline', 'pav_deadline.attribute_id', '=', 'a_deadline.id')
-                     ->where('a_deadline.code', '=', 'application_deadline');
-            })
-            ->leftJoin('product_attribute_values as pav_email', function($join) {
-                $join->on('p.id', '=', 'pav_email.product_id')
-                     ->leftJoin('attributes as a_email', 'pav_email.attribute_id', '=', 'a_email.id')
-                     ->where('a_email.code', '=', 'contact_email');
-            })
-            // Left join to get the first product image (thumbnail)
-            ->leftJoin('product_images as pi', function($join) {
-                $join->on('p.id', '=', 'pi.product_id')
-                     ->where('pi.type', '=', 'images')
-                     ->whereRaw('pi.id = (SELECT MIN(id) FROM product_images WHERE product_id = p.id AND type = "images")');
-            })
-            ->where('pf.url_key', $slug)
-            ->where('p.type', 'job')
-            ->where('p.sku', 'LIKE', 'JOB_%')
-            ->where('pf.status', 1)
-            ->where('pf.visible_individually', 1)
-            ->select(
-                'p.id',
-                'p.sku',
-                'pf.name',
-                'pf.short_description',
-                'pf.description',
-                'pf.price',
-                'pf.url_key',
-                'ct.name as category_name',
-                'p.created_at',
-                'p.updated_at',
-                'pav_deadline.text_value as application_deadline',
-                'pav_email.text_value as contact_email',
-                'pi.path as thumbnail',
-                'c.name as company_name',
-                'c.description as company_description',
-                'c.logo as company_logo',
-                'c.website as company_website',
-                'c.email as company_email',
-                'c.phone as company_phone',
-                'c.employee_count',
-                'c.founded_year',
-                'c.industry'
-            )
+        $job = \App\Models\JobPosting::with('skills', 'benefits')
+            ->where('slug', $slug)
+            ->where('status', 'active')
             ->first();
 
         if (!$job) {
             abort(404, 'Job not found');
         }
 
-        // Get job attributes
-        $job->attributes = $this->getJobAttributes($job->id);
-        
-        // Add thumbnail URL with fallback
-        $job->thumbnail_url = $this->getJobThumbnailUrl($job->thumbnail);
-        
-        // Process description for safe HTML display
-        $job->processed_description = $this->processJobDescription($job->short_description);
+        $job->incrementViews();
 
-        // Parse job data
-        $companyName = $job->company_name ?: trim(str_replace(' - ', ' ', explode(' - ', $job->name)[1] ?? $job->name));
-        $jobTitle = explode(' - ', $job->name)[0] ?? $job->name;
-        $salaryFormatted = $job->attributes['salary_range'] ?? 'Thỏa thuận';
-        $postedAgo = \Carbon\Carbon::parse($job->created_at)->diffForHumans();
-
-        // Company info from database or fallback
-        $logoUrl = null;
-        if ($job->company_logo) {
-            $path = 'company-logos/' . basename($job->company_logo);
-            if (\Storage::disk('public')->exists($path)) {
-                try {
-                    $file = \Storage::disk('public')->get($path);
-                    $mimeType = \Storage::disk('public')->mimeType($path);
-                    $logoUrl = 'data:' . $mimeType . ';base64,' . base64_encode($file);
-                } catch (\Exception $e) {
-                    \Log::error('Failed to encode logo: ' . $e->getMessage());
-                }
-            }
-        }
-
-        $companyInfo = [
-            'name' => $companyName,
-            'description' => $job->company_description ?: 'Công ty hoạt động trong lĩnh vực phát triển game, mang đến những trải nghiệm giải trí tuyệt vời.',
-            'logo' => $job->company_logo,
-            'logo_url' => $logoUrl,
-            'website' => $job->company_website,
-            'email' => $job->company_email,
-            'phone' => $job->company_phone,
-            'employee_count' => $job->employee_count ?: 50,
-            'founded_year' => $job->founded_year ?: 2020,
-            'industry' => $job->industry ?: 'Game Development'
+        // View compatibility
+        $job->name = $job->title;
+        $job->url_key = $job->slug;
+        $job->attributes = [
+            'salary_range'     => $job->salary_range ?? 'Thỏa thuận',
+            'job_location'     => $job->location ?? 'Việt Nam',
+            'job_type'         => $job->job_type ?? 'Full-time',
+            'experience_level' => $job->experience_level,
+            'required_skills'  => $job->skills->pluck('skill_name')->implode(','),
+            'job_benefits'     => $job->benefits->pluck('benefit_name')->implode(','),
         ];
 
-        // Get similar jobs
-        $similarJobs = \DB::table('products as p')
-            ->leftJoin('product_flat as pf', function($join) {
-                $join->on('p.id', '=', 'pf.product_id')
-                     ->where('pf.locale', '=', 'vi');
-            })
-            ->where('p.type', 'job')
-            ->where('p.sku', 'LIKE', 'JOB_%')
-            ->where('pf.url_key', '!=', $slug)
-            ->where('pf.status', 1)
-            ->where('pf.visible_individually', 1)
-            ->select('p.id', 'p.sku', 'pf.name', 'pf.price', 'pf.url_key', 'p.created_at')
-            ->orderBy('p.created_at', 'desc')
+        $jobTitle = $job->title;
+        $companyName = $job->company_name ?: 'Công ty chưa xác định';
+        $salaryFormatted = $job->salary_range ?? 'Thỏa thuận';
+        $postedAgo = $job->created_at->diffForHumans();
+
+        $logoUrl = $job->company_logo ? asset('storage/' . $job->company_logo) : null;
+        $companyInfo = [
+            'name'           => $companyName,
+            'description'    => 'Công ty hoạt động trong lĩnh vực phát triển game.',
+            'logo'           => $job->company_logo,
+            'logo_url'       => $logoUrl,
+            'website'        => null,
+            'email'          => $job->contact_email,
+            'phone'          => $job->contact_phone,
+            'employee_count' => 50,
+            'founded_year'   => 2020,
+            'industry'       => 'Game Development',
+        ];
+
+        $similarJobs = \App\Models\JobPosting::where('status', 'active')
+            ->where('slug', '!=', $slug)
+            ->orderByDesc('created_at')
             ->limit(3)
-            ->get();
+            ->get()
+            ->map(function ($j) {
+                $j->name = $j->title;
+                $j->url_key = $j->slug;
+                $j->price = 0;
+                return $j;
+            });
 
-        // Ensure url_key exists for similar jobs
-        foreach ($similarJobs as $similarJob) {
-            if (empty($similarJob->url_key)) {
-                $jobTitle = explode(' - ', $similarJob->name)[0] ?? $similarJob->name;
-                $similarJob->url_key = \Str::slug($jobTitle . '-' . $similarJob->id);
-            }
-        }
-
-        // Get authenticated customer data for auto-fill
         $customer = Auth::guard('customer')->user();
         $customerData = null;
-
         if ($customer) {
             $customerData = [
-                'id' => $customer->id,
-                'full_name' => trim($customer->first_name . ' ' . $customer->last_name),
-                'first_name' => $customer->first_name,
-                'last_name' => $customer->last_name,
-                'email' => $customer->email,
-                'phone' => $customer->phone ?? '',
+                'id'          => $customer->id,
+                'full_name'   => trim($customer->first_name . ' ' . $customer->last_name),
+                'first_name'  => $customer->first_name,
+                'last_name'   => $customer->last_name,
+                'email'       => $customer->email,
+                'phone'       => $customer->phone ?? '',
                 'is_verified' => $customer->is_verified ?? false,
-                'status' => $customer->status ?? 1
+                'status'      => $customer->status ?? 1,
             ];
         }
 
         return view('lamgame.pages.job-detail', [
-            'job' => $job,
-            'jobTitle' => $jobTitle,
-            'companyName' => $companyName,
-            'companyInfo' => $companyInfo,
-            'salaryFormatted' => $salaryFormatted,
-            'postedAgo' => $postedAgo,
-            'similarJobs' => $similarJobs,
-            'customer' => $customerData,
-            'isLoggedIn' => !is_null($customer),
-            'page_title' => $jobTitle . ' - ' . $companyName . ' - Làm Game',
+            'job'              => $job,
+            'jobTitle'         => $jobTitle,
+            'companyName'      => $companyName,
+            'companyInfo'      => $companyInfo,
+            'salaryFormatted'  => $salaryFormatted,
+            'postedAgo'        => $postedAgo,
+            'similarJobs'      => $similarJobs,
+            'customer'         => $customerData,
+            'isLoggedIn'       => !is_null($customer),
+            'page_title'       => $jobTitle . ' - ' . $companyName . ' - Làm Game',
             'page_description' => \Str::limit($job->short_description, 160),
         ]);
     }
