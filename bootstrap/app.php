@@ -3,6 +3,7 @@
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\SeoMetaRobots;
 use App\Http\Middleware\TrustProxies;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Cookie\Middleware\EncryptCookies as BaseEncryptCookies;
 use Illuminate\Foundation\Application;
@@ -18,7 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__.'/../routes/web.php',
         api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
-        
+        then: function () {
+            Route::middleware('api')->prefix('api')->group(base_path('routes/api-job-v2.php'));
+        },
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
