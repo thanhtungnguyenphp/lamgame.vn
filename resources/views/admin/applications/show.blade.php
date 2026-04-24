@@ -39,7 +39,7 @@
                         {{ $application->applicant_name ?: 'Ứng viên không tên' }}
                     </h2>
                     <p class="mt-1 text-sm text-gray-500">
-                        Ứng tuyển vào: <span class="font-medium">{{ $application->job_title ?: 'Job #' . $application->job_id }}</span>
+                        Ứng tuyển vào: <span class="font-medium">{{ $application->jobPosting->title ?? "N/A" ?: 'Job #' . $application->job_posting_id }}</span>
                     </p>
                 </div>
 
@@ -119,7 +119,7 @@
                     <dl class="space-y-2 text-sm text-gray-600">
                         <div>
                             <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Job</dt>
-                            <dd>{{ $application->job_title ?: 'Job #' . $application->job_id }}</dd>
+                            <dd>{{ $application->jobPosting->title ?? "N/A" ?: 'Job #' . $application->job_posting_id }}</dd>
                         </div>
 
                         @php

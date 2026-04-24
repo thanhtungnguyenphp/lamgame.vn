@@ -3,7 +3,7 @@
 @section('title', 'Sửa Job')
 
 @section('page-title')
-    Sửa Job: {{ $job->name }}
+    Sửa Job: {{ $job->title }}
 @endsection
 
 @push('styles')
@@ -11,7 +11,7 @@
 @endpush
 
 @section('content')
-<form method="POST" action="{{ route('admin.jobs.update', $job->id) }}" enctype="multipart/form-data" class="space-y-8">
+<form method="POST" action="{{ route('admin.job-postings.update', $job->id) }}" enctype="multipart/form-data" class="space-y-8">
     @csrf
     @method('PUT')
     
@@ -25,7 +25,7 @@
                     <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Tiêu đề Job *</label>
                     <div class="mt-2">
                         <input type="text" name="title" id="title" required 
-                               value="{{ old('title', $job->name) }}"
+                               value="{{ old('title', $job->title) }}"
                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
                     </div>
                 </div>
@@ -289,7 +289,7 @@
 
     <!-- Form Actions -->
     <div class="flex items-center justify-end gap-x-6">
-        <a href="{{ route('admin.jobs.index') }}" 
+        <a href="{{ route('admin.job-postings.index') }}" 
            class="text-sm font-semibold leading-6 text-gray-900">Hủy bỏ</a>
         <button type="submit" 
                 class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
@@ -300,7 +300,8 @@
 @endsection
 
 @push('scripts')
-@vite(['resources/js/job-form.js'])
+@include('admin.jobs.partials.form-options')
+<script src="{{ asset('js/job-form-v2.js') }}" defer></script>
 <script>
 // Pass existing job data to JavaScript
 window.existingJobData = {

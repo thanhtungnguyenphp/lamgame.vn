@@ -20,7 +20,7 @@
                 <div class="ml-5 w-0 flex-1">
                     <dl>
                         <dt class="text-sm font-medium text-gray-500 truncate">Tổng Jobs</dt>
-                        <dd class="text-lg font-medium text-gray-900">{{ $stats['total_jobs'] ?? 0 }}</dd>
+                        <dd class="text-lg font-medium text-gray-900">{{ $stats['total'] ?? 0 }}</dd>
                     </dl>
                 </div>
             </div>
@@ -41,7 +41,7 @@
                 <div class="ml-5 w-0 flex-1">
                     <dl>
                         <dt class="text-sm font-medium text-gray-500 truncate">Jobs Đang Tuyển</dt>
-                        <dd class="text-lg font-medium text-gray-900">{{ $stats['active_jobs'] ?? 0 }}</dd>
+                        <dd class="text-lg font-medium text-gray-900">{{ $stats['active'] ?? 0 }}</dd>
                     </dl>
                 </div>
             </div>
@@ -62,7 +62,7 @@
                 <div class="ml-5 w-0 flex-1">
                     <dl>
                         <dt class="text-sm font-medium text-gray-500 truncate">Jobs Chờ Duyệt</dt>
-                        <dd class="text-lg font-medium text-gray-900">{{ $stats['pending_jobs'] ?? 0 }}</dd>
+                        <dd class="text-lg font-medium text-gray-900">{{ $stats['draft'] ?? 0 }}</dd>
                     </dl>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                 <div class="ml-5 w-0 flex-1">
                     <dl>
                         <dt class="text-sm font-medium text-gray-500 truncate">Tổng Ứng Viên</dt>
-                        <dd class="text-lg font-medium text-gray-900">{{ $stats['total_applications'] ?? 0 }}</dd>
+                        <dd class="text-lg font-medium text-gray-900">{{ $stats['applications_total'] ?? 0 }}</dd>
                     </dl>
                 </div>
             </div>
@@ -100,14 +100,14 @@
                 <p class="mt-2 text-sm text-gray-700">Quản lý tất cả các job posting của bạn</p>
             </div>
             <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                <a href="{{ route('admin.jobs.create') }}" 
+                <a href="{{ route('admin.job-postings.create') }}" 
                    class="block rounded-md bg-primary-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
                     Đăng Job Mới
                 </a>
             </div>
         </div>
 
-        @if(isset($jobs['data']) && count($jobs['data']) > 0)
+        @if($jobs->count() > 0)
             <div class="mt-8 flow-root">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -125,7 +125,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
-                                @foreach($jobs['data'] as $job)
+                                @foreach($jobs as $job)
                                 <tr class="hover:bg-gray-50">
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 sm:pl-0">
                                         <div class="flex items-center">
@@ -163,7 +163,7 @@
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                         <div class="flex items-center justify-end space-x-2">
-                                            <a href="{{ route('admin.jobs.edit', $job->id) }}" 
+                                            <a href="{{ route('admin.job-postings.edit', $job->id) }}" 
                                                class="text-primary-600 hover:text-primary-900 p-1 rounded-md hover:bg-primary-50">
                                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -175,7 +175,7 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                                 </svg>
                                             </a>
-                                            <form method="POST" action="{{ route('admin.jobs.destroy', $job->id) }}" 
+                                            <form method="POST" action="{{ route('admin.job-postings.destroy', $job->id) }}" 
                                                   class="inline" onsubmit="return confirm('Bạn có chắc muốn xóa job này?')">
                                                 @csrf
                                                 @method('DELETE')
@@ -203,7 +203,7 @@
                 <h3 class="mt-2 text-sm font-semibold text-gray-900">Chưa có job nào</h3>
                 <p class="mt-1 text-sm text-gray-500">Bắt đầu bằng cách tạo job posting đầu tiên của bạn</p>
                 <div class="mt-6">
-                    <a href="{{ route('admin.jobs.create') }}" 
+                    <a href="{{ route('admin.job-postings.create') }}" 
                        class="inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
                         <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />

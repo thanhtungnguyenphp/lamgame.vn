@@ -85,7 +85,7 @@
                                                 {{ $application->applicant_phone ?: 'N/A' }}
                                             </td>
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                {{ $application->job_title ?: 'Job #' . $application->job_id }}
+                                                {{ $application->jobPosting->title ?? "N/A" ?: 'Job #' . $application->job_posting_id }}
                                             </td>
                                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                 {{ $application->applied_at ? date('d/m/Y H:i', strtotime($application->applied_at)) : 'N/A' }}

@@ -8,11 +8,12 @@
 @endpush
 
 @push('scripts')
-@vite(['resources/js/job-form.js'])
+@include('admin.jobs.partials.form-options')
+<script src="{{ asset('js/job-form-v2.js') }}" defer></script>
 @endpush
 
 @section('content')
-<form method="POST" action="{{ route('admin.jobs.store') }}" enctype="multipart/form-data" class="space-y-8">
+<form method="POST" action="{{ route('admin.job-postings.store') }}" enctype="multipart/form-data" class="space-y-8">
     @csrf
     
     <!-- Job Information -->
@@ -275,7 +276,7 @@
 
     <!-- Form Actions -->
     <div class="flex items-center justify-end gap-x-6">
-        <a href="{{ route('admin.jobs.index') }}" 
+        <a href="{{ route('admin.job-postings.index') }}" 
            class="text-sm font-semibold leading-6 text-gray-900">Hủy bỏ</a>
         <button type="submit" 
                 class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">

@@ -11,14 +11,18 @@ class StructuredDataHelper
     {
         $location = $job->location ?? 'Hồ Chí Minh';
         $addressMap = self::getAddressDetails($location);
+        $title = $job->title ?? $job->name ?? '';
+        $deadline = $job->application_deadline
+            ? (is_string($job->application_deadline) ? $job->application_deadline : $job->application_deadline->format('Y-m-d'))
+            : date('Y-m-d', strtotime('+30 days', strtotime($job->created_at)));
 
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'JobPosting',
-            'title' => $job->name,
-            'description' => strip_tags($job->description ?? $job->short_description),
+            'title' => $title,
+            'description' => strip_tags($job->description ?? $job->short_description ?? ''),
             'datePosted' => date('Y-m-d', strtotime($job->created_at)),
-            'validThrough' => date('Y-m-d', strtotime('+30 days', strtotime($job->created_at))),
+            'validThrough' => $deadline,
             'employmentType' => self::getEmploymentType($job),
             'hiringOrganization' => [
                 '@type' => 'Organization',
@@ -30,21 +34,21 @@ class StructuredDataHelper
                 '@type' => 'Place',
                 'address' => [
                     '@type' => 'PostalAddress',
-                    'streetAddress' => $job->street_address ?? $addressMap['streetAddress'],
+                    'streetAddress' => $addressMap['streetAddress'],
                     'addressLocality' => $addressMap['addressLocality'],
                     'addressRegion' => $addressMap['addressRegion'],
                     'postalCode' => $addressMap['postalCode'],
                     'addressCountry' => 'VN'
                 ]
             ],
-            // Always provide baseSalary - use range when salary not specified
             'baseSalary' => [
                 '@type' => 'MonetaryAmount',
-                'currency' => 'VND',
-                'value' => !empty($job->price) && $job->price > 0
+                'currency' => $job->salary_currency ?? 'VND',
+                'value' => ($job->salary_min ?? 0) > 0
                     ? [
                         '@type' => 'QuantitativeValue',
-                        'value' => $job->price,
+                        'minValue' => $job->salary_min,
+                        'maxValue' => $job->salary_max ?? $job->salary_min,
                         'unitText' => 'MONTH'
                     ]
                     : [

@@ -73,6 +73,9 @@ class JobPostingController extends Controller
         $job = $this->service->find($id);
         if (!$job) abort(404);
 
+        $job->skills_list = $job->skills->pluck('skill_name')->toArray();
+        $job->benefits_list = $job->benefits->pluck('benefit_name')->toArray();
+
         $filterOptions = $this->service->getFilterOptions();
         return view('admin.jobs.edit', compact('job', 'filterOptions'));
     }
