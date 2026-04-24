@@ -1,5 +1,98 @@
 # LAMGAME.VN — TRẠNG THÁI DỰ ÁN
-> Cập nhật: 24/04/2026 16:39 (GMT+7)
+> Cập nhật: 24/04/2026 17:27 (GMT+7)
+> Production deployed ✅ — Job Refactor ✅ — 48 Mini Games ✅ — Redis cache ✅
+
+---
+
+## 🔵 PAYMENT
+
+| Kênh | Trạng thái | Ghi chú |
+|------|:----------:|---------|
+| PayPal | ✅ LIVE | Production go-live 23/04 — AI Subscription + Source Game checkout hoạt động |
+| Lemon Squeezy | ⏳ Đang chờ duyệt | Store #334725 — Chờ Stripe identity verification |
+
+---
+
+## 🟢 ĐÃ HOÀN THÀNH
+
+- [x] E-Commerce Core (Bagisto)
+- [x] Source Game Marketplace (listing, detail, search, sort, SEO)
+- [x] Seller System (đăng ký, duyệt, dashboard, CRUD, versioning, earnings, withdrawals)
+- [x] Forum / Cộng đồng
+- [x] Blog (CRUD, scheduled publish, API publish)
+- [x] Mini Games (48 game HTML5) — synced + ZIP 24/04
+- [x] Xổ số (KQXS, Vietlot, dò vé, thống kê)
+- [x] Landing Pages (admin CRUD)
+- [x] Việc làm Game — **Refactored 24/04** (job_postings table riêng, −8,000 lines)
+- [x] Auth & User (đăng ký, đăng nhập, quên MK, verify email)
+- [x] Subscription + PayPal
+- [x] AI Tools (concept, codegen, debug, test, review — proxy qua II-Agent)
+- [x] Sport / Bóng đá (API: live scores, BXH, highlights, articles)
+- [x] Banner System (package LamGame/Banner)
+- [x] SEO (sitemap, Google Index push, Adsense)
+- [x] Collections (bookmark sản phẩm)
+- [x] Docker (8 services)
+- [x] Cache Redis (24/04)
+- [x] **Deploy production** (24/04 — 2 lần deploy thành công)
+
+---
+
+## 🟡 ĐANG LÀM / CHỜ
+
+| Việc | Trạng thái | Chi tiết |
+|------|:----------:|----------|
+| Lemon Squeezy | ⏳ Chờ Stripe duyệt | Chờ verify → kích hoạt live mode |
+
+---
+
+## 🔴 CHƯA LÀM
+
+### Kỹ thuật (ưu tiên cao)
+- [ ] Chuyển queue sang Redis (QUEUE_CONNECTION=redis)
+- [ ] Log rotation (laravel.log đang 23MB)
+- [ ] Error monitoring (Sentry)
+
+### Sản phẩm
+- [ ] Trang "Thuê Team Dev" (service page + form báo giá)
+- [ ] Review/rating system cho source game
+- [ ] Demo/preview trực tiếp cho source game
+- [ ] License types (single, multi, extended)
+- [ ] Thêm AI tools: Asset Generator, GDD Generator
+- [ ] Streaming response cho AI tools
+- [ ] Sport frontend (web views)
+- [ ] SportPulse Phase 9 — Crawl Data (11 tasks)
+
+### Kỹ thuật (backlog)
+- [ ] Dọn file macOS metadata (._*)
+- [ ] CI/CD pipeline
+- [ ] Unit/Feature tests
+
+---
+
+## 📊 SỐ LIỆU
+
+| Metric | Số lượng |
+|--------|:--------:|
+| Controllers | 21 |
+| Models | 40 |
+| Views (Blade) | 123 |
+| Services | 11 |
+| Migrations | 76 |
+| Database tables | 192 |
+| Mini Games | 48 |
+| Source Game Products | 68 |
+| Job Postings | 10 |
+| Docker services | 8 |
+| Tests | 0 ❌ |
+
+---
+
+## 📋 VIỆC TIẾP THEO (khi quay lại)
+
+1. **Queue → Redis** — `QUEUE_CONNECTION=redis` trong .env production (10 phút)
+2. **Log rotation** — cấu hình daily log channel + logrotate (15 phút)
+3. **Sentry** — setup error monitoring (1 giờ)
+4. **SportPulse Phase 9** — Crawl data (11 tasks, ~6 ngày)
 
 ---
 
