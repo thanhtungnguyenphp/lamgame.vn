@@ -1,13 +1,16 @@
 <?php
 
-use App\Http\Controllers\Admin\JobController;
+use App\Http\Controllers\Admin\JobPostingController;
 use App\Http\Controllers\Admin\ApplicationController;
 use App\Http\Controllers\Admin\CompanyController;
 
 Route::middleware(['web', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     
-    // Jobs Management
-    Route::resource('jobs', JobController::class);
+    // Jobs Management (v2 - job_postings table)
+    Route::resource('job-postings', JobPostingController::class);
+    
+    // Legacy redirect
+    Route::get('jobs', fn () => redirect()->route('admin.job-postings.index'));
     
     // Applications Management  
     Route::get('applications/{id}/download-cv', [ApplicationController::class, 'downloadCV'])->name('applications.download-cv');
