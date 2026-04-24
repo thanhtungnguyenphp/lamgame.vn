@@ -15,6 +15,7 @@ class JobApplication extends Model
     
     protected $fillable = [
         'job_id',
+        'job_posting_id',
         'applicant_user_id',
         'applicant_name',
         'applicant_email',
@@ -47,6 +48,14 @@ class JobApplication extends Model
         return $this->belongsTo(Product::class, 'job_id');
     }
     
+    /**
+     * Relationship with new job_postings table
+     */
+    public function jobPosting(): BelongsTo
+    {
+        return $this->belongsTo(JobPosting::class, 'job_posting_id');
+    }
+
     /**
      * Relationship with applicant (Customer model)
      */

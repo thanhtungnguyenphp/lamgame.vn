@@ -12,7 +12,7 @@ services:
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
     environment:
       - PHP_OPCACHE_VALIDATE_TIMESTAMPS=1
-      - DB_HOST=host.docker.internal
+      - DB_HOST=lg-mysql
       - DB_PORT=3306
       - DB_DATABASE=lamgame
       - DB_USERNAME=lg
@@ -44,13 +44,29 @@ services:
       - shared-network
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=shared-network"
-      - "traefik.http.routers.lamgame.rule=Host(`lamgame.vn`)"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.lamgame.rule=Host(`lamgame.vn`) || Host(`lamgame.test`)"
       - "traefik.http.routers.lamgame.entrypoints=web"
-      - "traefik.http.routers.lamgame-secure.rule=Host(`lamgame.vn`)"
+      - "traefik.http.routers.lamgame-secure.rule=Host(`lamgame.vn`) || Host(`lamgame.test`)"
       - "traefik.http.routers.lamgame-secure.entrypoints=websecure"
       - "traefik.http.routers.lamgame-secure.tls=true"
       - "traefik.http.services.lamgame.loadbalancer.server.port=80"
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    container_name: lg-mysql
+    environment:
+      - MYSQL_DATABASE=lamgame
+      - MYSQL_USER=lg
+      - MYSQL_PASSWORD=lg
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - lg-mysql-data:/var/lib/mysql
+    ports:
+      - "33069:3306"
+    networks:
+      - lamgame-network
     restart: unless-stopped
 
   redis:
@@ -75,11 +91,59 @@ services:
     image: axllent/mailpit:v1.18
     container_name: lg-mailpit
     ports:
-      - "49170:1025"
-      - "8028:8025"
+      - "55934:1025"
+      - "8029:8025"
     networks:
       - lamgame-network
     restart: unless-stopped
+
+  # === II-Agent (AI Tools Backend) ===
+  ii-agent-postgres:
+    image: postgres:15-alpine
+    container_name: lg-ii-postgres
+    environment:
+      - POSTGRES_USER=iiagent
+      - POSTGRES_PASSWORD=iiagent
+      - POSTGRES_DB=iiagentdev
+    volumes:
+      - ii-agent-pg-data:/var/lib/postgresql/data
+    networks:
+      - lamgame-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iiagent -d iiagentdev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ii-agent:
+    build:
+      context: ./docker/ii-agent
+      dockerfile: Dockerfile
+    container_name: lg-ii-agent
+    depends_on:
+      ii-agent-postgres:
+        condition: service_healthy
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - MODEL_CONFIGS=[{"model_id":"gpt-4o-mini","provider":"OpenAI","api_key":"${OPENAI_API_KEY}","display_name":"GPT-4o Mini","is_default":true},{"model_id":"gpt-4o","provider":"OpenAI","api_key":"${OPENAI_API_KEY}","display_name":"GPT-4o"},{"model_id":"claude-sonnet-4-6","provider":"Anthropic","api_key":"${ANTHROPIC_API_KEY}","display_name":"Claude Sonnet"}]
+      - DATABASE_URL=postgresql+asyncpg://iiagent:iiagent@lg-ii-postgres:5432/iiagentdev
+      - REDIS_SESSION_URL=redis://redis:6379/2
+      - GUNICORN_WORKERS=1
+      - STORAGE_PROVIDER=local
+      - STORAGE_LOCAL_BASE_DIR=/tmp/ii-agent-storage
+      - STORAGE_LOCAL_SERVE_URL=http://localhost:8900/storage
+      - COMPOSIO_API_KEY=dummy_not_used
+    ports:
+      - "8900:8000"
+    networks:
+      - lamgame-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
 
 networks:
   lamgame-network:
@@ -89,4 +153,6 @@ networks:
   shared-network:
     external: true
 
-volumes: {}
+volumes:
+  lg-mysql-data:
+  ii-agent-pg-data:
