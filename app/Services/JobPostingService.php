@@ -7,6 +7,7 @@ use App\Models\JobPostingSkill;
 use App\Models\JobPostingBenefit;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -51,6 +52,7 @@ class JobPostingService
 
             $this->syncSkills($job, $data['skills'] ?? []);
             $this->syncBenefits($job, $data['benefits'] ?? []);
+            Cache::forget('job_filter_options');
 
             return $job->load('skills', 'benefits');
         });
@@ -59,14 +61,27 @@ class JobPostingService
     public function update(JobPosting $job, array $data): JobPosting
     {
         return DB::transaction(function () use ($job, $data) {
-            $job->update(array_filter($data, fn ($v) => $v !== null));
+            $skills = null;
+            $benefits = null;
+            if (array_key_exists('skills', $data)) {
+                $skills = $data['skills'];
+                unset($data['skills']);
+            }
+            if (array_key_exists('benefits', $data)) {
+                $benefits = $data['benefits'];
+                unset($data['benefits']);
+            }
 
-            if (isset($data['skills'])) {
-                $this->syncSkills($job, $data['skills']);
+            $job->update($data);
+
+            if ($skills !== null) {
+                $this->syncSkills($job, $skills);
             }
-            if (isset($data['benefits'])) {
-                $this->syncBenefits($job, $data['benefits']);
+            if ($benefits !== null) {
+                $this->syncBenefits($job, $benefits);
             }
+
+            Cache::forget('job_filter_options');
 
             return $job->fresh(['skills', 'benefits']);
         });
@@ -74,6 +89,7 @@ class JobPostingService
 
     public function delete(JobPosting $job): bool
     {
+        Cache::forget('job_filter_options');
         return $job->delete();
     }
 
@@ -168,7 +184,7 @@ class JobPostingService
             'archived' => (clone $query)->where('status', 'archived')->count(),
             'applications_total' => DB::table('job_applications')
                 ->when($createdBy, fn ($q) => $q->whereIn('job_posting_id',
-                    JobPosting::where('created_by', $createdBy)->pluck('id')
+                    JobPosting::where('created_by', $createdBy)->select('id')
                 ))
                 ->count(),
         ];
@@ -202,16 +218,18 @@ class JobPostingService
 
     public function getFilterOptions(): array
     {
-        return [
-            'job_types'         => JobPosting::distinct()->whereNotNull('job_type')->pluck('job_type'),
-            'experience_levels' => JobPosting::distinct()->whereNotNull('experience_level')->pluck('experience_level'),
-            'locations'         => JobPosting::distinct()->whereNotNull('location')->pluck('location'),
-            'company_sizes'     => JobPosting::distinct()->whereNotNull('company_size')->pluck('company_size'),
-            'education_levels'  => JobPosting::distinct()->whereNotNull('education_level')->pluck('education_level'),
-            'english_levels'    => JobPosting::distinct()->whereNotNull('english_level')->pluck('english_level'),
-            'skills'            => JobPostingSkill::distinct()->pluck('skill_name'),
-            'benefits'          => JobPostingBenefit::distinct()->pluck('benefit_name'),
-        ];
+        return Cache::remember('job_filter_options', 3600, function () {
+            return [
+                'job_types'         => JobPosting::distinct()->whereNotNull('job_type')->pluck('job_type'),
+                'experience_levels' => JobPosting::distinct()->whereNotNull('experience_level')->pluck('experience_level'),
+                'locations'         => JobPosting::distinct()->whereNotNull('location')->pluck('location'),
+                'company_sizes'     => JobPosting::distinct()->whereNotNull('company_size')->pluck('company_size'),
+                'education_levels'  => JobPosting::distinct()->whereNotNull('education_level')->pluck('education_level'),
+                'english_levels'    => JobPosting::distinct()->whereNotNull('english_level')->pluck('english_level'),
+                'skills'            => JobPostingSkill::distinct()->pluck('skill_name'),
+                'benefits'          => JobPostingBenefit::distinct()->pluck('benefit_name'),
+            ];
+        });
     }
 
     // Private helpers

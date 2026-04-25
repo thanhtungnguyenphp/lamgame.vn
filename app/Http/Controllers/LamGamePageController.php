@@ -272,7 +272,7 @@ class LamGamePageController extends Controller
 
         switch ($sort) {
             case 'salary-high':
-                $query->orderByRaw('salary_max DESC NULLS LAST');
+                $query->orderByRaw('salary_max IS NULL, salary_max DESC');
                 break;
             case 'company':
                 $query->orderBy('company_name');
