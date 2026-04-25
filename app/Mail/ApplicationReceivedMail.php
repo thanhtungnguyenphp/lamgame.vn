@@ -3,121 +3,47 @@
 namespace App\Mail;
 
 use App\Models\JobApplication;
+use App\Models\JobPosting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Queue\SerializesModels;
-use Webkul\Product\Models\Product;
 
 class ApplicationReceivedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public JobApplication $application;
-    public Product $job;
-    public array $jobData;
+    public JobPosting $job;
     public string $applicantName;
     public string $companyName;
     public string $jobTitle;
     public string $applicationCode;
     public $appliedAt;
+    public array $jobData;
     public array $nextSteps;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct(JobApplication $application, Product $job)
+    public function __construct(JobApplication $application, JobPosting $job)
     {
         $this->application = $application;
         $this->job = $job;
-        $this->jobData = $this->parseJobData();
         $this->applicantName = $application->applicant_name;
-        $this->companyName = $this->jobData['company'] ?: 'LAMGAME';
-        $this->jobTitle = $this->jobData['title'];
+        $this->jobTitle = $job->title;
+        $this->companyName = $job->company_name ?: 'LAMGAME';
         $this->applicationCode = $application->application_code;
         $this->appliedAt = $application->applied_at;
-        $this->nextSteps = $this->getNextSteps();
-    }
-
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: "✅ Đã nhận hồ sơ ứng tuyển - {$this->jobData['title']}",
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            markdown: 'emails.job-application.applicant-received',
-            text: 'emails.job-application.applicant-received-text',
-        );
-    }
-
-    /**
-     * Parse job data from product
-     */
-    private function parseJobData(): array
-    {
-        $name = $this->job->name ?? '';
-        $parts = explode(' - ', $name);
-        
-        return [
-            'title' => $parts[0] ?? $name,
-            'company' => trim(str_replace(' - ', ' ', $parts[1] ?? '')),
-            'salary' => $this->formatSalary($this->job->price ?? 0),
-            'location' => $this->getJobAttribute('job_location') ?? 'Việt Nam',
-            'job_type' => $this->getJobAttribute('job_type') ?? 'Full-time',
-            'experience_level' => $this->getJobAttribute('experience_level'),
+        $this->jobData = [
+            'title'            => $job->title,
+            'company'          => $job->company_name ?: 'LAMGAME',
+            'salary'           => $job->salary_range ?: 'Thỏa thuận',
+            'location'         => $job->location ?: 'Việt Nam',
+            'job_type'         => $job->job_type ?: 'Full-time',
+            'experience_level' => $job->experience_level,
         ];
-    }
-
-    /**
-     * Get job attribute value
-     */
-    private function getJobAttribute(string $attributeCode): ?string
-    {
-        $attributeValue = $this->job->attribute_values()
-            ->whereHas('attribute', function ($query) use ($attributeCode) {
-                $query->where('code', $attributeCode);
-            })
-            ->first();
-
-        return $attributeValue?->text_value;
-    }
-
-    /**
-     * Format salary for display
-     */
-    private function formatSalary(float $price): string
-    {
-        if ($price <= 0) {
-            return 'Thỏa thuận';
-        }
-        
-        if ($price >= 1000000) {
-            return number_format($price / 1000000, 1) . ' triệu VND';
-        }
-        
-        return number_format($price, 0) . ' VND';
-    }
-
-    /**
-     * Get next steps information
-     */
-    private function getNextSteps(): array
-    {
-        return [
-            'review_time' => '2-3 ngày làm việc',
-            'contact_method' => 'email hoặc điện thoại',
+        $this->nextSteps = [
+            'review_time'       => '2-3 ngày làm việc',
+            'contact_method'    => 'email hoặc điện thoại',
             'what_happens_next' => [
                 'HR sẽ xem xét hồ sơ của bạn',
                 'Nếu phù hợp, chúng tôi sẽ liên hệ để sắp xếp phỏng vấn',
@@ -131,11 +57,21 @@ class ApplicationReceivedMail extends Mailable
         ];
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
+    public function envelope(): Envelope
+    {
+        return new Envelope(
+            subject: "✅ Đã nhận hồ sơ ứng tuyển - {$this->jobTitle}",
+        );
+    }
+
+    public function content(): Content
+    {
+        return new Content(
+            markdown: 'emails.job-application.applicant-received',
+            text: 'emails.job-application.applicant-received-text',
+        );
+    }
+
     public function attachments(): array
     {
         return [];
