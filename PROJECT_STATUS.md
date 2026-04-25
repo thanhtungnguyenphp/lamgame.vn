@@ -1,6 +1,6 @@
 # LAMGAME.VN — TRẠNG THÁI DỰ ÁN
-> Cập nhật: 24/04/2026 17:27 (GMT+7)
-> Production deployed ✅ — Job Refactor ✅ — 48 Mini Games ✅ — Redis cache ✅
+> Cập nhật: 25/04/2026 14:58 (GMT+7)
+> Production deployed ✅ — Job Optimized ✅ — 48 Mini Games ✅ — Redis cache ✅
 
 ---
 
@@ -189,6 +189,35 @@
 6. **Log rotation** — cấu hình daily log + logrotate
 7. **Error monitoring** — setup Sentry
 8. **SportPulse Phase 9** — Crawl data (11 tasks, ~6 ngày)
+
+---
+
+## 🔄 CHANGELOG 25/04/2026
+
+### Job System V2 Optimization (deployed production 25/04)
+- **Fix MySQL NULLS LAST** — `orderByRaw('salary_max DESC NULLS LAST')` → `salary_max IS NULL, salary_max DESC`
+- **View count dedup** — session-based, cùng session chỉ đếm 1 lần (chống F5 inflate)
+- **Fix update null issue** — `array_filter` chặn set null → tách skills/benefits, pass data trực tiếp
+- **Statistics subquery** — `pluck('id')` (2 queries) → `select('id')` subquery (1 query)
+- **Cache filter options** — `Cache::remember` 1 giờ cho 8 DISTINCT queries + auto invalidate khi CRUD
+- **Sanitize LIKE wildcards** — escape `%` và `_` trong scopeSearch/scopeByLocation
+- **Extract Form Requests** — `StoreJobPostingRequest` + `UpdateJobPostingRequest` (loại bỏ validation trùng 3 lần)
+- **Validation cải thiện** — thêm `salary_max gte:salary_min`, `skills/benefits max:20 items`
+
+**Files mới:**
+```
+app/Http/Requests/StoreJobPostingRequest.php
+app/Http/Requests/UpdateJobPostingRequest.php
+```
+
+**Files cập nhật:**
+```
+app/Models/JobPosting.php (incrementViews dedup, sanitize scopes)
+app/Services/JobPostingService.php (update null fix, cache, subquery)
+app/Http/Controllers/Api/JobPostingController.php (Form Requests)
+app/Http/Controllers/Admin/JobPostingController.php (Form Requests)
+app/Http/Controllers/LamGamePageController.php (MySQL NULLS LAST fix)
+```
 
 ---
 

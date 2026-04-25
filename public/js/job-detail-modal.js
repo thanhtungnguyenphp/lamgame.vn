@@ -1,707 +1,244 @@
-// Job Detail Modal Functions - Standalone JavaScript File
+// Job Detail Modal Functions
 
-// Initialize Vue.js if available (fallback for when not loaded via CDN)
-window.initializeVueApp = function() {
-    // Vue app initialization - optional since we're not using complex Vue components
-};
-
-// Helper function to get job ID from current page - moved to top for global access
 window.getJobIdFromPage = function() {
-    // Try multiple ways to get job ID
-    const urlParts = window.location.pathname.split('/');
-    const jobIdFromUrl = urlParts[urlParts.length - 1];
-    
-    // Check if it's a number
-    if (!isNaN(jobIdFromUrl) && jobIdFromUrl !== '') {
-        return parseInt(jobIdFromUrl);
+    var meta = document.querySelector('meta[name="job-id"]');
+    if (meta) {
+        var id = parseInt(meta.getAttribute('content'));
+        if (!isNaN(id)) return id;
     }
-    
-    // Try to get from meta tag or data attribute
-    const jobIdMeta = document.querySelector('meta[name="job-id"]')?.getAttribute('content');
-    if (jobIdMeta && !isNaN(jobIdMeta)) {
-        return parseInt(jobIdMeta);
-    }
-    
-    // Try to get from global variable
-    if (typeof window.currentJobId !== 'undefined') {
-        return window.currentJobId;
-    }
-    
-    // Try to extract from URL pattern /viec-lam/{slug}
-    if (urlParts.length >= 2 && urlParts[urlParts.length - 2] === 'viec-lam') {
-        const slug = urlParts[urlParts.length - 1];
-        
-        const knownJobs = {
-            'blockchain-game-developer-sky-mavis': 6,
-            '3d-platformer-demo': 20,
-            'job-appota-backend-003': 23
-        };
-        
-        if (knownJobs[slug]) {
-            return knownJobs[slug];
-        }
-    }
-    
+    if (typeof window.currentJobId !== 'undefined') return window.currentJobId;
     return null;
 };
 
-// Alias for easier access
 window.getJobId = window.getJobIdFromPage;
 
-// Define modal functions immediately - available for onclick
 window.openApplyModal = function() {
-    const modal = document.getElementById('applyModal');
-    
-    if (!modal) {
-        return;
-    }
-    
+    var modal = document.getElementById('applyModal');
+    if (!modal) return;
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    
-    // Track modal open event
     if (typeof window.trackEvent === 'function') {
-        const jobId = getJobIdFromPage();
-        const jobTitle = document.querySelector('h1.job-title')?.textContent?.trim();
-        const companyName = document.querySelector('.company-name')?.textContent?.trim();
-        
         window.trackEvent('job_application_modal_open', {
             'event_category': 'jobs',
-            'event_label': jobTitle,
-            'job_id': jobId,
-            'company': companyName,
+            'job_id': getJobIdFromPage(),
             'value': 1
         });
     }
-    
-    // Auto-fill form if user is logged in (with delay for DOM)
-    setTimeout(() => {
-        if (typeof autoFillFormData === 'function') {
-            autoFillFormData();
-        }
+    setTimeout(function() {
+        if (typeof autoFillFormData === 'function') autoFillFormData();
     }, 100);
 };
 
 window.closeApplyModal = function() {
-    const modal = document.getElementById('applyModal');
-    
-    if (!modal) {
-        return;
-    }
-    
+    var modal = document.getElementById('applyModal');
+    if (!modal) return;
     modal.classList.remove('active');
     document.body.style.overflow = 'auto';
 };
 
-// Show message function
-function showMessage(message, type = 'info') {
-    const messageEl = document.createElement('div');
-    messageEl.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#10b981' : '#667eea'};
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
-        font-weight: 500;
-        animation: slideIn 0.3s ease;
-    `;
-    messageEl.textContent = message;
-    
-    // Add animation styles
-    if (!document.querySelector('#messageStyles')) {
-        const style = document.createElement('style');
-        style.id = 'messageStyles';
-        style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    document.body.appendChild(messageEl);
-    
-    // Auto remove after 3 seconds
-    setTimeout(() => {
-        messageEl.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => {
-            if (messageEl.parentNode) {
-                messageEl.parentNode.removeChild(messageEl);
-            }
-        }, 300);
-    }, 3000);
+function showMessage(message, type) {
+    type = type || 'info';
+    var el = document.createElement('div');
+    el.style.cssText = 'position:fixed;top:20px;right:20px;background:' + (type === 'success' ? '#10b981' : type === 'error' ? '#dc2626' : '#667eea') + ';color:white;padding:12px 20px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:10001;font-weight:500;max-width:350px;font-size:14px;';
+    el.textContent = message;
+    document.body.appendChild(el);
+    setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 3500);
 }
 
-// Toggle save job functionality
+window.showToastMessage = showMessage;
+window.showErrorMessage = function(msg) { showMessage(msg, 'error'); };
+
 window.toggleSaveJob = function(button) {
-    const icon = button.querySelector('i');
-    const text = button.querySelector('span');
-    
+    var icon = button.querySelector('i');
+    var text = button.querySelector('span');
     if (icon.classList.contains('fa-heart-o')) {
-        // Save job
         icon.classList.remove('fa-heart-o');
         icon.classList.add('fa-heart');
         button.classList.add('saved');
         if (text) text.textContent = 'Đã lưu';
-        
-        // Track job save event
-        if (typeof window.trackEvent === 'function') {
-            const jobId = getJobIdFromPage();
-            const jobTitle = document.querySelector('h1.job-title')?.textContent?.trim();
-            const companyName = document.querySelector('.company-name')?.textContent?.trim();
-            
-            window.trackEvent('job_save', {
-                'event_category': 'jobs',
-                'event_label': jobTitle,
-                'job_id': jobId,
-                'company': companyName,
-                'value': 1
-            });
-        }
-        
-        // Show success message
         showMessage('Đã lưu việc làm vào danh sách yêu thích!', 'success');
     } else {
-        // Unsave job
         icon.classList.remove('fa-heart');
         icon.classList.add('fa-heart-o');
         button.classList.remove('saved');
         if (text) text.textContent = 'Lưu việc làm';
-        
-        // Track job unsave event
-        if (typeof window.trackEvent === 'function') {
-            const jobId = getJobIdFromPage();
-            const jobTitle = document.querySelector('h1.job-title')?.textContent?.trim();
-            
-            window.trackEvent('job_unsave', {
-                'event_category': 'jobs',
-                'event_label': jobTitle,
-                'job_id': jobId,
-                'value': 1
-            });
-        }
-        
         showMessage('Đã xóa khỏi danh sách yêu thích!', 'info');
     }
 };
 
-// Auto-fill form data function
 window.autoFillFormData = function() {
     if (window.isLoggedIn && window.customerData) {
-        const customer = window.customerData;
-        
-        // Fill form fields
-        const fullNameField = document.getElementById('full_name');
-        const emailField = document.getElementById('email');
-        const phoneField = document.getElementById('phone');
-        
-        if (fullNameField && customer.full_name) {
-            fullNameField.value = customer.full_name;
-            fullNameField.style.backgroundColor = '#f8f9fa';
-            fullNameField.style.borderColor = '#e2e8f0';
-            fullNameField.title = 'Thông tin từ tài khoản đã đăng nhập';
-            fullNameField.readOnly = true;
-        }
-        
-        if (emailField && customer.email) {
-            emailField.value = customer.email;
-            emailField.style.backgroundColor = '#f8f9fa';
-            emailField.style.borderColor = '#e2e8f0';
-            emailField.title = 'Thông tin từ tài khoản đã đăng nhập';
-            emailField.readOnly = true;
-        }
-        
-        if (phoneField && customer.phone) {
-            phoneField.value = customer.phone;
-            phoneField.style.borderColor = '#10b981';
-            phoneField.title = 'Thông tin từ tài khoản đã đăng nhập (có thể chỉnh sửa)';
-        }
-        
-        // Clear any previous validation errors since we have valid data
-        if (typeof clearFieldError === 'function') {
-            clearFieldError('full_name');
-            clearFieldError('email');
-            if (customer.phone) {
-                clearFieldError('phone');
-            }
-        }
-        
-        // Show a subtle indication that data has been auto-filled
-        showAutoFillNotification();
+        var c = window.customerData;
+        var nameField = document.getElementById('full_name');
+        var emailField = document.getElementById('email');
+        var phoneField = document.getElementById('phone');
+        if (nameField && c.full_name) { nameField.value = c.full_name; nameField.readOnly = true; nameField.style.backgroundColor = '#f8f9fa'; }
+        if (emailField && c.email) { emailField.value = c.email; emailField.readOnly = true; emailField.style.backgroundColor = '#f8f9fa'; }
+        if (phoneField && c.phone) { phoneField.value = c.phone; }
     }
 };
-
-function showAutoFillNotification() {
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #10b981;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1001;
-        font-weight: 500;
-        font-size: 14px;
-    `;
-    notification.innerHTML = '<i class="fa fa-check-circle"></i> Đã tự động điền thông tin từ tài khoản';
-    
-    document.body.appendChild(notification);
-    
-    // Auto remove after 3 seconds
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.parentNode.removeChild(notification);
-        }
-    }, 3000);
-}
-
-// Form validation functions
-window.validateFormBeforeSubmit = function() {
-    let isValid = true;
-    
-    // Get form values  
-    const fullName = document.getElementById('full_name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const cv = document.getElementById('cv').files[0];
-    
-    // Validate full name
-    if (!fullName) {
-        showFieldError('full_name', 'Vui lòng nhập họ và tên');
-        isValid = false;
-    } else if (fullName.length < 2) {
-        showFieldError('full_name', 'Họ và tên phải có ít nhất 2 ký tự');
-        isValid = false;
-    } else if (!/^[a-zA-ZÀ-ỹ\s\-\.\']+$/.test(fullName)) {
-        showFieldError('full_name', 'Họ và tên chỉ được chứa chữ cái, khoảng trắng, dấu gạch ngang và dấu chấm');
-        isValid = false;
-    }
-    
-    // Validate email
-    if (!email) {
-        showFieldError('email', 'Vui lòng nhập email');
-        isValid = false;
-    } else if (!isValidEmail(email)) {
-        showFieldError('email', 'Email không đúng định dạng');
-        isValid = false;
-    }
-    
-    // Validate phone
-    if (!phone) {
-        showFieldError('phone', 'Vui lòng nhập số điện thoại');
-        isValid = false;
-    } else if (!isValidVietnamesePhone(phone)) {
-        showFieldError('phone', 'Số điện thoại không đúng định dạng Việt Nam');
-        isValid = false;
-    }
-    
-    // Validate CV file
-    if (!cv) {
-        showFieldError('cv', 'Vui lòng chọn file CV');
-        isValid = false;
-    } else {
-        const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-        const maxSize = 5 * 1024 * 1024; // 5MB
-        
-        if (!allowedTypes.includes(cv.type)) {
-            showFieldError('cv', 'Chỉ chấp nhận file PDF, DOC hoặc DOCX');
-            isValid = false;
-        } else if (cv.size > maxSize) {
-            showFieldError('cv', 'Kích thước file không được vượt quá 5MB');
-            isValid = false;
-        } else if (cv.size === 0) {
-            showFieldError('cv', 'File CV không được để trống');
-            isValid = false;
-        }
-    }
-    
-    // Scroll to first error if any
-    if (!isValid) {
-        const firstError = document.querySelector('.field-error:not(:empty)');
-        if (firstError) {
-            firstError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-    }
-    
-    return isValid;
-};
-
-function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function isValidVietnamesePhone(phone) {
-    // Clean phone number
-    phone = phone.replace(/[\s\-\.\(\)]/g, '');
-    // Convert +84 to 0 for validation
-    if (phone.startsWith('+84')) {
-        phone = '0' + phone.substring(3);
-    } else if (phone.startsWith('84') && phone.length >= 10) {
-        phone = '0' + phone.substring(2);
-    }
-    return /^0(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/.test(phone);
-}
-
-window.handleFileSelection = function(file) {
-    const fileName = document.getElementById('fileName');
-    
-    if (file) {
-        // Validate file type and size
-        const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-        const maxSize = 5 * 1024 * 1024; // 5MB
-        
-        if (!allowedTypes.includes(file.type)) {
-            showFieldError('cv', 'Chỉ chấp nhận file PDF, DOC hoặc DOCX');
-            return;
-        }
-        
-        if (file.size > maxSize) {
-            showFieldError('cv', 'Kích thước file không được vượt quá 5MB');
-            return;
-        }
-        
-        if (file.size === 0) {
-            showFieldError('cv', 'File CV không được để trống');
-            return;
-        }
-        
-        // Clear any previous errors
-        clearFieldError('cv');
-        
-        // Show file info
-        fileName.innerHTML = `
-            <div style="color: #059669; font-weight: 600;">
-                <i class="fas fa-check-circle"></i> Đã chọn: ${file.name}
-            </div>
-            <div style="font-size: 12px; color: #6b7280; margin-top: 2px;">
-                Kích thước: ${formatFileSize(file.size)} | Loại: ${getFileExtension(file.name).toUpperCase()}
-            </div>
-        `;
-        fileName.style.display = 'block';
-    }
-};
-
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
-function getFileExtension(filename) {
-    return filename.split('.').pop() || '';
-}
 
 window.showFieldError = function(fieldId, message) {
-    const field = document.getElementById(fieldId);
-    if (field) {
-        field.classList.add('error');
-        
-        // Find or create error element
-        let errorEl = field.parentNode.querySelector('.field-error');
-        if (!errorEl) {
-            errorEl = document.createElement('div');
-            errorEl.className = 'field-error';
-            field.parentNode.appendChild(errorEl);
-        }
-        
-        errorEl.textContent = message;
-        errorEl.style.color = '#dc2626';
-        errorEl.style.fontSize = '12px';
-        errorEl.style.marginTop = '4px';
+    var field = document.getElementById(fieldId);
+    if (!field) return;
+    field.classList.add('error');
+    var errorEl = field.parentNode.querySelector('.field-error');
+    if (!errorEl) {
+        errorEl = document.createElement('div');
+        errorEl.className = 'field-error';
+        errorEl.style.cssText = 'color:#dc2626;font-size:12px;margin-top:4px;';
+        field.parentNode.appendChild(errorEl);
     }
+    errorEl.textContent = message;
 };
 
 window.clearFieldError = function(fieldId) {
-    const field = document.getElementById(fieldId);
-    if (field) {
-        field.classList.remove('error');
-        const errorEl = field.parentNode.querySelector('.field-error');
-        if (errorEl) {
-            errorEl.textContent = '';
-        }
-    }
+    var field = document.getElementById(fieldId);
+    if (!field) return;
+    field.classList.remove('error');
+    var errorEl = field.parentNode.querySelector('.field-error');
+    if (errorEl) errorEl.textContent = '';
 };
 
 window.clearAllFormErrors = function() {
-    document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
-    document.querySelectorAll('input, textarea, select').forEach(el => el.classList.remove('error'));
+    document.querySelectorAll('.field-error').forEach(function(el) { el.textContent = ''; });
+    document.querySelectorAll('input, textarea').forEach(function(el) { el.classList.remove('error'); });
 };
 
-window.displayValidationErrors = function(errors) {
-    Object.keys(errors).forEach(field => {
-        const messages = Array.isArray(errors[field]) ? errors[field] : [errors[field]];
-        if (messages.length > 0) {
-            showFieldError(field, messages[0]);
-        }
-    });
+window.validateFormBeforeSubmit = function() {
+    var valid = true;
+    var fullName = document.getElementById('full_name').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var phone = document.getElementById('phone').value.trim();
+    var cv = document.getElementById('cv').files[0];
+
+    if (!fullName || fullName.length < 2) { showFieldError('full_name', 'Vui lòng nhập họ và tên (ít nhất 2 ký tự)'); valid = false; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError('email', 'Email không đúng định dạng'); valid = false; }
+    if (!phone) { showFieldError('phone', 'Vui lòng nhập số điện thoại'); valid = false; }
+    if (cv) {
+        var allowed = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (allowed.indexOf(cv.type) === -1) { showFieldError('cv', 'Chỉ chấp nhận file PDF, DOC hoặc DOCX'); valid = false; }
+        else if (cv.size > 5 * 1024 * 1024) { showFieldError('cv', 'Kích thước file không được vượt quá 5MB'); valid = false; }
+    }
+    return valid;
+};
+
+window.handleFileSelection = function(file) {
+    var fileName = document.getElementById('fileName');
+    if (!file || !fileName) return;
+    var allowed = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (allowed.indexOf(file.type) === -1) { showFieldError('cv', 'Chỉ chấp nhận file PDF, DOC hoặc DOCX'); return; }
+    if (file.size > 5 * 1024 * 1024) { showFieldError('cv', 'File không được vượt quá 5MB'); return; }
+    clearFieldError('cv');
+    var sizeMB = (file.size / 1024 / 1024).toFixed(2);
+    fileName.innerHTML = '<div style="color:#059669;font-weight:600;"><i class="fa fa-check-circle"></i> ' + file.name + ' (' + sizeMB + ' MB)</div>';
+    fileName.style.display = 'block';
 };
 
 window.setFormLoadingState = function(loading) {
-    const submitBtn = document.querySelector('.btn-submit');
-    const form = document.getElementById('applyForm');
-    
+    var btn = document.querySelector('.btn-submit');
+    var form = document.getElementById('applyForm');
     if (loading) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang gửi...';
         form.style.opacity = '0.7';
         form.style.pointerEvents = 'none';
     } else {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi hồ sơ ứng tuyển';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-paper-plane"></i> Gửi hồ sơ';
         form.style.opacity = '1';
         form.style.pointerEvents = 'auto';
     }
 };
 
-window.showSuccessMessage = function(result) {
-    const message = `
-        <div style="text-align: center; padding: 20px;">
-            <div style="font-size: 48px; margin-bottom: 15px;">✅</div>
-            <h4 style="color: #059669; margin: 0 0 10px 0;">Hồ sơ đã được gửi thành công!</h4>
-            <p style="color: #6b7280; margin: 0 0 15px 0;">${result.message || 'Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.'}</p>
-            ${result.data?.application_code ? `<p style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 6px; padding: 10px; margin: 10px 0; font-size: 14px;"><strong>Mã đơn:</strong> ${result.data.application_code}</p>` : ''}
-            <p style="font-size: 12px; color: #9ca3af;">Modal sẽ đóng tự động sau 2 giây...</p>
-        </div>
-    `;
-    
-    const modalBody = document.querySelector('.modal-body');
-    modalBody.innerHTML = message;
-};
-
-window.showErrorMessage = function(message) {
-    showToastMessage(message, 'error');
+window.showSuccessMessage = function(data) {
+    var modalBody = document.querySelector('.modal-body');
+    var codeHtml = data.application_code ? '<p style="background:#f0f9ff;border:1px solid #0ea5e9;border-radius:6px;padding:10px;margin:10px 0;font-size:14px;"><strong>Mã đơn:</strong> ' + data.application_code + '</p>' : '';
+    modalBody.innerHTML = '<div style="text-align:center;padding:20px;"><div style="font-size:48px;margin-bottom:15px;">✅</div><h4 style="color:#059669;">Hồ sơ đã được gửi thành công!</h4><p style="color:#6b7280;">' + (data.message || '') + '</p>' + codeHtml + '</div>';
 };
 
 window.resetForm = function() {
-    const form = document.getElementById('applyForm');
-    const fileName = document.getElementById('fileName');
-    
-    form.reset();
-    fileName.style.display = 'none';
+    var form = document.getElementById('applyForm');
+    var fileName = document.getElementById('fileName');
+    if (form) form.reset();
+    if (fileName) fileName.style.display = 'none';
     clearAllFormErrors();
 };
 
-window.showToastMessage = function(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'error' ? '#dc2626' : type === 'success' ? '#10b981' : '#667eea'};
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1001;
-        font-weight: 500;
-        animation: slideIn 0.3s ease;
-        max-width: 300px;
-        font-size: 14px;
-    `;
-    toast.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : type === 'success' ? 'check-circle' : 'info-circle'}"></i> ${message}`;
-    
-    // Add animation styles if not already present
-    if (!document.querySelector('#toastStyles')) {
-        const style = document.createElement('style');
-        style.id = 'toastStyles';
-        style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    document.body.appendChild(toast);
-    
-    // Auto remove after 4 seconds
-    setTimeout(() => {
-        toast.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => {
-            if (toast.parentNode) {
-                toast.parentNode.removeChild(toast);
-            }
-        }, 300);
-    }, 4000);
+window.displayValidationErrors = function(errors) {
+    // Map backend field names → frontend field IDs
+    var fieldMap = { 'applicant_name': 'full_name', 'applicant_email': 'email', 'applicant_phone': 'phone', 'resume': 'cv' };
+    Object.keys(errors).forEach(function(field) {
+        var msgs = Array.isArray(errors[field]) ? errors[field] : [errors[field]];
+        var frontendField = fieldMap[field] || field;
+        if (msgs.length > 0) showFieldError(frontendField, msgs[0]);
+    });
 };
 
-// Initialize when DOM is ready
+// Main init
 document.addEventListener('DOMContentLoaded', function() {
-    // Prevent multiple DOM initializations
-    if (window.jobModalDOMInitialized) {
-        return;
-    }
+    if (window.jobModalDOMInitialized) return;
     window.jobModalDOMInitialized = true;
-    // Add click handler for apply buttons
-    const applyButtons = document.querySelectorAll('.btn-apply, .btn-apply-bottom');
-    
-    applyButtons.forEach(button => {
-        if (button.tagName.toLowerCase() === 'button') {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                openApplyModal();
-            });
-        }
-    });
-    
-    // Form submission handler
-    const applyForm = document.getElementById('applyForm');
+
+    // Form submit
+    var applyForm = document.getElementById('applyForm');
     if (applyForm) {
         applyForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            e.stopPropagation(); // Prevent any other handlers
-            
-            // Prevent multiple submissions
-            if (window.formSubmitting) {
-                return;
-            }
+            if (window.formSubmitting) return;
             window.formSubmitting = true;
-            
-            try {
-                await handleFormSubmission(this);
-            } finally {
-                window.formSubmitting = false;
-            }
+            try { await handleFormSubmission(this); } finally { window.formSubmitting = false; }
         });
     }
-    
-    // Modal click outside to close
-    const modal = document.getElementById('applyModal');
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeApplyModal();
-            }
-        });
-    }
-    
-    // Keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeApplyModal();
-        }
-    });
-    
-    // File upload preview with enhanced functionality
-    const cvInput = document.getElementById('cv');
+
+    // ESC to close
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeApplyModal(); });
+
+    // File input change
+    var cvInput = document.getElementById('cv');
     if (cvInput) {
         cvInput.addEventListener('change', function(e) {
-            if (e.target.files.length > 0) {
-                handleFileSelection(e.target.files[0]);
-            } else {
-                const fileName = document.getElementById('fileName');
-                if (fileName) {
-                    fileName.style.display = 'none';
-                }
-            }
+            if (e.target.files.length > 0) handleFileSelection(e.target.files[0]);
         });
     }
-    
-    // Add drag and drop functionality for file upload
-    const fileUploadArea = document.querySelector('.file-upload-area');
-    const fileInput = document.getElementById('cv');
-    
-    if (fileUploadArea && fileInput) {
-        
-        // Don't override existing CSS styles - they're already set in the stylesheet
-        // Just ensure the area is interactive
-        
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            fileUploadArea.addEventListener(eventName, preventDefaults, false);
+
+    // Drag & drop
+    var uploadArea = document.querySelector('.file-upload-area');
+    if (uploadArea && cvInput) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function(evt) {
+            uploadArea.addEventListener(evt, function(e) { e.preventDefault(); e.stopPropagation(); });
         });
-        
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        
-        ['dragenter', 'dragover'].forEach(eventName => {
-            fileUploadArea.addEventListener(eventName, highlight, false);
+        uploadArea.addEventListener('drop', function(e) {
+            var files = e.dataTransfer.files;
+            if (files.length > 0) { cvInput.files = files; handleFileSelection(files[0]); }
         });
-        
-        ['dragleave', 'drop'].forEach(eventName => {
-            fileUploadArea.addEventListener(eventName, unhighlight, false);
-        });
-        
-        function highlight() {
-            fileUploadArea.classList.add('drag-over');
-        }
-        
-        function unhighlight() {
-            fileUploadArea.classList.remove('drag-over');
-        }
-        
-        fileUploadArea.addEventListener('drop', handleDrop, false);
-        
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            
-            if (files.length > 0) {
-                fileInput.files = files;
-                handleFileSelection(files[0]);
-            }
-        }
-        
-        // Add click handler that works with the file input overlay
-        fileUploadArea.addEventListener('click', function(e) {
-            // Only trigger if we didn't click directly on the file input
-            if (e.target !== fileInput) {
-                fileInput.click();
-            }
-        });
+        uploadArea.addEventListener('click', function(e) { if (e.target !== cvInput) cvInput.click(); });
     }
-    
-    // Main form submission handler function
+
     async function handleFormSubmission(form) {
-        // Clear previous errors
         clearAllFormErrors();
-        
-        // Validate form before submission
-        if (!validateFormBeforeSubmit()) {
-            return;
-        }
-        
-        // Show loading state
+        if (!validateFormBeforeSubmit()) return;
         setFormLoadingState(true);
-        
+
         try {
-            // Prepare FormData with file
-            const formData = new FormData(form);
-            
-            // Get CSRF token
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
-                            document.querySelector('input[name="_token"]')?.value;
-            
-            // Get job ID from the current page context
-            const jobId = getJobIdFromPage();
-            
-            if (!jobId) {
-                throw new Error('Job ID not found');
-            }
-            
-            // Make API call
-            const response = await fetch(`/api/jobs/${jobId}/apply`, {
+            var jobId = getJobIdFromPage();
+            if (!jobId) throw new Error('Không tìm thấy Job ID');
+
+            // Build FormData with correct backend field names
+            var formData = new FormData();
+            formData.append('applicant_name', document.getElementById('full_name').value.trim());
+            formData.append('applicant_email', document.getElementById('email').value.trim());
+            formData.append('applicant_phone', document.getElementById('phone').value.trim());
+
+            var cvFile = document.getElementById('cv').files[0];
+            if (cvFile) formData.append('resume', cvFile);
+
+            var coverLetter = document.getElementById('cover_letter').value.trim();
+            if (coverLetter) formData.append('cover_letter', coverLetter);
+
+            var csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            var response = await fetch('/api/v2/jobs/' + jobId + '/apply', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken,
@@ -710,85 +247,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: formData
             });
-            
-            const result = await response.json();
-            
-            if (response.ok && result.success) {
-                // Success - show success message
+
+            var result = await response.json();
+
+            if (response.ok) {
                 showSuccessMessage(result);
-                
-                // Close modal after short delay
-                setTimeout(() => {
-                    closeApplyModal();
-                    resetForm();
-                }, 2000);
-                
-                // Track successful job application
-                if (typeof window.trackJobApplication === 'function') {
-                    const jobTitle = document.querySelector('h1.job-title')?.textContent?.trim();
-                    const companyName = document.querySelector('.company-name')?.textContent?.trim();
-                    window.trackJobApplication(jobId, jobTitle, companyName);
-                } else if (typeof window.trackEvent === 'function') {
-                    window.trackEvent('job_application_success', {
-                        'event_category': 'jobs',
-                        'job_id': jobId,
-                        'application_code': result.data?.application_code,
-                        'value': 1
-                    });
-                }
-                
-            } else {
-                // Handle validation errors or other errors
-                if (result.errors) {
-                    displayValidationErrors(result.errors);
-                } else {
-                    showErrorMessage(result.message || 'Có lỗi xảy ra khi gửi hồ sơ');
-                }
-                
-                // Track application error event
                 if (typeof window.trackEvent === 'function') {
-                    window.trackEvent('job_application_error', {
-                        'event_category': 'jobs',
-                        'job_id': jobId,
-                        'error_type': 'validation',
-                        'error_message': result.message,
-                        'value': 1
-                    });
+                    window.trackEvent('job_application_success', { 'event_category': 'jobs', 'job_id': jobId, 'application_code': result.application_code });
                 }
-            }
-            
-        } catch (error) {
-            
-            if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                showErrorMessage('Không thể kết nối đến server. Vui lòng kiểm tra kết nối internet và thử lại.');
+                setTimeout(function() { closeApplyModal(); resetForm(); }, 2500);
+            } else if (response.status === 422 && result.errors) {
+                displayValidationErrors(result.errors);
             } else {
-                showErrorMessage('Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.');
+                showErrorMessage(result.message || 'Có lỗi xảy ra khi gửi hồ sơ.');
             }
-            
-            // Track network error
-            if (typeof window.trackEvent === 'function') {
-                const jobId = getJobIdFromPage();
-                window.trackEvent('job_application_network_error', {
-                    'event_category': 'jobs',
-                    'job_id': jobId,
-                    'error_type': 'network',
-                    'error_message': error.message,
-                    'value': 1
-                });
-            }
+        } catch (error) {
+            showErrorMessage('Không thể kết nối đến server. Vui lòng thử lại.');
         } finally {
             setFormLoadingState(false);
         }
     }
-    
-    // Helper function to get job ID (using global function)
-    function getJobIdFromPage() {
-        return window.getJobIdFromPage();
-    }
-    
-    // Test function - can be called from browser console
-    window.testJobIdExtraction = function() {
-        const jobId = getJobIdFromPage();
-        return jobId;
-    };
 });
