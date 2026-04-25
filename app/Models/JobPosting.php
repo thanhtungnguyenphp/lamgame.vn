@@ -90,11 +90,13 @@ class JobPosting extends Model
 
     public function scopeByLocation($query, string $location)
     {
+        $location = str_replace(['%', '_'], ['\%', '\_'], $location);
         return $query->where('location', 'like', "%{$location}%");
     }
 
     public function scopeSearch($query, string $keyword)
     {
+        $keyword = str_replace(['%', '_'], ['\%', '\_'], $keyword);
         return $query->where(function ($q) use ($keyword) {
             $q->where('title', 'like', "%{$keyword}%")
               ->orWhere('description', 'like', "%{$keyword}%")
@@ -115,7 +117,11 @@ class JobPosting extends Model
 
     public function incrementViews(): void
     {
-        $this->increment('view_count');
+        $key = 'job_viewed_' . $this->id;
+        if (!session()->has($key)) {
+            $this->increment('view_count');
+            session()->put($key, true);
+        }
     }
 
     public function getUrlAttribute(): string
