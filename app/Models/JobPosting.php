@@ -22,6 +22,7 @@ class JobPosting extends Model
         'meta_title', 'meta_description', 'meta_keywords',
         'view_count', 'application_count', 'click_count',
         'created_by',
+        'crawl_source', 'crawl_source_id', 'crawl_source_url',
     ];
 
     protected $casts = [

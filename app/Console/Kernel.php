@@ -60,6 +60,14 @@ class Kernel extends ConsoleKernel
         $schedule->job(new \App\Jobs\ScrapeVietlotLottery('keno'))
             ->everyTenMinutes()
             ->between('6:00', '22:00');
+
+        // =============================================
+        // JOB CRAWLER — Crawl việc làm game hàng ngày
+        // =============================================
+        $schedule->command('job:crawl --source=all --category=all --limit=20')
+            ->dailyAt('08:00')
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/job-crawl.log'));
     }
 
     protected function commands(): void
