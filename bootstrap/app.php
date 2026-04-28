@@ -69,6 +69,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function (Schedule $schedule) {
         $schedule->command('blog:publish-scheduled')->everyFiveMinutes();
 
+        $schedule->command('forum:calculate-hot-scores')
+            ->hourly()
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/forum-hot-scores.log'));
+
         $schedule->command('sitemap:generate')
             ->dailyAt('02:00')
             ->appendOutputTo(storage_path('logs/sitemap.log'));

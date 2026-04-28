@@ -3,6 +3,10 @@
         <div class="fp-cmt-author">
             <div class="fm-avatar" style="width:28px;height:28px;font-size:0.65rem;">{{ strtoupper(substr($comment->author_name, 0, 1)) }}</div>
             <span class="fp-cmt-name">{{ $comment->author_name }}</span>
+            @if($comment->customer && $comment->customer->reputation > 0)
+            @php $badge = app(\App\Services\Forum\ForumReputationService::class)->getBadge($comment->customer->reputation); @endphp
+            <span class="fp-cmt-badge" title="{{ $badge['name'] }} ({{ $comment->customer->reputation }} điểm)">{{ $badge['icon'] }}</span>
+            @endif
             <span class="fp-cmt-time">{{ $comment->time_ago }}</span>
             @if($comment->is_best_answer)
             <span class="fp-best-badge"><i class="fas fa-check"></i> Câu trả lời tốt nhất</span>

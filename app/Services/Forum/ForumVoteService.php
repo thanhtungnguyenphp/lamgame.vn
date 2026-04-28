@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ForumVoteService
 {
+    public function __construct(
+        protected ForumReputationService $reputationService,
+    ) {}
+
     /**
      * Toggle vote on a voteable (ForumPost or ForumComment).
      * Returns updated counts.
@@ -17,10 +21,8 @@ class ForumVoteService
 
         if ($existing) {
             if ($existing->vote_type === $voteType) {
-                // Same vote type → remove (toggle off)
                 $existing->delete();
             } else {
-                // Different vote type → switch
                 $existing->update([
                     'vote_type'  => $voteType,
                     'ip_address' => request()->ip(),
@@ -28,13 +30,19 @@ class ForumVoteService
                 ]);
             }
         } else {
-            // New vote
             $voteable->votes()->create([
                 'voter_identifier' => $voterIdentifier,
                 'vote_type'        => $voteType,
                 'ip_address'       => request()->ip(),
                 'user_agent'       => request()->userAgent(),
             ]);
+
+            // Award reputation to content author for new votes
+            $authorId = $voteable->customer_id ?? null;
+            if ($authorId) {
+                $action = $voteType === 'like' ? 'vote_like' : 'vote_dislike';
+                $this->reputationService->award($authorId, $action, $voteable);
+            }
         }
 
         $voteable->refresh();

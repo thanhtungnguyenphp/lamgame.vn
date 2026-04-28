@@ -10,6 +10,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class ForumPostService
 {
+    public function __construct(
+        protected ForumReputationService $reputationService,
+    ) {}
     public function getIndexData(array $filters): array
     {
         $perPage = config('forum.posts_per_page', 15);
@@ -88,6 +91,11 @@ class ForumPostService
 
         if (!empty($data['tags'])) {
             $this->syncTags($post, $data['tags']);
+        }
+
+        // Award reputation
+        if ($customer) {
+            $this->reputationService->award($customer->id, 'post_created', $post);
         }
 
         return $post;
@@ -180,8 +188,13 @@ class ForumPostService
     public function search(string $query, array $filters = []): LengthAwarePaginator
     {
         $perPage = config('forum.posts_per_page', 15);
+        $sort = $filters['sort'] ?? 'relevance';
 
-        $q = ForumPost::published()->with(['category', 'tags'])->search($query);
+        $q = ForumPost::published()->with(['category', 'tags']);
+
+        // Use FULLTEXT search with relevance scoring
+        $q->selectRaw('forum_posts.*, MATCH(title, content) AGAINST(? IN BOOLEAN MODE) AS relevance_score', [$query])
+          ->whereRaw('MATCH(title, content) AGAINST(? IN BOOLEAN MODE)', [$query]);
 
         if (!empty($filters['category'])) {
             $q->where('category_id', $filters['category']);
@@ -189,8 +202,28 @@ class ForumPostService
         if (!empty($filters['type'])) {
             $q->ofType($filters['type']);
         }
+        if (!empty($filters['tag'])) {
+            $q->whereHas('tags', fn ($t) => $t->where('slug', $filters['tag']));
+        }
 
-        return $q->latest()->paginate($perPage)->appends(array_merge(['q' => $query], $filters));
+        $q = match ($sort) {
+            'newest'  => $q->latest(),
+            'votes'   => $q->orderByRaw('(likes_count - dislikes_count) DESC'),
+            'comments' => $q->orderByDesc('comments_count'),
+            default   => $q->orderByDesc('relevance_score'),
+        };
+
+        return $q->paginate($perPage)->appends(array_merge(['q' => $query], $filters));
+    }
+
+    public function getTrending(int $limit = 10): \Illuminate\Support\Collection
+    {
+        return ForumPost::published()
+            ->with(['category', 'tags'])
+            ->where('hot_score', '>', 0)
+            ->orderByDesc('hot_score')
+            ->limit($limit)
+            ->get();
     }
 
     public function updateStatus(ForumPost $post, string $status, ?bool $isFeatured = null, ?bool $isSticky = null): void

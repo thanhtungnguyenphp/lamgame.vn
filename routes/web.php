@@ -124,6 +124,8 @@ Route::prefix('forum')->name('forum.')->group(function () {
     // Main forum pages (public)
     Route::get('/', [ForumController::class, 'index'])->name('index');
     Route::get('/search', [ForumController::class, 'search'])->name('search');
+    Route::get('/trending', [ForumController::class, 'trending'])->name('trending');
+    Route::get('/leaderboard', [ForumController::class, 'leaderboard'])->name('leaderboard');
     Route::get('/posts/{post}', [ForumController::class, 'show'])->name('posts.show');
 
     // Categories and tags (public)

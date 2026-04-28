@@ -9,6 +9,7 @@ class ForumCommentService
 {
     public function __construct(
         protected ForumNotificationService $notificationService,
+        protected ForumReputationService $reputationService,
     ) {}
 
     public function create(ForumPost $post, array $data, $customer = null): ForumComment
@@ -37,6 +38,11 @@ class ForumCommentService
         // Process mentions
         $this->processMentions($comment, $post);
 
+        // Award reputation
+        if ($customer) {
+            $this->reputationService->award($customer->id, 'comment_created', $comment);
+        }
+
         return $comment;
     }
 
@@ -50,6 +56,11 @@ class ForumCommentService
 
         // Notify comment author
         $this->notificationService->notifyBestAnswer($comment);
+
+        // Award reputation
+        if ($comment->customer_id) {
+            $this->reputationService->award($comment->customer_id, 'best_answer', $comment);
+        }
     }
 
     public function unpinBestAnswer(ForumPost $post): void

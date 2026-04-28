@@ -15,6 +15,7 @@ use App\Services\Forum\ForumVoteService;
 use App\Services\Forum\ForumReportService;
 use App\Services\Forum\ForumBookmarkService;
 use App\Services\Forum\ForumNotificationService;
+use App\Services\Forum\ForumReputationService;
 
 class ForumController extends Controller
 {
@@ -25,6 +26,7 @@ class ForumController extends Controller
         protected ForumReportService $reportService,
         protected ForumBookmarkService $bookmarkService,
         protected ForumNotificationService $notificationService,
+        protected ForumReputationService $reputationService,
     ) {}
 
     /**
@@ -363,5 +365,24 @@ class ForumController extends Controller
 
         $this->notificationService->markAsRead($request->id, $user->id);
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Trending posts (public).
+     */
+    public function trending()
+    {
+        $posts = $this->postService->getTrending(20);
+        return view('lamgame.pages.forum.trending', compact('posts'));
+    }
+
+    /**
+     * Leaderboard (public).
+     */
+    public function leaderboard(Request $request)
+    {
+        $period = $request->get('period', 'all');
+        $leaders = $this->reputationService->getLeaderboard($period);
+        return view('lamgame.pages.forum.leaderboard', compact('leaders', 'period'));
     }
 }
