@@ -57,10 +57,12 @@ return Application::configure(basePath: dirname(__DIR__))
          * Register middleware aliases
          */
         $middleware->alias([
-            'seller'        => \App\Http\Middleware\CheckSeller::class,
-            'quota'         => \App\Http\Middleware\CheckSubscriptionQuota::class,
-            'firebase.auth' => \App\Http\Middleware\FirebaseAuth::class,
-            'api.key'       => \App\Http\Middleware\ApiKeyAuth::class,
+            'seller'          => \App\Http\Middleware\CheckSeller::class,
+            'quota'           => \App\Http\Middleware\CheckSubscriptionQuota::class,
+            'firebase.auth'   => \App\Http\Middleware\FirebaseAuth::class,
+            'api.key'         => \App\Http\Middleware\ApiKeyAuth::class,
+            'forum.rate'      => \App\Http\Middleware\ForumRateLimiter::class,
+            'forum.honeypot'  => \App\Http\Middleware\ForumHoneypot::class,
         ]);
     })
     ->withSchedule(function (Schedule $schedule) {

@@ -21,6 +21,7 @@ class ForumPost extends Model
         'content',
         'excerpt',
         'type',
+        'customer_id',
         'author_name',
         'author_email',
         'author_avatar',
@@ -81,6 +82,14 @@ class ForumPost extends Model
                 $post->excerpt = Str::limit(strip_tags($post->content), 160);
             }
         });
+    }
+
+    /**
+     * Get the customer that owns the post.
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(\Webkul\Customer\Models\CustomerProxy::modelClass(), 'customer_id');
     }
 
     /**

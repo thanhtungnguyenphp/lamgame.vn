@@ -18,123 +18,117 @@ class UserProfileController extends Controller
     {
         $customerModel = CustomerProxy::modelClass();
         $user = $customerModel::findOrFail($userId);
-        
-        // Get user's forum activity
-        $posts = ForumPost::where('author_id', $userId)
+
+        $posts = ForumPost::where('customer_id', $userId)
             ->with(['category', 'comments'])
             ->withCount(['comments', 'votes'])
             ->latest()
             ->paginate(10, ['*'], 'posts_page');
-            
-        $comments = ForumComment::where('author_id', $userId)
+
+        $comments = ForumComment::where('customer_id', $userId)
             ->with(['post'])
             ->latest()
             ->paginate(10, ['*'], 'comments_page');
-            
-        // Calculate user statistics
+
+        $latestPost = ForumPost::where('customer_id', $userId)->latest()->value('created_at');
+        $latestComment = ForumComment::where('customer_id', $userId)->latest()->value('created_at');
+
         $stats = [
-            'total_posts' => ForumPost::where('author_id', $userId)->count(),
-            'total_comments' => ForumComment::where('author_id', $userId)->count(),
-            'reputation' => $user->reputation ?? 0,
-            'joined_date' => $user->created_at,
-            'last_activity' => max(
-                ForumPost::where('author_id', $userId)->latest()->value('created_at'),
-                ForumComment::where('author_id', $userId)->latest()->value('created_at')
-            )
+            'total_posts'    => ForumPost::where('customer_id', $userId)->count(),
+            'total_comments' => ForumComment::where('customer_id', $userId)->count(),
+            'reputation'     => $user->reputation ?? 0,
+            'joined_date'    => $user->created_at,
+            'last_activity'  => $latestPost && $latestComment
+                ? max($latestPost, $latestComment)
+                : ($latestPost ?? $latestComment),
         ];
-        
+
         return view('forum.profile.show', compact('user', 'posts', 'comments', 'stats'));
     }
-    
+
     /**
      * Show edit profile form
      */
     public function edit()
     {
         $user = Auth::guard('customer')->user();
-        
+
         if (!$user) {
             return redirect()->route('customer.session.create');
         }
-        
+
         return view('forum.profile.edit', compact('user'));
     }
-    
+
     /**
      * Update user profile
      */
     public function update(Request $request)
     {
         $user = Auth::guard('customer')->user();
-        
+
         if (!$user) {
             return redirect()->route('customer.session.create');
         }
-        
+
         $request->validate([
-            'bio' => 'nullable|string|max:1000',
-            'avatar' => 'nullable|image|max:2048', // 2MB max
+            'bio'    => 'nullable|string|max:1000',
+            'avatar' => 'nullable|image|max:2048',
         ]);
-        
-        $updateData = [
-            'bio' => $request->bio,
-        ];
-        
-        // Handle avatar upload
+
+        $updateData = ['bio' => $request->bio];
+
         if ($request->hasFile('avatar')) {
-            // Delete old avatar if exists
             if ($user->avatar_url) {
                 Storage::delete($user->avatar_url);
             }
-            
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-            $updateData['avatar_url'] = $avatarPath;
+            $updateData['avatar_url'] = $request->file('avatar')->store('avatars', 'public');
         }
-        
+
         $user->update($updateData);
-        
+
         return redirect()->route('forum.profile.show', $user->id)
             ->with('success', 'Profile updated successfully!');
     }
-    
+
     /**
      * Get user's posts via AJAX
      */
     public function posts(Request $request, $userId)
     {
-        $posts = ForumPost::where('author_id', $userId)
+        $posts = ForumPost::where('customer_id', $userId)
             ->with(['category', 'comments'])
             ->withCount(['comments', 'votes'])
             ->latest()
             ->paginate(10);
-            
+
         if ($request->ajax()) {
             return response()->json([
-                'posts' => $posts->items(),
-                'pagination' => $posts->toArray()
+                'posts'      => $posts->items(),
+                'pagination' => $posts->toArray(),
             ]);
         }
-        
+
         return $posts;
     }
-    
+
     /**
      * Get user's comments via AJAX
      */
     public function comments(Request $request, $userId)
     {
-        $comments = ForumComment::where('author_id', $userId)
+        $comments = ForumComment::where('customer_id', $userId)
             ->with(['post'])
             ->latest()
             ->paginate(10);
-            
+
         if ($request->ajax()) {
             return response()->json([
-                'comments' => $comments->items(),
-                'pagination' => $comments->toArray()
+                'comments'   => $comments->items(),
+                'pagination' => $comments->toArray(),
             ]);
         }
-        
+
         return $comments;
     }
 }

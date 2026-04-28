@@ -13,6 +13,7 @@ class ForumVote extends Model
     protected $fillable = [
         'voteable_type',
         'voteable_id',
+        'customer_id',
         'voter_identifier',
         'vote_type',
         'ip_address',

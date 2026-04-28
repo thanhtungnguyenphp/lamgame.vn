@@ -15,6 +15,7 @@ class ForumComment extends Model
     protected $fillable = [
         'post_id',
         'parent_id',
+        'customer_id',
         'content',
         'author_name',
         'author_email',
@@ -66,6 +67,14 @@ class ForumComment extends Model
                 $comment->parent->updateRepliesCount();
             }
         });
+    }
+
+    /**
+     * Get the customer that owns the comment.
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(\Webkul\Customer\Models\CustomerProxy::modelClass(), 'customer_id');
     }
 
     /**

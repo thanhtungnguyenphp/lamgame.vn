@@ -130,22 +130,24 @@ Route::prefix('forum')->name('forum.')->group(function () {
     Route::get('/category/{category}', [ForumController::class, 'category'])->name('category');
     Route::get('/tag/{tag}', [ForumController::class, 'tag'])->name('tag');
 
-    // Protected routes - authentication handled in controller
-    // Post management
-    Route::get('/create', [ForumController::class, 'create'])->name('posts.create');
-    Route::post('/posts', [ForumController::class, 'store'])->name('posts.store');
-    Route::get('/posts/{post}/edit', [ForumController::class, 'edit'])->name('posts.edit');
-    Route::put('/posts/{post}', [ForumController::class, 'update'])->name('posts.update');
-    Route::delete('/posts/{post}', [ForumController::class, 'destroy'])->name('posts.destroy');
+    // Protected routes with rate limiting & honeypot
+    Route::middleware(['customer', 'forum.honeypot'])->group(function () {
+        // Post management
+        Route::get('/create', [ForumController::class, 'create'])->name('posts.create');
+        Route::post('/posts', [ForumController::class, 'store'])->middleware('forum.rate:posts')->name('posts.store');
+        Route::get('/posts/{post}/edit', [ForumController::class, 'edit'])->name('posts.edit');
+        Route::put('/posts/{post}', [ForumController::class, 'update'])->middleware('forum.rate:posts')->name('posts.update');
+        Route::delete('/posts/{post}', [ForumController::class, 'destroy'])->name('posts.destroy');
 
-    // Comments
-    Route::post('/posts/{post}/comments', [ForumController::class, 'storeComment'])->name('comments.store');
+        // Comments
+        Route::post('/posts/{post}/comments', [ForumController::class, 'storeComment'])->middleware('forum.rate:comments')->name('comments.store');
 
-    // Voting (AJAX)
-    Route::post('/vote', [ForumController::class, 'vote'])->name('vote');
+        // Voting (AJAX)
+        Route::post('/vote', [ForumController::class, 'vote'])->middleware('forum.rate:votes')->name('vote');
 
-    // Reporting
-    Route::post('/report', [ForumController::class, 'report'])->name('report');
+        // Reporting
+        Route::post('/report', [ForumController::class, 'report'])->middleware('forum.rate:reports')->name('report');
+    });
 });
 
 // Admin forum routes - handled by packages/Webkul/Admin/src/Routes/forum-routes.php
