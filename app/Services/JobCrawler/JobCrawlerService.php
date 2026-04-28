@@ -86,16 +86,20 @@ class JobCrawlerService
 
     private function logCrawl(string $source, array $raw, string $status, ?int $jobPostingId = null, ?string $error = null): void
     {
-        JobCrawlLog::create([
-            'source'          => $source,
-            'source_id'       => $raw['source_id'] ?? null,
-            'source_url'      => $raw['source_url'] ?? '',
-            'job_posting_id'  => $jobPostingId,
-            'status'          => $status,
-            'raw_data'        => $raw,
-            'error_message'   => $error,
-            'response_time_ms' => $raw['response_time_ms'] ?? null,
-            'created_at'      => now(),
-        ]);
+        JobCrawlLog::updateOrCreate(
+            [
+                'source'    => $source,
+                'source_id' => $raw['source_id'] ?? null,
+            ],
+            [
+                'source_url'      => $raw['source_url'] ?? '',
+                'job_posting_id'  => $jobPostingId,
+                'status'          => $status,
+                'raw_data'        => $raw,
+                'error_message'   => $error,
+                'response_time_ms' => $raw['response_time_ms'] ?? null,
+                'created_at'      => now(),
+            ]
+        );
     }
 }
