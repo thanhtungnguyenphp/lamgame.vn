@@ -141,6 +141,53 @@ class SellerManageController extends Controller
         ]);
     }
 
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $seller = SourceGameSeller::find($id);
+        if (!$seller) {
+            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy seller.'], 404);
+        }
+
+        $validated = $request->validate([
+            'shop_name'        => 'sometimes|string|max:255',
+            'shop_description' => 'sometimes|nullable|string',
+            'contact_email'    => 'sometimes|nullable|email',
+            'contact_phone'    => 'sometimes|nullable|string|max:20',
+            'website'          => 'sometimes|nullable|url',
+            'business_type'    => 'sometimes|in:individual,company',
+            'tax_id'           => 'sometimes|nullable|string|max:50',
+            'bank_name'        => 'sometimes|nullable|string|max:100',
+            'bank_account'     => 'sometimes|nullable|string|max:50',
+            'bank_holder'      => 'sometimes|nullable|string|max:100',
+        ]);
+
+        $seller->update($validated);
+        $seller->refresh();
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Seller updated successfully',
+            'data'    => [
+                'id'               => $seller->id,
+                'shop_name'        => $seller->shop_name,
+                'shop_slug'        => $seller->shop_slug,
+                'shop_description' => $seller->shop_description,
+                'contact_email'    => $seller->contact_email,
+                'contact_phone'    => $seller->contact_phone,
+                'website'          => $seller->website,
+                'business_type'    => $seller->business_type,
+                'status'           => $seller->status,
+                'verified'         => (bool) $seller->verified,
+                'bank_info'        => [
+                    'bank_name'    => $seller->bank_name,
+                    'bank_account' => $seller->bank_account,
+                    'bank_holder'  => $seller->bank_holder,
+                ],
+                'updated_at'       => $seller->updated_at?->toIso8601String(),
+            ],
+        ]);
+    }
+
     public function approve(Request $request, int $id): JsonResponse
     {
         $seller = SourceGameSeller::find($id);
