@@ -201,9 +201,7 @@ class Order extends Model implements OrderContract
      */
     public function customer(): MorphTo
     {
-        // Create a safe morphTo that avoids loading Customer class issues
-        return $this->morphTo('customer', 'customer_type', 'customer_id')
-            ->where('id', -999); // Non-existent ID to ensure no results
+        return $this->morphTo('customer', 'customer_type', 'customer_id');
     }
 
     /**

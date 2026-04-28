@@ -149,6 +149,7 @@ class SellerProductController extends Controller
             // Step 6: Set seller_id (not in fillable, use direct update)
             DB::table('products')->where('id', $product->id)->update([
                 'seller_id' => $seller->id,
+                'pending_review' => true,
             ]);
 
             // Refresh product and dispatch event to trigger flat indexer
