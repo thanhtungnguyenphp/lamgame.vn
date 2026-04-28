@@ -1,0 +1,10 @@
+/data/www/lamgame.vn/storage/logs/*.log {
+    daily
+    missingok
+    rotate 7
+    compress
+    delaycompress
+    notifempty
+    copytruncate
+    su root root
+}

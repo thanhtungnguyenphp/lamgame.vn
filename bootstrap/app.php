@@ -3,6 +3,7 @@
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\SeoMetaRobots;
 use App\Http\Middleware\TrustProxies;
+use Sentry\Laravel\Integration;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Cookie\Middleware\EncryptCookies as BaseEncryptCookies;
@@ -121,5 +122,5 @@ return Application::configure(basePath: dirname(__DIR__))
             ->between('6:00', '22:00');
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        Integration::handles($exceptions);
     })->create();
