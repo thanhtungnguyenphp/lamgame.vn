@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Mail\ProductApproved;
+use App\Mail\ProductRejected;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class AdminProductController extends Controller
 {
@@ -14,7 +17,6 @@ class AdminProductController extends Controller
             ->whereNotNull('seller_id')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
-
         return view('admin.products.sellers', compact('products'));
     }
 
@@ -24,7 +26,6 @@ class AdminProductController extends Controller
             ->where('pending_review', true)
             ->orderBy('updated_at', 'desc')
             ->paginate(20);
-
         return view('admin.products.pending', compact('products'));
     }
 
@@ -32,7 +33,6 @@ class AdminProductController extends Controller
     {
         $product = Product::with(['seller.customer', 'images', 'categories', 'downloadable_links'])
             ->findOrFail($id);
-
         return view('admin.products.review', compact('product'));
     }
 
@@ -50,8 +50,9 @@ class AdminProductController extends Controller
             'rejection_reason' => null,
         ]);
 
-        // TODO: Send email to seller
-        // Mail::to($product->seller->contact_email)->send(new ProductApproved($product));
+        if ($product->seller?->contact_email) {
+            Mail::to($product->seller->contact_email)->queue(new ProductApproved($product, $product->seller));
+        }
 
         return back()->with('success', 'Đã duyệt sản phẩm thành công!');
     }
@@ -74,8 +75,9 @@ class AdminProductController extends Controller
             'rejection_reason' => $request->reason,
         ]);
 
-        // TODO: Send email to seller
-        // Mail::to($product->seller->contact_email)->send(new ProductRejected($product, $request->reason));
+        if ($product->seller?->contact_email) {
+            Mail::to($product->seller->contact_email)->queue(new ProductRejected($product, $product->seller, $request->reason));
+        }
 
         return back()->with('success', 'Đã từ chối sản phẩm.');
     }

@@ -1,6 +1,6 @@
 # LAMGAME.VN — TRẠNG THÁI DỰ ÁN
-> Cập nhật: 25/04/2026 14:58 (GMT+7)
-> Production deployed ✅ — Job Optimized ✅ — 48 Mini Games ✅ — Redis cache ✅
+> Cập nhật: 28/04/2026 13:56 (GMT+7)
+> Production deployed ✅ — Job System V2 ✅ — Job Crawler ✅ — 48 Mini Games ✅ — Redis cache ✅ — E-Commerce API ✅
 
 ---
 
@@ -23,11 +23,13 @@
 - [x] Mini Games (48 game HTML5) — synced + ZIP 24/04
 - [x] Xổ số (KQXS, Vietlot, dò vé, thống kê)
 - [x] Landing Pages (admin CRUD)
-- [x] Việc làm Game — **Refactored 24/04** (job_postings table riêng, −8,000 lines)
+- [x] Việc làm Game — **Refactored 24/04** → **Deployed + Crawled 28/04** (job_postings table riêng, crawler TopDev)
+- [x] Job Crawler (crawl TopDev, normalize, dedup, auto-import)
 - [x] Auth & User (đăng ký, đăng nhập, quên MK, verify email)
 - [x] Subscription + PayPal
 - [x] AI Tools (concept, codegen, debug, test, review — proxy qua II-Agent)
 - [x] Sport / Bóng đá (API: live scores, BXH, highlights, articles)
+- [x] **E-Commerce Management API** (28/04) — 33 endpoints, 7 modules: Dashboard, Products, Orders, Sellers, Earnings, Withdrawals, Customers
 - [x] Banner System (package LamGame/Banner)
 - [x] SEO (sitemap, Google Index push, Adsense)
 - [x] Collections (bookmark sản phẩm)
@@ -89,106 +91,27 @@
 
 ## 📋 VIỆC TIẾP THEO (khi quay lại)
 
-1. **Queue → Redis** — `QUEUE_CONNECTION=redis` trong .env production (10 phút)
-2. **Log rotation** — cấu hình daily log channel + logrotate (15 phút)
-3. **Sentry** — setup error monitoring (1 giờ)
-4. **SportPulse Phase 9** — Crawl data (11 tasks, ~6 ngày)
+1. **Tích hợp Job Management vào Ohha Studio** — tương tự chức năng Blog (đang làm)
+2. **Queue → Redis** — `QUEUE_CONNECTION=redis` trong .env production (10 phút)
+3. **Log rotation** — cấu hình daily log channel + logrotate (15 phút)
+4. **Sentry** — setup error monitoring (1 giờ)
+5. **SportPulse Phase 9** — Crawl data (11 tasks, ~6 ngày)
 
 ---
 
-## 🔵 PAYMENT
+## 🔄 CHANGELOG 28/04/2026
 
-| Kênh | Trạng thái | Ghi chú |
-|------|:----------:|---------|
-| PayPal | ✅ LIVE | Production go-live 23/04 — AI Subscription + Source Game checkout hoạt động |
-| Lemon Squeezy | ⏳ Đang chờ duyệt | Store #334725 — Chờ Stripe identity verification |
-
----
-
-## 🟢 ĐÃ HOÀN THÀNH
-
-- [x] E-Commerce Core (Bagisto)
-- [x] Source Game Marketplace (listing, detail, search, sort, SEO)
-- [x] Seller System (đăng ký, duyệt, dashboard, CRUD, versioning, earnings, withdrawals)
-- [x] Forum / Cộng đồng
-- [x] Blog (CRUD, scheduled publish, API publish)
-- [x] Mini Games (~48 game HTML5) ← cập nhật từ 40
-- [x] Xổ số (KQXS, Vietlot, dò vé, thống kê)
-- [x] Landing Pages (admin CRUD)
-- [x] Việc làm Game (đăng tuyển, ứng tuyển, bulk ops, analytics, AI JD)
-- [x] Auth & User (đăng ký, đăng nhập, quên MK, verify email)
-- [x] Subscription + PayPal
-- [x] AI Tools (concept, codegen, debug, test, review — proxy qua II-Agent)
-- [x] Sport / Bóng đá (API: live scores, BXH, highlights, articles)
-- [x] Banner System (package LamGame/Banner)
-- [x] SEO (sitemap, Google Index push, Adsense)
-- [x] Collections (bookmark sản phẩm)
-- [x] Docker (8 services: php, nginx, mysql, redis, meili, mailpit, ii-agent, ii-postgres)
-- [x] **Mini Game Products Sync** — 48 game HTML5 → products + ZIP files (24/04)
-- [x] **Job System Refactor** — tách khỏi Products table → job_postings riêng (24/04)
-- [x] **Cache Redis** — chuyển CACHE_STORE từ file sang redis (24/04)
-
----
-
-## 🟡 ĐANG LÀM / CHỜ
-
-| Việc | Trạng thái | Chi tiết |
-|------|:----------:|----------|
-| Lemon Squeezy integration | ⏳ Chờ duyệt | Chờ Stripe verify → kích hoạt live mode |
-| Upload ZIP thật lên production | ⬜ Chưa làm | 48 file ZIP đã tạo local (140MB), cần rsync lên server |
-
----
-
-## 🔴 CHƯA LÀM
-
-### Sản phẩm
-- [ ] Trang "Thuê Team Dev" (service page + form báo giá)
-- [ ] Review/rating system cho source game
-- [ ] Demo/preview trực tiếp cho source game
-- [ ] License types (single, multi, extended)
-- [ ] Thêm AI tools: Asset Generator, GDD Generator
-- [ ] Streaming response cho AI tools
-- [ ] Sport frontend (web views)
-
-### Kỹ thuật
-- [x] ~~Chuyển cache sang Redis~~ ✅ 24/04
-- [ ] Chuyển queue sang Redis (production)
-- [ ] Log rotation (laravel.log đang 23MB)
-- [ ] Dọn file macOS metadata (._*)
-- [ ] Error monitoring (Sentry)
-- [ ] CI/CD pipeline
-- [ ] Unit/Feature tests
-
----
-
-## 📊 SỐ LIỆU
-
-| Metric | Số lượng |
-|--------|:--------:|
-| Controllers | 21 |
-| Models | 40 |
-| Views (Blade) | 123 |
-| Services | 11 |
-| Migrations | 76 |
-| Database tables | 192 |
-| Mini Games | 48 |
-| Source Game Products | 68 |
-| Job Postings | 10 |
-| Docker services | 8 |
-| Tests | 0 ❌ |
-
----
-
-## 📋 VIỆC TIẾP THEO (ưu tiên)
-
-1. **Upload 48 ZIP files lên production** — rsync `storage/app/private/product_downloadable_links/` (140MB)
-2. **Chạy migrate production** — 3 migrations job_postings (backup DB trước)
-3. **Chạy seeder production** — `MiniGameProductsSyncSeeder` cho 48 mini game
-4. **Chờ Stripe duyệt** → kích hoạt Lemon Squeezy live
-5. **Queue sang Redis** — `QUEUE_CONNECTION=redis` trong .env production
-6. **Log rotation** — cấu hình daily log + logrotate
-7. **Error monitoring** — setup Sentry
-8. **SportPulse Phase 9** — Crawl data (11 tasks, ~6 ngày)
+### Job System Production Deploy + Crawler
+- **Deploy migration production** — 3 migrations job_postings chạy thành công
+- **Job Crawler hoạt động** — crawl dữ liệu từ TopDev, normalize, dedup, import tự động
+- **Tài liệu API** — tạo `docs/job/JOB_API_GUIDE.md` cho tích hợp Ohha Studio
+- **Tài liệu E-Commerce API** — tạo `docs/ecommerce/ECOMMERCE_API_GUIDE.md` (DB schema, 6 modules, route design)
+- **Fix 4 bugs:**
+  - `SourceGameSeller::products()` — FK `company_id` → `seller_id`
+  - `Order::customer()` — bỏ `where('id', -999)` hack
+  - `SellerProductController::store()` — thêm `pending_review=true`
+  - `AdminProductController` — implement email notifications (ProductApproved/ProductRejected)
+- **Files mới:** `ProductApproved.php`, `ProductRejected.php`, `product-approved.blade.php`, `product-rejected.blade.php`
 
 ---
 
