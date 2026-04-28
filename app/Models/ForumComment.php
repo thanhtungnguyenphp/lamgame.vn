@@ -22,6 +22,7 @@ class ForumComment extends Model
         'author_avatar',
         'author_website',
         'status',
+        'is_best_answer',
         'likes_count',
         'dislikes_count',
         'replies_count',
@@ -31,6 +32,7 @@ class ForumComment extends Model
     ];
 
     protected $casts = [
+        'is_best_answer' => 'boolean',
         'likes_count' => 'integer',
         'dislikes_count' => 'integer',
         'replies_count' => 'integer',

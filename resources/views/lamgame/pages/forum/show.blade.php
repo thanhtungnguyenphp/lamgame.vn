@@ -76,11 +76,17 @@
                     {!! nl2br(e($post->content)) !!}
                 </div>
 
-                {{-- Share --}}
+                {{-- Actions --}}
                 <div class="fp-actions">
                     <button class="fp-action-btn" onclick="if(navigator.share){navigator.share({title:document.title,url:location.href})}else{navigator.clipboard.writeText(location.href).then(()=>alert('Đã sao chép link!'))}">
                         <i class="fas fa-share-alt"></i> Chia sẻ
                     </button>
+                    @auth('customer')
+                    <button class="fp-action-btn fp-bookmark-btn {{ $post->isBookmarkedBy(auth('customer')->id()) ? 'active' : '' }}" onclick="toggleBookmark(this)" data-post="{{ $post->slug }}">
+                        <i class="{{ $post->isBookmarkedBy(auth('customer')->id()) ? 'fas' : 'far' }} fa-bookmark"></i>
+                        <span>{{ $post->isBookmarkedBy(auth('customer')->id()) ? 'Đã lưu' : 'Lưu' }}</span>
+                    </button>
+                    @endauth
                 </div>
             </article>
 
@@ -193,6 +199,15 @@
 .fp-actions { display: flex; gap: 0.5rem; padding-top: 1rem; border-top: 1px solid #f1f5f9; }
 .fp-action-btn { background: #f1f5f9; border: none; padding: 0.5rem 1rem; border-radius: 6px; color: #64748b; font-size: 0.85rem; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 0.375rem; }
 .fp-action-btn:hover { background: #e2e8f0; color: #1a202c; }
+.fp-bookmark-btn.active { background: #fef3c7; color: #d97706; }
+.fp-bookmark-btn.active:hover { background: #fde68a; }
+
+/* Best Answer */
+.fp-cmt-best { border-left: 3px solid #10b981; background: #f0fdf4; padding-left: 0.75rem; border-radius: 0 8px 8px 0; }
+.fp-best-badge { display: inline-flex; align-items: center; gap: 0.25rem; background: #10b981; color: #fff; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 600; }
+.fp-pin-btn { background: none; border: 1px dashed #94a3b8; padding: 0.25rem 0.5rem; border-radius: 4px; color: #94a3b8; font-size: 0.75rem; cursor: pointer; transition: all .15s; }
+.fp-pin-btn:hover { border-color: #10b981; color: #10b981; }
+.fp-pin-btn.pinned { border-style: solid; border-color: #10b981; color: #10b981; background: #f0fdf4; }
 
 /* Comments */
 .fp-comments { background: #fff; border-radius: 10px; border: 1px solid #e2e8f0; padding: 1.5rem; margin-bottom: 1.25rem; }
@@ -269,5 +284,37 @@
     .fp-cmt-replies { padding-left: 0.75rem; }
 }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+function toggleBookmark(btn) {
+    const slug = btn.dataset.post;
+    fetch(`/forum/posts/${slug}/bookmark`, {
+        method: 'POST',
+        headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'Content-Type': 'application/json'},
+    }).then(r => r.json()).then(data => {
+        if (data.success) {
+            const icon = btn.querySelector('i');
+            const label = btn.querySelector('span');
+            btn.classList.toggle('active', data.bookmarked);
+            icon.className = data.bookmarked ? 'fas fa-bookmark' : 'far fa-bookmark';
+            label.textContent = data.bookmarked ? 'Đã lưu' : 'Lưu';
+        }
+    });
+}
+
+function pinBestAnswer(btn, commentId) {
+    const slug = '{{ $post->slug }}';
+    fetch(`/forum/posts/${slug}/pin-answer`, {
+        method: 'POST',
+        headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json', 'Content-Type': 'application/json'},
+        body: JSON.stringify({comment_id: commentId}),
+    }).then(r => r.json()).then(data => {
+        if (data.success) location.reload();
+        else if (data.message) alert(data.message);
+    });
+}
+</script>
 @endpush
 @endsection

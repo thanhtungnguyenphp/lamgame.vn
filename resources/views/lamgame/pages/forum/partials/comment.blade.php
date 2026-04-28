@@ -1,22 +1,30 @@
-<div class="fp-cmt" id="comment-{{ $comment->id }}">
+<div class="fp-cmt {{ $comment->is_best_answer ? 'fp-cmt-best' : '' }}" id="comment-{{ $comment->id }}">
     <div class="fp-cmt-hdr">
         <div class="fp-cmt-author">
             <div class="fm-avatar" style="width:28px;height:28px;font-size:0.65rem;">{{ strtoupper(substr($comment->author_name, 0, 1)) }}</div>
             <span class="fp-cmt-name">{{ $comment->author_name }}</span>
             <span class="fp-cmt-time">{{ $comment->time_ago }}</span>
+            @if($comment->is_best_answer)
+            <span class="fp-best-badge"><i class="fas fa-check"></i> Câu trả lời tốt nhất</span>
+            @endif
         </div>
         @if($comment->likes_count > 0)
         <span class="fp-cmt-action"><i class="far fa-heart"></i> {{ $comment->likes_count }}</span>
         @endif
     </div>
 
-    <p class="fp-cmt-body">{{ $comment->content }}</p>
+    <p class="fp-cmt-body">{!! nl2br(e($comment->content)) !!}</p>
 
     <div class="fp-cmt-footer">
         @auth('customer')
         <button class="fp-cmt-action" onclick="document.getElementById('reply-{{ $comment->id }}').classList.toggle('show')">
             <i class="far fa-comment"></i> Trả lời
         </button>
+        @if(isset($post) && $post->customer_id === auth('customer')->id() && !$comment->parent_id)
+        <button class="fp-pin-btn {{ $comment->is_best_answer ? 'pinned' : '' }}" onclick="pinBestAnswer(this, {{ $comment->id }})">
+            <i class="fas fa-check-circle"></i> {{ $comment->is_best_answer ? 'Bỏ chọn' : 'Chọn trả lời tốt nhất' }}
+        </button>
+        @endif
         @endauth
     </div>
 
@@ -39,7 +47,7 @@
     @if($comment->publishedReplies->count() > 0)
     <div class="fp-cmt-replies">
         @foreach($comment->publishedReplies as $reply)
-            @include('lamgame.pages.forum.partials.comment', ['comment' => $reply])
+            @include('lamgame.pages.forum.partials.comment', ['comment' => $reply, 'post' => $post ?? $comment->post])
         @endforeach
     </div>
     @endif

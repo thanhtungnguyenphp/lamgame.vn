@@ -142,6 +142,18 @@ Route::prefix('forum')->name('forum.')->group(function () {
         // Comments
         Route::post('/posts/{post}/comments', [ForumController::class, 'storeComment'])->middleware('forum.rate:comments')->name('comments.store');
 
+        // Bookmark
+        Route::post('/posts/{post}/bookmark', [ForumController::class, 'bookmark'])->name('posts.bookmark');
+        Route::get('/bookmarks', [ForumController::class, 'bookmarks'])->name('bookmarks');
+
+        // Pin best answer
+        Route::post('/posts/{post}/pin-answer', [ForumController::class, 'pinBestAnswer'])->name('posts.pin_answer');
+
+        // Notifications
+        Route::get('/notifications', [ForumController::class, 'notifications'])->name('notifications');
+        Route::get('/notifications/count', [ForumController::class, 'notificationCount'])->name('notifications.count');
+        Route::post('/notifications/read', [ForumController::class, 'markNotificationRead'])->name('notifications.read');
+
         // Voting (AJAX)
         Route::post('/vote', [ForumController::class, 'vote'])->middleware('forum.rate:votes')->name('vote');
 

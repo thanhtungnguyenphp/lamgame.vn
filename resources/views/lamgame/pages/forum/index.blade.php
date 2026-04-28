@@ -13,9 +13,18 @@
                     <h1 class="fm-hdr-title">🎮 Cộng Đồng Game Developer</h1>
                     <p class="fm-hdr-desc">Chia sẻ, thảo luận và học hỏi cùng cộng đồng game dev Việt Nam</p>
                 </div>
-                <a href="{{ route('forum.posts.create') }}" class="fm-btn-create">
-                    <i class="fas fa-pen"></i> Đăng bài
-                </a>
+                <div class="fm-hdr-actions">
+                    @auth('customer')
+                    <a href="{{ route('forum.bookmarks') }}" class="fm-hdr-icon" title="Bài đã lưu"><i class="far fa-bookmark"></i></a>
+                    <a href="{{ route('forum.notifications') }}" class="fm-hdr-icon fm-notif-bell" title="Thông báo" id="notifBell">
+                        <i class="far fa-bell"></i>
+                        <span class="fm-notif-badge" id="notifBadge" style="display:none;"></span>
+                    </a>
+                    @endauth
+                    <a href="{{ route('forum.posts.create') }}" class="fm-btn-create">
+                        <i class="fas fa-pen"></i> Đăng bài
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -112,6 +121,10 @@
     transition: opacity .2s;
 }
 .fm-btn-create:hover { opacity: .85; }
+.fm-hdr-actions { display: flex; align-items: center; gap: 0.75rem; }
+.fm-hdr-icon { color: #a0aec0; font-size: 1.2rem; position: relative; transition: color .15s; }
+.fm-hdr-icon:hover { color: #fff; }
+.fm-notif-badge { position: absolute; top: -6px; right: -8px; background: #ef4444; color: #fff; font-size: 0.6rem; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
 
 /* Toolbar */
 .fm-toolbar { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 0.75rem 0; position: sticky; top: 0; z-index: 100; }
@@ -232,4 +245,25 @@
 }
 </style>
 @endpush
+
+@auth('customer')
+@push('scripts')
+<script>
+(function(){
+    const badge = document.getElementById('notifBadge');
+    if (!badge) return;
+    function check() {
+        fetch('{{ route("forum.notifications.count") }}', {headers:{'Accept':'application/json'}})
+            .then(r => r.json())
+            .then(d => {
+                if (d.count > 0) { badge.textContent = d.count > 99 ? '99+' : d.count; badge.style.display = ''; }
+                else { badge.style.display = 'none'; }
+            }).catch(() => {});
+    }
+    check();
+    setInterval(check, 30000);
+})();
+</script>
+@endpush
+@endauth
 @endsection

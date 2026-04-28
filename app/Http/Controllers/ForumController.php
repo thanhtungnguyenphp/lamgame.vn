@@ -13,6 +13,8 @@ use App\Services\Forum\ForumPostService;
 use App\Services\Forum\ForumCommentService;
 use App\Services\Forum\ForumVoteService;
 use App\Services\Forum\ForumReportService;
+use App\Services\Forum\ForumBookmarkService;
+use App\Services\Forum\ForumNotificationService;
 
 class ForumController extends Controller
 {
@@ -21,6 +23,8 @@ class ForumController extends Controller
         protected ForumCommentService $commentService,
         protected ForumVoteService $voteService,
         protected ForumReportService $reportService,
+        protected ForumBookmarkService $bookmarkService,
+        protected ForumNotificationService $notificationService,
     ) {}
 
     /**
@@ -253,5 +257,111 @@ class ForumController extends Controller
             'success' => true,
             'message' => 'Báo cáo đã được gửi. Chúng tôi sẽ xem xét sớm.',
         ]);
+    }
+
+    /**
+     * Toggle bookmark on a post (AJAX, auth via middleware).
+     */
+    public function bookmark(ForumPost $post)
+    {
+        $user = auth()->guard('customer')->user();
+        $bookmarked = $this->bookmarkService->toggle($user->id, $post);
+
+        return response()->json([
+            'success'    => true,
+            'bookmarked' => $bookmarked,
+            'message'    => $bookmarked ? 'Đã lưu bài viết.' : 'Đã bỏ lưu bài viết.',
+        ]);
+    }
+
+    /**
+     * Show bookmarked posts (auth via middleware).
+     */
+    public function bookmarks()
+    {
+        $user = auth()->guard('customer')->user();
+        $posts = $this->bookmarkService->getByCustomer($user->id);
+
+        return view('lamgame.pages.forum.bookmarks', compact('posts'));
+    }
+
+    /**
+     * Pin/unpin best answer (AJAX, auth via middleware).
+     */
+    public function pinBestAnswer(Request $request, ForumPost $post)
+    {
+        $user = auth()->guard('customer')->user();
+
+        // Only post author or admin can pin
+        if ($post->customer_id !== $user->id) {
+            return response()->json(['success' => false, 'message' => 'Chỉ tác giả bài viết mới có thể chọn câu trả lời tốt nhất.'], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'comment_id' => 'required|exists:forum_comments,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        $comment = \App\Models\ForumComment::where('id', $request->comment_id)
+            ->where('post_id', $post->id)
+            ->firstOrFail();
+
+        if ($comment->is_best_answer) {
+            $this->commentService->unpinBestAnswer($post);
+            return response()->json(['success' => true, 'pinned' => false, 'message' => 'Đã bỏ chọn câu trả lời tốt nhất.']);
+        }
+
+        $this->commentService->pinBestAnswer($comment, $post);
+        return response()->json(['success' => true, 'pinned' => true, 'message' => 'Đã chọn câu trả lời tốt nhất!']);
+    }
+
+    /**
+     * Get notifications (auth via middleware).
+     */
+    public function notifications()
+    {
+        $user = auth()->guard('customer')->user();
+        $notifications = $this->notificationService->getForCustomer($user->id);
+        $unreadCount = $this->notificationService->getUnreadCount($user->id);
+
+        return view('lamgame.pages.forum.notifications', compact('notifications', 'unreadCount'));
+    }
+
+    /**
+     * Get unread notification count (AJAX, auth via middleware).
+     */
+    public function notificationCount()
+    {
+        $user = auth()->guard('customer')->user();
+        return response()->json([
+            'count' => $this->notificationService->getUnreadCount($user->id),
+        ]);
+    }
+
+    /**
+     * Mark notification as read (AJAX, auth via middleware).
+     */
+    public function markNotificationRead(Request $request)
+    {
+        $user = auth()->guard('customer')->user();
+
+        if ($request->input('all')) {
+            $count = $this->notificationService->markAllAsRead($user->id);
+            return response()->json(['success' => true, 'marked' => $count]);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false], 422);
+        }
+
+        $this->notificationService->markAsRead($request->id, $user->id);
+        return response()->json(['success' => true]);
     }
 }

@@ -133,6 +133,31 @@ class ForumPost extends Model
     }
 
     /**
+     * Get all of the post's bookmarks.
+     */
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(ForumBookmark::class, 'post_id');
+    }
+
+    /**
+     * Check if post is bookmarked by a customer.
+     */
+    public function isBookmarkedBy(?int $customerId): bool
+    {
+        if (!$customerId) return false;
+        return $this->bookmarks()->where('customer_id', $customerId)->exists();
+    }
+
+    /**
+     * Get the best answer comment.
+     */
+    public function bestAnswer(): ?ForumComment
+    {
+        return $this->comments()->where('is_best_answer', true)->first();
+    }
+
+    /**
      * Get all of the post's votes.
      */
     public function votes(): MorphMany
