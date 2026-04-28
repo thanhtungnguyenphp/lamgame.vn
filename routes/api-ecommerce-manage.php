@@ -52,6 +52,7 @@ Route::prefix('manage')->name('api.manage.')->middleware(['api.key', 'throttle:6
         Route::post('/{id}/reject', [SellerManageController::class, 'reject'])->name('reject')->where('id', '[0-9]+')->middleware('throttle:10,1');
         Route::post('/{id}/suspend', [SellerManageController::class, 'suspend'])->name('suspend')->where('id', '[0-9]+')->middleware('throttle:10,1');
         Route::post('/{id}/activate', [SellerManageController::class, 'activate'])->name('activate')->where('id', '[0-9]+')->middleware('throttle:10,1');
+        Route::put('/{id}', [SellerManageController::class, 'update'])->name('update')->where('id', '[0-9]+')->middleware('throttle:10,1');
     });
 
     // === Earnings ===
@@ -76,5 +77,6 @@ Route::prefix('manage')->name('api.manage.')->middleware(['api.key', 'throttle:6
         Route::get('/{id}', [CustomerManageController::class, 'detail'])->name('detail')->where('id', '[0-9]+');
         Route::post('/{id}/suspend', [CustomerManageController::class, 'suspend'])->name('suspend')->where('id', '[0-9]+')->middleware('throttle:10,1');
         Route::post('/{id}/activate', [CustomerManageController::class, 'activate'])->name('activate')->where('id', '[0-9]+')->middleware('throttle:10,1');
+        Route::put('/{id}', [CustomerManageController::class, 'update'])->name('update')->where('id', '[0-9]+')->middleware('throttle:10,1');
     });
 });
