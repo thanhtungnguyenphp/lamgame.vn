@@ -40,6 +40,7 @@ Route::get('ai-tools/dashboard', [LamGamePageController::class, 'aiToolsDashboar
 
 Route::get('lien-he', [LamGamePageController::class, 'lienHe'])->name('lamgame.lien-he');
 Route::post('lien-he', [LamGamePageController::class, 'submitContact'])->name('lamgame.lien-he.submit');
+Route::get('thue-team-dev', [LamGamePageController::class, 'hireTeam'])->name('lamgame.thue-team-dev');
 
 // Blog routes
 Route::get('blog', [LamGamePageController::class, 'blog'])->name('lamgame.blog');
@@ -106,6 +107,17 @@ Route::prefix('admin')->middleware('admin')->name('admin.')->group(function () {
         Route::get('{id}/review', [App\Http\Controllers\Admin\AdminProductController::class, 'review'])->name('review');
         Route::post('{id}/approve', [App\Http\Controllers\Admin\AdminProductController::class, 'approve'])->name('approve');
         Route::post('{id}/reject', [App\Http\Controllers\Admin\AdminProductController::class, 'reject'])->name('reject');
+    });
+
+    Route::prefix('reviews')->name('reviews.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\ReviewController::class, 'index'])->name('index');
+        Route::post('{id}/status', [App\Http\Controllers\Admin\ReviewController::class, 'updateStatus'])->name('update-status');
+        Route::post('bulk', [App\Http\Controllers\Admin\ReviewController::class, 'bulkAction'])->name('bulk');
+    });
+
+    Route::prefix('hire-requests')->name('hire-requests.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\HireRequestController::class, 'index'])->name('index');
+        Route::post('{id}/status', [App\Http\Controllers\Admin\HireRequestController::class, 'updateStatus'])->name('update-status');
     });
 });
 

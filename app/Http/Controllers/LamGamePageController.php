@@ -11,6 +11,7 @@ use App\Models\BlogCategory;
 use App\Models\BlogTag;
 use App\Models\ForumCategory;
 use App\Models\ForumPost;
+use App\Models\SourceGameReview;
 
 class LamGamePageController extends Controller
 {
@@ -1317,6 +1318,17 @@ class LamGamePageController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Bình luận của bạn đã được đăng!'
+        ]);
+    }
+
+    /**
+     * Show "Thuê Team Dev" landing page
+     */
+    public function hireTeam()
+    {
+        return view('lamgame.pages.thue-team-dev', [
+            'page_title'       => 'Thuê Team Dev - Phát triển Game, Web, App | LamGame.vn',
+            'page_description' => 'Thuê đội ngũ lập trình viên chuyên nghiệp để phát triển game, website, ứng dụng mobile và giải pháp AI.',
         ]);
     }
 }

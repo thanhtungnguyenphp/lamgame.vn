@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware('api')->prefix('api')->group(base_path('routes/api-job-v2.php'));
             Route::middleware('api')->prefix('api')->group(base_path('routes/api-job-manage.php'));
             Route::middleware('api')->prefix('api')->group(base_path('routes/api-ecommerce-manage.php'));
+            Route::middleware('api')->prefix('api')->group(base_path('routes/api-reviews-hire.php'));
         },
         health: '/up',
     )
