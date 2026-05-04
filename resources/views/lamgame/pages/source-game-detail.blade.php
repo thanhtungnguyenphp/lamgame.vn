@@ -171,13 +171,13 @@
 
     <!-- Tabs -->
     <div class="tabs">
-        <div class="tab active">Chi tiết sản phẩm</div>
-        <div class="tab">Bình luận</div>
+        <div class="tab active" onclick="switchTab(this, 'tab-detail')">Chi tiết sản phẩm</div>
+        <div class="tab" onclick="switchTab(this, 'tab-reviews')">Đánh giá ({{ $sourceGame['review_count'] ?? 0 }})</div>
     </div>
 
     <div class="content-grid">
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="main-content" id="tab-detail">
             <!-- Gallery -->
             @if(count($sourceGame['images']) > 0)
             <div class="gallery-container">
@@ -256,6 +256,11 @@
                 </div>
             </div>
             @endif
+        </div>
+
+        <!-- Reviews Tab (hidden by default) -->
+        <div class="main-content" id="tab-reviews" style="display:none;">
+            @include('lamgame.partials.source-game-reviews', ['productId' => $sourceGame['id']])
         </div>
 
         <!-- Sidebar -->
@@ -377,6 +382,74 @@
 
 @push('scripts')
 <script>
+function switchTab(el, tabId) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('tab-detail').style.display = tabId === 'tab-detail' ? '' : 'none';
+    document.getElementById('tab-reviews').style.display = tabId === 'tab-reviews' ? '' : 'none';
+    if (tabId === 'tab-reviews' && !window._reviewsLoaded) {
+        loadReviews({{ $sourceGame['id'] }});
+        window._reviewsLoaded = true;
+    }
+}
+
+function loadReviews(productId) {
+    fetch('/api/v1/source-game/' + productId + '/review-stats')
+        .then(r => r.json()).then(d => {
+            if (d.data) renderStats(d.data);
+        });
+    fetch('/api/v1/source-game/' + productId + '/reviews?per_page=10')
+        .then(r => r.json()).then(d => {
+            if (d.data?.data) renderReviews(d.data.data);
+        });
+}
+
+function renderStats(s) {
+    const el = document.getElementById('review-stats');
+    if (!el) return;
+    let bars = '';
+    for (let i = 5; i >= 1; i--) {
+        const pct = s.total > 0 ? Math.round((s.distribution[i] || 0) / s.total * 100) : 0;
+        bars += '<div class="rating-bar"><span>' + i + '★</span><div class="bar"><div class="bar-fill" style="width:' + pct + '%"></div></div><span>' + (s.distribution[i] || 0) + '</span></div>';
+    }
+    el.innerHTML = '<div class="rating-summary"><div class="rating-big">' + s.avg_rating + '<small>/5</small></div><div class="rating-count">' + s.total + ' đánh giá</div></div><div class="rating-bars">' + bars + '</div>';
+}
+
+function renderReviews(reviews) {
+    const el = document.getElementById('review-list');
+    if (!el) return;
+    if (!reviews.length) { el.innerHTML = '<p class="no-reviews">Chưa có đánh giá nào.</p>'; return; }
+    el.innerHTML = reviews.map(r => '<div class="review-item">' +
+        '<div class="review-header"><strong>' + (r.customer?.first_name || 'Ẩn danh') + '</strong>' +
+        (r.is_verified_purchase ? ' <span class="verified-badge">✓ Đã mua</span>' : '') +
+        '<span class="review-date">' + new Date(r.created_at).toLocaleDateString('vi-VN') + '</span></div>' +
+        '<div class="review-stars">' + '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating) + '</div>' +
+        (r.title ? '<div class="review-title">' + r.title + '</div>' : '') +
+        '<p>' + r.content + '</p>' +
+        (r.pros ? '<div class="review-pros">👍 ' + r.pros + '</div>' : '') +
+        (r.cons ? '<div class="review-cons">👎 ' + r.cons + '</div>' : '') +
+        '</div>').join('');
+}
+
+function submitReview(productId) {
+    const form = document.getElementById('review-form');
+    const data = Object.fromEntries(new FormData(form));
+    data.rating = parseInt(data.rating);
+    fetch('/api/v1/source-game/' + productId + '/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+        body: JSON.stringify(data)
+    }).then(r => r.json()).then(d => {
+        const msg = document.getElementById('review-message');
+        if (d.status === 'success') {
+            msg.innerHTML = '<div style="color:#16a34a">Đánh giá đã gửi, đang chờ duyệt!</div>';
+            form.reset();
+        } else {
+            msg.innerHTML = '<div style="color:#dc2626">' + (d.message || 'Có lỗi xảy ra') + '</div>';
+        }
+    });
+}
+
 function changeMainImage(url, el) {
     document.getElementById('main-image').src = url;
     document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
