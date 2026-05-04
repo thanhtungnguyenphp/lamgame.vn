@@ -1,6 +1,6 @@
 # LAMGAME.VN — TRẠNG THÁI DỰ ÁN
-> Cập nhật: 28/04/2026 15:00 (GMT+7)
-> Production deployed ✅ — Forum Phase 1-3 ✅ — Job Crawler ✅ — 48 Mini Games ✅ — Redis cache ✅ — E-Commerce API ✅
+> Cập nhật: 04/05/2026 15:42 (GMT+7)
+> Production deployed ✅ — Forum Phase 1-3 ✅ — Forum Management API ✅ — Job Crawler ✅ — 48 Mini Games ✅ — Redis cache ✅ — Queue Redis ✅ — Sentry ✅ — E-Commerce API ✅
 
 ---
 
@@ -30,6 +30,7 @@
 - [x] AI Tools (concept, codegen, debug, test, review — proxy qua II-Agent)
 - [x] Sport / Bóng đá (API: live scores, BXH, highlights, articles)
 - [x] **E-Commerce Management API** (28/04) — 33 endpoints, 7 modules
+- [x] **Forum Management API** (29/04) — 28 endpoints, 6 modules (posts, comments, categories, tags, reports, leaderboard) — Ohha Studio integration
 - [x] Banner System (package LamGame/Banner)
 - [x] SEO (sitemap, Google Index push, Adsense)
 - [x] Collections (bookmark sản phẩm)
@@ -50,9 +51,9 @@
 ## 🔴 CHƯA LÀM
 
 ### Kỹ thuật (ưu tiên cao)
-- [ ] Chuyển queue sang Redis (QUEUE_CONNECTION=redis)
-- [ ] Log rotation (laravel.log đang 23MB)
-- [ ] Error monitoring (Sentry)
+- [x] Chuyển queue sang Redis (QUEUE_CONNECTION=redis) — ✅ Done 04/05
+- [x] Log rotation (laravel.log đang 23MB) — ✅ Done 04/05
+- [x] Error monitoring (Sentry) — ✅ Done 04/05
 
 ### Sản phẩm
 - [ ] Trang "Thuê Team Dev" (service page + form báo giá)
@@ -76,13 +77,14 @@
 
 | Metric | Số lượng |
 |--------|:--------:|
-| Controllers | 23 (+2 ForumApiController, ForumCalculateHotScores) |
+| Controllers | 24 (+1 ForumManageController) |
 | Models | 43 (+3 ForumBookmark, ForumNotification, ForumReputationLog) |
 | Views (Blade) | 129 (+6 forum views) |
 | Services | 17 (+6 forum services) |
 | Migrations | 79 (+3 forum migrations) |
 | Database tables | 195 (+3 forum_bookmarks, forum_notifications, forum_reputation_logs) |
 | Forum API endpoints | 14 (REST API /api/v1/forum/) |
+| Forum Management API | 28 (Admin API /api/manage/forum/) |
 | Forum web routes | 43 (frontend + admin) |
 | Mini Games | 48 |
 | Source Game Products | 68 |
@@ -94,11 +96,49 @@
 
 ## 📋 VIỆC TIẾP THEO (khi quay lại)
 
-1. **Queue → Redis** — `QUEUE_CONNECTION=redis` trong .env production (10 phút)
-2. **Log rotation** — cấu hình daily log channel + logrotate (15 phút)
-3. **Sentry** — setup error monitoring (1 giờ)
-4. **Forum Phase 4** (tuỳ chọn) — Polls, Private Messages, Follow, WebSocket
-5. **SportPulse Phase 9** — Crawl data (11 tasks, ~6 ngày)
+1. ~~**Deploy Forum Management API**~~ — ✅ Done 04/05
+2. ~~**Queue → Redis**~~ — ✅ Done 04/05
+3. ~~**Log rotation**~~ — ✅ Done 04/05
+4. ~~**Sentry**~~ — ✅ Done 04/05
+5. **Forum Phase 4** (tuỳ chọn) — Polls, Private Messages, Follow, WebSocket
+6. **SportPulse Phase 9** — Crawl data (11 tasks, ~6 ngày)
+7. **Review/rating** cho source game (~3 ngày)
+8. **Trang "Thuê Team Dev"** (~2 ngày)
+
+---
+
+## 🔄 CHANGELOG 04/05/2026
+
+### Infra Production — 4 tasks hoàn thành
+- ✅ Queue chuyển sang Redis (`QUEUE_CONNECTION=redis`)
+- ✅ Log rotation cấu hình (daily log channel + logrotate)
+- ✅ Sentry error monitoring setup
+- ✅ Deploy Forum Management API lên production (28 endpoints live)
+
+---
+
+## 🔄 CHANGELOG 29/04/2026
+
+### Forum Management API — Ohha Studio Integration
+**28 endpoints** tại `/api/manage/forum/` — Auth: `X-Api-Key` (admin token)
+
+| Module | Endpoints | Chức năng |
+|--------|:---------:|-----------|
+| Dashboard | 1 | Thống kê tổng quan (posts, comments, reports, trends 7 ngày, top categories) |
+| Posts | 8 | CRUD + change status + bulk status + bulk delete |
+| Comments | 6 | List, detail, change status, delete, bulk status, bulk delete |
+| Categories | 4 | CRUD (chặn xóa nếu còn bài viết) |
+| Tags | 5 | CRUD + bulk delete |
+| Reports | 3 | List, resolve, bulk resolve |
+| Leaderboard | 1 | Reputation ranking (all-time / monthly) |
+
+**Files:**
+- `app/Http/Controllers/Api/ForumManageController.php` — Controller (reuse 5 forum services)
+- `routes/api-forum-manage.php` — 28 routes
+- `bootstrap/app.php` — Đăng ký route file
+- `docs/forum/FORUM_MANAGE_API_GUIDE.md` — Tài liệu API
+
+**Test local:** Tất cả 28 endpoints PASSED (dashboard, CRUD posts/categories/tags, status change, bulk ops, auth fail 401)
 
 ---
 
