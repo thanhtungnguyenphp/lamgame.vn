@@ -157,6 +157,45 @@ class CustomerManageController extends Controller
         ]);
     }
 
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $c = Customer::find($id);
+        if (!$c) {
+            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy khách hàng.'], 404);
+        }
+
+        $validated = $request->validate([
+            'first_name'    => 'sometimes|string|max:100',
+            'last_name'     => 'sometimes|string|max:100',
+            'email'         => "sometimes|email|unique:customers,email,{$id}",
+            'phone'         => 'sometimes|nullable|string|max:20',
+            'gender'        => 'sometimes|nullable|in:male,female,other',
+            'date_of_birth' => 'sometimes|nullable|date',
+            'notes'         => 'sometimes|nullable|string',
+        ]);
+
+        $c->update($validated);
+        $c->refresh();
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Customer updated successfully',
+            'data'    => [
+                'id'            => $c->id,
+                'first_name'    => $c->first_name,
+                'last_name'     => $c->last_name,
+                'email'         => $c->email,
+                'phone'         => $c->phone,
+                'gender'        => $c->gender,
+                'date_of_birth' => $c->date_of_birth,
+                'is_verified'   => (bool) $c->is_verified,
+                'is_suspended'  => (bool) $c->is_suspended,
+                'notes'         => $c->notes,
+                'updated_at'    => $c->updated_at?->toIso8601String(),
+            ],
+        ]);
+    }
+
     public function suspend(Request $request, int $id): JsonResponse
     {
         $c = Customer::find($id);

@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware('api')->prefix('api')->group(base_path('routes/api-job-manage.php'));
             Route::middleware('api')->prefix('api')->group(base_path('routes/api-ecommerce-manage.php'));
             Route::middleware('api')->prefix('api')->group(base_path('routes/api-reviews-hire.php'));
+            Route::middleware('api')->prefix('api')->group(base_path('routes/api-forum-manage.php'));
         },
         health: '/up',
     )
@@ -123,5 +124,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ->between('6:00', '22:00');
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        Integration::handles($exceptions);
+        if (class_exists(\Sentry\Laravel\Integration::class)) {
+            \Sentry\Laravel\Integration::handles($exceptions);
+        }
     })->create();
