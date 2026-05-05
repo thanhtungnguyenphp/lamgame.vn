@@ -61,6 +61,6 @@
 </div>
 @else
 <div class="review-form" style="text-align:center">
-    <p>Vui lòng <a href="{{ route('customer.session.index') }}">đăng nhập</a> để viết đánh giá.</p>
+    <p>Vui lòng <a href="{{ route('shop.customer.session.index') }}">đăng nhập</a> để viết đánh giá.</p>
 </div>
 @endauth

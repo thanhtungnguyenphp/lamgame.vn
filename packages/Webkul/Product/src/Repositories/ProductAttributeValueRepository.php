@@ -33,7 +33,8 @@ class ProductAttributeValueRepository extends Repository
             }
 
             if (in_array($attribute->type, ['multiselect', 'checkbox'])) {
-                $data[$attribute->code] = implode(',', $data[$attribute->code] ?? []);
+                $value = $data[$attribute->code] ?? [];
+                $data[$attribute->code] = is_array($value) ? implode(',', $value) : (string) $value;
             }
 
             if (! isset($data[$attribute->code])) {

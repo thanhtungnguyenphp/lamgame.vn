@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('source_game_reviews', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('customer_id');
+            $table->unsignedInteger('product_id');
+            $table->unsignedInteger('customer_id');
             $table->tinyInteger('rating')->unsigned(); // 1-5
             $table->string('title', 255)->nullable();
             $table->text('content');
@@ -30,7 +30,7 @@ return new class extends Migration
 
         // Add avg_rating and review_count cache columns to products
         Schema::table('products', function (Blueprint $table) {
-            $table->decimal('avg_rating', 2, 1)->default(0)->after('status');
+            $table->decimal('avg_rating', 2, 1)->default(0)->after('type');
             $table->unsignedInteger('review_count')->default(0)->after('avg_rating');
         });
     }

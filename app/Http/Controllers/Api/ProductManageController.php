@@ -33,7 +33,6 @@ class ProductManageController extends Controller
                 'product_flat.price',
                 'product_flat.special_price',
                 'product_flat.status',
-                'product_flat.thumbnail',
                 'product_flat.short_description',
                 'source_game_sellers.shop_name as seller_shop_name',
                 'source_game_sellers.shop_slug as seller_shop_slug',
