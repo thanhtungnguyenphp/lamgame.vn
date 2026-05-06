@@ -15,6 +15,70 @@ use Intervention\Image\ImageManager;
 
 class ProductManageController extends Controller
 {
+    public function categoryList(Request $request): JsonResponse
+    {
+        $locale = 'vi';
+        $isActive = $request->input('is_active', 1);
+
+        $query = DB::table('categories')
+            ->join('category_translations', function ($j) use ($locale) {
+                $j->on('categories.id', '=', 'category_translations.category_id')
+                  ->where('category_translations.locale', $locale);
+            })
+            ->select('categories.id', 'categories.parent_id', 'categories.status', 'category_translations.name', 'category_translations.slug');
+
+        if ($isActive !== null) {
+            $query->where('categories.status', (int) $isActive);
+        }
+
+        if ($search = $request->input('search')) {
+            $query->where('category_translations.name', 'like', "%{$search}%");
+        }
+
+        // Exclude root category (id=1)
+        $query->where('categories.id', '>', 1);
+
+        $categories = $query->orderBy('categories.position')->get();
+
+        // Product counts
+        $counts = DB::table('product_categories')
+            ->select('category_id', DB::raw('COUNT(*) as cnt'))
+            ->groupBy('category_id')
+            ->pluck('cnt', 'category_id');
+
+        // Build tree
+        $parentFilter = $request->input('parent_id');
+        $items = [];
+        foreach ($categories as $c) {
+            $items[$c->id] = [
+                'id'            => $c->id,
+                'name'          => $c->name,
+                'slug'          => $c->slug,
+                'parent_id'     => $c->parent_id == 1 ? null : $c->parent_id,
+                'product_count' => (int) ($counts[$c->id] ?? 0),
+                'is_active'     => (bool) $c->status,
+                'children'      => [],
+            ];
+        }
+
+        $tree = [];
+        foreach ($items as $id => &$cat) {
+            if ($cat['parent_id'] && isset($items[$cat['parent_id']])) {
+                $items[$cat['parent_id']]['children'][] = &$cat;
+            } else {
+                $tree[] = &$cat;
+            }
+        }
+        unset($cat);
+
+        if ($parentFilter !== null) {
+            $pid = (int) $parentFilter === 0 ? null : (int) $parentFilter;
+            $tree = array_values(array_filter($tree, fn ($c) => $c['parent_id'] === $pid));
+        }
+
+        return response()->json(['status' => 'success', 'data' => $tree]);
+    }
+
     public function list(Request $request): JsonResponse
     {
         $locale = 'vi';

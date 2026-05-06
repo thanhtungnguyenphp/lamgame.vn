@@ -22,6 +22,9 @@ Route::prefix('manage')->name('api.manage.')->middleware(['api.key', 'throttle:6
     // === Dashboard ===
     Route::get('dashboard', [DashboardManageController::class, 'index'])->name('dashboard');
 
+    // === Categories ===
+    Route::get('categories', [ProductManageController::class, 'categoryList'])->name('categories.list');
+
     // === Product Management ===
     Route::prefix('products')->name('products.')->group(function () {
         Route::get('/', [ProductManageController::class, 'list'])->name('list');
