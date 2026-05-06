@@ -84,12 +84,21 @@ class ProductManageController extends Controller
 
         $query->orderBy($sortColumn, $sortDir);
 
+        // Add thumbnail (first image)
+        $query->addSelect(DB::raw('(SELECT CONCAT("/storage/", pi.path) FROM product_images pi WHERE pi.product_id = products.id ORDER BY pi.position, pi.id LIMIT 1) as thumbnail_url'));
+
         $perPage = min(max($request->integer('per_page', 15), 1), 100);
         $products = $query->paginate($perPage);
 
+        // Build full URL for thumbnails
+        $items = collect($products->items())->map(function ($item) {
+            $item->thumbnail_url = $item->thumbnail_url ? url($item->thumbnail_url) : null;
+            return $item;
+        });
+
         return response()->json([
             'status' => 'success',
-            'data'   => $products->items(),
+            'data'   => $items,
             'meta'   => [
                 'current_page' => $products->currentPage(),
                 'last_page'    => $products->lastPage(),
