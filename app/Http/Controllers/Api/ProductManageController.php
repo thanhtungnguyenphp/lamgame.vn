@@ -637,6 +637,295 @@ class ProductManageController extends Controller
         }
     }
 
+    /**
+     * Upload downloadable link (source file) for a product.
+     *
+     * POST /api/manage/products/{id}/downloadable-links
+     * - file: required, max 100MB (zip, rar, 7z, tar.gz, etc.)
+     * - title: required, display name of the link
+     * - price: optional, additional price for this link (default 0)
+     * - downloads: optional, max download count (0 = unlimited)
+     * - sort_order: optional
+     *
+     * OR use URL instead of file upload:
+     * - url: required if no file, external download URL
+     * - title, price, downloads, sort_order same as above
+     */
+    public function uploadDownloadableLink(Request $request, int $id): JsonResponse
+    {
+        $product = Product::find($id);
+        if (!$product) {
+            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy sản phẩm.'], 404);
+        }
+
+        if ($product->type !== 'downloadable') {
+            return response()->json(['status' => 'error', 'message' => 'Sản phẩm không phải loại downloadable.'], 422);
+        }
+
+        $request->validate([
+            'title'      => 'required|string|max:255',
+            'file'       => 'required_without:url|file|max:102400', // 100MB
+            'url'        => 'required_without:file|nullable|url',
+            'price'      => 'nullable|numeric|min:0',
+            'downloads'  => 'nullable|integer|min:0',
+            'sort_order' => 'nullable|integer|min:0',
+        ]);
+
+        $locale = 'vi';
+        $data = [
+            'product_id' => $id,
+            'price'      => $request->input('price', 0),
+            'downloads'  => $request->input('downloads', 0),
+            'sort_order' => $request->input('sort_order', 0),
+        ];
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $path = $file->store("product_downloadable_links/{$id}", 'private');
+            $data['type'] = 'file';
+            $data['file'] = $path;
+            $data['file_name'] = $file->getClientOriginalName();
+        } else {
+            $data['type'] = 'url';
+            $data['url'] = $request->input('url');
+            $data['file_name'] = basename(parse_url($request->input('url'), PHP_URL_PATH)) ?: $request->input('title');
+        }
+
+        $link = DB::table('product_downloadable_links')->insertGetId(array_merge($data, [
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]));
+
+        // Save translation (title)
+        DB::table('product_downloadable_link_translations')->insert([
+            'product_downloadable_link_id' => $link,
+            'locale' => $locale,
+            'title'  => $request->input('title'),
+        ]);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Đã upload file download.',
+            'data'    => [
+                'id'        => $link,
+                'title'     => $request->input('title'),
+                'type'      => $data['type'],
+                'file_name' => $data['file_name'],
+                'price'     => (float) $data['price'],
+                'downloads' => (int) $data['downloads'],
+            ],
+        ], 201);
+    }
+
+    /**
+     * Update a downloadable link.
+     *
+     * PUT /api/manage/products/{id}/downloadable-links/{linkId}
+     */
+    public function updateDownloadableLink(Request $request, int $id, int $linkId): JsonResponse
+    {
+        $link = DB::table('product_downloadable_links')
+            ->where('id', $linkId)
+            ->where('product_id', $id)
+            ->first();
+
+        if (!$link) {
+            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy link.'], 404);
+        }
+
+        $request->validate([
+            'title'      => 'nullable|string|max:255',
+            'file'       => 'nullable|file|max:102400',
+            'url'        => 'nullable|url',
+            'price'      => 'nullable|numeric|min:0',
+            'downloads'  => 'nullable|integer|min:0',
+            'sort_order' => 'nullable|integer|min:0',
+        ]);
+
+        $update = ['updated_at' => now()];
+
+        if ($request->has('price')) $update['price'] = $request->input('price');
+        if ($request->has('downloads')) $update['downloads'] = $request->input('downloads');
+        if ($request->has('sort_order')) $update['sort_order'] = $request->input('sort_order');
+
+        if ($request->hasFile('file')) {
+            // Delete old file if exists
+            if ($link->type === 'file' && $link->file) {
+                Storage::disk('private')->delete($link->file);
+            }
+            $file = $request->file('file');
+            $path = $file->store("product_downloadable_links/{$id}", 'private');
+            $update['type'] = 'file';
+            $update['file'] = $path;
+            $update['file_name'] = $file->getClientOriginalName();
+            $update['url'] = null;
+        } elseif ($request->has('url')) {
+            if ($link->type === 'file' && $link->file) {
+                Storage::disk('private')->delete($link->file);
+            }
+            $update['type'] = 'url';
+            $update['url'] = $request->input('url');
+            $update['file'] = null;
+            $update['file_name'] = basename(parse_url($request->input('url'), PHP_URL_PATH));
+        }
+
+        DB::table('product_downloadable_links')->where('id', $linkId)->update($update);
+
+        if ($request->has('title')) {
+            DB::table('product_downloadable_link_translations')->updateOrInsert(
+                ['product_downloadable_link_id' => $linkId, 'locale' => 'vi'],
+                ['title' => $request->input('title')]
+            );
+        }
+
+        return response()->json(['status' => 'success', 'message' => 'Đã cập nhật link download.']);
+    }
+
+    /**
+     * Delete a downloadable link.
+     *
+     * DELETE /api/manage/products/{id}/downloadable-links/{linkId}
+     */
+    public function deleteDownloadableLink(int $id, int $linkId): JsonResponse
+    {
+        $link = DB::table('product_downloadable_links')
+            ->where('id', $linkId)
+            ->where('product_id', $id)
+            ->first();
+
+        if (!$link) {
+            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy link.'], 404);
+        }
+
+        // Delete file from storage
+        if ($link->type === 'file' && $link->file) {
+            Storage::disk('private')->delete($link->file);
+        }
+
+        DB::table('product_downloadable_link_translations')->where('product_downloadable_link_id', $linkId)->delete();
+        DB::table('product_downloadable_links')->where('id', $linkId)->delete();
+
+        return response()->json(['status' => 'success', 'message' => 'Đã xóa link download.']);
+    }
+
+    /**
+     * List downloadable links of a product.
+     *
+     * GET /api/manage/products/{id}/downloadable-links
+     */
+    public function listDownloadableLinks(int $id): JsonResponse
+    {
+        $product = Product::find($id);
+        if (!$product) {
+            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy sản phẩm.'], 404);
+        }
+
+        $links = DB::table('product_downloadable_links')
+            ->where('product_id', $id)
+            ->orderBy('sort_order')
+            ->get();
+
+        $result = $links->map(function ($link) {
+            $title = DB::table('product_downloadable_link_translations')
+                ->where('product_downloadable_link_id', $link->id)
+                ->where('locale', 'vi')
+                ->value('title');
+
+            return [
+                'id'         => $link->id,
+                'title'      => $title ?? $link->file_name,
+                'type'       => $link->type,
+                'file_name'  => $link->file_name,
+                'price'      => (float) $link->price,
+                'downloads'  => (int) $link->downloads,
+                'sort_order' => (int) $link->sort_order,
+                'created_at' => $link->created_at,
+            ];
+        });
+
+        return response()->json(['status' => 'success', 'data' => $result]);
+    }
+
+    /**
+     * Upload sample file for a product.
+     *
+     * POST /api/manage/products/{id}/downloadable-samples
+     */
+    public function uploadDownloadableSample(Request $request, int $id): JsonResponse
+    {
+        $product = Product::find($id);
+        if (!$product) {
+            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy sản phẩm.'], 404);
+        }
+
+        $request->validate([
+            'title'      => 'required|string|max:255',
+            'file'       => 'required_without:url|file|max:20480', // 20MB for samples
+            'url'        => 'required_without:file|nullable|url',
+            'sort_order' => 'nullable|integer|min:0',
+        ]);
+
+        $data = [
+            'product_id' => $id,
+            'sort_order' => $request->input('sort_order', 0),
+        ];
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $path = $file->store("product_downloadable_samples/{$id}", 'private');
+            $data['type'] = 'file';
+            $data['file'] = $path;
+            $data['file_name'] = $file->getClientOriginalName();
+        } else {
+            $data['type'] = 'url';
+            $data['url'] = $request->input('url');
+            $data['file_name'] = basename(parse_url($request->input('url'), PHP_URL_PATH));
+        }
+
+        $sampleId = DB::table('product_downloadable_samples')->insertGetId(array_merge($data, [
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]));
+
+        DB::table('product_downloadable_sample_translations')->insert([
+            'product_downloadable_sample_id' => $sampleId,
+            'locale' => 'vi',
+            'title'  => $request->input('title'),
+        ]);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Đã upload sample.',
+            'data'    => ['id' => $sampleId, 'title' => $request->input('title'), 'type' => $data['type']],
+        ], 201);
+    }
+
+    /**
+     * Delete a sample.
+     *
+     * DELETE /api/manage/products/{id}/downloadable-samples/{sampleId}
+     */
+    public function deleteDownloadableSample(int $id, int $sampleId): JsonResponse
+    {
+        $sample = DB::table('product_downloadable_samples')
+            ->where('id', $sampleId)
+            ->where('product_id', $id)
+            ->first();
+
+        if (!$sample) {
+            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy sample.'], 404);
+        }
+
+        if ($sample->type === 'file' && $sample->file) {
+            Storage::disk('private')->delete($sample->file);
+        }
+
+        DB::table('product_downloadable_sample_translations')->where('product_downloadable_sample_id', $sampleId)->delete();
+        DB::table('product_downloadable_samples')->where('id', $sampleId)->delete();
+
+        return response()->json(['status' => 'success', 'message' => 'Đã xóa sample.']);
+    }
+
     private function getCustomAttributes(int $productId): array
     {
         $codes = ['game_engine', 'programming_language', 'file_size', 'version', 'video_demo_url', 'demo_url', 'author_name'];

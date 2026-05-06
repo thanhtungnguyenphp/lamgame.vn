@@ -35,6 +35,16 @@ Route::prefix('manage')->name('api.manage.')->middleware(['api.key', 'throttle:6
         Route::post('/{id}/images', [ProductManageController::class, 'uploadImages'])->name('upload-images')->where('id', '[0-9]+')->middleware('throttle:10,1');
         Route::delete('/{id}/images/{imageId}', [ProductManageController::class, 'deleteImage'])->name('delete-image')->where(['id' => '[0-9]+', 'imageId' => '[0-9]+'])->middleware('throttle:10,1');
         Route::post('/{id}/images/reorder', [ProductManageController::class, 'reorderImages'])->name('reorder-images')->where('id', '[0-9]+')->middleware('throttle:10,1');
+
+        // Downloadable Links (source files)
+        Route::get('/{id}/downloadable-links', [ProductManageController::class, 'listDownloadableLinks'])->name('downloadable-links.list')->where('id', '[0-9]+');
+        Route::post('/{id}/downloadable-links', [ProductManageController::class, 'uploadDownloadableLink'])->name('downloadable-links.upload')->where('id', '[0-9]+')->middleware('throttle:5,1');
+        Route::put('/{id}/downloadable-links/{linkId}', [ProductManageController::class, 'updateDownloadableLink'])->name('downloadable-links.update')->where(['id' => '[0-9]+', 'linkId' => '[0-9]+'])->middleware('throttle:5,1');
+        Route::delete('/{id}/downloadable-links/{linkId}', [ProductManageController::class, 'deleteDownloadableLink'])->name('downloadable-links.delete')->where(['id' => '[0-9]+', 'linkId' => '[0-9]+'])->middleware('throttle:5,1');
+
+        // Downloadable Samples (preview files)
+        Route::post('/{id}/downloadable-samples', [ProductManageController::class, 'uploadDownloadableSample'])->name('downloadable-samples.upload')->where('id', '[0-9]+')->middleware('throttle:5,1');
+        Route::delete('/{id}/downloadable-samples/{sampleId}', [ProductManageController::class, 'deleteDownloadableSample'])->name('downloadable-samples.delete')->where(['id' => '[0-9]+', 'sampleId' => '[0-9]+'])->middleware('throttle:5,1');
     });
 
     // === Order Management ===
