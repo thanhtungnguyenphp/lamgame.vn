@@ -32,6 +32,9 @@ Route::prefix('manage')->name('api.manage.')->middleware(['api.key', 'throttle:6
         Route::delete('/{id}', [ProductManageController::class, 'destroy'])->name('destroy')->where('id', '[0-9]+')->middleware('throttle:10,1');
         Route::post('/{id}/status', [ProductManageController::class, 'changeStatus'])->name('change-status')->where('id', '[0-9]+')->middleware('throttle:10,1');
         Route::post('/{id}/review', [ProductManageController::class, 'review'])->name('review')->where('id', '[0-9]+')->middleware('throttle:10,1');
+        Route::post('/{id}/images', [ProductManageController::class, 'uploadImages'])->name('upload-images')->where('id', '[0-9]+')->middleware('throttle:10,1');
+        Route::delete('/{id}/images/{imageId}', [ProductManageController::class, 'deleteImage'])->name('delete-image')->where(['id' => '[0-9]+', 'imageId' => '[0-9]+'])->middleware('throttle:10,1');
+        Route::post('/{id}/images/reorder', [ProductManageController::class, 'reorderImages'])->name('reorder-images')->where('id', '[0-9]+')->middleware('throttle:10,1');
     });
 
     // === Order Management ===

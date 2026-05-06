@@ -8,6 +8,10 @@ use App\Models\SourceGameSeller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\ImageManager;
 
 class ProductManageController extends Controller
 {
@@ -321,6 +325,8 @@ class ProductManageController extends Controller
 
             $product->refresh();
 
+            Event::dispatch('catalog.product.update.after', $product);
+
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Đã tạo sản phẩm.',
@@ -389,7 +395,9 @@ class ProductManageController extends Controller
                 $updateData['categories'] = $request->input('category_ids');
             }
 
-            $productRepo->update($updateData, $id);
+            Event::dispatch('catalog.product.update.before', $id);
+
+            $updatedProduct = $productRepo->update($updateData, $id);
 
             // Direct fields on products table
             $directUpdate = [];
@@ -406,6 +414,8 @@ class ProductManageController extends Controller
             }
 
             DB::commit();
+
+            Event::dispatch('catalog.product.update.after', $updatedProduct);
 
             return response()->json([
                 'status'  => 'success',
@@ -521,6 +531,92 @@ class ProductManageController extends Controller
         }
 
         return response()->json(['status' => 'success', 'message' => 'Đã từ chối sản phẩm.']);
+    }
+
+    public function uploadImages(Request $request, int $id): JsonResponse
+    {
+        $product = Product::find($id);
+        if (!$product) {
+            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy sản phẩm.'], 404);
+        }
+
+        $request->validate([
+            'images'   => 'required|array|min:1|max:10',
+            'images.*' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
+        ]);
+
+        $lastPosition = DB::table('product_images')
+            ->where('product_id', $id)
+            ->max('position') ?? 0;
+
+        $uploaded = [];
+
+        foreach ($request->file('images') as $file) {
+            $manager = new ImageManager();
+            $image = $manager->make($file)->encode('webp');
+            $path = 'product/' . $id . '/' . Str::random(40) . '.webp';
+            Storage::put($path, $image);
+
+            $record = DB::table('product_images')->insertGetId([
+                'type'       => 'images',
+                'path'       => $path,
+                'product_id' => $id,
+                'position'   => ++$lastPosition,
+            ]);
+
+            $uploaded[] = [
+                'id'       => $record,
+                'path'     => $path,
+                'url'      => Storage::url($path),
+                'position' => $lastPosition,
+            ];
+        }
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Đã upload ' . count($uploaded) . ' hình.',
+            'data'    => $uploaded,
+        ]);
+    }
+
+    public function deleteImage(int $id, int $imageId): JsonResponse
+    {
+        $image = DB::table('product_images')
+            ->where('id', $imageId)
+            ->where('product_id', $id)
+            ->first();
+
+        if (!$image) {
+            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy hình.'], 404);
+        }
+
+        Storage::delete($image->path);
+        DB::table('product_images')->where('id', $imageId)->delete();
+
+        return response()->json(['status' => 'success', 'message' => 'Đã xóa hình.']);
+    }
+
+    public function reorderImages(Request $request, int $id): JsonResponse
+    {
+        $product = Product::find($id);
+        if (!$product) {
+            return response()->json(['status' => 'error', 'message' => 'Không tìm thấy sản phẩm.'], 404);
+        }
+
+        $request->validate([
+            'image_ids'   => 'required|array|min:1',
+            'image_ids.*' => 'integer',
+        ]);
+
+        $position = 0;
+        foreach ($request->input('image_ids') as $imageId) {
+            DB::table('product_images')
+                ->where('id', $imageId)
+                ->where('product_id', $id)
+                ->update(['position' => ++$position]);
+        }
+
+        return response()->json(['status' => 'success', 'message' => 'Đã sắp xếp lại hình.']);
     }
 
     private function saveCustomAttributes(int $productId, array $attrs): void
