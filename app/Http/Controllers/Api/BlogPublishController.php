@@ -375,18 +375,19 @@ class BlogPublishController extends Controller
 
         $perPage = $request->integer('per_page', 20);
         $paginated = $query->orderByDesc('updated_at')
-            ->select(['slug', 'name', 'status', 'default_category', 'published_at', 'updated_at'])
+            ->select(['slug', 'name', 'status', 'default_category', 'src', 'published_at', 'updated_at'])
             ->paginate($perPage);
 
         $data = $paginated->getCollection()->map(function ($blog) {
             $cat = $blog->default_category ? \Webbycrown\BlogBagisto\Models\Category::find($blog->default_category) : null;
             return [
-                'slug'         => $blog->slug,
-                'title'        => $blog->name,
-                'status'       => $blog->status,
-                'category'     => $cat?->name,
-                'published_at' => $blog->published_at?->toDateString(),
-                'updated_at'   => $blog->updated_at?->toIso8601String(),
+                'slug'          => $blog->slug,
+                'title'         => $blog->name,
+                'status'        => $blog->status,
+                'category'      => $cat?->name,
+                'thumbnail_url' => $blog->src ? asset('storage/' . $blog->src) : null,
+                'published_at'  => $blog->published_at?->toDateString(),
+                'updated_at'    => $blog->updated_at?->toIso8601String(),
             ];
         });
 
