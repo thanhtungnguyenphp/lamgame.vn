@@ -44,6 +44,7 @@ class SourceGameReviewService
     {
         $allowedSorts = ['created_at', 'rating', 'helpful_count'];
         $sortBy = in_array($sortBy, $allowedSorts) ? $sortBy : 'created_at';
+        $perPage = min(max($perPage, 1), 50);
 
         return SourceGameReview::byProduct($productId)
             ->published()
@@ -82,10 +83,22 @@ class SourceGameReviewService
     {
         $review = SourceGameReview::published()->findOrFail($reviewId);
 
-        // Simple increment (no tracking per user for now)
-        $review->increment('helpful_count');
+        $vote = \App\Models\ReviewHelpfulVote::where('review_id', $reviewId)
+            ->where('customer_id', $customerId)
+            ->first();
 
-        return $review;
+        if ($vote) {
+            $vote->delete();
+            $review->decrement('helpful_count');
+        } else {
+            \App\Models\ReviewHelpfulVote::create([
+                'review_id'   => $reviewId,
+                'customer_id' => $customerId,
+            ]);
+            $review->increment('helpful_count');
+        }
+
+        return $review->fresh();
     }
 
     public function refreshProductRating(int $productId): void

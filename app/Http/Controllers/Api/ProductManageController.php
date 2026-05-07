@@ -17,7 +17,7 @@ class ProductManageController extends Controller
 {
     public function categoryList(Request $request): JsonResponse
     {
-        $locale = 'vi';
+        $locale = $request->input('locale', app()->getLocale());
         $isActive = $request->input('is_active', 1);
 
         $query = DB::table('categories')
@@ -32,6 +32,7 @@ class ProductManageController extends Controller
         }
 
         if ($search = $request->input('search')) {
+            $search = str_replace(['%', '_'], ['\\%', '\\_'], $search);
             $query->where('category_translations.name', 'like', "%{$search}%");
         }
 
@@ -81,7 +82,7 @@ class ProductManageController extends Controller
 
     public function list(Request $request): JsonResponse
     {
-        $locale = 'vi';
+        $locale = $request->input('locale', app()->getLocale());
 
         $query = DB::table('products')
             ->join('product_flat', 'products.id', '=', 'product_flat.product_id')
@@ -108,6 +109,7 @@ class ProductManageController extends Controller
 
         // Filters
         if ($search = $request->input('search')) {
+            $search = str_replace(['%', '_'], ['\\%', '\\_'], $search);
             $query->where(function ($q) use ($search) {
                 $q->where('product_flat.name', 'like', "%{$search}%")
                   ->orWhere('products.sku', 'like', "%{$search}%");
@@ -245,7 +247,7 @@ class ProductManageController extends Controller
 
     public function statistics(Request $request): JsonResponse
     {
-        $locale = 'vi';
+        $locale = $request->input('locale', app()->getLocale());
 
         // Totals
         $totals = DB::table('product_flat')
@@ -336,7 +338,7 @@ class ProductManageController extends Controller
             'meta_keywords'                => 'nullable|string|max:255',
         ]);
 
-        $locale = 'vi';
+        $locale = $request->input('locale', app()->getLocale());
         $channel = 'default';
 
         DB::beginTransaction();
@@ -440,7 +442,7 @@ class ProductManageController extends Controller
             'meta_keywords'                => 'nullable|string|max:255',
         ]);
 
-        $locale = 'vi';
+        $locale = $request->input('locale', app()->getLocale());
         $channel = 'default';
 
         DB::beginTransaction();
@@ -744,7 +746,7 @@ class ProductManageController extends Controller
             'sort_order' => 'nullable|integer|min:0',
         ]);
 
-        $locale = 'vi';
+        $locale = $request->input('locale', app()->getLocale());
         $data = [
             'product_id' => $id,
             'price'      => $request->input('price', 0),
@@ -845,8 +847,9 @@ class ProductManageController extends Controller
         DB::table('product_downloadable_links')->where('id', $linkId)->update($update);
 
         if ($request->has('title')) {
+            $locale = $request->input('locale', app()->getLocale());
             DB::table('product_downloadable_link_translations')->updateOrInsert(
-                ['product_downloadable_link_id' => $linkId, 'locale' => 'vi'],
+                ['product_downloadable_link_id' => $linkId, 'locale' => $locale],
                 ['title' => $request->input('title')]
             );
         }
@@ -886,27 +889,38 @@ class ProductManageController extends Controller
      *
      * GET /api/manage/products/{id}/downloadable-links
      */
-    public function listDownloadableLinks(int $id): JsonResponse
+    public function listDownloadableLinks(Request $request, int $id): JsonResponse
     {
         $product = Product::find($id);
         if (!$product) {
             return response()->json(['status' => 'error', 'message' => 'Không tìm thấy sản phẩm.'], 404);
         }
 
+        $locale = $request->input('locale', app()->getLocale());
+
         $links = DB::table('product_downloadable_links')
-            ->where('product_id', $id)
-            ->orderBy('sort_order')
+            ->leftJoin('product_downloadable_link_translations', function ($j) use ($locale) {
+                $j->on('product_downloadable_links.id', '=', 'product_downloadable_link_translations.product_downloadable_link_id')
+                  ->where('product_downloadable_link_translations.locale', $locale);
+            })
+            ->where('product_downloadable_links.product_id', $id)
+            ->select([
+                'product_downloadable_links.id',
+                'product_downloadable_links.file_name',
+                'product_downloadable_links.type',
+                'product_downloadable_links.price',
+                'product_downloadable_links.downloads',
+                'product_downloadable_links.sort_order',
+                'product_downloadable_links.created_at',
+                'product_downloadable_link_translations.title',
+            ])
+            ->orderBy('product_downloadable_links.sort_order')
             ->get();
 
         $result = $links->map(function ($link) {
-            $title = DB::table('product_downloadable_link_translations')
-                ->where('product_downloadable_link_id', $link->id)
-                ->where('locale', 'vi')
-                ->value('title');
-
             return [
                 'id'         => $link->id,
-                'title'      => $title ?? $link->file_name,
+                'title'      => $link->title ?? $link->file_name,
                 'type'       => $link->type,
                 'file_name'  => $link->file_name,
                 'price'      => (float) $link->price,
@@ -962,7 +976,7 @@ class ProductManageController extends Controller
 
         DB::table('product_downloadable_sample_translations')->insert([
             'product_downloadable_sample_id' => $sampleId,
-            'locale' => 'vi',
+            'locale' => $request->input('locale', app()->getLocale()),
             'title'  => $request->input('title'),
         ]);
 
