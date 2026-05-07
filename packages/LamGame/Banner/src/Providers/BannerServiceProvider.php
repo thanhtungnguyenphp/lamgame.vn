@@ -20,6 +20,7 @@ class BannerServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'banner');
         $this->loadTranslationsFrom(__DIR__ . '/../Resources/lang', 'banner');
         $this->loadRoutesFrom(__DIR__ . '/../Routes/api.php');
+        $this->loadRoutesFrom(__DIR__ . '/../Routes/api-management.php');
         $this->loadRoutesFrom(__DIR__ . '/../Routes/admin.php');
         
         $this->registerObservers();
