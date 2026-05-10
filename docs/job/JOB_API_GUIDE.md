@@ -1,695 +1,257 @@
-# Job Management API — Hướng dẫn tích hợp Ohha Studio
+# Job Management API Guide
 
-> Cập nhật: 28/04/2026
-> Base URL: `https://lamgame.vn/api`
-> Pattern: Tương tự Blog Publish API
-
----
+> Cập nhật: 2026-05-06 | Dựa trên code thực tế
 
 ## Tổng quan
 
-Hệ thống Job có 2 tầng API:
+API quản lý tuyển dụng cho platform LamGame.
 
-| Tầng | Prefix | Auth | Mục đích |
-|-------|--------|------|----------|
-| **Management API** | `/api/manage/` | `X-Api-Key` header | Ohha Studio — quản lý jobs, candidates, companies |
-| **Public API V2** | `/api/v2/jobs/` | Public + Sanctum | Frontend web — listing, detail, apply |
+- **Base URL:** `/api/manage/`
+- **Auth:** Header `X-Api-Key: {admin_api_token}`
+- **Rate limit:** Read 60/min, Write 10/min
+- **Route file:** `routes/api-job-manage.php`
+- **Controllers:** `JobManageController`, `CandidateManageController`, `CompanyManageController`
+- **Services:** `JobPostingService`, `JobPostingApplicationService`
 
-**Ohha Studio sử dụng Management API** (giống Blog Publish API).
+## Endpoints Summary (15 total)
+
+| # | Method | Endpoint | Description |
+|---|--------|----------|-------------|
+| 1 | GET | /jobs | Danh sách jobs |
+| 2 | GET | /jobs/statistics | Thống kê |
+| 3 | GET | /jobs/{slug} | Chi tiết job |
+| 4 | POST | /jobs | Tạo job |
+| 5 | PUT | /jobs/{slug} | Cập nhật job |
+| 6 | DELETE | /jobs/{slug} | Xóa job |
+| 7 | POST | /jobs/{slug}/status | Đổi trạng thái |
+| 8 | GET | /candidates | Danh sách ứng viên |
+| 9 | GET | /candidates/statistics | Thống kê ứng viên |
+| 10 | GET | /candidates/{id} | Chi tiết đơn |
+| 11 | PATCH | /candidates/{id}/status | Cập nhật trạng thái |
+| 12 | DELETE | /candidates/{id} | Xóa đơn |
+| 13 | GET | /companies | Danh sách công ty |
+| 14 | GET | /companies/{id} | Chi tiết công ty |
+| 15 | POST | /companies | Tạo công ty |
+| 16 | POST | /companies/{id} | Cập nhật công ty |
+| 17 | DELETE | /companies/{id} | Xóa công ty |
+
+**Note:** Tất cả endpoints tự động scope theo `auth_admin.id` (chỉ thấy data của mình).
 
 ---
 
-## Authentication
+## 1. Jobs
 
-```
-Header: X-Api-Key: {admin_api_token}
-```
+### GET /api/manage/jobs
 
-Tất cả endpoints Management API yêu cầu header `X-Api-Key`. Token lấy từ bảng `admins.api_token`.
+**Query params:**
+| Param | Type | Description |
+|-------|------|-------------|
+| search | string | Tìm kiếm |
+| job_type | string | Loại công việc |
+| location | string | Địa điểm |
+| experience_level | string | Cấp độ |
+| is_featured | bool | Tin nổi bật |
+| is_remote | bool | Remote |
+| status | string | draft, active, paused, archived |
+| sort_by | string | Trường sắp xếp |
+| sort_dir | string | asc, desc |
+| per_page | int | Default: 15 |
 
----
+### GET /api/manage/jobs/statistics
 
-## Response Format
+Thống kê jobs của admin hiện tại (total, by status, etc.).
 
-Tất cả response trả về JSON:
+### GET /api/manage/jobs/{slug}
+
+Chi tiết job posting (lookup by slug). Trả về `JobPostingResource`.
+
+### POST /api/manage/jobs
+
+Tạo tin tuyển dụng.
 
 ```json
 {
-  "status": "success",
-  "message": "Mô tả kết quả",
-  "data": { ... },
-  "meta": { "current_page": 1, "last_page": 5, "per_page": 15, "total": 72 }
+  "title": "required|string|max:255",
+  "description": "required|string",
+  "short_description": "nullable|string|max:500",
+  "job_type": "nullable|string|max:50",
+  "experience_level": "nullable|string|max:50",
+  "salary_range": "nullable|string",
+  "salary_min": "nullable|numeric|min:0",
+  "salary_max": "nullable|numeric|gte:salary_min",
+  "location": "nullable|string",
+  "is_remote": "nullable|boolean",
+  "education_level": "nullable|string|max:50",
+  "english_level": "nullable|string|max:50",
+  "company_name": "nullable|string|max:255",
+  "company_id": "nullable|int|exists:companies,id",
+  "company_size": "nullable|string|max:50",
+  "contact_email": "nullable|email",
+  "contact_phone": "nullable|string|max:20",
+  "application_method": "nullable|string",
+  "application_url": "nullable|url",
+  "application_deadline": "nullable|date|after:today",
+  "is_featured": "nullable|boolean",
+  "is_urgent": "nullable|boolean",
+  "status": "nullable|in:draft,active",
+  "skills": "nullable|array|max:20",
+  "skills.*": "string|max:100",
+  "benefits": "nullable|array|max:20",
+  "benefits.*": "string|max:100",
+  "meta_title": "nullable|string|max:255",
+  "meta_description": "nullable|string|max:500"
 }
 ```
 
-Error response:
+### PUT /api/manage/jobs/{slug}
+
+Cập nhật job. Tất cả fields optional. Status cho phép: `draft, active, paused, archived`.
+
+### DELETE /api/manage/jobs/{slug}
+
+Xóa job posting.
+
+### POST /api/manage/jobs/{slug}/status
+
+```json
+{ "status": "required|in:draft,active,paused,archived" }
+```
+
+**Logic:**
+- `active` → gọi `service->publish()` (set published_at, etc.)
+- `paused` → gọi `service->unpublish()`
+- `draft`, `archived` → update trực tiếp
+
+---
+
+## 2. Candidates
+
+### GET /api/manage/candidates
+
+**Query params:**
+| Param | Type | Description |
+|-------|------|-------------|
+| job_posting_id | int | Lọc theo job cụ thể |
+| status | string | pending, reviewed, shortlisted, accepted, rejected |
+| search | string | Tìm theo applicant_name/email |
+| per_page | int | Default: 15 |
+
+Sorted by `applied_at` DESC.
+
+### GET /api/manage/candidates/statistics
+
+**Query params:** `job_posting_id` (optional).
+
+Nếu không có job_posting_id → tổng hợp tất cả jobs của admin.
+
 ```json
 {
-  "status": "error",
-  "message": "Mô tả lỗi"
+  "total": 50,
+  "pending": 20,
+  "reviewed": 10,
+  "shortlisted": 8,
+  "accepted": 7,
+  "rejected": 5
 }
 ```
 
-HTTP Status Codes: `200` OK, `201` Created, `404` Not Found, `409` Conflict, `422` Validation Error, `429` Too Many Requests.
+### GET /api/manage/candidates/{id}
 
----
+Chi tiết đơn ứng tuyển + job posting info (title, slug, company_name).
 
-## 1. JOB MANAGEMENT
+### PATCH /api/manage/candidates/{id}/status
 
-### 1.1 Danh sách Jobs
-
-```
-GET /api/manage/jobs
-```
-
-**Query Parameters:**
-
-| Param | Type | Default | Mô tả |
-|-------|------|---------|--------|
-| `search` | string | — | Tìm theo title, description, company_name |
-| `status` | string | — | `draft`, `active`, `paused`, `archived` |
-| `job_type` | string | — | `full-time`, `part-time`, `contract`, `freelance`, `internship` |
-| `location` | string | — | Tìm theo location (LIKE) |
-| `experience_level` | string | — | `junior`, `mid`, `senior`, `lead`, `manager` |
-| `is_featured` | boolean | — | Lọc job nổi bật |
-| `is_remote` | boolean | — | Lọc job remote |
-| `sort_by` | string | `created_at` | `created_at`, `title`, `salary_max`, `view_count`, `application_count` |
-| `sort_dir` | string | `desc` | `asc`, `desc` |
-| `per_page` | int | 15 | 1–100 |
-
-**Response:**
 ```json
 {
-  "status": "success",
-  "data": [
-    {
-      "id": 1,
-      "title": "Unity Developer",
-      "slug": "unity-developer",
-      "short_description": "...",
-      "job_type": "full-time",
-      "experience_level": "mid",
-      "salary_min": 15000000,
-      "salary_max": 25000000,
-      "salary_currency": "VND",
-      "location": "Hồ Chí Minh",
-      "is_remote": false,
-      "company_name": "GameStudio VN",
-      "status": "active",
-      "is_featured": false,
-      "is_urgent": false,
-      "view_count": 150,
-      "application_count": 12,
-      "application_deadline": "2026-06-30",
-      "published_at": "2026-04-25T10:00:00+07:00",
-      "created_at": "2026-04-24T09:00:00+07:00"
-    }
-  ],
-  "meta": { "current_page": 1, "last_page": 3, "per_page": 15, "total": 42 }
+  "status": "required|in:pending,reviewed,shortlisted,accepted,rejected",
+  "notes": "nullable|string|max:2000"
 }
 ```
 
-**Rate limit:** 60 requests/phút
+### DELETE /api/manage/candidates/{id}
+
+Xóa đơn ứng tuyển.
 
 ---
 
-### 1.2 Chi tiết Job
+## 3. Companies
 
-```
-GET /api/manage/jobs/{slug}
-```
+### GET /api/manage/companies
 
-**Response:** Full `JobPostingResource`:
+**Query params:** search (name/industry), per_page.
+
+### GET /api/manage/companies/{id}
+
+Chi tiết công ty.
+
+### POST /api/manage/companies
+
+Tạo công ty mới. **Content-Type: multipart/form-data** (hỗ trợ upload logo).
+
 ```json
 {
-  "status": "success",
-  "data": {
-    "id": 1,
-    "title": "Unity Developer",
-    "slug": "unity-developer",
-    "description": "<p>Mô tả chi tiết...</p>",
-    "short_description": "Tuyển Unity Dev...",
-    "url": "/viec-lam/unity-developer",
-
-    "job_type": "full-time",
-    "experience_level": "mid",
-    "salary_range": "15-25 triệu",
-    "salary_min": 15000000,
-    "salary_max": 25000000,
-    "salary_currency": "VND",
-    "location": "Hồ Chí Minh",
-    "is_remote": false,
-
-    "education_level": "Đại học",
-    "english_level": "Giao tiếp",
-    "skills": ["Unity", "C#", "3D Math"],
-    "benefits": ["Lương tháng 13", "Bảo hiểm"],
-
-    "company_name": "GameStudio VN",
-    "company_size": "50-100",
-    "company_logo": "https://lamgame.vn/storage/company-logos/gamestudio.png",
-
-    "contact_email": "hr@gamestudio.vn",
-    "contact_phone": "0901234567",
-    "application_method": "email",
-    "application_url": null,
-
-    "status": "active",
-    "is_featured": false,
-    "is_urgent": false,
-    "application_deadline": "2026-06-30",
-    "days_remaining": 63,
-    "is_expired": false,
-
-    "view_count": 150,
-    "application_count": 12,
-    "click_count": 45,
-
-    "meta_title": "Tuyển Unity Developer - GameStudio VN",
-    "meta_description": "...",
-    "meta_keywords": "unity, game developer, hcm",
-
-    "published_at": "2026-04-25T10:00:00+07:00",
-    "created_at": "2026-04-24T09:00:00+07:00",
-    "updated_at": "2026-04-26T14:30:00+07:00"
-  }
+  "name": "required|string|max:255",
+  "description": "nullable|string",
+  "website": "nullable|url",
+  "email": "nullable|email",
+  "phone": "nullable|string|max:20",
+  "address": "nullable|string|max:500",
+  "employee_count": "nullable|int|min:1",
+  "founded_year": "nullable|int|min:1900|max:2026",
+  "industry": "nullable|string|max:100",
+  "logo": "nullable|file|mimes:jpg,jpeg,png,webp,svg|max:2048"
 }
 ```
 
----
+### POST /api/manage/companies/{id}
 
-### 1.3 Tạo Job mới
+Cập nhật công ty (POST thay vì PUT vì hỗ trợ file upload). Logo cũ sẽ bị xóa khi upload mới.
 
-```
-POST /api/manage/jobs
-```
+### DELETE /api/manage/companies/{id}
 
-**Body (JSON):**
-
-| Field | Type | Required | Mô tả |
-|-------|------|:--------:|--------|
-| `title` | string | ✅ | Tiêu đề (max 255) |
-| `description` | string | ✅ | Mô tả HTML |
-| `short_description` | string | — | Tóm tắt (max 500) |
-| `job_type` | string | — | `full-time`, `part-time`, `contract`, `freelance`, `internship` |
-| `experience_level` | string | — | `junior`, `mid`, `senior`, `lead`, `manager` |
-| `salary_range` | string | — | Text hiển thị (VD: "15-25 triệu") |
-| `salary_min` | number | — | Lương tối thiểu |
-| `salary_max` | number | — | Lương tối đa (≥ salary_min) |
-| `salary_currency` | string | — | Default: `VND` |
-| `location` | string | — | Địa điểm |
-| `is_remote` | boolean | — | Cho phép remote |
-| `education_level` | string | — | Yêu cầu học vấn |
-| `english_level` | string | — | Yêu cầu tiếng Anh |
-| `company_name` | string | — | Tên công ty |
-| `company_size` | string | — | Quy mô (VD: "50-100") |
-| `contact_email` | email | — | Email liên hệ |
-| `contact_phone` | string | — | SĐT liên hệ |
-| `application_method` | string | — | `email`, `url`, `both` |
-| `application_url` | url | — | Link ứng tuyển ngoài |
-| `application_deadline` | date | — | Hạn ứng tuyển (YYYY-MM-DD, phải > hôm nay) |
-| `is_featured` | boolean | — | Job nổi bật |
-| `is_urgent` | boolean | — | Job gấp |
-| `status` | string | — | `draft` (default) hoặc `active` |
-| `skills` | array | — | Danh sách kỹ năng (max 20, mỗi item max 100 ký tự) |
-| `benefits` | array | — | Danh sách phúc lợi (max 20) |
-| `meta_title` | string | — | SEO title |
-| `meta_description` | string | — | SEO description |
-
-**Response:** `201 Created`
-```json
-{
-  "status": "success",
-  "message": "Job posting created successfully",
-  "data": { "id": 15, "slug": "unity-developer-1", ... }
-}
-```
-
-**Rate limit:** 10 requests/phút
+Xóa công ty.
 
 ---
 
-### 1.4 Cập nhật Job
+## Enums
 
-```
-PUT /api/manage/jobs/{slug}
-```
+### Job Statuses
+- `draft` - Nháp
+- `active` - Đang tuyển
+- `paused` - Tạm dừng
+- `archived` - Lưu trữ
 
-Body giống tạo mới, chỉ gửi fields cần update. `title` và `description` dùng `sometimes` (không bắt buộc khi update).
+### Candidate Statuses
+- `pending` - Chờ xem
+- `reviewed` - Đã xem
+- `shortlisted` - Vào danh sách ngắn
+- `accepted` - Chấp nhận
+- `rejected` - Từ chối
 
-**Response:** `200 OK` với data đã cập nhật.
-
-**Rate limit:** 10 requests/phút
-
----
-
-### 1.5 Xóa Job
-
-```
-DELETE /api/manage/jobs/{slug}
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "message": "Job posting deleted successfully"
-}
-```
-
-**Rate limit:** 10 requests/phút
-
----
-
-### 1.6 Đổi trạng thái Job
-
-```
-POST /api/manage/jobs/{slug}/status
-```
-
-**Body:**
-```json
-{
-  "status": "active"
-}
-```
-
-Giá trị hợp lệ: `draft`, `active`, `paused`, `archived`
-
-**Workflow:**
-```
-draft → active → paused → archived
-              ↘ archived
-       paused → active
-```
-
-**Rate limit:** 10 requests/phút
-
----
-
-### 1.7 Thống kê Jobs
-
-```
-GET /api/manage/jobs/statistics
-```
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": {
-    "total": 42,
-    "active": 30,
-    "draft": 5,
-    "paused": 3,
-    "archived": 4,
-    "total_views": 5200,
-    "total_applications": 180
-  }
-}
-```
-
----
-
-## 2. CANDIDATE / APPLICATION MANAGEMENT
-
-### 2.1 Danh sách ứng viên
-
-```
-GET /api/manage/candidates
-```
-
-**Query Parameters:**
-
-| Param | Type | Mô tả |
-|-------|------|--------|
-| `job_posting_id` | int | Lọc theo job cụ thể |
-| `status` | string | `pending`, `reviewed`, `shortlisted`, `accepted`, `rejected` |
-| `search` | string | Tìm theo tên hoặc email |
-| `per_page` | int | Default 15 |
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": [
-    {
-      "id": 1,
-      "application_code": "APP-001-ABC",
-      "status": "pending",
-      "applicant_name": "Nguyễn Văn A",
-      "applicant_email": "a@email.com",
-      "applicant_phone": "0901234567",
-      "cover_letter": "...",
-      "resume_file_path": "/storage/resumes/abc.pdf",
-      "additional_info": null,
-      "employer_notes": null,
-      "job": {
-        "id": 1,
-        "title": "Unity Developer",
-        "slug": "unity-developer",
-        "company_name": "GameStudio VN"
-      },
-      "applied_at": "2026-04-26T10:00:00+07:00",
-      "created_at": "2026-04-26T10:00:00+07:00"
-    }
-  ],
-  "meta": { "current_page": 1, "total": 25 }
-}
-```
-
-> Chỉ trả về ứng viên của jobs do admin hiện tại tạo.
-
----
-
-### 2.2 Chi tiết ứng viên
-
-```
-GET /api/manage/candidates/{id}
-```
-
-**Response:** Full `JobApplicationResource`.
-
----
-
-### 2.3 Cập nhật trạng thái ứng viên
-
-```
-PATCH /api/manage/candidates/{id}/status
-```
-
-**Body:**
-```json
-{
-  "status": "shortlisted",
-  "notes": "Ứng viên có kinh nghiệm Unity 3 năm"
-}
-```
-
-Giá trị hợp lệ: `pending`, `reviewed`, `shortlisted`, `accepted`, `rejected`
-
-**Workflow:**
+### Candidate Status Flow
 ```
 pending → reviewed → shortlisted → accepted
                                   → rejected
-         reviewed → rejected
-```
-
-**Rate limit:** 10 requests/phút
-
----
-
-### 2.4 Thống kê ứng viên
-
-```
-GET /api/manage/candidates/statistics
-```
-
-**Query:** `?job_posting_id=1` (optional — nếu không truyền, thống kê tất cả jobs)
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": {
-    "total": 25,
-    "pending": 10,
-    "reviewed": 5,
-    "shortlisted": 6,
-    "accepted": 3,
-    "rejected": 1
-  }
-}
 ```
 
 ---
 
-### 2.5 Xóa ứng viên
+## Database Tables
 
-```
-DELETE /api/manage/candidates/{id}
-```
-
----
-
-## 3. COMPANY MANAGEMENT
-
-### 3.1 Danh sách công ty
-
-```
-GET /api/manage/companies
-```
-
-**Query:** `search` (tìm theo name/industry), `per_page`
-
-**Response:**
-```json
-{
-  "status": "success",
-  "data": [
-    {
-      "id": 1,
-      "name": "GameStudio VN",
-      "description": "...",
-      "logo_url": "https://lamgame.vn/storage/company-logos/gamestudio.png",
-      "website": "https://gamestudio.vn",
-      "email": "hr@gamestudio.vn",
-      "phone": "0901234567",
-      "address": "123 Nguyễn Huệ, Q1, HCM",
-      "employee_count": 80,
-      "founded_year": 2018,
-      "industry": "Game Development",
-      "status": "active",
-      "created_at": "2026-04-24T09:00:00+07:00"
-    }
-  ]
-}
-```
+- `job_postings` - Tin tuyển dụng (lookup by slug)
+- `job_posting_skills` - Skills (one-to-many)
+- `job_posting_benefits` - Benefits (one-to-many)
+- `job_applications` - Đơn ứng tuyển
+- `companies` - Công ty (scoped by created_by_admin_id)
 
 ---
 
-### 3.2 Chi tiết công ty
+## Public Job API V2
 
-```
-GET /api/manage/companies/{id}
-```
+Ngoài Management API, còn có Public API tại `routes/api-job-v2.php`:
 
----
+- **Prefix:** `/api/v2/jobs/`
+- **Auth:** Không cần (public)
+- **Endpoints:** Listing, detail, apply, filters
 
-### 3.3 Tạo công ty
-
-```
-POST /api/manage/companies
-```
-
-**Body (multipart/form-data):**
-
-| Field | Type | Required | Mô tả |
-|-------|------|:--------:|--------|
-| `name` | string | ✅ | Tên công ty (max 255) |
-| `description` | string | — | Mô tả |
-| `logo` | file | — | Logo (image, max 2MB) |
-| `website` | url | — | Website |
-| `email` | email | — | Email |
-| `phone` | string | — | SĐT |
-| `address` | string | — | Địa chỉ |
-| `employee_count` | int | — | Số nhân viên |
-| `founded_year` | int | — | Năm thành lập |
-| `industry` | string | — | Ngành nghề |
-
----
-
-### 3.4 Cập nhật công ty
-
-```
-POST /api/manage/companies/{id}
-```
-
-> Dùng POST (không phải PUT) vì hỗ trợ file upload. Gửi `_method=PUT` nếu cần.
-
----
-
-### 3.5 Xóa công ty
-
-```
-DELETE /api/manage/companies/{id}
-```
-
----
-
-## 4. PUBLIC API (Frontend)
-
-Dành cho web frontend, không cần auth cho read endpoints.
-
-### 4.1 Danh sách Jobs (public)
-
-```
-GET /api/v2/jobs
-```
-
-Query: `search`, `job_type`, `location`, `experience_level`, `is_remote`, `is_featured`, `sort_by`, `sort_dir`, `per_page`
-
-Chỉ trả về jobs có `status=active` và chưa hết hạn.
-
----
-
-### 4.2 Filter Options
-
-```
-GET /api/v2/jobs/filters
-```
-
-Trả về danh sách distinct values cho dropdown (cached 1 giờ):
-```json
-{
-  "job_types": ["full-time", "part-time", "contract"],
-  "experience_levels": ["junior", "mid", "senior"],
-  "locations": ["Hồ Chí Minh", "Hà Nội", "Đà Nẵng"],
-  "education_levels": ["Đại học", "Cao đẳng"],
-  "english_levels": ["Giao tiếp", "Đọc hiểu"],
-  "company_sizes": ["10-50", "50-100", "100-500"],
-  "salary_currencies": ["VND", "USD"],
-  "skills": ["Unity", "C#", "Unreal Engine"]
-}
-```
-
----
-
-### 4.3 Chi tiết Job (public)
-
-```
-GET /api/v2/jobs/{id}
-GET /api/v2/jobs/slug/{slug}
-```
-
-Tự động tăng view_count (session-based dedup).
-
----
-
-### 4.4 Ứng tuyển
-
-```
-POST /api/v2/jobs/{id}/apply
-```
-
-**Body (multipart/form-data):**
-
-| Field | Type | Required | Mô tả |
-|-------|------|:--------:|--------|
-| `applicant_name` | string | ✅ | Họ tên (2-255 ký tự) |
-| `applicant_email` | email | ✅ | Email |
-| `applicant_phone` | string | — | SĐT |
-| `resume` | file | — | CV (PDF/DOC/DOCX, max 5MB) |
-| `cover_letter` | string | — | Thư xin việc (max 5000) |
-| `additional_info` | object | — | Thông tin bổ sung |
-
-**Response:** `201 Created`
-```json
-{
-  "status": "success",
-  "message": "Ứng tuyển thành công!",
-  "data": {
-    "application_code": "APP-001-XYZ",
-    "status": "pending"
-  }
-}
-```
-
-Trùng email+job → `409 Conflict`.
-
-**Rate limit:** 5 requests/60 phút
-
----
-
-### 4.5 Tra cứu đơn ứng tuyển (auth:sanctum)
-
-```
-GET /api/v2/applications
-GET /api/v2/applications/{id}/status
-```
-
----
-
-## 5. SO SÁNH VỚI BLOG API
-
-| Tính năng | Blog API | Job Management API |
-|-----------|----------|-------------------|
-| Auth | `X-Api-Key` | `X-Api-Key` (giống) |
-| Prefix | `/api/blog/` | `/api/manage/jobs/` |
-| Resource ID | slug | slug (jobs), id (candidates, companies) |
-| CRUD | publish/update/delete | publish/update/destroy |
-| Status | draft→scheduled→published→archived | draft→active→paused→archived |
-| List | `/blog/list` | `/manage/jobs` |
-| Detail | `/blog/detail/{slug}` | `/manage/jobs/{slug}` |
-| Create | `POST /blog/publish` | `POST /manage/jobs` |
-| Update | `POST /blog/update/{slug}` | `PUT /manage/jobs/{slug}` |
-| Delete | `DELETE /blog/delete/{slug}` | `DELETE /manage/jobs/{slug}` |
-| Change status | `POST /blog/status/{slug}` | `POST /manage/jobs/{slug}/status` |
-| Extra | — | Candidates, Companies, Statistics |
-
----
-
-## 6. JOB CRAWLER
-
-Hệ thống tự động crawl jobs từ nguồn bên ngoài.
-
-**Artisan command:**
-```bash
-php artisan job:crawl --source=topdev --keyword="unity" --limit=20 --sync
-php artisan job:crawl --category=dev --limit=50
-php artisan job:crawl --category=all
-```
-
-**Categories:** `dev`, `art`, `qc`, `content`, `general`, `all`
-
-**Config:** `config/job_crawler.php`
-- Sources: TopDev (mở rộng thêm sau)
-- auto_publish: `false` (admin review trước khi publish)
-- delay: 3s giữa các request
-- max_per_run: 50
-
-**Flow:** Crawl → Normalize → Dedup → Save (status=draft) → Admin review → Publish
-
----
-
-## 7. KIẾN TRÚC CODE
-
-```
-app/
-├── Http/Controllers/
-│   ├── Admin/JobPostingController.php      # Admin web panel
-│   └── Api/
-│       ├── JobPostingController.php        # Public V2 API
-│       ├── JobManageController.php         # Management API (Ohha Studio)
-│       ├── JobPostingApplicationController.php  # Apply + tracking
-│       ├── CandidateManageController.php   # Candidate management
-│       └── CompanyManageController.php     # Company management
-├── Http/Requests/
-│   ├── StoreJobPostingRequest.php
-│   ├── UpdateJobPostingRequest.php
-│   └── Api/JobApplicationRequest.php
-├── Http/Resources/
-│   ├── JobPostingResource.php
-│   ├── JobApplicationResource.php
-│   └── CompanyResource.php
-├── Models/
-│   ├── JobPosting.php                      # 30+ fields, SoftDeletes
-│   ├── JobPostingSkill.php
-│   ├── JobPostingBenefit.php
-│   ├── JobApplication.php
-│   └── JobCrawlLog.php
-├── Services/
-│   ├── JobPostingService.php               # Core CRUD + business logic
-│   ├── JobPostingApplicationService.php    # Apply + notifications
-│   └── JobCrawler/
-│       ├── JobCrawlerService.php           # Orchestrator
-│       ├── JobNormalizer.php               # Data normalization
-│       ├── DuplicateDetector.php           # Dedup logic
-│       └── Sources/
-│           ├── CrawlerSourceInterface.php
-│           └── TopDevCrawler.php
-routes/
-├── api-job-manage.php                      # Management API routes
-├── api-job-v2.php                          # Public V2 API routes
-└── admin.php                               # Admin web routes
-```
+(Xem chi tiết trong route file `api-job-v2.php`)

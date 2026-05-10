@@ -1,6 +1,6 @@
 # LAMGAME.VN — TRẠNG THÁI DỰ ÁN
-> Cập nhật: 04/05/2026 15:42 (GMT+7)
-> Production deployed ✅ — Forum Phase 1-3 ✅ — Forum Management API ✅ — Job Crawler ✅ — 48 Mini Games ✅ — Redis cache ✅ — Queue Redis ✅ — Sentry ✅ — E-Commerce API ✅
+> Cập nhật: 06/05/2026 11:25 (GMT+7)
+> Production deployed ✅ — Forum Phase 1-3 ✅ — Forum Management API ✅ — Job Crawler ✅ — 48 Mini Games ✅ — Redis cache ✅ — Queue Redis ✅ — Sentry ✅ — E-Commerce API ✅ — Reviews & Hire API ✅
 
 ---
 
@@ -31,6 +31,8 @@
 - [x] Sport / Bóng đá (API: live scores, BXH, highlights, articles)
 - [x] **E-Commerce Management API** (28/04) — 33 endpoints, 7 modules
 - [x] **Forum Management API** (29/04) — 28 endpoints, 6 modules (posts, comments, categories, tags, reports, leaderboard) — Ohha Studio integration
+- [x] **Source Game Reviews API** (05/05) — Rating, review, helpful, verified purchase
+- [x] **Hire Request API** (05/05) — Yêu cầu báo giá, email notification
 - [x] Banner System (package LamGame/Banner)
 - [x] SEO (sitemap, Google Index push, Adsense)
 - [x] Collections (bookmark sản phẩm)

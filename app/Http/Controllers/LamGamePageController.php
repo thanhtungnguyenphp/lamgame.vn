@@ -51,6 +51,14 @@ class LamGamePageController extends Controller
     }
 
     /**
+     * Show AI Chat page (OHHA Core WebSocket)
+     */
+    public function aiChat()
+    {
+        return view('lamgame.pages.ai-chat');
+    }
+
+    /**
      * Show Lien he page
      */
     public function lienHe()
