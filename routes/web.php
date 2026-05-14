@@ -50,6 +50,7 @@ Route::get('blog/{slug}', [LamGamePageController::class, 'blogShow'])->name('blo
 // Landing Page routes
 Route::get('p/{slug}', [\App\Http\Controllers\LandingPageController::class, 'show'])->name('landing-page.show');
 Route::get('lottolive', [\App\Http\Controllers\LandingPageController::class, 'show'])->defaults('slug', 'lottolive')->name('landing-page.lottolive');
+Route::get('world-cup-2026', [\App\Http\Controllers\WorldCup2026Controller::class, 'show'])->name('world-cup-2026');
 
 // Mini Games
 Route::get('choi-game', [\App\Http\Controllers\MiniGameController::class, 'index'])->name('mini-game.index');
