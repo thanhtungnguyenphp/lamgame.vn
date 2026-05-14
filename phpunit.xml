@@ -25,6 +25,11 @@
         <testsuite name="Shop Feature Test">
             <directory suffix="Test.php">packages/Webkul/Shop/tests/Feature</directory>
         </testsuite>
+
+        <!-- App API Smoke Tests -->
+        <testsuite name="API Smoke">
+            <directory suffix="Test.php">tests/Feature</directory>
+        </testsuite>
     </testsuites>
 
     <source>

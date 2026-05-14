@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware('api')->prefix('api')->group(base_path('routes/api-ecommerce-manage.php'));
             Route::middleware('api')->prefix('api')->group(base_path('routes/api-reviews-hire.php'));
             Route::middleware('api')->prefix('api')->group(base_path('routes/api-forum-manage.php'));
+            Route::middleware('api')->prefix('api')->group(base_path('routes/api-blog-manage.php'));
         },
         health: '/up',
     )
@@ -122,6 +123,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->job(new \App\Jobs\ScrapeVietlotLottery('keno'))
             ->everyTenMinutes()
             ->between('6:00', '22:00');
+
+        // === SPORT CRAWL ===
+        $schedule->command('sport:sync-fixtures')->dailyAt('06:00')->withoutOverlapping();
+        $schedule->command('sport:sync-live')->everyThirtySeconds()->withoutOverlapping()
+            ->when(fn () => \Illuminate\Support\Facades\Cache::get('sport:has_live_matches', false));
+        $schedule->command('sport:sync-standings')->twiceDaily(2, 14)->withoutOverlapping();
+        $schedule->command('sport:sync-highlights')->everySixHours()->withoutOverlapping();
+        $schedule->command('sport:sync-articles')->cron('0 1,7,13,19 * * *')->withoutOverlapping();
+        $schedule->command('sport:cleanup')->weekly()->withoutOverlapping();
     })
     ->withExceptions(function (Exceptions $exceptions) {
         if (class_exists(\Sentry\Laravel\Integration::class)) {

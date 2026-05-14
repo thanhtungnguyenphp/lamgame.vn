@@ -1,6 +1,6 @@
 # LAMGAME.VN — TRẠNG THÁI DỰ ÁN
-> Cập nhật: 06/05/2026 11:25 (GMT+7)
-> Production deployed ✅ — Forum Phase 1-3 ✅ — Forum Management API ✅ — Job Crawler ✅ — 48 Mini Games ✅ — Redis cache ✅ — Queue Redis ✅ — Sentry ✅ — E-Commerce API ✅ — Reviews & Hire API ✅
+> Cập nhật: 14/05/2026 10:54 (GMT+7)
+> Production deployed ✅ — Forum Phase 1-3 ✅ — Forum Management API ✅ — Job Crawler ✅ — 48 Mini Games ✅ — Redis cache ✅ — Queue Redis ✅ — Sentry ✅ — E-Commerce API ✅ — Reviews & Hire API ✅ — Blog Management API ✅ — SportPulse Phase 9 Foundation ✅ — Smoke Tests ✅
 
 ---
 
@@ -58,20 +58,21 @@
 - [x] Error monitoring (Sentry) — ✅ Done 04/05
 
 ### Sản phẩm
-- [ ] Trang "Thuê Team Dev" (service page + form báo giá)
-- [ ] Review/rating system cho source game
+- [x] Trang "Thuê Team Dev" (service page + form báo giá) — ✅ Done 05/05
+- [x] Review/rating system cho source game — ✅ Done 07/05
 - [ ] Demo/preview trực tiếp cho source game
 - [ ] License types (single, multi, extended)
 - [ ] Thêm AI tools: Asset Generator, GDD Generator
 - [ ] Streaming response cho AI tools
 - [ ] Sport frontend (web views)
-- [ ] SportPulse Phase 9 — Crawl Data (11 tasks)
+- [x] SportPulse Phase 9 — Crawl Data Foundation — ✅ Done 14/05 (migration, 6 commands, 5 services, scheduler)
+- [ ] SportPulse Phase 9 — Chạy thực tế (cần API keys)
 - [ ] Forum Phase 4 (tuỳ chọn): Polls, Private Messages, Follow User/Tag, WebSocket real-time
 
 ### Kỹ thuật (backlog)
-- [ ] Dọn file macOS metadata (._*)
+- [ ] Dọn file macOS metadata (._*) — Script sẵn, 1098 files chờ xóa
 - [ ] CI/CD pipeline
-- [ ] Unit/Feature tests
+- [x] Unit/Feature tests — ✅ Smoke tests 14/05 (30+ test cases)
 
 ---
 
@@ -79,33 +80,64 @@
 
 | Metric | Số lượng |
 |--------|:--------:|
-| Controllers | 24 (+1 ForumManageController) |
-| Models | 43 (+3 ForumBookmark, ForumNotification, ForumReputationLog) |
-| Views (Blade) | 129 (+6 forum views) |
-| Services | 17 (+6 forum services) |
-| Migrations | 79 (+3 forum migrations) |
-| Database tables | 195 (+3 forum_bookmarks, forum_notifications, forum_reputation_logs) |
+| Controllers | 25 (+1 BlogManageController) |
+| Models | 44 (+1 SportCrawlLog) |
+| Views (Blade) | 129 |
+| Services | 23 (+5 SportCrawl services, +1 SourceGameReviewService) |
+| Migrations | 80 (+1 sport crawl tracking) |
+| Database tables | 196 (+1 sport_crawl_logs) |
 | Forum API endpoints | 14 (REST API /api/v1/forum/) |
 | Forum Management API | 28 (Admin API /api/manage/forum/) |
+| Blog Management API | 17 (Admin API /api/manage/blogs/) |
+| E-Commerce Management API | 42 |
+| Job Management API | 15 |
+| Reviews & Hire API | 5 |
+| Sport Crawl Commands | 6 |
 | Forum web routes | 43 (frontend + admin) |
 | Mini Games | 48 |
 | Source Game Products | 68 |
 | Job Postings | 10 |
 | Docker services | 8 |
-| Tests | 0 ❌ |
+| Scheduled tasks | 20 (+6 sport crawl) |
+| Tests | 30+ (smoke tests) ✅ |
 
 ---
 
 ## 📋 VIỆC TIẾP THEO (khi quay lại)
 
-1. ~~**Deploy Forum Management API**~~ — ✅ Done 04/05
-2. ~~**Queue → Redis**~~ — ✅ Done 04/05
-3. ~~**Log rotation**~~ — ✅ Done 04/05
-4. ~~**Sentry**~~ — ✅ Done 04/05
-5. **Forum Phase 4** (tuỳ chọn) — Polls, Private Messages, Follow, WebSocket
-6. **SportPulse Phase 9** — Crawl data (11 tasks, ~6 ngày)
-7. **Review/rating** cho source game (~3 ngày)
-8. **Trang "Thuê Team Dev"** (~2 ngày)
+1. **Đăng ký API-Football key** → thêm vào `.env` → chạy `migrate` + `seed SportExternalIdsSeeder`
+2. **Map team external_ids** → chạy `sport:sync-fixtures` lần đầu
+3. **Chạy xóa file `._*`** → `bash scripts/cleanup-macos-metadata.sh` (1098 files)
+4. **Lemon Squeezy** — chờ Stripe duyệt
+5. **SportPulse Phase 9** — test e2e sau khi có API keys
+6. **Forum Phase 4** (tuỳ chọn) — Polls, Private Messages, Follow, WebSocket
+7. **Demo/preview** cho source game (~5 ngày)
+8. **CI/CD pipeline** — GitHub Actions
+
+---
+
+## 🔄 CHANGELOG 14/05/2026
+
+### SportPulse Phase 9 — Crawl Foundation
+- ✅ Migration: `external_id`, `source`, `synced_at` cho sport_matches; `external_ids` JSON cho teams + leagues; `source_url` cho highlights + articles; bảng `sport_crawl_logs`
+- ✅ `SportDataService` base class (HTTP client, retry 3x, logging, team mapping)
+- ✅ 5 crawl services: SyncFixtures, SyncLive, SyncStandings, SyncHighlights, SyncArticles
+- ✅ 6 artisan commands: `sport:sync-fixtures`, `sport:sync-live`, `sport:sync-standings`, `sport:sync-highlights`, `sport:sync-articles`, `sport:cleanup`
+- ✅ Scheduler config (6 commands đăng ký trong bootstrap/app.php)
+- ✅ Config `sport-crawl.php` (15 leagues, API keys, retry settings)
+- ✅ Seeder `SportExternalIdsSeeder` (map 15 leagues → API-Football IDs)
+- ✅ `.env.example` thêm `API_FOOTBALL_KEY`, `BALLDONTLIE_KEY`
+
+### Smoke Tests — API Quality
+- ✅ `tests/Feature/ApiSmokeTest.php` — 30+ test cases
+- ✅ Public endpoints: verify không trả 500
+- ✅ Auth endpoints: verify trả 401 khi không có token
+- ✅ Management endpoints: verify trả 401 khi không có X-Api-Key
+- ✅ `phpunit.xml` thêm testsuite "API Smoke"
+
+### Cleanup & Fixes
+- ✅ Script `scripts/cleanup-macos-metadata.sh` — phát hiện 1098 file `._*` rác
+- ✅ Đăng ký route `api-blog-manage.php` trong `bootstrap/app.php` (trước đó bị thiếu)
 
 ---
 
