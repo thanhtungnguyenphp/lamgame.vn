@@ -36,3 +36,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('source-game/{id}/demo', [\App\Http\Controllers\DemoController::class, 'store']);
     Route::delete('source-game/{id}/demo', [\App\Http\Controllers\DemoController::class, 'destroy']);
 });
+
+// License API
+Route::get('source-game/{id}/licenses', [\App\Http\Controllers\Api\LicenseController::class, 'productLicenses']);
+Route::post('licenses/verify', [\App\Http\Controllers\Api\LicenseController::class, 'verify']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('my-licenses', [\App\Http\Controllers\Api\LicenseController::class, 'myLicenses']);
+    Route::post('licenses/{id}/transfer', [\App\Http\Controllers\Api\LicenseController::class, 'transfer']);
+});

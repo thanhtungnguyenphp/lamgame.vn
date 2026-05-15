@@ -34,7 +34,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('conversations/{id}/read', [\App\Http\Controllers\Api\ForumMessageController::class, 'markRead']);
     Route::post('users/{id}/block', [\App\Http\Controllers\Api\ForumMessageController::class, 'block']);
     Route::delete('users/{id}/block', [\App\Http\Controllers\Api\ForumMessageController::class, 'unblock']);
+
+    // Follow + Feed
+    Route::post('follow', [\App\Http\Controllers\Api\ForumFollowController::class, 'follow']);
+    Route::delete('follow', [\App\Http\Controllers\Api\ForumFollowController::class, 'unfollow']);
+    Route::get('feed', [\App\Http\Controllers\Api\ForumFollowController::class, 'feed']);
+    Route::get('following', [\App\Http\Controllers\Api\ForumFollowController::class, 'following']);
 });
 
 // Polls (public)
 Route::get('polls/{id}/results', [\App\Http\Controllers\Api\ForumPollController::class, 'results']);
+
+// Followers count (public)
+Route::get('{type}/{id}/followers', [\App\Http\Controllers\Api\ForumFollowController::class, 'followers']);
