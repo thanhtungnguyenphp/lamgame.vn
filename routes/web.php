@@ -18,6 +18,7 @@ Route::get('checkout/onepage/success', [\Webkul\Shop\Http\Controllers\OnepageCon
 // Source Game routes
 Route::get('source-game', [LamGamePageController::class, 'sourceGame'])->name('lamgame.source-game');
 Route::get('source-game/{slug}', [LamGamePageController::class, 'sourceGameDetail'])->name('lamgame.source-game.detail');
+Route::get('source-game/{slug}/demo', [App\Http\Controllers\DemoController::class, 'show'])->name('source-game.demo');
 
 // Seller public profile
 Route::get('seller/{slug}', [App\Http\Controllers\SellerProfileController::class, 'show'])->name('seller.profile');
@@ -42,6 +43,17 @@ Route::get('ai', [LamGamePageController::class, 'aiChat'])->name('lamgame.ai-cha
 Route::get('lien-he', [LamGamePageController::class, 'lienHe'])->name('lamgame.lien-he');
 Route::post('lien-he', [LamGamePageController::class, 'submitContact'])->name('lamgame.lien-he.submit');
 Route::get('thue-team-dev', [LamGamePageController::class, 'hireTeam'])->name('lamgame.thue-team-dev');
+
+// Sport Web Views
+Route::prefix('the-thao')->group(function () {
+    Route::get('/', [App\Http\Controllers\SportWebController::class, 'index'])->name('sport.index');
+    Route::get('lich-thi-dau', [App\Http\Controllers\SportWebController::class, 'fixtures'])->name('sport.fixtures');
+    Route::get('bang-xep-hang/{league}', [App\Http\Controllers\SportWebController::class, 'standings'])->name('sport.standings');
+    Route::get('tran-dau/{id}', [App\Http\Controllers\SportWebController::class, 'match'])->name('sport.match');
+    Route::get('doi-bong/{slug}', [App\Http\Controllers\SportWebController::class, 'team'])->name('sport.team');
+    Route::get('tin-tuc', [App\Http\Controllers\SportWebController::class, 'articles'])->name('sport.articles');
+    Route::get('tin-tuc/{id}', [App\Http\Controllers\SportWebController::class, 'article'])->name('sport.article');
+});
 
 // Blog routes
 Route::get('blog', [LamGamePageController::class, 'blog'])->name('lamgame.blog');

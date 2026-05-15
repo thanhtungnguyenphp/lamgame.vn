@@ -132,6 +132,17 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('sport:sync-highlights')->everySixHours()->withoutOverlapping();
         $schedule->command('sport:sync-articles')->cron('0 1,7,13,19 * * *')->withoutOverlapping();
         $schedule->command('sport:cleanup')->weekly()->withoutOverlapping();
+
+        // === SPORT NOTIFICATIONS ===
+        $schedule->job(new \App\Jobs\Sport\DailyDigestNotificationJob)->dailyAt('08:00');
+        $schedule->call(function () {
+            $upcoming = \App\Models\Sport\SportMatch::where('status', 'scheduled')
+                ->whereBetween('start_time', [now()->addMinutes(14), now()->addMinutes(16)])
+                ->pluck('id');
+            foreach ($upcoming as $matchId) {
+                \App\Jobs\Sport\MatchStartNotificationJob::dispatch($matchId);
+            }
+        })->everyMinute()->withoutOverlapping();
     })
     ->withExceptions(function (Exceptions $exceptions) {
         if (class_exists(\Sentry\Laravel\Integration::class)) {

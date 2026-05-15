@@ -21,4 +21,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('vote', [ForumApiController::class, 'vote']);
     Route::get('notifications', [ForumApiController::class, 'notifications']);
     Route::post('notifications/read', [ForumApiController::class, 'markNotificationRead']);
+
+    // Polls
+    Route::post('polls/{id}/vote', [\App\Http\Controllers\Api\ForumPollController::class, 'vote']);
+    Route::delete('polls/{id}/vote', [\App\Http\Controllers\Api\ForumPollController::class, 'retract']);
+
+    // Private Messages
+    Route::get('conversations', [\App\Http\Controllers\Api\ForumMessageController::class, 'conversations']);
+    Route::post('conversations', [\App\Http\Controllers\Api\ForumMessageController::class, 'createConversation']);
+    Route::get('conversations/{id}/messages', [\App\Http\Controllers\Api\ForumMessageController::class, 'messages']);
+    Route::post('conversations/{id}/messages', [\App\Http\Controllers\Api\ForumMessageController::class, 'send']);
+    Route::patch('conversations/{id}/read', [\App\Http\Controllers\Api\ForumMessageController::class, 'markRead']);
+    Route::post('users/{id}/block', [\App\Http\Controllers\Api\ForumMessageController::class, 'block']);
+    Route::delete('users/{id}/block', [\App\Http\Controllers\Api\ForumMessageController::class, 'unblock']);
 });
+
+// Polls (public)
+Route::get('polls/{id}/results', [\App\Http\Controllers\Api\ForumPollController::class, 'results']);

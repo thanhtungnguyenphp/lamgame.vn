@@ -2,6 +2,7 @@
 
 namespace App\Services\SportCrawl;
 
+use App\Jobs\Sport\StandingChangeNotificationJob;
 use App\Models\Sport\Standing;
 
 class SyncStandingsService extends SportDataService
@@ -34,6 +35,9 @@ class SyncStandingsService extends SportDataService
                     continue;
                 }
 
+                $oldPosition = Standing::where('league_id', $localLeagueId)
+                    ->where('team_id', $teamId)->value('position');
+
                 $standing = Standing::updateOrCreate(
                     ['league_id' => $localLeagueId, 'team_id' => $teamId],
                     [
@@ -51,6 +55,10 @@ class SyncStandingsService extends SportDataService
                         'form' => $entry['form'] ?? null,
                     ]
                 );
+
+                if ($oldPosition && $oldPosition !== ($entry['rank'] ?? 0)) {
+                    StandingChangeNotificationJob::dispatch($teamId, $localLeagueId, $oldPosition, $entry['rank'] ?? 0);
+                }
 
                 $standing->wasRecentlyCreated ? $this->created++ : $this->updated++;
             }

@@ -29,3 +29,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::post('hire-request', [HireRequestController::class, 'store'])
         ->name('hire-request.store')->middleware('throttle:3,60');
 });
+
+// Demo API
+Route::get('source-game/{id}/demo-info', [\App\Http\Controllers\DemoController::class, 'info']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('source-game/{id}/demo', [\App\Http\Controllers\DemoController::class, 'store']);
+    Route::delete('source-game/{id}/demo', [\App\Http\Controllers\DemoController::class, 'destroy']);
+});

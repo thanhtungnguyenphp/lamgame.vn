@@ -2,6 +2,8 @@
 
 namespace App\Services\SportCrawl;
 
+use App\Jobs\Sport\GoalNotificationJob;
+use App\Jobs\Sport\MatchEndNotificationJob;
 use App\Models\Sport\SportMatch;
 use Illuminate\Support\Facades\Cache;
 
@@ -58,17 +60,23 @@ class SyncLiveService extends SportDataService
 
             // Dispatch goal notification if score changed
             if (($goals['home'] ?? $oldHome) != $oldHome || ($goals['away'] ?? $oldAway) != $oldAway) {
-                // TODO: dispatch SendGoalNotification job
+                $scoringTeam = ($goals['home'] ?? $oldHome) != $oldHome ? $match->home_team_id : $match->away_team_id;
+                GoalNotificationJob::dispatch($match->id, $scoringTeam, $goals['home'] ?? $oldHome, $goals['away'] ?? $oldAway);
             }
 
             $this->updated++;
         }
 
-        // Mark finished matches
-        $finishedCount = SportMatch::where('status', 'live')
+        // Mark finished matches and notify
+        $finishedMatches = SportMatch::where('status', 'live')
             ->whereNotNull('external_id')
             ->whereNotIn('external_id', $liveExternalIds)
-            ->update(['status' => 'finished', 'synced_at' => now()]);
+            ->get();
+
+        foreach ($finishedMatches as $fm) {
+            $fm->update(['status' => 'finished', 'synced_at' => now()]);
+            MatchEndNotificationJob::dispatch($fm->id);
+        }
 
         // Clear live flag if no more live matches
         if (empty($liveExternalIds)) {
