@@ -33,6 +33,9 @@ class SyncFixturesService extends SportDataService
             foreach ($data as $fixture) {
                 $this->processFixture($fixture);
             }
+
+            // Respect rate limit (free plan: 10 req/min)
+            usleep(7_000_000);
         }
 
         $duration = (int) ((microtime(true) - $start) * 1000);
@@ -79,6 +82,15 @@ class SyncFixturesService extends SportDataService
                 'synced_at' => now(),
             ]
         );
+
+        // Broadcast score change for live matches
+        if ($status === 'live' && !$match->wasRecentlyCreated) {
+            $oldHome = (int) $match->getOriginal('home_score');
+            $oldAway = (int) $match->getOriginal('away_score');
+            if ($oldHome !== ($goals['home'] ?? 0) || $oldAway !== ($goals['away'] ?? 0)) {
+                event(new \App\Events\Sport\ScoreUpdated($match->id, $goals['home'] ?? 0, $goals['away'] ?? 0));
+            }
+        }
 
         $match->wasRecentlyCreated ? $this->created++ : $this->updated++;
     }

@@ -20,14 +20,20 @@ class SyncHighlightsService extends SportDataService
         }
 
         $feed = json_decode($body, true);
-        $items = $feed['response'] ?? $feed ?? [];
+        $items = is_array($feed) ? $feed : [];
         $this->fetched = count($items);
 
         foreach ($items as $item) {
-            $videoUrl = $item['matchviewUrl'] ?? $item['videos'][0]['embed'] ?? null;
-            if (!$videoUrl) {
+            $embed = $item['videos'][0]['embed'] ?? $item['embed'] ?? null;
+            if (!$embed) {
                 $this->skipped++;
                 continue;
+            }
+
+            // Extract iframe src from embed HTML
+            $videoUrl = $embed;
+            if (preg_match('/src=[\'"]([^\'"]+)[\'"]/', $embed, $m)) {
+                $videoUrl = $m[1];
             }
 
             // Dedup by source_url

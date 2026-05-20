@@ -3,6 +3,7 @@
 namespace App\Jobs\Sport;
 
 use App\Models\Sport\SportMatch;
+use App\Models\Sport\UserSportProfile;
 use App\Models\Sport\UserSportReminder;
 use App\Services\FcmNotificationService;
 use Illuminate\Bus\Queueable;
@@ -26,34 +27,34 @@ class MatchStartNotificationJob implements ShouldQueue
 
         $title = '🏟️ Sắp bắt đầu (15 phút)';
         $body = "{$match->homeTeam->name} vs {$match->awayTeam->name}";
+        $data = [
+            'type' => 'match_start',
+            'match_id' => $this->matchId,
+            'app' => 'sport_pulse', // Phân biệt với lotto-live
+        ];
 
-        // Users with reminders for this match
-        $reminders = UserSportReminder::where('match_id', $this->matchId)
+        $tokens = collect();
+
+        // 1. Users with reminders for this match
+        UserSportReminder::where('match_id', $this->matchId)
             ->with('profile.fcmTokens')
-            ->get();
+            ->get()
+            ->each(fn ($r) => $tokens->push(...$r->profile->fcmTokens->pluck('token')));
 
-        foreach ($reminders as $reminder) {
-            foreach ($reminder->profile->fcmTokens ?? [] as $token) {
-                $fcm->sendToToken($token->token, compact('title', 'body'), [
-                    'type' => 'match_start', 'match_id' => $this->matchId,
-                ]);
-            }
-        }
-
-        // Users with favorite teams
+        // 2. Users with favorite teams (chỉ khi bật match_reminder)
         $teamIds = [$match->home_team_id, $match->away_team_id];
-        $profiles = \App\Models\Sport\UserSportProfile::where(function ($q) use ($teamIds) {
+        UserSportProfile::where(function ($q) use ($teamIds) {
             foreach ($teamIds as $id) {
                 $q->orWhereJsonContains('favorite_teams', $id);
             }
-        })->with('fcmTokens')->get();
+        })->with('fcmTokens')->get()
+            ->filter(fn ($p) => ($p->notification_settings['match_reminder'] ?? true))
+            ->each(fn ($p) => $tokens->push(...$p->fcmTokens->pluck('token')));
 
-        foreach ($profiles as $user) {
-            foreach ($user->fcmTokens as $token) {
-                $fcm->sendToToken($token->token, compact('title', 'body'), [
-                    'type' => 'match_start', 'match_id' => $this->matchId,
-                ]);
-            }
+        // Send — chỉ gửi đến tokens trong bảng user_sport_fcm_tokens (SportPulse only)
+        $uniqueTokens = $tokens->unique()->values()->toArray();
+        foreach ($uniqueTokens as $token) {
+            $fcm->sendToToken($token, compact('title', 'body'), $data);
         }
     }
 }

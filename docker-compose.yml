@@ -50,6 +50,18 @@ services:
       - "traefik.http.routers.lamgame-secure.rule=Host(`lamgame.vn`)"
       - "traefik.http.routers.lamgame-secure.entrypoints=websecure"
       - "traefik.http.routers.lamgame-secure.tls=true"
+      # www → non-www redirect middleware
+      - "traefik.http.middlewares.lamgame-www-redirect.redirectregex.regex=^https?://www\\.lamgame\\.vn/(.*)"
+      - "traefik.http.middlewares.lamgame-www-redirect.redirectregex.replacement=https://lamgame.vn/$${1}"
+      - "traefik.http.middlewares.lamgame-www-redirect.redirectregex.permanent=true"
+      # www routers
+      - "traefik.http.routers.lamgame-www.rule=Host(`www.lamgame.vn`)"
+      - "traefik.http.routers.lamgame-www.entrypoints=web"
+      - "traefik.http.routers.lamgame-www.middlewares=lamgame-www-redirect"
+      - "traefik.http.routers.lamgame-www-secure.rule=Host(`www.lamgame.vn`)"
+      - "traefik.http.routers.lamgame-www-secure.entrypoints=websecure"
+      - "traefik.http.routers.lamgame-www-secure.tls=true"
+      - "traefik.http.routers.lamgame-www-secure.middlewares=lamgame-www-redirect"
       - "traefik.http.services.lamgame.loadbalancer.server.port=80"
     restart: unless-stopped
 
@@ -77,6 +89,21 @@ services:
     ports:
       - "49170:1025"
       - "8028:8025"
+    networks:
+      - lamgame-network
+    restart: unless-stopped
+
+  soketi:
+    image: quay.io/soketi/soketi:1.6-16-debian
+    container_name: lg-soketi
+    ports:
+      - "6001:6001"
+    environment:
+      SOKETI_DEBUG: "0"
+      SOKETI_DEFAULT_APP_ID: "lamgame-sport"
+      SOKETI_DEFAULT_APP_KEY: "sport-pulse-key"
+      SOKETI_DEFAULT_APP_SECRET: "sport-pulse-secret"
+      SOKETI_DEFAULT_APP_ENABLE_CLIENT_MESSAGES: "true"
     networks:
       - lamgame-network
     restart: unless-stopped

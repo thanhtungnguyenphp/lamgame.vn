@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->string('demo_url')->nullable()->after('url_key');
+            $table->string('demo_url')->nullable()->after('sku');
             $table->string('demo_file_path')->nullable()->after('demo_url');
             $table->boolean('has_demo')->default(false)->after('demo_file_path');
         });

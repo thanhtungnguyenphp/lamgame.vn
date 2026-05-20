@@ -27,6 +27,9 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware('api')->prefix('api')->group(base_path('routes/api-reviews-hire.php'));
             Route::middleware('api')->prefix('api')->group(base_path('routes/api-forum-manage.php'));
             Route::middleware('api')->prefix('api')->group(base_path('routes/api-blog-manage.php'));
+
+            // Alias: /api-sport/* → same controllers as /api/v1/sport/*
+            Route::middleware('api')->prefix('api-sport')->group(base_path('routes/api-sport-alias.php'));
         },
         health: '/up',
     )
@@ -142,7 +145,7 @@ return Application::configure(basePath: dirname(__DIR__))
             foreach ($upcoming as $matchId) {
                 \App\Jobs\Sport\MatchStartNotificationJob::dispatch($matchId);
             }
-        })->everyMinute()->withoutOverlapping();
+        })->everyMinute()->name('sport-match-start-notify')->withoutOverlapping();
     })
     ->withExceptions(function (Exceptions $exceptions) {
         if (class_exists(\Sentry\Laravel\Integration::class)) {

@@ -9,8 +9,8 @@ use App\Http\Controllers\Api\Sport\SportUserController;
 use App\Http\Controllers\Api\Sport\SearchController;
 use Illuminate\Support\Facades\Route;
 
-// Public endpoints
-Route::prefix('v1/sport')->name('api.sport.')->middleware('throttle:60,1')->group(function () {
+// Public endpoints — dual prefix: /api/v1/sport/* and /api-sport/*
+$sportPublicRoutes = function () {
     // Sports & Leagues
     Route::get('/sports', [SportController::class, 'index'])->name('sports');
     Route::get('/leagues', [LeagueController::class, 'index'])->name('leagues');
@@ -38,10 +38,12 @@ Route::prefix('v1/sport')->name('api.sport.')->middleware('throttle:60,1')->grou
 
     // Search
     Route::get('/search', [SearchController::class, 'index'])->name('search');
-});
+};
+
+Route::prefix('v1/sport')->name('api.sport.')->middleware('throttle:60,1')->group($sportPublicRoutes);
 
 // User endpoints (Firebase Auth required)
-Route::prefix('v1/sport/user')->name('api.sport.user.')->middleware(['throttle:30,1', 'firebase.auth'])->group(function () {
+$sportUserRoutes = function () {
     Route::get('/profile', [SportUserController::class, 'profile'])->name('profile');
     Route::put('/favorites', [SportUserController::class, 'updateFavorites'])->name('favorites');
     Route::put('/notification-settings', [SportUserController::class, 'updateNotificationSettings'])->name('notification-settings');
@@ -50,4 +52,7 @@ Route::prefix('v1/sport/user')->name('api.sport.user.')->middleware(['throttle:3
     Route::get('/reminders', [SportUserController::class, 'reminders'])->name('reminders.index');
     Route::post('/fcm-token', [SportUserController::class, 'registerFcmToken'])->name('fcm-token');
     Route::delete('/account', [SportUserController::class, 'deleteAccount'])->name('account.delete');
-});
+};
+
+Route::prefix('v1/sport/user')->name('api.sport.user.')->middleware(['throttle:30,1', 'firebase.auth'])->group($sportUserRoutes);
+

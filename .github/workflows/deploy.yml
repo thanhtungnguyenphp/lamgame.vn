@@ -13,11 +13,8 @@ jobs:
     name: Deploy to Production
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
+    steps:
       - name: Deploy to server via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -27,52 +24,35 @@ jobs:
           port: ${{ secrets.SERVER_PORT || '22' }}
           script: |
             cd /data/www/lamgame.vn
-            
+
             echo "🔄 Pulling latest code..."
             git pull origin main
-            
-            echo "📦 Installing Composer dependencies..."
-            composer install --no-dev --optimize-autoloader --no-interaction
-            
-            echo "📦 Installing NPM dependencies..."
-            npm ci --only=production
-            
-            echo "🏗️ Building assets..."
-            npm run build
-            
-            echo "🔄 Running migrations..."
-            php artisan migrate --force
-            
-            echo "🧹 Clearing caches..."
-            php artisan config:clear
-            php artisan cache:clear
-            php artisan route:clear
-            php artisan view:clear
-            
-            echo "⚡ Optimizing..."
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-            
-            echo "🔗 Creating storage link..."
-            php artisan storage:link
-            
-            echo "🔄 Restarting services..."
-            sudo systemctl restart php8.2-fpm
-            sudo systemctl reload nginx
-            
-            echo "✅ Deployment completed successfully!"
 
-      - name: Send deployment notification
-        if: always() && secrets.SLACK_WEBHOOK_URL != ''
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          text: |
-            Deployment to Production ${{ job.status }}
-            Repository: ${{ github.repository }}
-            Branch: ${{ github.ref_name }}
-            Commit: ${{ github.sha }}
-          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+            echo "📦 Installing Composer dependencies..."
+            docker exec lg-php composer install --no-dev --optimize-autoloader --no-interaction
+
+            echo "📦 Installing NPM & building assets..."
+            docker exec lg-php npm ci
+            docker exec lg-php npm run build
+
+            echo "🔄 Running migrations..."
+            docker exec lg-php php artisan migrate --force
+
+            echo "🧹 Clearing caches..."
+            docker exec lg-php php artisan config:clear
+            docker exec lg-php php artisan cache:clear
+            docker exec lg-php php artisan route:clear
+            docker exec lg-php php artisan view:clear
+
+            echo "⚡ Optimizing..."
+            docker exec lg-php php artisan config:cache
+            docker exec lg-php php artisan route:cache
+            docker exec lg-php php artisan view:cache
+
+            echo "🔗 Storage link..."
+            docker exec lg-php php artisan storage:link 2>/dev/null || true
+
+            echo "🔄 Restarting PHP-FPM..."
+            docker restart lg-php
+
+            echo "✅ Deployment completed!"

@@ -30,4 +30,16 @@ return [
         'mien-bac'   => 'kqxs_mien_bac',
         'vietlot'    => 'vietlot',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sport Pulse — Notification Channels
+    |--------------------------------------------------------------------------
+    | Prefix 'sport_' để phân biệt với Lotto-Live notifications.
+    */
+    'sport_channels' => [
+        'match_start' => 'sport_match_start',
+        'live_score'  => 'sport_live_score',
+        'highlights'  => 'sport_highlights',
+    ],
 ];

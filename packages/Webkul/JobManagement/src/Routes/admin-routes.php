@@ -32,13 +32,7 @@ Route::group([
         Route::post('/{id}/unpublish', [JobController::class, 'unpublish'])->name('unpublish');
     });
     
-    Route::prefix('companies')->name('admin.companies.')->group(function () {
-        Route::get('/', [CompanyController::class, 'index'])->name('index');
-        Route::get('/create', [CompanyController::class, 'create'])->name('create');
-        Route::post('/', [CompanyController::class, 'store'])->name('store');
-        Route::get('/{id}/edit', [CompanyController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [CompanyController::class, 'update'])->name('update');
-        Route::delete('/{id}', [CompanyController::class, 'destroy'])->name('destroy');
-    });
+    // Companies routes are registered in routes/admin.php via Route::resource
+    // Removed duplicate to avoid route name collision with admin.companies.edit
     
 });

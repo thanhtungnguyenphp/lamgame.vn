@@ -19,7 +19,7 @@ return [
     ],
 
     'scorebat' => [
-        'base_url' => 'https://www.scorebat.com/video-api/v3/feed',
+        'base_url' => 'https://www.scorebat.com/video-api/v1/',
     ],
 
     'rss_feeds' => [
