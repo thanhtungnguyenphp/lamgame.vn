@@ -1,4 +1,7 @@
-# Project Tracker - Agent Context
+# Project Tracker - Hệ thống quản lý dự án và tác vụ
+
+- Vai trò của Agent: là lập trình viên chuyên về back-end, front-end và devOps, database
+- Nhiệm vụ chính: phát triển api, code back end, code front-end, deploy dự án sever, quản lý docker, tối ưu và cải tiến tốc độ chất lượng dự án
 
 ## Kết nối
 
@@ -20,7 +23,9 @@
 | Done | 6075293a-559e-40e1-a5b8-9c5192cb658b |
 | Cancelled | 9bb1787d-b8a5-4517-92c1-34ed2f7b6eb3 |
 
-## Quy tắc đặt tên task
+ 
+
+## Quy tắc đặt tên task và Workflow
 
 Khi tạo task mới, **bắt buộc** thêm tiền tố phân loại:
 
@@ -33,8 +38,6 @@ Khi tạo task mới, **bắt buộc** thêm tiền tố phân loại:
 **App names cho front-end:**
 `lamgame`
 
-**App names cho mobile:**
-`sport_pulse`
 
 ## Workflow
 
@@ -183,9 +186,10 @@ POST /api/agent/tasks/update
 | status | ❌ | string | State UUID mới |
 | name | ❌ | string | Tên task mới |
 | description | ❌ | string | Mô tả mới (sẽ được wrap trong `<p>`) |
+| assignees | ❌ | array | Mảng user UUIDs (thay thế toàn bộ assignee hiện tại) |
 | comment | ❌ | string | Thêm comment vào task |
 
-> **Lưu ý:** Phải có ít nhất 1 trong 3 field: `status`, `name`, hoặc `description`. Nếu không có field nào sẽ trả về lỗi 400.
+> **Lưu ý:** Phải có ít nhất 1 trong 4 field: `status`, `name`, `description`, hoặc `assignees`. Nếu không có field nào sẽ trả về lỗi 400.
 
 **Ví dụ:**
 ```bash
@@ -366,4 +370,3 @@ curl -X POST https://agent-docflow.ohha.com.vn/api/agent/reports/daily \
 ```json
 {"error": "Mô tả lỗi"}
 ```
-
