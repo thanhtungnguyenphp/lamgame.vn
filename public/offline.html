@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Làm Game</title>
+    <style>
+        body{font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f8fafc;color:#334155;text-align:center;padding:2rem}
+        .offline-box{max-width:400px}
+        .offline-box h1{font-size:3rem;margin-bottom:.5rem}
+        .offline-box p{font-size:1.1rem;color:#64748b;margin-bottom:1.5rem}
+        .retry-btn{padding:12px 24px;background:#6a4c93;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer;font-weight:600}
+        .retry-btn:hover{background:#5a3d7a}
+    </style>
+</head>
+<body>
+    <div class="offline-box">
+        <h1>📡</h1>
+        <h2>Bạn đang offline</h2>
+        <p>Kiểm tra kết nối mạng và thử lại. Một số nội dung đã được lưu cache có thể vẫn truy cập được.</p>
+        <button class="retry-btn" onclick="location.reload()">Thử lại</button>
+    </div>
+</body>
+</html>

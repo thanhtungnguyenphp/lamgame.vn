@@ -654,5 +654,14 @@
     @stack('scripts')
 
     @include('partials.fcm-init')
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js');
+        window.addEventListener('online', () => {
+            navigator.serviceWorker.controller?.postMessage('retry-queue');
+        });
+    }
+    </script>
 </body>
 </html>
