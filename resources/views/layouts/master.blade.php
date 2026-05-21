@@ -421,7 +421,9 @@
                 {{-- Navigation Menu --}}
                 <nav class="nav">
                     <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a>
+                    <a href="{{ route('mini-game.index') }}" class="{{ request()->routeIs('mini-game.*') ? 'active' : '' }}">Chơi Game</a>
                     <a href="{{ route('lamgame.source-game') }}" class="{{ request()->routeIs('lamgame.source-game') ? 'active' : '' }}">Source Game</a>
+                    <a href="{{ route('lamgame.ai-tools') }}" class="{{ request()->routeIs('lamgame.ai-tools*') ? 'active' : '' }}">AI Tools</a>
                     <a href="{{ route('forum.index') }}" class="{{ request()->routeIs('forum.*') ? 'active' : '' }}">Forum</a>
                     <a href="{{ route('lamgame.blog') }}" class="{{ request()->routeIs('lamgame.blog*', 'blog.*') ? 'active' : '' }}">Blog</a>
                     <a href="{{ route('lamgame.viec-lam-game') }}" class="{{ request()->routeIs('lamgame.viec-lam-game*') ? 'active' : '' }}">Việc làm</a>
