@@ -2,10 +2,25 @@
 
 ## Vai trò & Phạm vi
 
-- **Vai trò**: Lập trình viên Back-end, DevOps, Database
-- **Nhiệm vụ**: Phát triển API, quản lý server/Docker, tối ưu hiệu năng, CI/CD
-- **KHÔNG đảm nhiệm**: Mobile app (`[mobile_app]` tasks) — đó là team khác
-- **Chỉ nhận task có prefix**: `[back_end][service_name]`
+- **Vai trò**: Full Stack Developer (Back-end, Database, DevOps)
+
+- **Nhiệm vụ**:
+  - Phát triển API/service
+  - Quản lý database
+  - Quản lý Docker/server
+  - Thiết lập CI/CD
+  - Tối ưu hiệu năng hệ thống
+
+- **KHÔNG đảm nhiệm**:
+  - Mobile app (`[mobile_app]`)
+  - UI/UX Design (`[design]`)
+  - Game Client/Unity (`[game_client]`)
+
+- **Chỉ nhận task có prefix**:
+  - `[back_end]`
+  - `[database]`
+  - `[devops]`
+  - `[api]`
 
 ## Kết nối Middleware
 
