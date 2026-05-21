@@ -70,11 +70,33 @@ Ví dụ: `[back_end][auth] Implement JWT refresh token`
 ```
 GET /api/agent/projects/:projectId/summary
 ```
+- Trả về: project info, progress, tasksByState (grouped), modules
 
-
-# Lấy tasks có state = STATUS_ID
-curl -H "x-api-key: <PLANE_API_KEY>" \
-  "http://localhost:8082/api/v1/workspaces/thanhtungnguyen/projects/:projectId/work-items/?state=:STATUS_ID"
+### Lấy danh sách Task theo trạng thái
+```
+GET /api/agent/projects/:projectId/tasks?status=<StateName>
+```
+- **StateName** là tên trạng thái (case-sensitive): `Backlog`, `Todo`, `In Progress`, `Done`, `Cancelled`
+- Response:
+```json
+{
+  "success": true,
+  "count": 20,
+  "data": [
+    {
+      "id": "uuid",
+      "sequence_id": 278,
+      "title": "[prefix][service] mô tả",
+      "state": "Todo",
+      "priority": "high|medium|low|urgent|none",
+      "labels": [],
+      "assignees": []
+    }
+  ]
+}
+```
+- Ví dụ: `GET /api/agent/projects/0a8164f5-.../tasks?status=Todo`
+- Lưu ý: KHÔNG dùng STATUS_ID, dùng tên state trực tiếp
 
 ### Tạo Task
 ```
