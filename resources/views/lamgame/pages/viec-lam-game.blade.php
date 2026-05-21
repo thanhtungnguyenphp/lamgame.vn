@@ -3,6 +3,46 @@
 @section('page_title', $page_title ?? 'Việc làm Game - Làm Game')
 @section('page_description', $page_description ?? 'Tìm kiếm cơ hội việc làm trong ngành game development tại Việt Nam và quốc tế')
 
+@push('schema_markup')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Việc làm Game Developer",
+    "description": "Tìm kiếm cơ hội việc làm trong ngành game development tại Việt Nam và quốc tế",
+    "url": "{{ url('/viec-lam-game') }}",
+    "isPartOf": {
+        "@type": "WebSite",
+        "name": "Làm Game",
+        "url": "{{ url('/') }}"
+    }
+    @if(isset($jobs) && $jobs->count())
+    ,"itemListElement": [
+        @foreach($jobs->take(10) as $i => $job)
+        {
+            "@type": "ListItem",
+            "position": {{ $i + 1 }},
+            "item": {
+                "@type": "JobPosting",
+                "title": "{{ $job->title }}",
+                "datePosted": "{{ $job->created_at->toIso8601String() }}",
+                "hiringOrganization": {
+                    "@type": "Organization",
+                    "name": "{{ $job->company_name ?? 'Công ty Game' }}"
+                },
+                "jobLocation": {
+                    "@type": "Place",
+                    "address": "{{ $job->attributes['job_location'] ?? 'Việt Nam' }}"
+                }
+            }
+        }@if(!$loop->last),@endif
+        @endforeach
+    ]
+    @endif
+}
+</script>
+@endpush
+
 @push('pagination_links')
     @if(isset($jobs) && $jobs->currentPage() > 1)
         <link rel="prev" href="{{ $jobs->previousPageUrl() }}">

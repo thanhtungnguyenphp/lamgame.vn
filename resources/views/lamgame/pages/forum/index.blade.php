@@ -3,6 +3,23 @@
 @section('page_title', 'Forum - Cộng đồng Game Developer')
 @section('page_description', 'Tham gia thảo luận về game development, chia sẻ ý tưởng và tìm kiếm đồng đội.')
 
+@push('schema_markup')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "DiscussionForum",
+    "name": "Forum Cộng đồng Game Developer",
+    "description": "Tham gia thảo luận về game development, chia sẻ ý tưởng và tìm kiếm đồng đội",
+    "url": "{{ route('forum.index') }}",
+    "isPartOf": {
+        "@type": "WebSite",
+        "name": "Làm Game",
+        "url": "{{ url('/') }}"
+    }
+}
+</script>
+@endpush
+
 @section('content')
 <div class="fm-page">
     {{-- Header --}}

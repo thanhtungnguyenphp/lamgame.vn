@@ -108,6 +108,30 @@ services:
       - lamgame-network
     restart: unless-stopped
 
+  queue:
+    image: lamgamevn_php
+    container_name: lg-queue
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html:cached
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini:ro
+    environment:
+      - DB_HOST=host.docker.internal
+      - DB_PORT=3306
+      - DB_DATABASE=lamgame
+      - DB_USERNAME=lg
+      - DB_PASSWORD=lg
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["sh", "/var/www/html/docker/queue-worker.sh"]
+    depends_on:
+      - redis
+    networks:
+      - lamgame-network
+    restart: unless-stopped
+
 networks:
   lamgame-network:
     driver: bridge

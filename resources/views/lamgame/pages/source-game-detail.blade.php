@@ -226,6 +226,16 @@
             </div>
             @endif
 
+            <!-- Video Demo -->
+            @if(!empty($sourceGame['video_demo_url']))
+            <div class="content-section">
+                <h3 class="section-title">Video Demo</h3>
+                <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px;">
+                    <iframe src="{{ $sourceGame['video_demo_url'] }}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;" allowfullscreen loading="lazy"></iframe>
+                </div>
+            </div>
+            @endif
+
             <!-- Full Description -->
             @if($sourceGame['full_description'])
             <div class="content-section">
@@ -304,6 +314,11 @@
                         Mua ngay
                     </button>
                 </form>
+                @if(!empty($sourceGame['demo_url']))
+                <a href="{{ $sourceGame['demo_url'] }}" target="_blank" class="btn btn-demo" style="display:inline-block; margin-top:8px; background:#10b981; color:#fff; padding:10px 20px; border-radius:6px; text-decoration:none;">
+                    <i class="fa fa-play-circle"></i> Xem Demo
+                </a>
+                @endif
                 <p class="price-note">Giá chưa bao gồm thuế VAT</p>
                 <div id="cart-message" class="cart-message"></div>
                 @elseif($sourceGame['is_free'])

@@ -102,6 +102,23 @@
                     </div>
                 </div>
 
+                <!-- Poll (Optional) -->
+                <div class="form-section">
+                    <h3><label><input type="checkbox" id="enablePoll" name="has_poll" value="1"> 📊 Thêm Poll</label></h3>
+                    <div id="pollSection" style="display:none;margin-top:12px">
+                        <input type="text" name="poll_question" class="form-control" placeholder="Câu hỏi poll..." style="margin-bottom:8px">
+                        <div id="pollOptions">
+                            <input type="text" name="poll_options[]" class="form-control" placeholder="Lựa chọn 1" style="margin-bottom:6px">
+                            <input type="text" name="poll_options[]" class="form-control" placeholder="Lựa chọn 2" style="margin-bottom:6px">
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="addPollOption()" style="margin-top:4px">+ Thêm lựa chọn</button>
+                        <div style="margin-top:8px">
+                            <label><input type="checkbox" name="poll_multiple" value="1"> Cho phép chọn nhiều</label>
+                            <label style="margin-left:12px"><input type="number" name="poll_expires_days" min="1" max="30" value="7" style="width:50px"> ngày hết hạn</label>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Author Info Display -->
                 <div class="form-section">
                     <h3>Đăng bởi</h3>
@@ -586,6 +603,20 @@ document.getElementById('postForm').addEventListener('submit', function(e) {
     
     // Author info is now handled automatically from authenticated user
 });
+
+// Poll toggle
+document.getElementById('enablePoll').addEventListener('change', function() {
+    document.getElementById('pollSection').style.display = this.checked ? '' : 'none';
+});
+function addPollOption() {
+    const container = document.getElementById('pollOptions');
+    if (container.children.length >= 10) return;
+    const input = document.createElement('input');
+    input.type = 'text'; input.name = 'poll_options[]'; input.className = 'form-control';
+    input.placeholder = 'Lựa chọn ' + (container.children.length + 1);
+    input.style.marginBottom = '6px';
+    container.appendChild(input);
+}
 
 // Auto-save draft functionality
 function saveDraft() {

@@ -4,6 +4,38 @@
 
 @section('page_description', $page_description ?? (isset($bai_viet) ? 'Thảo luận về ' . $bai_viet['title'] : 'Thảo luận về ' . $post['title']))
 
+@push('schema_markup')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "DiscussionForumPosting",
+    "headline": "{{ $post['title'] }}",
+    "datePublished": "{{ $post['created_at'] }}",
+    "author": {
+        "@type": "Person",
+        "name": "{{ $post['author'] ?? 'Thành viên' }}"
+    },
+    "interactionStatistic": [
+        {
+            "@type": "InteractionCounter",
+            "interactionType": "https://schema.org/CommentAction",
+            "userInteractionCount": {{ $post['comments_count'] ?? 0 }}
+        },
+        {
+            "@type": "InteractionCounter",
+            "interactionType": "https://schema.org/LikeAction",
+            "userInteractionCount": {{ $post['likes_count'] ?? 0 }}
+        }
+    ],
+    "isPartOf": {
+        "@type": "DiscussionForum",
+        "name": "Cộng đồng Làm Game",
+        "url": "{{ route('forum.index') }}"
+    }
+}
+</script>
+@endpush
+
 @section('content')
     <!-- Breadcrumb -->
     <section class="breadcrumb-section">

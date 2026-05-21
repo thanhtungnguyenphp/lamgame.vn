@@ -422,20 +422,30 @@ class CustomerAuthController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:customers,email,' . $customer->id,
             'phone' => 'nullable|string|max:20',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ], [
             'first_name.required' => 'Họ là bắt buộc.',
             'last_name.required' => 'Tên là bắt buộc.',
             'email.required' => 'Email là bắt buộc.',
             'email.email' => 'Email không đúng định dạng.',
             'email.unique' => 'Email này đã được sử dụng.',
+            'avatar.image' => 'Avatar phải là ảnh.',
+            'avatar.max' => 'Avatar tối đa 2MB.',
         ]);
 
-        $customer->update([
+        $data = [
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
             'phone' => $request->phone,
-        ]);
+        ];
+
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('customers/avatars', 'public');
+            $data['image'] = $path;
+        }
+
+        $customer->update($data);
 
         if ($request->expectsJson()) {
             return response()->json([

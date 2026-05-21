@@ -181,6 +181,7 @@ Route::prefix('forum')->name('forum.')->group(function () {
         Route::get('/notifications', [ForumController::class, 'notifications'])->name('notifications');
         Route::get('/notifications/count', [ForumController::class, 'notificationCount'])->name('notifications.count');
         Route::post('/notifications/read', [ForumController::class, 'markNotificationRead'])->name('notifications.read');
+        Route::get('/messages', [ForumController::class, 'messages'])->name('messages');
 
         // Voting (AJAX)
         Route::post('/vote', [ForumController::class, 'vote'])->middleware('forum.rate:votes')->name('vote');

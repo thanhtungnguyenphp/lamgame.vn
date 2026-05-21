@@ -3,6 +3,27 @@
 @section('page_title', $page_title ?? 'Giới thiệu - Làm Game')
 @section('page_description', $page_description ?? 'Tìm hiểu về Làm Game - nền tảng học lập trình game hàng đầu Việt Nam')
 
+@push('schema_markup')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Làm Game",
+    "url": "{{ url('/') }}",
+    "logo": "{{ asset('logo/lamgame-logo.png') }}",
+    "description": "Nền tảng học lập trình game, mua bán source code, cộng đồng game developer Việt Nam",
+    "sameAs": [
+        "https://www.facebook.com/lamgame.vn"
+    ],
+    "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "url": "{{ url('/lien-he') }}"
+    }
+}
+</script>
+@endpush
+
 @section('content')
     <!-- Hero Section -->
     <section class="hero-simple">

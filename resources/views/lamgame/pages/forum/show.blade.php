@@ -3,6 +3,39 @@
 @section('page_title', $post->meta_title ?: ($post->title . ' - Forum'))
 @section('page_description', $post->meta_description ?: $post->excerpt)
 
+@push('schema_markup')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "DiscussionForumPosting",
+    "headline": "{{ $post->title }}",
+    "datePublished": "{{ $post->created_at->toIso8601String() }}",
+    "dateModified": "{{ $post->updated_at->toIso8601String() }}",
+    "author": {
+        "@type": "Person",
+        "name": "{{ $post->customer->name ?? $post->author_name ?? 'Thành viên' }}"
+    },
+    "interactionStatistic": [
+        {
+            "@type": "InteractionCounter",
+            "interactionType": "https://schema.org/CommentAction",
+            "userInteractionCount": {{ $post->comments_count ?? 0 }}
+        },
+        {
+            "@type": "InteractionCounter",
+            "interactionType": "https://schema.org/LikeAction",
+            "userInteractionCount": {{ $post->likes_count ?? 0 }}
+        }
+    ],
+    "isPartOf": {
+        "@type": "DiscussionForum",
+        "name": "Forum Cộng đồng Game Developer",
+        "url": "{{ route('forum.index') }}"
+    }
+}
+</script>
+@endpush
+
 @section('content')
 <div class="fp-page">
     {{-- Breadcrumb --}}
@@ -75,6 +108,28 @@
                 <div class="fp-content">
                     {!! nl2br(e($post->content)) !!}
                 </div>
+
+                {{-- Poll --}}
+                @if($post->poll)
+                <div class="fp-poll" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:16px">
+                    <h4 style="margin:0 0 12px;font-size:1rem">📊 {{ $post->poll->question }}</h4>
+                    <div id="poll-{{ $post->poll->id }}">
+                        @php $userVoted = $post->poll->votes->where('customer_id', auth('customer')->id())->isNotEmpty(); @endphp
+                        @foreach($post->poll->options as $opt)
+                        @php $pct = $post->poll->total_votes > 0 ? round($opt->votes_count / $post->poll->total_votes * 100) : 0; @endphp
+                        <div style="margin-bottom:8px">
+                            @if($userVoted || ($post->poll->expires_at && $post->poll->expires_at->isPast()))
+                            <div style="display:flex;justify-content:space-between;font-size:.9rem;margin-bottom:2px"><span>{{ $opt->text }}</span><span>{{ $pct }}%</span></div>
+                            <div style="height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden"><div style="height:100%;width:{{ $pct }}%;background:#6a4c93;border-radius:4px"></div></div>
+                            @else
+                            <button type="button" onclick="votePoll({{ $post->poll->id }}, [{{ $opt->id }}])" style="width:100%;text-align:left;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;cursor:pointer;font-size:.9rem">{{ $opt->text }}</button>
+                            @endif
+                        </div>
+                        @endforeach
+                        <div style="font-size:.8rem;color:#64748b;margin-top:8px">{{ $post->poll->total_votes }} phiếu{{ $post->poll->expires_at ? ' · Hết hạn '.$post->poll->expires_at->format('d/m/Y') : '' }}</div>
+                    </div>
+                </div>
+                @endif
 
                 {{-- Actions --}}
                 <div class="fp-actions">
@@ -314,6 +369,14 @@ function pinBestAnswer(btn, commentId) {
         if (data.success) location.reload();
         else if (data.message) alert(data.message);
     });
+}
+
+function votePoll(pollId, optionIds) {
+    fetch('/api/v1/forum/polls/' + pollId + '/vote', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]')?.content||''},
+        body: JSON.stringify({option_ids: optionIds})
+    }).then(r => r.json()).then(d => { if(d.success || !d.error) location.reload(); else alert(d.error||'Lỗi'); });
 }
 </script>
 @endpush

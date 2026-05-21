@@ -13,6 +13,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Firebase Web Config (for FCM on browser)
+    |--------------------------------------------------------------------------
+    | Set these in .env. If FIREBASE_WEB_API_KEY is empty, FCM web is disabled.
+    */
+    'web' => env('FIREBASE_WEB_API_KEY') ? [
+        'apiKey'            => env('FIREBASE_WEB_API_KEY'),
+        'authDomain'        => env('FIREBASE_WEB_AUTH_DOMAIN'),
+        'projectId'         => env('FIREBASE_PROJECT_ID', 'lotto-live-vn'),
+        'messagingSenderId' => env('FIREBASE_WEB_MESSAGING_SENDER_ID'),
+        'appId'             => env('FIREBASE_WEB_APP_ID'),
+        'vapidKey'          => env('FIREBASE_WEB_VAPID_KEY'),
+    ] : null,
+
+    /*
+    |--------------------------------------------------------------------------
     | FCM Project ID
     |--------------------------------------------------------------------------
     | Firebase project ID, used for FCM v1 API endpoint.

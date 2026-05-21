@@ -1,3 +1,15 @@
+/data/www/lamgame.vn/storage/logs/laravel*.log {
+    daily
+    missingok
+    rotate 3
+    compress
+    delaycompress
+    notifempty
+    copytruncate
+    su root root
+    maxsize 50M
+}
+
 /data/www/lamgame.vn/storage/logs/*.log {
     daily
     missingok

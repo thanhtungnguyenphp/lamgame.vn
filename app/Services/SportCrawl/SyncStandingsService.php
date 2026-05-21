@@ -36,14 +36,12 @@ class SyncStandingsService extends SportDataService
                 }
 
                 $oldPosition = Standing::where('league_id', $localLeagueId)
-                    ->where('team_id', $teamId)->value('position');
+                    ->where('team_id', $teamId)->value('rank');
 
                 $standing = Standing::updateOrCreate(
                     ['league_id' => $localLeagueId, 'team_id' => $teamId],
                     [
-                        'sport_id' => 'football',
-                        'season' => config('sport-crawl.season'),
-                        'position' => $entry['rank'] ?? 0,
+                        'rank' => $entry['rank'] ?? 0,
                         'played' => $entry['all']['played'] ?? 0,
                         'won' => $entry['all']['win'] ?? 0,
                         'drawn' => $entry['all']['draw'] ?? 0,

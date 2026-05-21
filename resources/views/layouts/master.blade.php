@@ -50,6 +50,7 @@
     @endif
     
     @stack('meta')
+    @stack('schema_markup')
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/logos/favicon/favicon.ico') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logos/favicon/favicon-32x32.png') }}">
@@ -651,5 +652,7 @@
 
     <!-- Additional page scripts -->
     @stack('scripts')
+
+    @include('partials.fcm-init')
 </body>
 </html>

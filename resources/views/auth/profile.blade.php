@@ -253,9 +253,24 @@
             </div>
         @endif
 
-        <form id="profileForm" action="{{ route('auth.profile.update') }}" method="POST">
+        <form id="profileForm" action="{{ route('auth.profile.update') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+
+            {{-- Avatar Upload --}}
+            <div style="text-align:center;margin-bottom:2rem">
+                <div style="position:relative;display:inline-block">
+                    <img id="avatarPreview"
+                         src="{{ $customer->image ? asset('storage/'.$customer->image) : 'https://ui-avatars.com/api/?name='.urlencode($customer->first_name.'+'.$customer->last_name).'&size=120&background=6a4c93&color=fff' }}"
+                         alt="Avatar"
+                         style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #6a4c93">
+                    <label for="avatarInput" style="position:absolute;bottom:0;right:0;background:#6a4c93;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;border:2px solid #fff" title="Đổi avatar">📷</label>
+                    <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display:none" onchange="previewAvatar(this)">
+                </div>
+                @error('avatar')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
             
             <div class="form-row">
                 <div class="form-group">
@@ -363,6 +378,14 @@
 
 @push('scripts')
 <script>
+function previewAvatar(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => document.getElementById('avatarPreview').src = e.target.result;
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const profileForm = document.getElementById('profileForm');
     const profileBtn = document.getElementById('profileBtn');

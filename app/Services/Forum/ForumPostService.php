@@ -93,6 +93,21 @@ class ForumPostService
             $this->syncTags($post, $data['tags']);
         }
 
+        // Create poll if provided
+        if (!empty($data['has_poll']) && !empty($data['poll_question']) && !empty($data['poll_options'])) {
+            $options = array_filter($data['poll_options']);
+            if (count($options) >= 2) {
+                $poll = $post->poll()->create([
+                    'question'    => $data['poll_question'],
+                    'multiple'    => !empty($data['poll_multiple']),
+                    'expires_at'  => now()->addDays((int) ($data['poll_expires_days'] ?? 7)),
+                ]);
+                foreach ($options as $text) {
+                    $poll->options()->create(['text' => $text]);
+                }
+            }
+        }
+
         // Award reputation
         if ($customer) {
             $this->reputationService->award($customer->id, 'post_created', $post);

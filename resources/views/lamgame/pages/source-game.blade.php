@@ -3,6 +3,34 @@
 @section('page_title', $page_title ?? 'Source Game - Kho Mã Nguồn Game - Làm Game')
 @section('page_description', $page_description ?? 'Kho source code game, thuê lập trình viên game, chia sẻ ý tưởng game. Cộng đồng game developer Việt Nam.')
 
+@push('schema_markup')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Kho Source Game - Mã Nguồn Game",
+    "description": "Kho source code game, thuê lập trình viên game, chia sẻ ý tưởng game",
+    "url": "{{ route('lamgame.source-game') }}",
+    "isPartOf": {
+        "@type": "WebSite",
+        "name": "Làm Game",
+        "url": "{{ url('/') }}"
+    }
+    @if(!empty($featuredSources) && count($featuredSources))
+    ,"itemListElement": [
+        @foreach(array_slice($featuredSources, 0, 10) as $i => $source)
+        {
+            "@type": "ListItem",
+            "position": {{ $i + 1 }},
+            "url": "{{ route('lamgame.source-game.detail', $source['url_key'] ?? $source['id'] ?? '') }}"
+        }@if($i < count(array_slice($featuredSources, 0, 10)) - 1),@endif
+        @endforeach
+    ]
+    @endif
+}
+</script>
+@endpush
+
 @push('pagination_links')
 @php
     $currentPage = $pagination['current_page'] ?? 1;

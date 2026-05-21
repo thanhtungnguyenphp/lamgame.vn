@@ -56,6 +56,9 @@ require __DIR__ . '/api/subscription.php';
 // Include AI Tools routes
 require __DIR__ . '/api/ai-tools.php';
 
+// Include notification routes
+require __DIR__ . '/api/notifications.php';
+
 // Include sport routes
 require __DIR__ . '/api/sport.php';
 

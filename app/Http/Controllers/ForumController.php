@@ -323,6 +323,11 @@ class ForumController extends Controller
     /**
      * Get notifications (auth via middleware).
      */
+    public function messages()
+    {
+        return view('lamgame.pages.forum.messages');
+    }
+
     public function notifications()
     {
         $user = auth()->guard('customer')->user();
