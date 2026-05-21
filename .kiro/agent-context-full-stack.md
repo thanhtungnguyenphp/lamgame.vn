@@ -18,6 +18,7 @@
 
 - **Chỉ nhận task có prefix**:
   - `[back_end]`
+  - `[front_end]`
   - `[database]`
   - `[devops]`
   - `[api]`
