@@ -71,6 +71,11 @@ Ví dụ: `[back_end][auth] Implement JWT refresh token`
 GET /api/agent/projects/:projectId/summary
 ```
 
+
+# Lấy tasks có state = STATUS_ID
+curl -H "x-api-key: <PLANE_API_KEY>" \
+  "http://localhost:8082/api/v1/workspaces/thanhtungnguyen/projects/:projectId/work-items/?state=:STATUS_ID"
+
 ### Tạo Task
 ```
 POST /api/agent/tasks/create
