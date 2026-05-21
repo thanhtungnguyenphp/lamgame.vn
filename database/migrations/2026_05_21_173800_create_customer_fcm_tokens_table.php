@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('customer_fcm_tokens', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('customer_id');
+            $table->unsignedInteger('customer_id');
             $table->string('token', 500)->unique();
             $table->string('platform', 10)->default('web'); // web, android, ios
             $table->timestamps();
