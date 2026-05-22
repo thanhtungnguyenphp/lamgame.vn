@@ -32,8 +32,6 @@
     
     <!-- Design System (bundled) -->
     <link rel="stylesheet" href="{{ asset('css/redesign-bundle.min.css') }}">
-    <!-- Dark Gaming UI -->
-    <link rel="stylesheet" href="{{ asset('css/lamgame-dark-gaming.css') }}">
     <script src="{{ asset('themes/shop/emsaigon/assets/js/dark-mode.js') }}"></script>
     
     <!-- Styles -->
