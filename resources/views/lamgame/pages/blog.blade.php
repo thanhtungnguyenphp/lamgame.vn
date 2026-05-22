@@ -1,593 +1,199 @@
+{{-- Blog — Dark Gaming UI --}}
 @extends('layouts.master')
 
-@section('page_title', $page_title ?? 'Blog & Tin tức - Làm Game')
-@section('page_description', $page_description ?? 'Khám phá các bài viết hữu ích về lập trình game, Unity, Unreal Engine và game development')
-
-@push('pagination_links')
-    @if(isset($blogs) && $blogs->currentPage() > 1)
-        <link rel="prev" href="{{ $blogs->previousPageUrl() }}">
-    @endif
-    @if(isset($blogs) && $blogs->hasMorePages())
-        <link rel="next" href="{{ $blogs->nextPageUrl() }}">
-    @endif
-@endpush
+@section('page_title', $page_title ?? 'Blog - LamGame.vn')
+@section('page_description', $page_description ?? '')
 
 @section('content')
-    <!-- Hero Section -->
-    <section class="hero-simple">
-        <div class="container">
-            <h1>Blog & Tin tức</h1>
-            <p class="lead">Kiến thức và cập nhật mới nhất về thế giới game development</p>
+<div class="bl-page">
+
+{{-- HEADER --}}
+<section class="bl-header">
+    <div class="bl-container">
+        <h1 class="bl-header__title">Blog & Tutorial</h1>
+        <p class="bl-header__sub">Kiến thức game dev, tips & tricks, xu hướng công nghệ mới nhất</p>
+
+        {{-- CATEGORY CHIPS --}}
+        <div class="bl-chips">
+            <a href="{{ route('lamgame.blog') }}" class="bl-chip {{ !$currentCategory && !$currentTag ? 'bl-chip--active' : '' }}">Tất cả</a>
+            @foreach($categories as $cat)
+            <a href="{{ route('lamgame.blog', ['category' => $cat->slug]) }}" class="bl-chip {{ $currentCategory == $cat->slug ? 'bl-chip--active' : '' }}">{{ $cat->name }} <span class="bl-chip__count">{{ $cat->blogs_count }}</span></a>
+            @endforeach
         </div>
-    </section>
 
-    <!-- Blog Section -->
-    <section class="section-content">
-        <div class="container">
-            <div class="row">
-                <!-- Main Content -->
-                <div class="col-lg-8">
-                    <!-- Featured Post -->
-                    @if($featuredBlog)
-                    <div class="featured-post">
-                        <div class="post-image">
-                            <img src="{{ $featuredBlog->featured_image }}" alt="{{ $featuredBlog->name }}">
-                            @if($featuredBlog->category)
-                            <div class="post-category">{{ $featuredBlog->category->name }}</div>
-                            @endif
-                        </div>
-                        <div class="post-content">
-                            <h2><a href="/blog/{{ $featuredBlog->slug }}">{{ $featuredBlog->name }}</a></h2>
-                            <div class="post-meta">
-                                <span><i class="fa fa-calendar"></i> {{ $featuredBlog->formatted_date }}</span>
-                                <span><i class="fa fa-user"></i> {{ $featuredBlog->author }}</span>
-                                <span><i class="fa fa-clock"></i> {{ $featuredBlog->reading_time }} phút đọc</span>
-                            </div>
-                            <p>{{ $featuredBlog->short_description }}</p>
-                            <a href="/blog/{{ $featuredBlog->slug }}" class="btn btn-outline">Đọc tiếp</a>
-                        </div>
-                    </div>
-                    @endif
+        {{-- SEARCH --}}
+        <form action="{{ route('lamgame.blog') }}" method="GET" class="bl-search">
+            <input type="text" name="search" placeholder="Tìm bài viết..." value="{{ $searchQuery ?? '' }}" class="bl-search__input">
+            <button type="submit" class="bl-search__btn">🔍</button>
+        </form>
+    </div>
+</section>
 
-                    <!-- Blog Posts Grid -->
-                    <div class="blog-grid">
-                        @forelse($blogs as $blog)
-                        @if($featuredBlog && $blog->id == $featuredBlog->id)
-                            @continue
-                        @endif
-                        <div class="blog-post">
-                            <div class="post-image">
-                                <img src="{{ $blog->featured_image }}" alt="{{ $blog->name }}">
-                                @if($blog->category)
-                                <div class="post-category">{{ $blog->category->name }}</div>
-                                @endif
-                            </div>
-                            <div class="post-content">
-                                <h3><a href="/blog/{{ $blog->slug }}">{{ $blog->name }}</a></h3>
-                                <div class="post-meta">
-                                    <span><i class="fa fa-calendar"></i> {{ $blog->formatted_date }}</span>
-                                    <span><i class="fa fa-clock"></i> {{ $blog->reading_time }} phút</span>
-                                </div>
-                                <p>{{ $blog->short_description }}</p>
-                                <a href="/blog/{{ $blog->slug }}" class="read-more">Đọc tiếp <i class="fa fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                        @empty
-                        <div class="no-posts">
-                            <p>Chưa có bài viết nào được đăng.</p>
-                        </div>
-                        @endforelse
-                    </div>
-
-                    <!-- Pagination -->
-                    @if($blogs->hasPages())
-                        {{ $blogs->appends(request()->query())->links('pagination.custom') }}
-                    @endif
-                </div>
-
-                <!-- Sidebar -->
-                <div class="col-lg-4">
-                    <div class="sidebar">
-                        <!-- Search -->
-                        <div class="sidebar-block">
-                            <h3>Tìm kiếm</h3>
-                            <form class="search-form" method="GET" action="{{ route('lamgame.blog') }}">
-                                <div class="search-group">
-                                    <input type="text" name="search" placeholder="Tìm bài viết..." value="{{ request('search') }}">
-                                    <button type="submit">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </div>
-                                @if(request('category'))
-                                    <input type="hidden" name="category" value="{{ request('category') }}">
-                                @endif
-                                @if(request('tag'))
-                                    <input type="hidden" name="tag" value="{{ request('tag') }}">
-                                @endif
-                            </form>
-                        </div>
-
-                        <!-- Categories -->
-                        <div class="sidebar-block">
-                            <h3>Danh mục</h3>
-                            <div class="category-list">
-                                <a href="{{ route('lamgame.blog') }}" class="category-item {{ !request('category') ? 'active' : '' }}">
-                                    <span>Tất cả</span>
-                                    <span class="count">({{ $blogs->total() }})</span>
-                                </a>
-                                @foreach($categories as $category)
-                                <a href="{{ route('lamgame.blog', ['category' => $category->slug]) }}" 
-                                   class="category-item {{ request('category') == $category->slug ? 'active' : '' }}">
-                                    <span>{{ $category->name }}</span>
-                                    <span class="count">({{ $category->blogs_count }})</span>
-                                </a>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        <!-- Popular Posts -->
-                        <div class="sidebar-block">
-                            <h3>Bài viết mới nhất</h3>
-                            <div class="popular-posts">
-                                @foreach($popularPosts as $post)
-                                <div class="popular-post">
-                                    <div class="post-thumb">
-                                        <img src="{{ $post->featured_image }}" alt="{{ $post->name }}">
-                                    </div>
-                                    <div class="post-info">
-                                        <h4><a href="/blog/{{ $post->slug }}">{{ Str::limit($post->name, 50) }}</a></h4>
-                                        <span class="post-date">{{ $post->formatted_date }}</span>
-                                        <span class="post-views">{{ $post->reading_time }} phút đọc</span>
-                                    </div>
-                                </div>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        <!-- Newsletter -->
-                        <div class="sidebar-block">
-                            <h3>Đăng ký nhận tin</h3>
-                            <p>Nhận thông tin cập nhật mới nhất về game development</p>
-                            <form class="newsletter-form">
-                                <div class="form-group">
-                                    <input type="email" placeholder="Email của bạn" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-envelope"></i> Đăng ký
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- Tags -->
-                        <div class="sidebar-block">
-                            <h3>Tags</h3>
-                            <div class="tags-cloud">
-                                @foreach($popularTags as $tag)
-                                <a href="{{ route('lamgame.blog', ['tag' => $tag->slug]) }}" 
-                                   class="tag {{ request('tag') == $tag->slug ? 'active' : '' }}">{{ $tag->name }}</a>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
+{{-- FEATURED --}}
+@if($featuredBlog && !$searchQuery && !$currentCategory && !$currentTag)
+<section class="bl-section">
+    <div class="bl-container">
+        <a href="{{ route('lamgame.blog') }}/{{ $featuredBlog->slug }}" class="bl-featured">
+            <div class="bl-featured__img">
+                <img src="{{ $featuredBlog->src ?? '' }}" alt="{{ $featuredBlog->name }}" loading="lazy">
+            </div>
+            <div class="bl-featured__body">
+                <span class="bl-badge">{{ $featuredBlog->category->name ?? 'Featured' }}</span>
+                <h2 class="bl-featured__title">{{ $featuredBlog->name }}</h2>
+                <p class="bl-featured__desc">{{ Str::limit(strip_tags($featuredBlog->short_description), 150) }}</p>
+                <div class="bl-featured__meta">
+                    <span>{{ $featuredBlog->author ?? 'LamGame' }}</span>
+                    <span>·</span>
+                    <span>{{ $featuredBlog->published_at ? $featuredBlog->published_at->diffForHumans() : '' }}</span>
+                    <span>·</span>
+                    <span>{{ ceil(str_word_count(strip_tags($featuredBlog->description ?? '')) / 200) }} phút đọc</span>
                 </div>
             </div>
+        </a>
+    </div>
+</section>
+@endif
+
+{{-- BLOG GRID --}}
+<section class="bl-section">
+    <div class="bl-container">
+        @if($searchQuery)
+        <p class="bl-results">Kết quả cho "<strong>{{ $searchQuery }}</strong>" — {{ $blogs->total() }} bài viết</p>
+        @endif
+
+        <div class="bl-grid">
+            @forelse($blogs as $blog)
+            <a href="{{ route('lamgame.blog') }}/{{ $blog->slug }}" class="bl-card">
+                <div class="bl-card__img">
+                    <img src="{{ $blog->src ?? '' }}" alt="{{ $blog->name }}" loading="lazy">
+                    <span class="bl-badge">{{ $blog->category->name ?? '' }}</span>
+                </div>
+                <div class="bl-card__body">
+                    <h3 class="bl-card__title">{{ Str::limit($blog->name, 60) }}</h3>
+                    <p class="bl-card__desc">{{ Str::limit(strip_tags($blog->short_description), 100) }}</p>
+                    <div class="bl-card__meta">
+                        <span>{{ $blog->author ?? 'LamGame' }}</span>
+                        <span>{{ $blog->published_at ? $blog->published_at->diffForHumans() : '' }}</span>
+                    </div>
+                </div>
+            </a>
+            @empty
+            <div class="bl-empty">
+                <p>Không tìm thấy bài viết nào.</p>
+                <a href="{{ route('lamgame.blog') }}" class="bl-btn bl-btn--outline">Xem tất cả bài viết</a>
+            </div>
+            @endforelse
         </div>
-    </section>
 
-    @push('styles')
-    <style>
-        /* Hero Simple */
-        .hero-simple {
-            background: linear-gradient(135deg, #6a4c93 0%, #9b59b6 100%);
-            color: white;
-            padding: 4rem 0;
-            text-align: center;
-        }
-        
-        .hero-simple h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .lead {
-            font-size: 1.25rem;
-            margin-bottom: 0;
-        }
+        {{-- PAGINATION --}}
+        @if($blogs->hasPages())
+        <div class="bl-pagination">
+            {{ $blogs->appends(request()->query())->links('pagination::simple-default') }}
+        </div>
+        @endif
+    </div>
+</section>
 
-        /* Section Content */
-        .section-content {
-            padding: 4rem 0;
-            background: #f8f9fa;
-        }
-        
-        .row {
-            display: flex;
-            gap: 2rem;
-        }
-        
-        .col-lg-8 {
-            flex: 0 0 66.66%;
-        }
-        
-        .col-lg-4 {
-            flex: 0 0 33.33%;
-        }
+{{-- TAGS --}}
+@if($popularTags && $popularTags->count() > 0)
+<section class="bl-section bl-section--alt">
+    <div class="bl-container">
+        <h2 class="bl-section__title">Tags phổ biến</h2>
+        <div class="bl-tags">
+            @foreach($popularTags as $tag)
+            <a href="{{ route('lamgame.blog', ['tag' => $tag->slug]) }}" class="bl-tag {{ $currentTag == $tag->slug ? 'bl-tag--active' : '' }}">{{ $tag->name }}</a>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
 
-        /* Featured Post */
-        .featured-post {
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 3rem;
-        }
-        
-        .featured-post .post-image {
-            position: relative;
-        }
-        
-        .featured-post .post-image img {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-        }
-        
-        .post-category {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            background: #6a4c93;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        
-        .featured-post .post-content {
-            padding: 2rem;
-        }
-        
-        .featured-post h2 {
-            margin-bottom: 1rem;
-        }
-        
-        .featured-post h2 a {
-            color: #333;
-            text-decoration: none;
-        }
-        
-        .featured-post h2 a:hover {
-            color: #6a4c93;
-        }
-        
-        .post-meta {
-            display: flex;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        .post-meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        
-        .post-meta i {
-            color: #6a4c93;
-        }
-        
-        .featured-post p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-        
-        .btn-outline {
-            border: 2px solid #6a4c93;
-            color: #6a4c93;
-            background: transparent;
-            padding: 0.75rem 1.5rem;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s;
-            display: inline-block;
-        }
-        
-        .btn-outline:hover {
-            background: #6a4c93;
-            color: white;
-        }
-
-        /* Blog Grid */
-        .blog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        
-        .blog-post {
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .blog-post:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
-        
-        .blog-post .post-image {
-            position: relative;
-        }
-        
-        .blog-post .post-image img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-        }
-        
-        .blog-post .post-content {
-            padding: 1.5rem;
-        }
-        
-        .blog-post h3 {
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-        
-        .blog-post h3 a {
-            color: #333;
-            text-decoration: none;
-        }
-        
-        .blog-post h3 a:hover {
-            color: #6a4c93;
-        }
-        
-        .blog-post p {
-            color: #666;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-        
-        .read-more {
-            color: #6a4c93;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-        
-        .read-more:hover {
-            text-decoration: underline;
-        }
-
-        /* Blog specific pagination adjustments */
-        .pagination-wrapper {
-            background: white;
-        }
-
-        /* Sidebar */
-        .sidebar-block {
-            background: #fff;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-        
-        .sidebar-block h3 {
-            color: #6a4c93;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid #6a4c93;
-            padding-bottom: 0.5rem;
-        }
-        
-        /* Search Form */
-        .search-group {
-            display: flex;
-        }
-        
-        .search-group input {
-            flex: 1;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-right: none;
-            border-radius: 4px 0 0 4px;
-        }
-        
-        .search-group button {
-            padding: 0.75rem 1rem;
-            background: #6a4c93;
-            color: white;
-            border: 1px solid #6a4c93;
-            border-radius: 0 4px 4px 0;
-            cursor: pointer;
-        }
-        
-        .search-group button:hover {
-            background: #5a3c83;
-        }
-        
-        /* Category List */
-        .category-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .category-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem;
-            color: #333;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        
-        .category-item:hover {
-            background: #f8f9fa;
-            color: #6a4c93;
-        }
-        
-        .category-item .count {
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        /* Popular Posts */
-        .popular-posts {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .popular-post {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .post-thumb img {
-            width: 80px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-        
-        .post-info h4 {
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .post-info h4 a {
-            color: #333;
-            text-decoration: none;
-        }
-        
-        .post-info h4 a:hover {
-            color: #6a4c93;
-        }
-        
-        .post-date,
-        .post-views {
-            display: block;
-            font-size: 0.8rem;
-            color: #666;
-        }
-        
-        /* Newsletter Form */
-        .newsletter-form {
-            margin-top: 1rem;
-        }
-        
-        .newsletter-form input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-        }
-        
-        .btn-primary {
-            background: #6a4c93;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            width: 100%;
-            justify-content: center;
-        }
-        
-        .btn-primary:hover {
-            background: #5a3c83;
-        }
-        
-        /* Tags Cloud */
-        .tags-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-        
-        .tag {
-            padding: 0.25rem 0.75rem;
-            background: #f8f9fa;
-            color: #6a4c93;
-            text-decoration: none;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            border: 1px solid #e9ecef;
-            transition: all 0.3s;
-        }
-        
-        .tag:hover,
-        .tag.active {
-            background: #6a4c93;
-            color: white;
-            border-color: #6a4c93;
-        }
-        
-        /* Category item active state */
-        .category-item.active {
-            background: #6a4c93;
-            color: white !important;
-            border-radius: 4px;
-        }
-        
-        .category-item.active .count {
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        /* No posts message */
-        .no-posts {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #666;
-            font-style: italic;
-        }
-        
-        /* Blog specific styles */
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .row {
-                flex-direction: column;
-            }
-            
-            .col-lg-8, .col-lg-4 {
-                flex: 1;
-            }
-            
-            .hero-simple h1 {
-                font-size: 2rem;
-            }
-            
-            .blog-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .featured-post .post-image img {
-                height: 250px;
-            }
-            
-            .post-meta {
-                flex-wrap: wrap;
-            }
-        }
-    </style>
-    @endpush
+</div>
 @endsection
+
+@push('styles')
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+.bl-page{background:#070B14;color:#F5F7FA;font-family:'Inter',sans-serif;min-height:100vh}
+.bl-container{max-width:1100px;margin:0 auto;padding:0 24px}
+.bl-section{padding:48px 0}
+.bl-section--alt{background:#0B1020}
+.bl-section__title{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:20px}
+
+/* HEADER */
+.bl-header{padding:80px 24px 40px;text-align:center;background:radial-gradient(ellipse at 50% 80%,rgba(124,92,255,.08) 0%,transparent 60%)}
+.bl-header__title{font-family:'Space Grotesk',sans-serif;font-size:2.4rem;font-weight:700;margin-bottom:8px}
+.bl-header__sub{color:#7A8599;margin-bottom:28px;font-size:1.05rem}
+
+/* CHIPS */
+.bl-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.bl-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:.82rem;font-weight:500;text-decoration:none!important;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.1);color:#B7C0D1;transition:all .2s}
+.bl-chip:hover{border-color:#7C5CFF;color:#F5F7FA}
+.bl-chip--active{background:rgba(124,92,255,.15);border-color:#7C5CFF;color:#F5F7FA}
+.bl-chip__count{font-size:.7rem;opacity:.6}
+
+/* SEARCH */
+.bl-search{display:flex;max-width:400px;margin:0 auto;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.1);border-radius:8px;overflow:hidden}
+.bl-search__input{flex:1;padding:10px 16px;background:transparent;border:none;color:#F5F7FA;font-size:.9rem;outline:none}
+.bl-search__input::placeholder{color:#7A8599}
+.bl-search__btn{padding:10px 16px;background:transparent;border:none;color:#7C5CFF;cursor:pointer;font-size:1rem}
+
+/* FEATURED */
+.bl-featured{display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:center;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.1);border-radius:16px;overflow:hidden;text-decoration:none!important;transition:all .3s}
+.bl-featured:hover{border-color:#7C5CFF;box-shadow:0 8px 30px rgba(124,92,255,.1)}
+.bl-featured__img{aspect-ratio:16/10;overflow:hidden}
+.bl-featured__img img{width:100%;height:100%;object-fit:cover}
+.bl-featured__body{padding:24px 32px 24px 0}
+.bl-featured__title{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#F5F7FA;margin:12px 0}
+.bl-featured__desc{color:#7A8599;font-size:.92rem;line-height:1.6;margin-bottom:16px}
+.bl-featured__meta{display:flex;gap:8px;font-size:.8rem;color:#7A8599}
+
+/* BADGE */
+.bl-badge{display:inline-block;background:rgba(124,92,255,.15);border:1px solid rgba(124,92,255,.3);color:#B7C0D1;padding:3px 10px;border-radius:5px;font-size:.72rem;font-weight:600}
+
+/* GRID */
+.bl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+
+/* CARD */
+.bl-card{background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.08);border-radius:14px;overflow:hidden;text-decoration:none!important;transition:all .3s}
+.bl-card:hover{border-color:#7C5CFF;box-shadow:0 8px 25px rgba(124,92,255,.1);transform:translateY(-3px)}
+.bl-card__img{position:relative;aspect-ratio:16/10;overflow:hidden;background:#111827}
+.bl-card__img img{width:100%;height:100%;object-fit:cover}
+.bl-card__img .bl-badge{position:absolute;top:10px;left:10px}
+.bl-card__body{padding:16px}
+.bl-card__title{font-size:.95rem;font-weight:600;color:#F5F7FA;margin-bottom:8px;line-height:1.4}
+.bl-card__desc{font-size:.82rem;color:#7A8599;line-height:1.5;margin-bottom:12px}
+.bl-card__meta{display:flex;justify-content:space-between;font-size:.75rem;color:#7A8599}
+
+/* TAGS */
+.bl-tags{display:flex;flex-wrap:wrap;gap:8px}
+.bl-tag{padding:6px 12px;border-radius:6px;font-size:.8rem;text-decoration:none!important;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.1);color:#B7C0D1;transition:all .2s}
+.bl-tag:hover{border-color:#00D1FF;color:#00D1FF}
+.bl-tag--active{background:rgba(0,209,255,.1);border-color:#00D1FF;color:#00D1FF}
+
+/* PAGINATION */
+.bl-pagination{display:flex;justify-content:center;margin-top:40px;gap:8px}
+.bl-pagination a,.bl-pagination span{padding:8px 14px;border-radius:6px;font-size:.85rem;text-decoration:none!important;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.1);color:#B7C0D1;transition:all .2s}
+.bl-pagination a:hover{border-color:#7C5CFF;color:#F5F7FA}
+.bl-pagination .active span{background:rgba(124,92,255,.2);border-color:#7C5CFF;color:#F5F7FA}
+
+/* EMPTY */
+.bl-empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:#7A8599}
+.bl-btn{display:inline-flex;padding:10px 20px;border-radius:8px;font-weight:600;font-size:.9rem;text-decoration:none!important;transition:all .3s}
+.bl-btn--outline{color:#7C5CFF!important;border:1.5px solid #7C5CFF}
+
+/* RESULTS */
+.bl-results{color:#7A8599;margin-bottom:24px;font-size:.9rem}
+.bl-results strong{color:#F5F7FA}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+    .bl-featured{grid-template-columns:1fr}
+    .bl-featured__body{padding:20px}
+    .bl-grid{grid-template-columns:1fr}
+    .bl-header{padding:60px 20px 30px}
+    .bl-header__title{font-size:1.8rem}
+    .bl-chips{justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding-bottom:8px}
+}
+</style>
+@endpush
