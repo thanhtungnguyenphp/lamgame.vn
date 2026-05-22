@@ -3,7 +3,7 @@
     <div class="nav-redesign__inner">
         {{-- Logo --}}
         <a href="{{ url('/') }}" class="nav-redesign__logo" aria-label="Trang chủ Làm Game">
-            <img src="{{ asset('assets/logos/png/logo-square-512.png') }}" alt="LamGame.vn" width="40" height="40">
+            <img src="{{ asset('assets/logos/png/logo-horizontal-200.png') }}" alt="LamGame.vn" height="36" style="height:36px;width:auto;">
         </a>
 
         {{-- Desktop Menu --}}
