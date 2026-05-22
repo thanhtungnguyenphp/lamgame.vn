@@ -83,7 +83,7 @@
 @endif
 
 {{-- JOBS --}}
-@if(!empty($jobs))
+@if(!empty($jobs['featured']))
 <section class="lg-section lg-section--alt">
     <div class="lg-container">
         <div class="lg-section__head">
@@ -91,7 +91,7 @@
             <a href="/viec-lam-game" class="lg-section__more">Xem tất cả →</a>
         </div>
         <div class="lg-grid lg-grid--2">
-            @foreach($jobs as $job)
+            @foreach($jobs['featured'] as $job)
             <div class="lg-job">
                 <div class="lg-job__logo">{{ strtoupper(substr($job['company'] ?? 'G', 0, 1)) }}</div>
                 <div class="lg-job__info">
@@ -110,7 +110,7 @@
 @endif
 
 {{-- BLOG --}}
-@if(!empty($latestBlogs))
+@if(!empty($latestBlogs['featured']))
 <section class="lg-section">
     <div class="lg-container">
         <div class="lg-section__head">
@@ -118,20 +118,21 @@
             <a href="/blog" class="lg-section__more">Xem tất cả →</a>
         </div>
         <div class="lg-grid lg-grid--3">
-            @foreach($latestBlogs as $blog)
-            <div class="lg-card">
+            @foreach($latestBlogs['featured'] as $blog)
+            <a href="{{ $blog['url'] ?? '#' }}" class="lg-card">
                 <div class="lg-card__img">
-                    <img src="{{ $blog['thumbnail'] ?? $blog['image'] ?? '' }}" alt="{{ $blog['title'] ?? '' }}" loading="lazy">
+                    <img src="{{ $blog['featured_image'] ?? '' }}" alt="{{ $blog['title'] ?? '' }}" loading="lazy">
                     <span class="lg-card__badge">{{ $blog['category'] ?? 'Tutorial' }}</span>
                 </div>
                 <div class="lg-card__body">
                     <h3 class="lg-card__title">{{ Str::limit($blog['title'] ?? '', 50) }}</h3>
+                    <p class="lg-card__desc">{{ Str::limit($blog['excerpt'] ?? '', 80) }}</p>
                     <div class="lg-card__meta">
-                        <span>{{ $blog['author'] ?? 'LamGame' }}</span>
-                        <span>{{ $blog['views'] ?? 0 }} views</span>
+                        <span>{{ $blog['author'] ?? 'LamGame' }} · {{ $blog['time_ago'] ?? '' }}</span>
+                        <span>📖 {{ $blog['reading_time'] ?? 0 }} phút</span>
                     </div>
                 </div>
-            </div>
+            </a>
             @endforeach
         </div>
     </div>
@@ -139,7 +140,7 @@
 @endif
 
 {{-- FORUM --}}
-@if(!empty($hotForumTopics))
+@if(!empty($hotForumTopics['featured']))
 <section class="lg-section lg-section--alt">
     <div class="lg-container">
         <div class="lg-section__head">
@@ -147,15 +148,16 @@
             <a href="/cong-dong" class="lg-section__more">Xem tất cả →</a>
         </div>
         <div class="lg-forum-list">
-            @foreach($hotForumTopics as $topic)
+            @foreach($hotForumTopics['featured'] as $topic)
             <a href="{{ $topic['url'] ?? '#' }}" class="lg-forum-item">
                 <div class="lg-forum-item__left">
                     <h3 class="lg-forum-item__title">{{ $topic['title'] ?? '' }}</h3>
-                    <span class="lg-forum-item__author">{{ $topic['author'] ?? '' }} · {{ $topic['category'] ?? '' }}</span>
+                    <span class="lg-forum-item__author">{{ $topic['author'] ?? '' }} · {{ $topic['category'] ?? '' }} · {{ $topic['time_ago'] ?? '' }}</span>
                 </div>
                 <div class="lg-forum-item__stats">
-                    <span>💬 {{ $topic['comments'] ?? 0 }}</span>
+                    <span>💬 {{ $topic['replies'] ?? 0 }}</span>
                     <span>👁 {{ $topic['views'] ?? 0 }}</span>
+                    <span>❤️ {{ $topic['likes'] ?? 0 }}</span>
                 </div>
             </a>
             @endforeach
