@@ -93,7 +93,7 @@
                 </div>
             </li>
             <li class="nav-redesign__item">
-                <a href="{{ route('lamgame.choi-game') }}" class="nav-redesign__link {{ request()->routeIs('lamgame.choi-game*') ? 'nav-redesign__link--active' : '' }}">Chơi Game</a>
+                <a href="{{ route('mini-game.index') }}" class="nav-redesign__link {{ request()->routeIs('mini-game.*') ? 'nav-redesign__link--active' : '' }}">Chơi Game</a>
             </li>
         </ul>
 
@@ -146,7 +146,7 @@
         <li><a href="{{ route('forum.index') }}">💬 Forum</a></li>
         <li><a href="{{ route('lamgame.viec-lam-game') }}">💼 Việc làm</a></li>
         <li><a href="{{ route('lamgame.ai-tools') }}">🤖 AI Tools</a></li>
-        <li><a href="{{ route('lamgame.choi-game') }}">🕹️ Chơi Game</a></li>
+        <li><a href="{{ route('mini-game.index') }}">🕹️ Chơi Game</a></li>
     </ul>
 </nav>
 

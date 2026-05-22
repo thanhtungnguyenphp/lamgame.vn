@@ -30,9 +30,8 @@
     
     @stack('meta')
     
-    <!-- Design System -->
-    <link rel="stylesheet" href="{{ asset('css/design-system.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/nav-redesign.css') }}">
+    <!-- Design System (bundled) -->
+    <link rel="stylesheet" href="{{ asset('css/redesign-bundle.min.css') }}">
     <script src="{{ asset('themes/shop/emsaigon/assets/js/dark-mode.js') }}"></script>
     
     <!-- Styles -->

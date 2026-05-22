@@ -6,9 +6,7 @@
 @section('page_description', 'Cộng đồng Game Developer Việt Nam hàng đầu. Tìm việc làm game dev, thảo luận Unity/Unreal Engine, chia sẻ source code và ý tưởng game sáng tạo. 50+ jobs mới mỗi tuần từ VNG, Gameloft.')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/hero-redesign.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/forum-section.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/blog-section.css') }}">
+    {{-- CSS already in redesign-bundle.min.css --}}
 @endpush
 
 

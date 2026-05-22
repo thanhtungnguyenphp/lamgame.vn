@@ -76,7 +76,6 @@
 @endpush
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/hero-redesign.css') }}">
     <style>
     /* Fallback banner styles */
     .banner-fallback {

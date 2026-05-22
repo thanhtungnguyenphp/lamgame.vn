@@ -316,11 +316,8 @@
     <!-- Homepage specific CSS -->
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-homepage.css') }}">
 
-    <!-- Design System -->
-    <link rel="stylesheet" href="{{ asset('css/design-system.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/nav-redesign.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/footer-redesign.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/micro-interactions.css') }}">
+    <!-- Design System (bundled) -->
+    <link rel="stylesheet" href="{{ asset('css/redesign-bundle.min.css') }}">
     <script src="{{ asset('themes/shop/emsaigon/assets/js/dark-mode.js') }}"></script>
 
     <!-- Dynamic styles from pages -->

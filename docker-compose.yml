@@ -68,6 +68,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: lg-redis
+    command: ["redis-server", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
     ports:
       - "63794:6379"
     networks:
