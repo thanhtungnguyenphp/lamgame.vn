@@ -1,12 +1,16 @@
+// Import Design System
+@import 'design-system';
+
+// Legacy aliases (backward compat)
 :root {
-  --green: #0a3b09; /* xanh đậm brand */
-  --cream: #fdf9f1; /* kem nhạt background */
-  --dark: #1a1a1a;
-  --muted: #6b7280;
-  --accent: #2d8f47; /* xanh sáng hơn cho hover */
-  --radius: 16px;
-  --shadow: 0 8px 30px rgba(0,0,0,.08);
-  --shadow-lg: 0 20px 60px rgba(0,0,0,.12);
+  --green: var(--color-primary-500);
+  --cream: var(--color-secondary-50);
+  --dark: var(--color-neutral-800);
+  --muted: var(--color-neutral-500);
+  --accent: var(--color-primary-400);
+  --radius: var(--radius-xl);
+  --shadow: var(--shadow-md);
+  --shadow-lg: var(--shadow-xl);
 }
 
 * { box-sizing: border-box; }

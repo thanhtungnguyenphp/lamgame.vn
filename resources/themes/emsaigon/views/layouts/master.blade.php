@@ -30,6 +30,11 @@
     
     @stack('meta')
     
+    <!-- Design System -->
+    <link rel="stylesheet" href="{{ asset('css/design-system.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/nav-redesign.css') }}">
+    <script src="{{ asset('themes/shop/emsaigon/assets/js/dark-mode.js') }}"></script>
+    
     <!-- Styles -->
     @stack('styles')
     
@@ -44,34 +49,7 @@
 
 <body>
     <!-- Header -->
-    <header class="header" id="header">
-        <div class="wrap row">
-            <a href="{{ url('/') }}" class="brand brand-container" aria-label="Trang chủ Làm Game">
-                <x-logo 
-                    size="60" 
-                    variant="horizontal" 
-                    alt="LamGame.vn - Làm Game Logo" 
-                    class="brand-logo-optimized brand-logo-60" 
-                    :priority="true" 
-                    :lazy="false" 
-                    :interactive="true" 
-                />
-                <span class="title">Làm Game</span>
-            </a>
-            <nav aria-label="Điều hướng chính">
-                <button class="menu-btn" aria-label="Mở menu" onclick="toggleMenu()">☰</button>
-                <ul id="nav-menu">
-                    <li><a href="#khoa-hoc">Khóa học</a></li>
-                    <li><a href="{{ route('lamgame.blog') }}">Blog</a></li>
-                    <li><a href="{{ route('lamgame.source-game') }}">Source Game</a></li>
-                    <li><a href="{{ route('forum.index') }}">Forum</a></li>
-                    <li><a href="{{ route('lamgame.viec-lam-game') }}">Việc làm</a></li>
-                    <li><a href="#lien-he">Liên hệ</a></li>
-                    <li><button class="cta" onclick="scrollToSection('#khoa-hoc');trackCTA('header_courses')">Khám phá khóa học</button></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    @include('components.nav-redesign')
 
     <!-- Main Content -->
     <main id="main">

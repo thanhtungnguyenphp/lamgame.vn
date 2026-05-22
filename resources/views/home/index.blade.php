@@ -76,7 +76,7 @@
 @endpush
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-optimized-banner.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/hero-redesign.css') }}">
     <style>
     /* Fallback banner styles */
     .banner-fallback {
@@ -202,130 +202,8 @@
 
 
 @section('content')
-    <!-- LamGame Dynamic Banner Section -->
-    <section class="hero-optimized" id="hero-banner" aria-label="Banner chính LamGame.vn">
-        <h1 class="sr-only">LamGame.vn — Cộng đồng Game Developer Việt Nam</h1>
-        @if(!empty($homepageBanners['banners']))
-            <button class="arrow banner-arrow prev" aria-label="Slide trước" tabindex="0">◄</button>
-            <button class="arrow banner-arrow next" aria-label="Slide sau" tabindex="0">►</button>
-
-            <div class="track" id="banner-track">
-                @foreach($homepageBanners['banners'] as $index => $banner)
-                    @if($banner['is_active'])
-                        <div class="slide" data-banner-id="{{ $banner['id'] }}">
-                            <a href="{{ $banner['link'] }}" class="slide-link" title="{{ $banner['title'] }}" target="{{ $banner['target'] }}" onclick="trackBannerClick({{ $banner['id'] }})">
-                                @if($banner['image'])
-                                    <img class="slide-img" 
-                                         src="{{ $banner['image'] }}" 
-                                         alt="{{ $banner['title'] }}"
-                                         loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
-                                         style="object-position: {{ $banner['focal_point'] ?? 'center center' }}">
-                                @else
-                                    <div class="bg {{ $banner['css_classes'] }}"></div>
-                                @endif
-                                <div class="overlay"></div>
-                                <div class="content">
-                                    <h2>{{ $banner['title'] }}</h2>
-                                    <p>{{ $banner['content'] }}</p>
-                                    <div class="btns">
-                                        <span class="btn primary">Khám phá ngay</span>
-                                        @if($index == 0)
-                                            <a class="btn secondary" href="{{ route('forum.index') }}" onclick="event.stopPropagation()">Hỏi kinh nghiệm</a>
-                                        @endif
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    @endif
-                @endforeach
-            </div>
-
-            <div class="dots" aria-hidden="true">
-                @foreach($homepageBanners['banners'] as $index => $banner)
-                    @if($banner['is_active'])
-                        <div class="dot banner-dot" tabindex="0" aria-label="Đi đến slide {{ $index + 1 }}"></div>
-                    @endif
-                @endforeach
-            </div>
-
-            @if($homepageBanners['has_banners'])
-                <!-- Banner Analytics Tracking -->
-                <script>
-                    // Track banner impressions
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const banners = document.querySelectorAll('[data-banner-id]');
-                        banners.forEach(function(slide) {
-                            const bannerId = slide.getAttribute('data-banner-id');
-                            if (bannerId && bannerId !== 'fallback-1' && bannerId !== 'fallback-2' && bannerId !== 'fallback-3' && bannerId !== 'fallback-4') {
-                                // Track impression after slide is visible for 1 second
-                                setTimeout(function() {
-                                    if (isElementVisible(slide)) {
-                                        trackBannerImpression(bannerId);
-                                    }
-                                }, 1000);
-                            }
-                        });
-                    });
-
-                    // Track banner clicks
-                    function trackBannerClick(bannerId) {
-                        if (bannerId && !bannerId.toString().startsWith('fallback-')) {
-                            fetch('/api/banners/' + bannerId + '/track-click', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-Requested-With': 'XMLHttpRequest'
-                                },
-                                body: JSON.stringify({
-                                    user_agent: navigator.userAgent,
-                                    referrer: document.referrer
-                                })
-                            }).catch(function(error) {
-                                console.log('Banner click tracking failed:', error);
-                            });
-                        }
-                    }
-
-                    // Track banner impressions
-                    function trackBannerImpression(bannerId) {
-                        fetch('/api/banners/' + bannerId + '/track-impression', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: JSON.stringify({
-                                user_agent: navigator.userAgent,
-                                referrer: document.referrer
-                            })
-                        }).catch(function(error) {
-                            console.log('Banner impression tracking failed:', error);
-                        });
-                    }
-
-                    // Helper function to check if element is visible
-                    function isElementVisible(element) {
-                        const rect = element.getBoundingClientRect();
-                        return rect.top >= 0 && rect.left >= 0 &&
-                               rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-                               rect.right <= (window.innerWidth || document.documentElement.clientWidth);
-                    }
-                </script>
-            @endif
-        @else
-            <!-- Fallback static banner if no dynamic banners available -->
-            <div class="banner-fallback">
-                <div class="content">
-                    <h1>LamGame.vn - Cộng đồng Game Developer Việt Nam</h1>
-                    <p>Nơi kết nối các game developer, chia sẻ kiến thức và tìm kiếm cơ hội việc làm trong ngành game.</p>
-                    <div class="btns">
-                        <a href="{{ route('lamgame.viec-lam-game') }}" class="btn primary">Xem việc làm</a>
-                        <a href="{{ route('forum.index') }}" class="btn secondary">Tham gia forum</a>
-                    </div>
-                </div>
-            </div>
-        @endif
-    </section>
+    <!-- Hero Section Redesign -->
+    @include('partials.hero-redesign')
 
     <!-- Featured Forum Topics - Only show when quality data exists -->
     @php
@@ -2407,7 +2285,7 @@ a.topic-card:hover {
             });
 
             // Initialize hero section immediately
-            const heroSection = document.querySelector('.hero-modern');
+            const heroSection = document.querySelector('.hero-redesign');
             if (heroSection) {
                 heroSection.style.opacity = '1';
                 heroSection.style.transform = 'translateY(0)';

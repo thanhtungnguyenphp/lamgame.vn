@@ -59,7 +59,11 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome 5 Icons (supports both fa fa-* and fab fa-* syntax) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/v4-shims.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 
     <!-- Vite Assets -->
     {{-- @bagistoVite(['resources/themes/emsaigon/assets/css/app.scss'], 'shop-emsaigon') --}}
@@ -312,6 +316,13 @@
     <!-- Homepage specific CSS -->
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-homepage.css') }}">
 
+    <!-- Design System -->
+    <link rel="stylesheet" href="{{ asset('css/design-system.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/nav-redesign.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/footer-redesign.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/micro-interactions.css') }}">
+    <script src="{{ asset('themes/shop/emsaigon/assets/js/dark-mode.js') }}"></script>
+
     <!-- Dynamic styles from pages -->
     @stack('styles')
 
@@ -401,77 +412,10 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="brand">
-                    <x-logo
-                        size="medium"
-                        variant="horizontal"
-                        alt="LamGame.vn - Game Development Platform"
-                        class="brand-logo-optimized"
-                        :priority="true"
-                        :lazy="false"
-                        :interactive="true"
-                        href="{{ url('/') }}"
-                        title="Về trang chủ LamGame.vn - Cộng đồng Game Developer Việt Nam"
-                    />
-                </div>
+    @include('partials.nav-redesign')
 
-                {{-- Navigation Menu --}}
-                <nav class="nav">
-                    <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Trang chủ</a>
-                    <a href="{{ route('mini-game.index') }}" class="{{ request()->routeIs('mini-game.*') ? 'active' : '' }}">Chơi Game</a>
-                    <a href="{{ route('lamgame.source-game') }}" class="{{ request()->routeIs('lamgame.source-game') ? 'active' : '' }}">Source Game</a>
-                    <a href="{{ route('lamgame.ai-tools') }}" class="{{ request()->routeIs('lamgame.ai-tools*') ? 'active' : '' }}">AI Tools</a>
-                    <a href="{{ route('forum.index') }}" class="{{ request()->routeIs('forum.*') ? 'active' : '' }}">Forum</a>
-                    <a href="{{ route('lamgame.blog') }}" class="{{ request()->routeIs('lamgame.blog*', 'blog.*') ? 'active' : '' }}">Blog</a>
-                    <a href="{{ route('lamgame.viec-lam-game') }}" class="{{ request()->routeIs('lamgame.viec-lam-game*') ? 'active' : '' }}">Việc làm</a>
-                    <a href="{{ route('lamgame.gioi-thieu') }}" class="{{ request()->routeIs('lamgame.gioi-thieu*') ? 'active' : '' }}">Giới thiệu</a>
-                    <a href="{{ route('lamgame.lien-he') }}" class="{{ request()->routeIs('lamgame.lien-he*') ? 'active' : '' }}">Liên hệ</a>
-
-                    {{-- Cart Icon --}}
-                    <a href="{{ route('shop.checkout.cart.index') }}" class="cart-icon {{ request()->routeIs('shop.checkout.cart.*') ? 'active' : '' }}" title="Giỏ hàng">
-                        🛒
-                        @php
-                            $cartItemCount = 0;
-                            try {
-                                $cart = cart()->getCart();
-                                $cartItemCount = $cart ? $cart->items->count() : 0;
-                            } catch (\Exception $e) {}
-                        @endphp
-                        @if($cartItemCount > 0)
-                            <span class="cart-badge">{{ $cartItemCount }}</span>
-                        @endif
-                    </a>
-
-                    @guest('customer')
-                        <a href="{{ route('auth.login') }}" class="cta">Tham gia ngay</a>
-                    @else
-                        <div class="user-menu">
-                            <span class="user-name">{{ auth('customer')->user()->first_name }}</span>
-                            <div class="user-dropdown">
-                                <a href="{{ route('shop.customers.account.profile.index') }}">Thông tin cá nhân</a>
-                                <form action="{{ route('shop.customer.session.destroy') }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    <button type="submit" style="background: none; border: none; color: inherit; cursor: pointer;">Đăng xuất</button>
-                                </form>
-                            </div>
-                        </div>
-                    @endguest
-                </nav>
-
-                <div class="mobile-toggle" onclick="openMobileMenu()">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    {{-- Dynamic Mobile Menu --}}
-    @include('menu::frontend.partials.mobile-menu')
+    {{-- Dynamic Mobile Menu (legacy fallback) --}}
+    {{-- @include('menu::frontend.partials.mobile-menu') --}}
 
     <!-- Main Content -->
     <main>
@@ -479,39 +423,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-main">
-                <div class="footer-section">
-                    <h4>Chính sách & Điều khoản</h4>
-                    <nav class="footer-nav">
-                        <div class="footer-nav-item"><a href="/page/chinh-sach-bao-mat" class="footer-nav-link">Chính sách bảo mật</a></div>
-                        <div class="footer-nav-item"><a href="/page/dieu-khoan-dich-vu" class="footer-nav-link">Điều khoản dịch vụ</a></div>
-                        <div class="footer-nav-item"><a href="/page/chinh-sach-thanh-toan-rut-tien" class="footer-nav-link">Chính sách thanh toán & rút tiền</a></div>
-                        <div class="footer-nav-item"><a href="/page/chinh-sach-hoan-tien-tranh-chap" class="footer-nav-link">Chính sách hoàn tiền & tranh chấp</a></div>
-                        <div class="footer-nav-item"><a href="/page/chinh-sach-danh-gia-xac-nhan" class="footer-nav-link">Chính sách đánh giá & xác nhận</a></div>
-                    </nav>
-                </div>
-                <div class="footer-section">
-                    <h4>Liên hệ</h4>
-                    <div class="footer-contact-item"><i>📍</i><span>Tòa nhà E.Town Central, 11 Đoàn Văn Bơ, P.13, Q.4, TP.HCM</span></div>
-                    <div class="footer-contact-item"><i>📞</i><span>09.1111.8300</span></div>
-                    <div class="footer-contact-item"><i>✉️</i><span>salegamevui@gmail.com</span></div>
-                </div>
-                <div class="footer-section">
-                    <h4>Kết nối</h4>
-                    <div class="social-links">
-                        <a href="#" aria-label="Facebook" title="Facebook">f</a>
-                        <a href="#" aria-label="Instagram" title="Instagram">in</a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <span>&copy; {{ date('Y') }} LAMGAME - Làm Game. All rights reserved.</span>
-                <a href="{{ route('lamgame.lien-he') }}">Liên hệ hỗ trợ</a>
-            </div>
-        </div>
-    </footer>
+    @include('partials.footer-redesign')
 
     <!-- Vue.js 3 and Axios for dynamic content -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js" onload="initializeVueApp()" onerror="handleVueLoadError()"></script>
@@ -654,6 +566,20 @@
 
     <!-- Additional page scripts -->
     @stack('scripts')
+
+    <!-- Scroll reveal + lazy image load -->
+    <script>
+    (function(){
+      var obs = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('revealed'); obs.unobserve(e.target); }});
+      },{threshold:0.1});
+      document.querySelectorAll('[data-reveal]').forEach(function(el){obs.observe(el);});
+      document.querySelectorAll('img[loading="lazy"]').forEach(function(img){
+        if(img.complete) img.classList.add('loaded');
+        else img.addEventListener('load',function(){img.classList.add('loaded');});
+      });
+    })();
+    </script>
 
     @include('partials.fcm-init')
 
