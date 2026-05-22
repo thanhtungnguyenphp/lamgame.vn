@@ -4,7 +4,6 @@
         {{-- Logo --}}
         <a href="{{ url('/') }}" class="nav-redesign__logo" aria-label="Trang chủ Làm Game">
             <img src="{{ asset('assets/logos/png/logo-square-512.png') }}" alt="LamGame.vn" width="40" height="40">
-            <span class="nav-redesign__logo-text">Làm Game</span>
         </a>
 
         {{-- Desktop Menu --}}
