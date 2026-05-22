@@ -117,6 +117,27 @@ POST /api/agent/tasks/batch-update
 Body: { projectId, updates: [{taskId, status, comment}] }
 ```
 
+## Đọc nội dung Page (Tài liệu)
+
+```
+GET /api/agent/projects/:projectId/documents/:pageId
+```
+
+**Path params:**
+
+| Param | Bắt buộc | Mô tả |
+|-------|----------|--------|
+| projectId | ✅ | UUID project |
+| pageId | ✅ | UUID page cần đọc |
+
+**Ví dụ:**
+```bash
+curl https://agent-docflow.ohha.com.vn/api/agent/projects/PROJECT_UUID/documents/PAGE_UUID \
+  -H "X-Agent-Key: YOUR_KEY"
+```
+
+
+
 ### Tạo/Cập nhật Tài liệu
 ```
 POST /api/agent/documents/update
