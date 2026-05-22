@@ -322,9 +322,20 @@
                 <p class="price-note">Giá chưa bao gồm thuế VAT</p>
                 <div id="cart-message" class="cart-message"></div>
                 @elseif($sourceGame['is_free'])
-                <a href="#download" class="btn btn-cart">
-                    <i class="fa fa-download"></i> Tải về miễn phí
-                </a>
+                @php
+                    $freeLinks = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->pluck('id')->toArray();
+                @endphp
+                <form id="add-to-cart-form">
+                    <input type="hidden" name="product_id" value="{{ $sourceGame['id'] }}">
+                    <input type="hidden" name="quantity" value="1">
+                    @foreach($freeLinks as $linkId)
+                        <input type="hidden" name="links[]" value="{{ $linkId }}">
+                    @endforeach
+                    <button type="button" id="btn-add-cart" class="btn btn-cart" onclick="addToCart(false, this)">
+                        <i class="fa fa-download"></i> Tải về miễn phí
+                    </button>
+                </form>
+                <div id="cart-message" class="cart-message"></div>
                 @endif
             </div>
 
