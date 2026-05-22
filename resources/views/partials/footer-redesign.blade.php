@@ -18,8 +18,7 @@
             {{-- Brand --}}
             <div class="footer-redesign__col">
                 <div class="footer-redesign__brand-logo">
-                    <img src="{{ asset('assets/logos/png/logo-square-512.png') }}" alt="LamGame" width="40" height="40">
-                    <span>Làm Game</span>
+                    <img src="{{ asset('assets/logos/png/logo-horizontal-200.png') }}" alt="LamGame.vn" height="36" style="height:36px;width:auto;">
                 </div>
                 <p class="footer-redesign__brand-desc">
                     Cộng đồng Game Developer Việt Nam. Kết nối developer, chia sẻ kiến thức, tìm việc làm và phát triển game cùng nhau.
