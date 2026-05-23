@@ -13,14 +13,6 @@
         <h1 class="bl-header__title">Blog & Tutorial</h1>
         <p class="bl-header__sub">Kiến thức game dev, tips & tricks, xu hướng công nghệ mới nhất</p>
 
-        {{-- CATEGORY CHIPS --}}
-        <div class="bl-chips">
-            <a href="{{ route('lamgame.blog') }}" class="bl-chip {{ !$currentCategory && !$currentTag ? 'bl-chip--active' : '' }}">Tất cả</a>
-            @foreach($categories as $cat)
-            <a href="{{ route('lamgame.blog', ['category' => $cat->slug]) }}" class="bl-chip {{ $currentCategory == $cat->slug ? 'bl-chip--active' : '' }}">{{ $cat->name }} <span class="bl-chip__count">{{ $cat->blogs_count }}</span></a>
-            @endforeach
-        </div>
-
         {{-- SEARCH --}}
         <form action="{{ route('lamgame.blog') }}" method="GET" class="bl-search">
             <input type="text" name="search" placeholder="Tìm bài viết..." value="{{ $searchQuery ?? '' }}" class="bl-search__input">
@@ -35,7 +27,7 @@
     <div class="bl-container">
         <a href="{{ route('lamgame.blog') }}/{{ $featuredBlog->slug }}" class="bl-featured">
             <div class="bl-featured__img">
-                <img src="{{ $featuredBlog->src ?? '' }}" alt="{{ $featuredBlog->name }}" loading="lazy">
+                <img src="{{ $featuredBlog->featured_image }}" alt="{{ $featuredBlog->name }}" loading="lazy">
             </div>
             <div class="bl-featured__body">
                 <span class="bl-badge">{{ $featuredBlog->category->name ?? 'Featured' }}</span>
@@ -57,6 +49,14 @@
 {{-- BLOG GRID --}}
 <section class="bl-section">
     <div class="bl-container">
+        {{-- CATEGORY FILTER --}}
+        <div class="bl-chips">
+            <a href="{{ route('lamgame.blog') }}" class="bl-chip {{ !$currentCategory && !$currentTag ? 'bl-chip--active' : '' }}">Tất cả</a>
+            @foreach($categories as $cat)
+            <a href="{{ route('lamgame.blog', ['category' => $cat->slug]) }}" class="bl-chip {{ $currentCategory == $cat->slug ? 'bl-chip--active' : '' }}">{{ $cat->name }}</a>
+            @endforeach
+        </div>
+
         @if($searchQuery)
         <p class="bl-results">Kết quả cho "<strong>{{ $searchQuery }}</strong>" — {{ $blogs->total() }} bài viết</p>
         @endif
@@ -65,7 +65,7 @@
             @forelse($blogs as $blog)
             <a href="{{ route('lamgame.blog') }}/{{ $blog->slug }}" class="bl-card">
                 <div class="bl-card__img">
-                    <img src="{{ $blog->src ?? '' }}" alt="{{ $blog->name }}" loading="lazy">
+                    <img src="{{ $blog->featured_image }}" alt="{{ $blog->name }}" loading="lazy">
                     <span class="bl-badge">{{ $blog->category->name ?? '' }}</span>
                 </div>
                 <div class="bl-card__body">
@@ -126,7 +126,7 @@
 .bl-header__sub{color:#7A8599;margin-bottom:28px;font-size:1.05rem}
 
 /* CHIPS */
-.bl-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.bl-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
 .bl-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:.82rem;font-weight:500;text-decoration:none!important;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.1);color:#B7C0D1;transition:all .2s}
 .bl-chip:hover{border-color:#7C5CFF;color:#F5F7FA}
 .bl-chip--active{background:rgba(124,92,255,.15);border-color:#7C5CFF;color:#F5F7FA}
