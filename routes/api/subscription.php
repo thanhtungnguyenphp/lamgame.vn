@@ -9,6 +9,7 @@ Route::prefix('v1/subscription')->name('api.subscription.')->group(function () {
 
     // PayPal callbacks (không cần auth)
     Route::get('/paypal/return', [SubscriptionController::class, 'paypalReturn'])->name('paypal.return');
+    Route::get('/paypal/cancel', [SubscriptionController::class, 'paypalCancel'])->name('paypal.cancel');
     Route::post('/webhook', [SubscriptionController::class, 'webhook'])->name('webhook');
 
     // Protected (cần auth)

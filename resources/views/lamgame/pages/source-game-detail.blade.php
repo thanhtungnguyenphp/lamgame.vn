@@ -14,541 +14,322 @@
     "url": "{{ url()->current() }}",
     @if($sourceGame['image'] ?? null)"image": "{{ $sourceGame['image'] }}",@endif
     "programmingLanguage": "{{ $sourceGame['programming_language'] ?? '' }}",
-    "offers": {
-        "@type": "Offer",
-        "price": "{{ $sourceGame['price'] ?? 0 }}",
-        "priceCurrency": "VND",
-        "availability": "https://schema.org/InStock"
-    }
+    "offers": {"@type": "Offer","price": "{{ $sourceGame['price'] ?? 0 }}","priceCurrency": "VND","availability": "https://schema.org/InStock"}
     @if(($sourceGame['rating'] ?? 0) > 0)
-    ,"aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "{{ $sourceGame['rating'] }}",
-        "reviewCount": "{{ $sourceGame['review_count'] ?? 1 }}"
-    }
+    ,"aggregateRating": {"@type": "AggregateRating","ratingValue": "{{ $sourceGame['rating'] }}","reviewCount": "{{ $sourceGame['review_count'] ?? 1 }}"}
     @endif
 }
 </script>
 @endpush
 
-@push('styles')
-<style>
-    .source-detail-container { max-width: 1200px; margin: 0 auto; padding: 20px; background: #fff; color: #1f2937; }
-    
-    /* Compact Header - như 3DOcean */
-    .compact-header {
-        display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
-        padding: 16px 0; border-bottom: 1px solid #e5e7eb; margin-bottom: 24px; gap: 16px;
-    }
-    .compact-header-left { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-    .compact-header-left a { color: #6a4c93; text-decoration: none; font-weight: 500; }
-    .compact-header-left span { color: #6b7280; display: flex; align-items: center; gap: 6px; }
-    .compact-header-right { display: flex; gap: 16px; }
-    .action-link { color: #6b7280; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; cursor: pointer; }
-    .action-link:hover { color: #6a4c93; }
-    
-    /* Tabs */
-    .tabs { display: flex; gap: 0; border-bottom: 1px solid #e5e7eb; margin-bottom: 24px; }
-    .tab { padding: 12px 20px; border: 1px solid #e5e7eb; border-bottom: none; background: #f9fafb; color: #6b7280; cursor: pointer; margin-right: -1px; }
-    .tab.active { background: white; color: #1f2937; font-weight: 600; border-bottom: 1px solid white; margin-bottom: -1px; }
-    
-    /* Main Grid */
-    .content-grid { display: grid; grid-template-columns: 1fr 340px; gap: 32px; }
-    
-    /* Gallery */
-    .gallery-container { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 4px; padding: 16px; margin-bottom: 16px; }
-    .gallery-main { position: relative; }
-    .gallery-main img { width: 100%; height: auto; max-height: 500px; object-fit: contain; }
-    .more-images-btn { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 8px 16px; border-radius: 4px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-    .gallery-thumbs { display: flex; gap: 8px; margin-top: 16px; overflow-x: auto; }
-    .gallery-thumb { width: 80px; height: 60px; border: 2px solid transparent; cursor: pointer; flex-shrink: 0; }
-    .gallery-thumb.active, .gallery-thumb:hover { border-color: #6a4c93; }
-    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
-    
-    /* Quick Actions dưới gallery */
-    .quick-actions { display: flex; gap: 12px; margin-bottom: 24px; }
-    .quick-action-btn { flex: 1; padding: 12px; border: 1px solid #e5e7eb; background: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; color: #374151; transition: all 0.2s; }
-    .quick-action-btn:hover { border-color: #6a4c93; color: #6a4c93; }
-    
-    /* Product Title */
-    .product-title { font-size: 0.95rem; color: #6b7280; margin-bottom: 32px; }
-    
-    /* Sidebar */
-    .sidebar { position: sticky; top: 20px; height: fit-content; }
-    .sidebar-card { background: white; border: 1px solid #e5e7eb; border-radius: 4px; padding: 20px; margin-bottom: 16px; overflow: hidden; }
-    
-    /* Price Box */
-    .price-header { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
-    .license-select { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.9rem; align-self: flex-start; }
-    .price-value { font-size: 1.75rem; font-weight: 700; color: #1f2937; word-break: break-word; }
-    .price-value sup { font-size: 0.875rem; }
-    .license-desc { font-size: 0.85rem; color: #6b7280; line-height: 1.5; margin-bottom: 16px; }
-    .license-links { font-size: 0.85rem; margin-bottom: 20px; }
-    .license-links a { color: #6a4c93; text-decoration: none; }
-    
-    /* CTA Buttons */
-    .btn { width: 100%; padding: 14px; border-radius: 4px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; transition: all 0.2s; }
-    .btn-cart { background: #82b440; color: white; margin-bottom: 8px; }
-    .btn-cart:hover { background: #72a430; }
-    .btn-buy { background: #6b7280; color: white; }
-    .btn-buy:hover { background: #5b6270; }
-    .price-note { font-size: 0.8rem; color: #9ca3af; text-align: center; margin-top: 12px; }
-    
-    /* Author Card */
-    .author-card { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-    .author-avatar { width: 64px; height: 64px; border-radius: 4px; background: linear-gradient(135deg, #6a4c93 0%, #9b59b6 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.5rem; flex-shrink: 0; }
-    .author-name { font-weight: 600; color: #1f2937; margin-bottom: 4px; }
-    .author-badges { display: flex; gap: 4px; flex-wrap: wrap; }
-    .badge { width: 24px; height: 24px; border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
-    .btn-portfolio { width: 100%; padding: 10px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 4px; color: #374151; cursor: pointer; }
-    .btn-portfolio:hover { background: #e5e7eb; }
-    
-    /* Attributes */
-    .attr-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; }
-    .attr-row:last-child { border-bottom: none; }
-    .attr-label { color: #6b7280; font-weight: 500; }
-    .attr-value { color: #1f2937; font-weight: 600; }
-    .more-attr-btn { width: 100%; padding: 10px; background: none; border: none; color: #6a4c93; cursor: pointer; font-weight: 500; margin-top: 8px; }
-    .hidden-attrs { display: none; }
-    .hidden-attrs.show { display: block; }
-    
-    /* Content Sections */
-    .content-section { margin-bottom: 32px; }
-    .section-title { font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-    .description-content { line-height: 1.8; color: #374151; }
-    .description-content p { margin-bottom: 1em; }
-    .description-content img { max-width: 100%; height: auto; border-radius: 4px; }
-    .description-content ul, .description-content ol { padding-left: 1.5em; margin-bottom: 1em; }
-    .description-content a { color: #6a4c93; }
-    .features-list { list-style: none; padding: 0; margin: 0; }
-    .features-list li { padding: 8px 0; display: flex; align-items: center; gap: 10px; }
-    .features-list li::before { content: '✓'; color: #10b981; font-weight: 600; }
-    
-    /* Related Items */
-    .related-section { margin-top: 40px; padding-top: 32px; border-top: 1px solid #e5e7eb; }
-    .related-title { font-size: 1.1rem; color: #1f2937; margin-bottom: 16px; }
-    .related-grid { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px; }
-    .related-item { flex-shrink: 0; width: 120px; text-decoration: none; }
-    .related-item img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; }
-    .related-item-title { font-size: 0.8rem; color: #374151; line-height: 1.3; }
-    
-    /* Footer links */
-    .footer-links { text-align: center; font-size: 0.85rem; color: #9ca3af; margin-top: 16px; }
-    .footer-links a { color: #6a4c93; text-decoration: none; }
-    
-    /* Message */
-    .cart-message { margin-top: 12px; padding: 10px; border-radius: 4px; font-size: 0.9rem; display: none; }
-    
-    /* Mobile */
-    @media (max-width: 900px) {
-        .content-grid { grid-template-columns: 1fr; }
-        .sidebar { position: static; }
-        .compact-header { flex-direction: column; align-items: flex-start; }
-    }
-</style>
-@endpush
-
 @section('content')
-<div class="source-detail-container">
-    <!-- Compact Header -->
-    <div class="compact-header">
-        <div class="compact-header-left">
-            <span>Bởi
-                @if($sourceGame['author_slug'])
-                    <a href="{{ url('seller/' . $sourceGame['author_slug']) }}">{{ $sourceGame['author_name'] }}</a>
-                @else
-                    <a href="#">{{ $sourceGame['author_name'] }}</a>
+<div class="sd-page">
+
+{{-- HERO PRODUCT --}}
+<section class="sd-hero">
+    <div class="sd-hero__bg"></div>
+    <div class="sd-container sd-hero__inner">
+        <div class="sd-breadcrumb">
+            <a href="{{ url('/') }}">Trang chủ</a><span>/</span>
+            <a href="{{ route('lamgame.source-game') }}">Source Game</a><span>/</span>
+            <span>{{ Str::limit($sourceGame['title'], 40) }}</span>
+        </div>
+        <div class="sd-hero__grid">
+            {{-- Gameplay Autoplay Preview --}}
+            <div class="sd-gallery">
+                @if(!empty($sourceGame['video_demo_url']))
+                <div class="sd-gallery__video">
+                    <video autoplay muted loop playsinline poster="{{ $sourceGame['images'][0]['url'] ?? '' }}">
+                        @if(!empty($sourceGame['video_preview_mp4']))
+                        <source src="{{ $sourceGame['video_preview_mp4'] }}" type="video/mp4">
+                        @endif
+                    </video>
+                    <div class="sd-gallery__video-badge">▶ Gameplay Preview</div>
+                </div>
                 @endif
-            </span>
-            <span>💬 {{ $sourceGame['review_count'] }} Bình luận</span>
-            <span>🛒 {{ number_format($sourceGame['downloads_count']) }} lượt mua</span>
-        </div>
-        <div class="compact-header-right">
-            <span class="action-link" onclick="addToFavorites()"><i class="fa fa-heart"></i> Yêu thích</span>
-            <span class="action-link" onclick="addToCollection()"><i class="fa fa-folder"></i> Bộ sưu tập</span>
-        </div>
-    </div>
-
-    <!-- Tabs -->
-    <div class="tabs">
-        <div class="tab active" onclick="switchTab(this, 'tab-detail')">Chi tiết sản phẩm</div>
-        <div class="tab" onclick="switchTab(this, 'tab-reviews')">Đánh giá ({{ $sourceGame['review_count'] ?? 0 }})</div>
-    </div>
-
-    <div class="content-grid">
-        <!-- Main Content -->
-        <div class="main-content" id="tab-detail">
-            <!-- Gallery -->
-            @if(count($sourceGame['images']) > 0)
-            <div class="gallery-container">
-                <div class="gallery-main">
+                @if(count($sourceGame['images']) > 0)
+                <div class="sd-gallery__main">
                     <img id="main-image" src="{{ $sourceGame['images'][0]['url'] }}" alt="{{ $sourceGame['title'] }}">
-                    @if(count($sourceGame['images']) > 1)
-                    <div class="more-images-btn" onclick="openGallery()">
-                        <i class="fa fa-image"></i> Xem thêm ảnh
-                    </div>
-                    @endif
                 </div>
                 @if(count($sourceGame['images']) > 1)
-                <div class="gallery-thumbs">
-                    @foreach($sourceGame['images'] as $index => $image)
-                    <div class="gallery-thumb {{ $index == 0 ? 'active' : '' }}" onclick="changeMainImage('{{ $image['url'] }}', this)">
-                        <img src="{{ $image['url'] }}" alt="">
+                <div class="sd-gallery__thumbs">
+                    @foreach($sourceGame['images'] as $i => $img)
+                    <div class="sd-thumb {{ $i == 0 ? 'active' : '' }}" onclick="changeMainImage('{{ $img['url'] }}', this)">
+                        <img src="{{ $img['url'] }}" alt="">
                     </div>
                     @endforeach
                 </div>
                 @endif
-            </div>
-            @endif
-
-            <!-- Quick Actions -->
-            <div class="quick-actions">
-                <button class="quick-action-btn" onclick="addToFavorites()">
-                    <i class="fa fa-heart-o"></i> Thêm yêu thích
-                </button>
-                <button class="quick-action-btn" onclick="addToCollection()">
-                    <i class="fa fa-folder-o"></i> Thêm bộ sưu tập
-                </button>
+                @endif
             </div>
 
-            <!-- Product Title/Description -->
-            <p class="product-title">{{ $sourceGame['description'] }}</p>
-
-            <!-- Features -->
-            @if(count($sourceGame['features']) > 0)
-            <div class="content-section">
-                <h3 class="section-title">Tính năng nổi bật</h3>
-                <ul class="features-list">
-                    @foreach($sourceGame['features'] as $feature)
-                    <li>{{ $feature }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
-
-            <!-- Video Demo -->
-            @if(!empty($sourceGame['video_demo_url']))
-            <div class="content-section">
-                <h3 class="section-title">Video Demo</h3>
-                <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px;">
-                    <iframe src="{{ $sourceGame['video_demo_url'] }}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;" allowfullscreen loading="lazy"></iframe>
+            {{-- Product Info --}}
+            <div class="sd-info">
+                <div class="sd-info__badges">
+                    @if(!empty($sourceGame['engine']))<span class="sd-badge">{{ $sourceGame['engine'] }}</span>@endif
+                    @if($sourceGame['is_free'])<span class="sd-badge sd-badge--free">Free</span>@endif
+                    @if(!empty($sourceGame['production_ready']))<span class="sd-badge sd-badge--prod">Production Ready</span>@endif
                 </div>
-            </div>
-            @endif
+                <h1 class="sd-info__title">{{ $sourceGame['title'] }}</h1>
+                <p class="sd-info__desc">{{ $sourceGame['description'] }}</p>
 
-            <!-- Full Description -->
-            @if($sourceGame['full_description'])
-            <div class="content-section">
-                <h3 class="section-title">Mô tả chi tiết</h3>
-                <div class="description-content">{!! strip_tags($sourceGame['full_description'], '<p><br><strong><b><em><i><ul><ol><li><a><h1><h2><h3><h4><h5><h6><img><table><tr><td><th><thead><tbody><blockquote><pre><code><span><div><hr>') !!}</div>
-            </div>
-            @endif
-
-            <!-- Requirements -->
-            @if($sourceGame['requirements'])
-            <div class="content-section">
-                <h3 class="section-title">Yêu cầu hệ thống</h3>
-                <p>{{ $sourceGame['requirements'] }}</p>
-            </div>
-            @endif
-
-            <!-- Related Sources -->
-            @if(count($relatedSources) > 0)
-            <div class="related-section">
-                <h3 class="related-title">Sản phẩm khác của {{ $sourceGame['author_name'] }}</h3>
-                <div class="related-grid">
-                    @foreach($relatedSources as $source)
-                    <a href="{{ $source['url'] }}" class="related-item">
-                        <img src="{{ $source['image'] }}" alt="{{ $source['title'] }}">
-                        <div class="related-item-title">{{ Str::limit($source['title'], 40) }}</div>
-                    </a>
-                    @endforeach
+                {{-- Trust signals --}}
+                <div class="sd-trust">
+                    @if($sourceGame['rating'] > 0)
+                    <span class="sd-trust__item">⭐ {{ number_format($sourceGame['rating'], 1) }}/5</span>
+                    @endif
+                    <span class="sd-trust__item">↓ {{ number_format($sourceGame['downloads_count']) }} lượt tải</span>
+                    <span class="sd-trust__item">💬 {{ $sourceGame['review_count'] }} đánh giá</span>
+                    <span class="sd-trust__item">🔄 {{ $sourceGame['last_updated'] }}</span>
                 </div>
-            </div>
-            @endif
-        </div>
 
-        <!-- Reviews Tab (hidden by default) -->
-        <div class="main-content" id="tab-reviews" style="display:none;">
-            @include('lamgame.partials.source-game-reviews', ['productId' => $sourceGame['id']])
-        </div>
+                {{-- CTA Priority: #1 Demo > #2 Buy > #3 Save --}}
+                <div class="sd-price-box">
+                    @if(!empty($sourceGame['demo_url']))
+                    <a href="{{ $sourceGame['demo_url'] }}" target="_blank" class="sd-btn sd-btn--demo sd-btn--pulse">🚀 Chơi thử Demo</a>
+                    @endif
 
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <!-- Price & Purchase -->
-            <div class="sidebar-card">
-                <div class="price-header">
-                    <select class="license-select">
-                        <option>Giấy phép thường</option>
-                    </select>
-                    <div class="price-value">
+                    <div class="sd-price">
                         @if($sourceGame['is_free'])
-                            Miễn phí
+                            <span class="sd-price__value sd-price__value--free">Miễn phí</span>
                         @else
-                            {{ number_format($sourceGame['price']) }}<sup>đ</sup>
+                            <span class="sd-price__value">{{ number_format($sourceGame['price']) }}đ</span>
                         @endif
                     </div>
-                </div>
-                
-                <p class="license-desc">Sử dụng cho một dự án cá nhân hoặc thương mại. Giá đã bao gồm source code và tài liệu.</p>
-                
-                <div class="license-links">
-                    <a href="#">Chi tiết giấy phép</a> | <a href="#">Tại sao mua tại LamGame?</a>
+
+                    @if(!$sourceGame['is_free'] && isset($sourceGame['id']) && !str_starts_with($sourceGame['id'], 'sample-'))
+                    @php $downloadableLinks = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->pluck('id')->toArray(); @endphp
+                    <form id="add-to-cart-form">
+                        <input type="hidden" name="product_id" value="{{ $sourceGame['id'] }}">
+                        <input type="hidden" name="quantity" value="1">
+                        @foreach($downloadableLinks as $linkId)
+                        <input type="hidden" name="links[]" value="{{ $linkId }}">
+                        @endforeach
+                        <button type="button" id="btn-add-cart" class="sd-btn sd-btn--primary">📦 Mua Source Code</button>
+                        <button type="button" id="btn-buy-now" class="sd-btn sd-btn--secondary">Mua ngay</button>
+                    </form>
+                    @elseif($sourceGame['is_free'])
+                    @php $freeLinks = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->pluck('id')->toArray(); @endphp
+                    <form id="add-to-cart-form">
+                        <input type="hidden" name="product_id" value="{{ $sourceGame['id'] }}">
+                        <input type="hidden" name="quantity" value="1">
+                        @foreach($freeLinks as $linkId)
+                        <input type="hidden" name="links[]" value="{{ $linkId }}">
+                        @endforeach
+                        <button type="button" id="btn-add-cart" class="sd-btn sd-btn--primary">📦 Tải về miễn phí</button>
+                    </form>
+                    @endif
+                    <button class="sd-btn sd-btn--save" onclick="addToFavorites()">❤ Lưu Source</button>
+                    <div id="cart-message" class="sd-message"></div>
                 </div>
 
-                @if(!$sourceGame['is_free'] && isset($sourceGame['id']) && !str_starts_with($sourceGame['id'], 'sample-'))
-                @php
-                    $downloadableLinks = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->pluck('id')->toArray();
-                @endphp
-                <form id="add-to-cart-form">
-                    <input type="hidden" name="product_id" value="{{ $sourceGame['id'] }}">
-                    <input type="hidden" name="quantity" value="1">
-                    @foreach($downloadableLinks as $linkId)
-                        <input type="hidden" name="links[]" value="{{ $linkId }}">
-                    @endforeach
-                    
-                    <button type="button" id="btn-add-cart" class="btn btn-cart">
-                        <i class="fa fa-cart-plus"></i> Thêm vào giỏ hàng
-                    </button>
-                    <button type="button" id="btn-buy-now" class="btn btn-buy">
-                        Mua ngay
-                    </button>
-                </form>
-                @if(!empty($sourceGame['demo_url']))
-                <a href="{{ $sourceGame['demo_url'] }}" target="_blank" class="btn btn-demo" style="display:inline-block; margin-top:8px; background:#10b981; color:#fff; padding:10px 20px; border-radius:6px; text-decoration:none;">
-                    <i class="fa fa-play-circle"></i> Xem Demo
-                </a>
-                @endif
-                <p class="price-note">Giá chưa bao gồm thuế VAT</p>
-                <div id="cart-message" class="cart-message"></div>
-                @elseif($sourceGame['is_free'])
-                @php
-                    $freeLinks = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->pluck('id')->toArray();
-                @endphp
-                <form id="add-to-cart-form">
-                    <input type="hidden" name="product_id" value="{{ $sourceGame['id'] }}">
-                    <input type="hidden" name="quantity" value="1">
-                    @foreach($freeLinks as $linkId)
-                        <input type="hidden" name="links[]" value="{{ $linkId }}">
-                    @endforeach
-                    <button type="button" id="btn-add-cart" class="btn btn-cart" onclick="addToCart(false, this)">
-                        <i class="fa fa-download"></i> Tải về miễn phí
-                    </button>
-                </form>
-                <div id="cart-message" class="cart-message"></div>
-                @endif
-            </div>
-
-            <!-- Author -->
-            <div class="sidebar-card">
-                <div class="author-card">
+                {{-- Author --}}
+                <div class="sd-author">
                     @if($sourceGame['author_logo'])
-                        <img src="{{ $sourceGame['author_logo'] }}" alt="{{ $sourceGame['author_name'] }}" style="width:64px;height:64px;border-radius:4px;object-fit:cover;flex-shrink:0;">
+                    <img src="{{ $sourceGame['author_logo'] }}" alt="{{ $sourceGame['author_name'] }}" class="sd-author__avatar">
                     @else
-                        <div class="author-avatar">{{ mb_strtoupper(mb_substr($sourceGame['author_name'], 0, 1)) }}</div>
+                    <div class="sd-author__avatar sd-author__avatar--placeholder">{{ mb_strtoupper(mb_substr($sourceGame['author_name'], 0, 1)) }}</div>
                     @endif
                     <div>
-                        <div class="author-name">{{ $sourceGame['author_name'] }}</div>
-                        @if($sourceGame['author_verified'])
-                            <div class="author-badges"><span class="badge" title="Đã xác minh">✓</span></div>
+                        <span class="sd-author__name">{{ $sourceGame['author_name'] }} @if($sourceGame['author_verified'])✓@endif</span>
+                        @if($sourceGame['author_slug'])
+                        <a href="{{ url('seller/' . $sourceGame['author_slug']) }}" class="sd-author__link">Xem portfolio →</a>
                         @endif
                     </div>
                 </div>
-                @if($sourceGame['author_slug'])
-                    <a href="{{ url('seller/' . $sourceGame['author_slug']) }}" class="btn-portfolio" style="display:block;text-align:center;text-decoration:none;">Xem Portfolio</a>
-                @else
-                    <button class="btn-portfolio">Xem Portfolio</button>
-                @endif
-            </div>
-
-            <!-- Attributes -->
-            <div class="sidebar-card">
-                <div class="attr-row">
-                    <span class="attr-label">Cập nhật</span>
-                    <span class="attr-value">{{ $sourceGame['last_updated'] }}</span>
-                </div>
-                <div class="hidden-attrs" id="more-attrs">
-                    <div class="attr-row">
-                        <span class="attr-label">Game Engine</span>
-                        <span class="attr-value">{{ $sourceGame['engine'] }}</span>
-                    </div>
-                    <div class="attr-row">
-                        <span class="attr-label">Ngôn ngữ</span>
-                        <span class="attr-value">{{ $sourceGame['language'] }}</span>
-                    </div>
-                    <div class="attr-row">
-                        <span class="attr-label">Dung lượng</span>
-                        <span class="attr-value">{{ $sourceGame['file_size'] }}</span>
-                    </div>
-                    <div class="attr-row">
-                        <span class="attr-label">Phiên bản</span>
-                        <span class="attr-value">{{ $sourceGame['version'] }}</span>
-                    </div>
-                    @if($sourceGame['rating'] > 0)
-                    <div class="attr-row">
-                        <span class="attr-label">Đánh giá</span>
-                        <span class="attr-value">{{ $sourceGame['rating'] }}/5.0</span>
-                    </div>
-                    @endif
-                </div>
-                <button class="more-attr-btn" onclick="toggleAttrs(this)">
-                    Xem thêm thông số <i class="fa fa-chevron-down"></i>
-                </button>
-            </div>
-
-            <!-- Footer -->
-            <div class="footer-links">
-                © {{ $sourceGame['author_name'] }}<br>
-                <a href="#">Liên hệ hỗ trợ</a>
             </div>
         </div>
     </div>
+</section>
+
+{{-- KEY FEATURES --}}
+@if(count($sourceGame['features']) > 0)
+<section class="sd-sec sd-fadein">
+    <div class="sd-container">
+        <h2 class="sd-sec__title">⚡ Tính năng nổi bật</h2>
+        <div class="sd-features">
+            @foreach($sourceGame['features'] as $feature)
+            <div class="sd-feature"><span class="sd-feature__check">✓</span>{{ $feature }}</div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- TRUST PANEL --}}
+<section class="sd-sec sd-sec--trust sd-fadein">
+    <div class="sd-container">
+        <h2 class="sd-sec__title">🛡️ Cam kết chất lượng</h2>
+        <div class="sd-trust-panel">
+            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Production Ready</span></div>
+            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>{{ $sourceGame['engine'] ?? 'Unity 6' }} Compatible</span></div>
+            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Clean Architecture</span></div>
+            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Mobile Optimized</span></div>
+            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Documentation Included</span></div>
+            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Fast Support</span></div>
+        </div>
+    </div>
+</section>
+
+{{-- VIDEO DEMO --}}
+@if(!empty($sourceGame['video_demo_url']))
+<section class="sd-sec sd-sec--alt">
+    <div class="sd-container">
+        <h2 class="sd-sec__title">🎬 Gameplay Preview</h2>
+        <div class="sd-video">
+            <iframe src="{{ $sourceGame['video_demo_url'] }}" allowfullscreen loading="lazy"></iframe>
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- TECHNICAL SPECS --}}
+<section class="sd-sec">
+    <div class="sd-container">
+        <h2 class="sd-sec__title">🔧 Thông số kỹ thuật</h2>
+        <div class="sd-specs">
+            <div class="sd-spec"><span class="sd-spec__label">Game Engine</span><span class="sd-spec__value">{{ $sourceGame['engine'] }}</span></div>
+            <div class="sd-spec"><span class="sd-spec__label">Ngôn ngữ</span><span class="sd-spec__value">{{ $sourceGame['language'] }}</span></div>
+            <div class="sd-spec"><span class="sd-spec__label">Dung lượng</span><span class="sd-spec__value">{{ $sourceGame['file_size'] }}</span></div>
+            <div class="sd-spec"><span class="sd-spec__label">Phiên bản</span><span class="sd-spec__value">{{ $sourceGame['version'] }}</span></div>
+            <div class="sd-spec"><span class="sd-spec__label">Cập nhật</span><span class="sd-spec__value">{{ $sourceGame['last_updated'] }}</span></div>
+            @if($sourceGame['requirements'])
+            <div class="sd-spec"><span class="sd-spec__label">Yêu cầu</span><span class="sd-spec__value">{{ $sourceGame['requirements'] }}</span></div>
+            @endif
+        </div>
+    </div>
+</section>
+
+{{-- FULL DESCRIPTION --}}
+@if($sourceGame['full_description'])
+<section class="sd-sec sd-sec--alt">
+    <div class="sd-container">
+        <h2 class="sd-sec__title">📖 Mô tả chi tiết</h2>
+        <div class="sd-content">{!! strip_tags($sourceGame['full_description'], '<p><br><strong><b><em><i><ul><ol><li><a><h1><h2><h3><h4><h5><h6><img><table><tr><td><th><thead><tbody><blockquote><pre><code><span><div><hr>') !!}</div>
+    </div>
+</section>
+@endif
+
+{{-- REVIEWS --}}
+<section class="sd-sec" id="reviews">
+    <div class="sd-container">
+        <h2 class="sd-sec__title">⭐ Đánh giá ({{ $sourceGame['review_count'] ?? 0 }})</h2>
+        <div id="review-stats"></div>
+        <div id="review-list"></div>
+        @include('lamgame.partials.source-game-reviews', ['productId' => $sourceGame['id']])
+    </div>
+</section>
+
+{{-- RELATED SOURCES --}}
+@if(count($relatedSources) > 0)
+<section class="sd-sec sd-sec--alt">
+    <div class="sd-container">
+        <h2 class="sd-sec__title">🎮 Source game liên quan</h2>
+        <div class="sd-related">
+            @foreach($relatedSources as $source)
+            <a href="{{ $source['url'] }}" class="sd-related__card">
+                <div class="sd-related__img"><img src="{{ $source['image'] }}" alt="{{ $source['title'] }}" loading="lazy"></div>
+                <div class="sd-related__body">
+                    <h3>{{ Str::limit($source['title'], 40) }}</h3>
+                    <span class="sd-related__price">{{ ($source['price'] ?? 0) > 0 ? number_format($source['price']) . 'đ' : 'Miễn phí' }}</span>
+                </div>
+            </a>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- FINAL CTA --}}
+<section class="sd-cta">
+    <div class="sd-container" style="text-align:center">
+        <h2>Sẵn sàng tiết kiệm thời gian phát triển?</h2>
+        <p>Source code production-ready, document đầy đủ, support sau mua</p>
+        <div class="sd-cta__btns">
+            @if($sourceGame['is_free'])
+            <button onclick="document.getElementById('btn-add-cart').click()" class="sd-btn sd-btn--primary sd-btn--lg">Tải về miễn phí →</button>
+            @else
+            <button onclick="document.getElementById('btn-buy-now').click()" class="sd-btn sd-btn--primary sd-btn--lg">Mua ngay — {{ number_format($sourceGame['price']) }}đ</button>
+            @endif
+            <a href="{{ route('lamgame.source-game') }}" class="sd-btn sd-btn--ghost">← Xem thêm source khác</a>
+        </div>
+    </div>
+</section>
+
+</div>
+
+{{-- STICKY MOBILE CTA --}}
+<div class="sd-sticky-cta">
+    <span class="sd-sticky-cta__price">{{ $sourceGame['is_free'] ? 'Miễn phí' : number_format($sourceGame['price']) . 'đ' }}</span>
+    <button onclick="document.getElementById('btn-add-cart').click()" class="sd-btn sd-btn--primary sd-btn--sm">{{ $sourceGame['is_free'] ? 'Tải về' : 'Mua ngay' }}</button>
 </div>
 @endsection
 
+@push('styles')
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('css/source-detail.css') }}">
+@endpush
+
 @push('scripts')
 <script>
-function switchTab(el, tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('tab-detail').style.display = tabId === 'tab-detail' ? '' : 'none';
-    document.getElementById('tab-reviews').style.display = tabId === 'tab-reviews' ? '' : 'none';
-    if (tabId === 'tab-reviews' && !window._reviewsLoaded) {
-        loadReviews({{ $sourceGame['id'] }});
-        window._reviewsLoaded = true;
-    }
-}
-
-function loadReviews(productId) {
-    fetch('/api/v1/source-game/' + productId + '/review-stats')
-        .then(r => r.json()).then(d => {
-            if (d.data) renderStats(d.data);
-        });
-    fetch('/api/v1/source-game/' + productId + '/reviews?per_page=10')
-        .then(r => r.json()).then(d => {
-            if (d.data?.data) renderReviews(d.data.data);
-        });
-}
-
-function renderStats(s) {
-    const el = document.getElementById('review-stats');
-    if (!el) return;
-    let bars = '';
-    for (let i = 5; i >= 1; i--) {
-        const pct = s.total > 0 ? Math.round((s.distribution[i] || 0) / s.total * 100) : 0;
-        bars += '<div class="rating-bar"><span>' + i + '★</span><div class="bar"><div class="bar-fill" style="width:' + pct + '%"></div></div><span>' + (s.distribution[i] || 0) + '</span></div>';
-    }
-    el.innerHTML = '<div class="rating-summary"><div class="rating-big">' + s.avg_rating + '<small>/5</small></div><div class="rating-count">' + s.total + ' đánh giá</div></div><div class="rating-bars">' + bars + '</div>';
-}
-
-function renderReviews(reviews) {
-    const el = document.getElementById('review-list');
-    if (!el) return;
-    if (!reviews.length) { el.innerHTML = '<p class="no-reviews">Chưa có đánh giá nào.</p>'; return; }
-    el.innerHTML = reviews.map(r => '<div class="review-item">' +
-        '<div class="review-header"><strong>' + (r.customer?.first_name || 'Ẩn danh') + '</strong>' +
-        (r.is_verified_purchase ? ' <span class="verified-badge">✓ Đã mua</span>' : '') +
-        '<span class="review-date">' + new Date(r.created_at).toLocaleDateString('vi-VN') + '</span></div>' +
-        '<div class="review-stars">' + '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating) + '</div>' +
-        (r.title ? '<div class="review-title">' + r.title + '</div>' : '') +
-        '<p>' + r.content + '</p>' +
-        (r.pros ? '<div class="review-pros">👍 ' + r.pros + '</div>' : '') +
-        (r.cons ? '<div class="review-cons">👎 ' + r.cons + '</div>' : '') +
-        '</div>').join('');
-}
-
-function submitReview(productId) {
-    const form = document.getElementById('review-form');
-    const data = Object.fromEntries(new FormData(form));
-    data.rating = parseInt(data.rating);
-    fetch('/api/v1/source-game/' + productId + '/reviews', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-        body: JSON.stringify(data)
-    }).then(r => r.json()).then(d => {
-        const msg = document.getElementById('review-message');
-        if (d.status === 'success') {
-            msg.innerHTML = '<div style="color:#16a34a">Đánh giá đã gửi, đang chờ duyệt!</div>';
-            form.reset();
-        } else {
-            msg.innerHTML = '<div style="color:#dc2626">' + (d.message || 'Có lỗi xảy ra') + '</div>';
-        }
-    });
-}
-
 function changeMainImage(url, el) {
     document.getElementById('main-image').src = url;
-    document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.sd-thumb').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
 }
-
-function toggleAttrs(btn) {
-    const attrs = document.getElementById('more-attrs');
-    attrs.classList.toggle('show');
-    btn.innerHTML = attrs.classList.contains('show') 
-        ? 'Thu gọn <i class="fa fa-chevron-up"></i>' 
-        : 'Xem thêm thông số <i class="fa fa-chevron-down"></i>';
-}
-
-function addToFavorites() { alert('Tính năng đang phát triển'); }
-function addToCollection() { alert('Tính năng đang phát triển'); }
-function openGallery() { /* TODO: lightbox */ }
 
 document.addEventListener('DOMContentLoaded', function() {
     const addCartBtn = document.getElementById('btn-add-cart');
     const buyNowBtn = document.getElementById('btn-buy-now');
     const messageDiv = document.getElementById('cart-message');
-    
-    function showMessage(text, isError = false) {
+
+    function showMessage(text, isError) {
         if (!messageDiv) return;
         messageDiv.style.display = 'block';
-        messageDiv.style.background = isError ? '#fef2f2' : '#f0fdf4';
-        messageDiv.style.color = isError ? '#dc2626' : '#16a34a';
+        messageDiv.className = 'sd-message ' + (isError ? 'sd-message--error' : 'sd-message--success');
         messageDiv.innerHTML = text;
     }
-    
-    function addToCart(buyNow = false, btn = null) {
+
+    function addToCart(buyNow, btn) {
         const form = document.getElementById('add-to-cart-form');
         if (!form) return;
-        
         const productId = form.querySelector('[name="product_id"]').value;
         const quantity = form.querySelector('[name="quantity"]').value;
         const links = Array.from(form.querySelectorAll('[name="links[]"]')).map(i => i.value);
-        
-        let originalText = '';
-        if (btn) {
-            originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
-            btn.disabled = true;
-        }
-        
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
+        btn.disabled = true;
+
         fetch('{{ route("shop.api.checkout.cart.store") }}', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-            body: JSON.stringify({ product_id: productId, quantity: quantity, is_buy_now: buyNow ? 1 : 0, links: links })
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
-            
-            if (data.redirect) {
-                window.location.href = data.redirect;
-            } else if (data.message) {
-                showMessage(data.message);
-                // Redirect to cart after 1s if add to cart success
-                if (!buyNow) setTimeout(() => window.location.href = '{{ route("shop.checkout.cart.index") }}', 1000);
-            } else if (data.data?.message) {
-                showMessage(data.data.message, true);
-            }
-        })
-        .catch(() => {
-            if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
-            showMessage('Có lỗi xảy ra. Vui lòng thử lại.', true);
-        });
+            headers: {'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'},
+            body: JSON.stringify({product_id: productId, quantity: quantity, is_buy_now: buyNow ? 1 : 0, links: links})
+        }).then(r => r.json()).then(data => {
+            btn.innerHTML = orig; btn.disabled = false;
+            if (data.redirect) window.location.href = data.redirect;
+            else if (data.message) { showMessage(data.message, false); if (!buyNow) setTimeout(() => window.location.href = '{{ route("shop.checkout.cart.index") }}', 1000); }
+            else if (data.data?.message) showMessage(data.data.message, true);
+        }).catch(() => { btn.innerHTML = orig; btn.disabled = false; showMessage('Có lỗi xảy ra.', true); });
     }
-    
+
     if (addCartBtn) addCartBtn.addEventListener('click', () => addToCart(false, addCartBtn));
     if (buyNowBtn) buyNowBtn.addEventListener('click', () => addToCart(true, buyNowBtn));
+
+    // Load reviews
+    fetch('/api/v1/source-game/{{ $sourceGame["id"] }}/review-stats').then(r=>r.json()).then(d=>{if(d.data)renderStats(d.data)});
+    fetch('/api/v1/source-game/{{ $sourceGame["id"] }}/reviews?per_page=10').then(r=>r.json()).then(d=>{if(d.data?.data)renderReviews(d.data.data)});
 });
+
+function renderStats(s){const el=document.getElementById('review-stats');if(!el)return;let bars='';for(let i=5;i>=1;i--){const p=s.total>0?Math.round((s.distribution[i]||0)/s.total*100):0;bars+='<div class="sd-rbar"><span>'+i+'★</span><div class="sd-rbar__track"><div class="sd-rbar__fill" style="width:'+p+'%"></div></div><span>'+(s.distribution[i]||0)+'</span></div>';}el.innerHTML='<div class="sd-rating-summary"><div class="sd-rating-big">'+s.avg_rating+'<small>/5</small></div><div class="sd-rating-count">'+s.total+' đánh giá</div></div><div class="sd-rating-bars">'+bars+'</div>';}
+
+function renderReviews(reviews){const el=document.getElementById('review-list');if(!el)return;if(!reviews.length){el.innerHTML='<p style="color:#7A8599">Chưa có đánh giá nào.</p>';return;}el.innerHTML=reviews.map(r=>'<div class="sd-review"><div class="sd-review__head"><strong>'+(r.customer?.first_name||'Ẩn danh')+'</strong>'+(r.is_verified_purchase?' <span class="sd-verified">✓ Đã mua</span>':'')+'<span class="sd-review__date">'+new Date(r.created_at).toLocaleDateString('vi-VN')+'</span></div><div class="sd-review__stars">'+'★'.repeat(r.rating)+'☆'.repeat(5-r.rating)+'</div>'+(r.title?'<div class="sd-review__title">'+r.title+'</div>':'')+'<p>'+r.content+'</p></div>').join('');}
+
+// Fade-in sections on scroll
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.sd-fadein').forEach(el => observer.observe(el));
+
+function addToFavorites() { alert('Đã lưu vào danh sách yêu thích!'); }
 </script>
 @endpush

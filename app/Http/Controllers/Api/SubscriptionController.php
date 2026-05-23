@@ -39,7 +39,7 @@ class SubscriptionController extends Controller
      */
     public function subscribe(Request $request): JsonResponse
     {
-        $request->validate(['plan' => 'required|in:free,pro,business']);
+        $request->validate(['plan' => 'required|in:free,basic,pro,studio,enterprise']);
 
         $userId = $request->user()->id;
         $planSlug = $request->input('plan');
@@ -197,6 +197,43 @@ class SubscriptionController extends Controller
         $quota = $this->service->checkQuota($userId, $feature);
 
         return response()->json(['status' => 'ok', 'data' => ['success' => true, 'remaining' => $quota['limit'] === -1 ? -1 : max(0, $quota['limit'] - $quota['used'])]]);
+    }
+
+    /**
+     * GET /subscription/paypal/cancel — PayPal redirect khi user cancel
+     */
+    public function paypalCancel(Request $request)
+    {
+        $subscriptionId = $request->query('subscription_id');
+
+        // Log cancel event
+        Log::info('PayPal subscription cancelled by user', [
+            'subscription_id' => $subscriptionId,
+            'ba_token' => $request->query('ba_token'),
+            'token' => $request->query('token'),
+            'ip' => $request->ip(),
+        ]);
+
+        // Update status in DB if exists
+        if ($subscriptionId) {
+            $sub = \App\Models\UserSubscription::where('paypal_subscription_id', $subscriptionId)->first();
+            if ($sub) {
+                $sub->update(['status' => 'cancelled', 'cancelled_at' => now()]);
+
+                // Log transaction
+                \App\Models\SubscriptionTransaction::create([
+                    'subscription_id' => $sub->id,
+                    'paypal_transaction_id' => $subscriptionId,
+                    'amount' => 0,
+                    'currency' => 'USD',
+                    'status' => 'cancelled',
+                    'paypal_data' => ['event' => 'user_cancelled_at_paypal', 'ba_token' => $request->query('ba_token')],
+                ]);
+            }
+        }
+
+        $html = '<html><head><meta http-equiv="refresh" content="0;url=/ai-tools"></head><body><p>Đang chuyển hướng... <a href="/ai-tools">Click here</a></p></body></html>';
+        return response($html);
     }
 
     /**

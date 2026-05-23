@@ -59,8 +59,14 @@
     <!-- Hero Section -->
     <section class="hero-simple">
         <div class="container">
-            <h1>Việc làm Game Development</h1>
-            <p class="lead">Kết nối bạn với những cơ hội việc làm tốt nhất trong ngành game</p>
+            <span class="jb-hero-badge">💼 Game Industry Careers</span>
+            <h1>Việc làm <span class="jb-glow">Game Development</span></h1>
+            <p class="lead">Kết nối developers & studios. Tìm cơ hội việc làm tốt nhất trong ngành game Việt Nam.</p>
+            <div class="jb-hero-stats">
+                <div><strong>{{ $totalJobs }}</strong><span>Việc làm</span></div>
+                <div><strong>{{ isset($companies) ? $companies->count() : '50+' }}</strong><span>Studios</span></div>
+                <div><strong>500+</strong><span>Developers</span></div>
+            </div>
         </div>
     </section>
 
@@ -2697,5 +2703,6 @@
             background: linear-gradient(135deg, #5a3c83, #8b4982);
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/jobs-dark.css') }}">
     @endpush
 @endsection

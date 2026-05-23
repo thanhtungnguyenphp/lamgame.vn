@@ -314,4 +314,14 @@ class ForumPost extends Model
             'dislikes_count' => $this->dislikes()->count(),
         ]);
     }
+
+    public function getReactionsCountAttribute(): array
+    {
+        return \App\Models\ForumReaction::where('reactable_type', self::class)
+            ->where('reactable_id', $this->id)
+            ->selectRaw('type, count(*) as count')
+            ->groupBy('type')
+            ->pluck('count', 'type')
+            ->toArray();
+    }
 }

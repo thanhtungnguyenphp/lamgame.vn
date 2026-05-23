@@ -1,29 +1,21 @@
 @extends('layouts.master')
 
-@section('page_title', $page_title ?? 'Source Game - Kho Mã Nguồn Game - Làm Game')
-@section('page_description', $page_description ?? 'Kho source code game, thuê lập trình viên game, chia sẻ ý tưởng game. Cộng đồng game developer Việt Nam.')
+@section('page_title', $page_title ?? 'Source Game Marketplace - Mã Nguồn Game Production-Ready - Làm Game')
+@section('page_description', $page_description ?? 'Marketplace source code game production-ready. Unity, Unreal, Godot. 1200+ source từ cộng đồng developer Việt Nam.')
 
 @push('schema_markup')
 <script type="application/ld+json">
 {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "Kho Source Game - Mã Nguồn Game",
-    "description": "Kho source code game, thuê lập trình viên game, chia sẻ ý tưởng game",
+    "name": "Source Game Marketplace",
+    "description": "Marketplace source code game production-ready cho developer Việt Nam",
     "url": "{{ route('lamgame.source-game') }}",
-    "isPartOf": {
-        "@type": "WebSite",
-        "name": "Làm Game",
-        "url": "{{ url('/') }}"
-    }
+    "isPartOf": {"@type": "WebSite","name": "Làm Game","url": "{{ url('/') }}"}
     @if(!empty($featuredSources) && count($featuredSources))
     ,"itemListElement": [
         @foreach(array_slice($featuredSources, 0, 10) as $i => $source)
-        {
-            "@type": "ListItem",
-            "position": {{ $i + 1 }},
-            "url": "{{ route('lamgame.source-game.detail', $source['url_key'] ?? $source['id'] ?? '') }}"
-        }@if($i < count(array_slice($featuredSources, 0, 10)) - 1),@endif
+        {"@type": "ListItem","position": {{ $i + 1 }},"url": "{{ route('lamgame.source-game.detail', $source['url_key'] ?? $source['id'] ?? '') }}"}@if($i < count(array_slice($featuredSources, 0, 10)) - 1),@endif
         @endforeach
     ]
     @endif
@@ -47,327 +39,203 @@
 
 @section('content')
 <div class="sg-page">
-    {{-- Hero compact --}}
-    <section class="sg-hero">
-        <div class="container">
-            <h1 class="sg-hero__title">Kho Source Game</h1>
-            <p class="sg-hero__sub">Mua bán source code · Thuê game developer · Chia sẻ ý tưởng game</p>
+
+{{-- HERO --}}
+<section class="sg-hero">
+    <div class="sg-hero__bg"></div>
+    <div class="sg-container sg-hero__inner">
+        <span class="sg-hero__badge">🎮 Source Game Marketplace</span>
+        <h1 class="sg-hero__title">Build game nhanh hơn với<br><span class="sg-glow">source code production-ready</span></h1>
+        <p class="sg-hero__sub">Tiết kiệm hàng trăm giờ phát triển. Source đã test, document đầy đủ, sẵn sàng deploy.</p>
+        <form action="{{ route('lamgame.source-game') }}" method="GET" class="sg-search">
+            <svg class="sg-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Tìm source game, engine, genre..." class="sg-search__input">
+            <button type="submit" class="sg-search__btn">Tìm kiếm</button>
+        </form>
+    </div>
+</section>
+
+{{-- TRUST NUMBERS --}}
+<section class="sg-trust">
+    <div class="sg-container">
+        <div class="sg-trust__grid">
+            <div class="sg-trust__item"><strong>1.200+</strong><span>Source Code</span></div>
+            <div class="sg-trust__item"><strong>12.000+</strong><span>Developers</span></div>
+            <div class="sg-trust__item"><strong>850+</strong><span>Buyers</span></div>
+            <div class="sg-trust__item"><strong>98%</strong><span>Hài lòng</span></div>
         </div>
-    </section>
+    </div>
+</section>
 
-    {{-- Search --}}
-    <section class="sg-search">
-        <div class="container">
-            <form action="{{ route('lamgame.source-game') }}" method="GET" class="sg-search__form">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Tìm source game, engine, từ khóa..." class="sg-search__input">
-                <select name="sort" class="sg-search__select" onchange="this.form.submit()">
-                    <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Mới nhất</option>
-                    <option value="price-asc" {{ request('sort') == 'price-asc' ? 'selected' : '' }}>Giá thấp → cao</option>
-                    <option value="price-desc" {{ request('sort') == 'price-desc' ? 'selected' : '' }}>Giá cao → thấp</option>
-                    <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>Tên A-Z</option>
-                </select>
-                <button type="submit" class="sg-search__btn"><i class="fa fa-search"></i> Tìm</button>
-            </form>
+{{-- TRENDING SOURCE --}}
+@if(!empty($trendingSources ?? []))
+<section class="sg-sec">
+    <div class="sg-container">
+        <div class="sg-sec__head">
+            <h2 class="sg-sec__title">🔥 Trending</h2>
+            <a href="{{ route('lamgame.source-game', ['sort' => 'popular']) }}" class="sg-sec__link">Xem tất cả →</a>
         </div>
-    </section>
+        <div class="sg-scroll">
+            @foreach(($trendingSources ?? array_slice($featuredSources, 0, 4)) as $source)
+            @include('lamgame.partials.source-card', ['source' => $source])
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
 
-    {{-- Results --}}
-    <section class="sg-results">
-        <div class="container">
-            @if(count($featuredSources) > 0)
-                <div class="sg-grid">
-                    @foreach($featuredSources as $source)
-                    <a href="{{ $source['href'] ?? '#' }}" class="sg-card">
-                        <div class="sg-card__thumb">
-                            <img src="{{ $source['preview_image'] }}" alt="{{ $source['title'] }}" loading="lazy">
-                            @if(($source['price'] ?? 0) <= 0)
-                                <span class="sg-card__badge sg-card__badge--free">Miễn phí</span>
-                            @endif
-                        </div>
-                        <div class="sg-card__body">
-                            <h3 class="sg-card__title">{{ $source['title'] }}</h3>
-                            <p class="sg-card__desc">{{ \Str::limit(strip_tags($source['description'] ?? ''), 80) }}</p>
-                            <div class="sg-card__footer">
-                                <span class="sg-card__engine">{{ $source['engine'] ?? 'Unity' }}</span>
-                                <span class="sg-card__price">
-                                    @if(($source['price'] ?? 0) <= 0)
-                                        Miễn phí
-                                    @else
-                                        {{ number_format($source['price']) }}đ
-                                    @endif
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-                    @endforeach
-                </div>
+{{-- BEST SELLING --}}
+@if(!empty($bestSellingSources ?? []))
+<section class="sg-sec">
+    <div class="sg-container">
+        <div class="sg-sec__head">
+            <h2 class="sg-sec__title">⭐ Best Selling</h2>
+            <a href="{{ route('lamgame.source-game', ['sort' => 'best-selling']) }}" class="sg-sec__link">Xem tất cả →</a>
+        </div>
+        <div class="sg-scroll">
+            @foreach(($bestSellingSources ?? array_slice($featuredSources, 0, 4)) as $source)
+            @include('lamgame.partials.source-card', ['source' => $source])
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
 
-                {{-- Pagination --}}
-                @if($pagination['has_more'] ?? false)
-                <div class="sg-pager">
-                    @if($pagination['current_page'] > 1)
-                        <a href="{{ route('lamgame.source-game', array_merge(request()->query(), ['page' => $pagination['current_page'] - 1])) }}" class="sg-pager__btn">← Trước</a>
-                    @endif
-                    <span class="sg-pager__info">Trang {{ $pagination['current_page'] }}</span>
-                    @if($pagination['has_more'])
-                        <a href="{{ route('lamgame.source-game', array_merge(request()->query(), ['page' => $pagination['current_page'] + 1])) }}" class="sg-pager__btn">Tiếp →</a>
-                    @endif
-                </div>
-                @endif
-            @else
-                <div class="sg-empty">
-                    <h3>Chưa có source game nào</h3>
-                    <p>Hãy quay lại sau hoặc <a href="{{ route('lamgame.lien-he') }}">liên hệ</a> để đóng góp source game của bạn.</p>
-                </div>
+{{-- FILTERS --}}
+<section class="sg-filters">
+    <div class="sg-container">
+        <form action="{{ route('lamgame.source-game') }}" method="GET" class="sg-filters__form">
+            <select name="engine" class="sg-select" onchange="this.form.submit()">
+                <option value="">Engine</option>
+                <option value="unity" {{ request('engine') == 'unity' ? 'selected' : '' }}>Unity 6</option>
+                <option value="unreal" {{ request('engine') == 'unreal' ? 'selected' : '' }}>Unreal</option>
+                <option value="godot" {{ request('engine') == 'godot' ? 'selected' : '' }}>Godot</option>
+                <option value="cocos" {{ request('engine') == 'cocos' ? 'selected' : '' }}>Cocos</option>
+            </select>
+            <select name="genre" class="sg-select" onchange="this.form.submit()">
+                <option value="">Genre</option>
+                <option value="action" {{ request('genre') == 'action' ? 'selected' : '' }}>Action</option>
+                <option value="puzzle" {{ request('genre') == 'puzzle' ? 'selected' : '' }}>Puzzle</option>
+                <option value="rpg" {{ request('genre') == 'rpg' ? 'selected' : '' }}>RPG</option>
+                <option value="casual" {{ request('genre') == 'casual' ? 'selected' : '' }}>Casual</option>
+                <option value="multiplayer" {{ request('genre') == 'multiplayer' ? 'selected' : '' }}>Multiplayer</option>
+            </select>
+            <select name="platform" class="sg-select" onchange="this.form.submit()">
+                <option value="">Platform</option>
+                <option value="mobile" {{ request('platform') == 'mobile' ? 'selected' : '' }}>Mobile</option>
+                <option value="pc" {{ request('platform') == 'pc' ? 'selected' : '' }}>PC</option>
+                <option value="webgl" {{ request('platform') == 'webgl' ? 'selected' : '' }}>WebGL</option>
+                <option value="cross" {{ request('platform') == 'cross' ? 'selected' : '' }}>Cross-platform</option>
+            </select>
+            <select name="pricing" class="sg-select" onchange="this.form.submit()">
+                <option value="">Pricing</option>
+                <option value="free" {{ request('pricing') == 'free' ? 'selected' : '' }}>Miễn phí</option>
+                <option value="paid" {{ request('pricing') == 'paid' ? 'selected' : '' }}>Trả phí</option>
+            </select>
+            <select name="sort" class="sg-select" onchange="this.form.submit()">
+                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Mới nhất</option>
+                <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Phổ biến</option>
+                <option value="price-asc" {{ request('sort') == 'price-asc' ? 'selected' : '' }}>Giá thấp → cao</option>
+                <option value="price-desc" {{ request('sort') == 'price-desc' ? 'selected' : '' }}>Giá cao → thấp</option>
+            </select>
+            @if(request('search'))<input type="hidden" name="search" value="{{ request('search') }}">@endif
+        </form>
+    </div>
+</section>
+
+{{-- MARKETPLACE GRID --}}
+<section class="sg-sec">
+    <div class="sg-container">
+        @if(request('search'))
+        <p class="sg-results-info">Kết quả cho "<strong>{{ request('search') }}</strong>"</p>
+        @endif
+
+        @if(count($featuredSources) > 0)
+        <div class="sg-grid">
+            @foreach($featuredSources as $source)
+            @include('lamgame.partials.source-card', ['source' => $source])
+            @endforeach
+        </div>
+
+        @if($pagination['has_more'] ?? false)
+        <div class="sg-pager">
+            @if($pagination['current_page'] > 1)
+                <a href="{{ route('lamgame.source-game', array_merge(request()->query(), ['page' => $pagination['current_page'] - 1])) }}" class="sg-pager__btn">← Trước</a>
+            @endif
+            <span class="sg-pager__info">Trang {{ $pagination['current_page'] }}</span>
+            @if($pagination['has_more'])
+                <a href="{{ route('lamgame.source-game', array_merge(request()->query(), ['page' => $pagination['current_page'] + 1])) }}" class="sg-pager__btn">Tiếp →</a>
             @endif
         </div>
-    </section>
+        @endif
+        @else
+        <div class="sg-empty">
+            <h3>Chưa có source game nào</h3>
+            <p>Hãy quay lại sau hoặc <a href="{{ route('lamgame.lien-he') }}">liên hệ</a> để đóng góp source game.</p>
+        </div>
+        @endif
+    </div>
+</section>
 
-    {{-- Services --}}
-    <section class="sg-services">
-        <div class="container">
-            <h2 class="sg-services__title">Dịch vụ Game Development</h2>
-            <div class="sg-services__grid">
-                <div class="sg-svc">
-                    <div class="sg-svc__icon">💻</div>
-                    <h3>Thuê Game Developer</h3>
-                    <p>Freelancer Unity, Unreal, Godot — nhận việc trong 24h</p>
-                    <a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">Liên hệ →</a>
-                </div>
-                <div class="sg-svc">
-                    <div class="sg-svc__icon">💡</div>
-                    <h3>Chia sẻ ý tưởng Game</h3>
-                    <p>Đăng ý tưởng game, tìm đội ngũ phát triển cùng bạn</p>
-                    <a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">Gửi ý tưởng →</a>
-                </div>
-                <div class="sg-svc">
-                    <div class="sg-svc__icon">📦</div>
-                    <h3>Đăng bán Source Game</h3>
-                    <p>Bán source code game của bạn cho cộng đồng developer</p>
-                    <a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">Đăng bán →</a>
-                </div>
+{{-- TRUST SECTION --}}
+<section class="sg-sec sg-sec--alt">
+    <div class="sg-container">
+        <h2 class="sg-sec__title" style="text-align:center;margin-bottom:32px">Tại sao chọn LamGame Marketplace?</h2>
+        <div class="sg-why">
+            <div class="sg-why__item"><span>✅</span><h3>Production-Ready</h3><p>Mọi source đều được review, test và document đầy đủ trước khi publish.</p></div>
+            <div class="sg-why__item"><span>⚡</span><h3>Tiết kiệm 3-6 tháng</h3><p>Không cần code từ đầu. Clone, customize và ship game nhanh hơn.</p></div>
+            <div class="sg-why__item"><span>🛡️</span><h3>Hỗ trợ sau mua</h3><p>Mỗi source đi kèm support từ developer. Fix bug, hướng dẫn setup.</p></div>
+            <div class="sg-why__item"><span>🔄</span><h3>Cập nhật thường xuyên</h3><p>Source được update theo engine version mới nhất. Không lo outdated.</p></div>
+        </div>
+    </div>
+</section>
+
+{{-- TESTIMONIALS --}}
+<section class="sg-sec">
+    <div class="sg-container">
+        <h2 class="sg-sec__title" style="text-align:center;margin-bottom:32px">Developer nói gì?</h2>
+        <div class="sg-testimonials">
+            <div class="sg-testi">
+                <p>"Mua source multiplayer trên LamGame, tiết kiệm 4 tháng dev. Ship game lên store trong 6 tuần."</p>
+                <div class="sg-testi__author"><strong>Quang Huy</strong><span>Unity Developer</span></div>
+            </div>
+            <div class="sg-testi">
+                <p>"Source code clean, architecture tốt. Customize dễ dàng cho project của mình."</p>
+                <div class="sg-testi__author"><strong>Thanh Tùng</strong><span>Indie Game Studio</span></div>
+            </div>
+            <div class="sg-testi">
+                <p>"Support nhanh, documentation rõ ràng. Đáng tiền hơn nhiều so với Asset Store."</p>
+                <div class="sg-testi__author"><strong>Minh Anh</strong><span>Freelance Developer</span></div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
+{{-- SERVICES --}}
+<section class="sg-sec sg-sec--alt">
+    <div class="sg-container">
+        <h2 class="sg-sec__title" style="text-align:center;margin-bottom:32px">Dịch vụ Game Development</h2>
+        <div class="sg-services">
+            <div class="sg-svc"><span class="sg-svc__icon">💻</span><h3>Thuê Game Developer</h3><p>Freelancer Unity, Unreal, Godot — nhận việc trong 24h</p><a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">Liên hệ →</a></div>
+            <div class="sg-svc"><span class="sg-svc__icon">💡</span><h3>Chia sẻ ý tưởng Game</h3><p>Đăng ý tưởng game, tìm đội ngũ phát triển cùng bạn</p><a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">Gửi ý tưởng →</a></div>
+            <div class="sg-svc"><span class="sg-svc__icon">📦</span><h3>Đăng bán Source Game</h3><p>Bán source code game của bạn cho cộng đồng developer</p><a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">Đăng bán →</a></div>
+        </div>
+    </div>
+</section>
+
+{{-- FINAL CTA --}}
+<section class="sg-cta">
+    <div class="sg-container" style="text-align:center">
+        <h2>Bạn có source game muốn bán?</h2>
+        <p>Tham gia marketplace và kiếm thu nhập passive từ code của bạn</p>
+        <a href="{{ route('lamgame.lien-he') }}" class="sg-btn sg-btn--primary">Đăng bán source game →</a>
+    </div>
+</section>
+
 </div>
+@endsection
 
 @push('styles')
-<style>
-.sg-page { background: #f8fafc; }
-
-/* Hero */
-.sg-hero {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    color: #fff;
-    padding: 3rem 0 2rem;
-    text-align: center;
-}
-.sg-hero__title { font-size: 2rem; font-weight: 800; margin: 0; }
-.sg-hero__sub { color: #94a3b8; font-size: 1rem; margin: 0.5rem 0 0; }
-
-/* Search */
-.sg-search { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 1.25rem 0; }
-.sg-search__form {
-    display: flex;
-    gap: 0.75rem;
-    max-width: 800px;
-    margin: 0 auto;
-}
-.sg-search__input {
-    flex: 1;
-    padding: 0.7rem 1rem;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    min-width: 0;
-}
-.sg-search__input:focus { outline: none; border-color: #667eea; }
-.sg-search__select {
-    padding: 0.7rem 0.75rem;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    background: #fff;
-    cursor: pointer;
-}
-.sg-search__btn {
-    padding: 0.7rem 1.25rem;
-    background: #1e293b;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-}
-.sg-search__btn:hover { background: #334155; }
-
-/* Results grid */
-.sg-results { padding: 2rem 0 3rem; }
-.sg-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-}
-
-/* Card */
-.sg-card {
-    background: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #e2e8f0;
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-.sg-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-}
-.sg-card__thumb {
-    position: relative;
-    aspect-ratio: 16/10;
-    background: #1e293b;
-    overflow: hidden;
-}
-.sg-card__thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s;
-}
-.sg-card:hover .sg-card__thumb img { transform: scale(1.05); }
-.sg-card__badge {
-    position: absolute;
-    top: 0.5rem;
-    left: 0.5rem;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-.sg-card__badge--free { background: #10b981; color: #fff; }
-.sg-card__body { padding: 1rem; }
-.sg-card__title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0 0 0.35rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-.sg-card__desc {
-    font-size: 0.82rem;
-    color: #64748b;
-    margin: 0 0 0.75rem;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-.sg-card__footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.sg-card__engine {
-    font-size: 0.75rem;
-    color: #64748b;
-    background: #f1f5f9;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-}
-.sg-card__price {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #10b981;
-}
-
-/* Pagination */
-.sg-pager {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2rem;
-}
-.sg-pager__btn {
-    padding: 0.5rem 1rem;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    color: #1e293b;
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-.sg-pager__btn:hover { background: #f1f5f9; }
-.sg-pager__info { font-size: 0.85rem; color: #64748b; }
-
-/* Empty */
-.sg-empty {
-    text-align: center;
-    padding: 4rem 1rem;
-    color: #64748b;
-}
-.sg-empty h3 { color: #1e293b; margin-bottom: 0.5rem; }
-.sg-empty a { color: #667eea; }
-
-/* Services */
-.sg-services {
-    padding: 3rem 0;
-    background: #fff;
-    border-top: 1px solid #e2e8f0;
-}
-.sg-services__title {
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0 0 2rem;
-}
-.sg-services__grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-}
-.sg-svc {
-    text-align: center;
-    padding: 2rem 1.5rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    transition: border-color 0.2s;
-}
-.sg-svc:hover { border-color: #667eea; }
-.sg-svc__icon { font-size: 2rem; margin-bottom: 0.75rem; }
-.sg-svc h3 { font-size: 1.05rem; color: #1e293b; margin: 0 0 0.5rem; }
-.sg-svc p { font-size: 0.85rem; color: #64748b; margin: 0 0 1rem; line-height: 1.5; }
-.sg-svc__link {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #667eea;
-    text-decoration: none;
-}
-.sg-svc__link:hover { text-decoration: underline; }
-
-/* Responsive */
-@media (max-width: 768px) {
-    .sg-hero__title { font-size: 1.5rem; }
-    .sg-search__form { flex-wrap: wrap; }
-    .sg-search__input { width: 100%; }
-    .sg-search__select { flex: 1; }
-    .sg-search__btn { flex: 0; }
-    .sg-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-    .sg-services__grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 480px) {
-    .sg-grid { grid-template-columns: 1fr; }
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('css/source-game.css') }}">
 @endpush
-@endsection

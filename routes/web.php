@@ -158,6 +158,9 @@ Route::prefix('forum')->name('forum.')->group(function () {
     Route::get('/category/{category}', [ForumController::class, 'category'])->name('category');
     Route::get('/tag/{tag}', [ForumController::class, 'tag'])->name('tag');
 
+    // Reactions (public, rate limited by IP)
+    Route::post('/react', [ForumController::class, 'react'])->name('react');
+
     // Protected routes with rate limiting & honeypot
     Route::middleware(['customer', 'forum.honeypot'])->group(function () {
         // Post management

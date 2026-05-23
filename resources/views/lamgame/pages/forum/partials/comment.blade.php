@@ -17,7 +17,7 @@
         @endif
     </div>
 
-    <p class="fp-cmt-body">{!! nl2br(e($comment->content)) !!}</p>
+    <div class="fp-cmt-body">{!! strip_tags($comment->content, '<p><br><strong><b><em><i><ul><ol><li><a><code><pre>') !!}</div>
 
     <div class="fp-cmt-footer">
         @auth('customer')

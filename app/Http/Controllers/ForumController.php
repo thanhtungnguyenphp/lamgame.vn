@@ -152,6 +152,37 @@ class ForumController extends Controller
     }
 
     /**
+     * React to a post or comment (emoji reactions).
+     */
+    public function react(Request $request)
+    {
+        $request->validate([
+            'reactable_type' => 'required|in:post,comment',
+            'reactable_id' => 'required|integer',
+            'type' => 'required|in:like,love,fire,think,game',
+        ]);
+
+        $reactableType = $request->reactable_type === 'post'
+            ? 'App\Models\ForumPost'
+            : 'App\Models\ForumComment';
+
+        $customerId = auth('customer')->id();
+        $voterIdentifier = $customerId
+            ? 'customer_' . $customerId
+            : 'guest_' . $request->ip();
+
+        $result = \App\Models\ForumReaction::toggle(
+            $reactableType,
+            $request->reactable_id,
+            $voterIdentifier,
+            $request->type,
+            $customerId
+        );
+
+        return response()->json(['success' => true, ...$result]);
+    }
+
+    /**
      * Vote on a post or comment (AJAX, auth via middleware).
      */
     public function vote(Request $request)

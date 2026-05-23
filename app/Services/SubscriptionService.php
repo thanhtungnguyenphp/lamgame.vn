@@ -244,8 +244,19 @@ class SubscriptionService
      */
     public function cancelSubscription(string $paypalSubscriptionId): void
     {
-        UserSubscription::where('paypal_subscription_id', $paypalSubscriptionId)
-            ->update(['status' => 'cancelled', 'cancelled_at' => now()]);
+        $sub = UserSubscription::where('paypal_subscription_id', $paypalSubscriptionId)->first();
+        if ($sub) {
+            $sub->update(['status' => 'cancelled', 'cancelled_at' => now()]);
+
+            SubscriptionTransaction::create([
+                'subscription_id' => $sub->id,
+                'paypal_transaction_id' => $paypalSubscriptionId,
+                'amount' => 0,
+                'currency' => 'USD',
+                'status' => 'cancelled',
+                'paypal_data' => ['event' => 'webhook_cancelled', 'timestamp' => now()->toIso8601String()],
+            ]);
+        }
     }
 
     /**

@@ -198,7 +198,34 @@ async function loadDashboard() {
         if (!r.ok) { document.getElementById('ait-plan-label').textContent = 'Chưa đăng nhập'; return; }
         dashboardData = await r.json();
         renderDashboard(dashboardData);
+
+        // Auto-subscribe if ?subscribe= param present
+        const urlParams = new URLSearchParams(window.location.search);
+        const subscribePlan = urlParams.get('subscribe');
+        if (subscribePlan && subscribePlan !== 'free' && subscribePlan !== 'enterprise') {
+            subscribeToPlan(subscribePlan);
+            window.history.replaceState({}, '', window.location.pathname);
+        }
     } catch(e) { console.error(e); }
+}
+
+async function subscribeToPlan(plan) {
+    try {
+        const r = await fetch('/api/v1/subscription/subscribe', {
+            method: 'POST',
+            headers: {...headers(), 'Content-Type': 'application/json'},
+            body: JSON.stringify({plan: plan})
+        });
+        const d = await r.json();
+        if (d.status === 'ok' && d.data?.approval_url) {
+            window.location.href = d.data.approval_url;
+        } else if (d.data?.status === 'active') {
+            alert('Đã đăng ký gói ' + plan + ' thành công!');
+            location.reload();
+        } else {
+            alert(d.error?.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
+        }
+    } catch(e) { alert('Vui lòng đăng nhập trước khi đăng ký gói.'); }
 }
 
 function renderDashboard(d) {
