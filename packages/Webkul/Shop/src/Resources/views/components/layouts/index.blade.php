@@ -88,6 +88,11 @@
             {!! core()->getConfigData('general.content.custom_scripts.custom_css') !!}
         </style>
 
+        <!-- Account Dark Theme -->
+        @if(request()->is('customer/account*'))
+        <link rel="stylesheet" href="{{ asset('css/account-dark.css') }}">
+        @endif
+
         {!! view_render_event('bagisto.shop.layout.head.after') !!}
 
     </head>

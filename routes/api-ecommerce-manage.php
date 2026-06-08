@@ -7,6 +7,12 @@ use App\Http\Controllers\Api\SellerManageController;
 use App\Http\Controllers\Api\EarningManageController;
 use App\Http\Controllers\Api\WithdrawalManageController;
 use App\Http\Controllers\Api\CustomerManageController;
+use App\Http\Controllers\Api\InvoiceManageController;
+use App\Http\Controllers\Api\RefundManageController;
+use App\Http\Controllers\Api\ShipmentManageController;
+use App\Http\Controllers\Api\TransactionManageController;
+use App\Http\Controllers\Api\ReportingManageController;
+use App\Http\Controllers\Api\CategoryManageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,5 +100,53 @@ Route::prefix('manage')->name('api.manage.')->middleware(['api.key', 'throttle:6
         Route::post('/{id}/suspend', [CustomerManageController::class, 'suspend'])->name('suspend')->where('id', '[0-9]+')->middleware('throttle:10,1');
         Route::post('/{id}/activate', [CustomerManageController::class, 'activate'])->name('activate')->where('id', '[0-9]+')->middleware('throttle:10,1');
         Route::put('/{id}', [CustomerManageController::class, 'update'])->name('update')->where('id', '[0-9]+')->middleware('throttle:10,1');
+    });
+
+    // === Invoices ===
+    Route::prefix('invoices')->name('invoices.')->group(function () {
+        Route::get('/', [InvoiceManageController::class, 'list'])->name('list');
+        Route::get('/statistics', [InvoiceManageController::class, 'statistics'])->name('statistics');
+        Route::get('/{id}', [InvoiceManageController::class, 'detail'])->name('detail')->where('id', '[0-9]+');
+        Route::post('/create/{orderId}', [InvoiceManageController::class, 'store'])->name('store')->where('orderId', '[0-9]+')->middleware('throttle:10,1');
+    });
+
+    // === Refunds ===
+    Route::prefix('refunds')->name('refunds.')->group(function () {
+        Route::get('/', [RefundManageController::class, 'list'])->name('list');
+        Route::get('/statistics', [RefundManageController::class, 'statistics'])->name('statistics');
+        Route::get('/{id}', [RefundManageController::class, 'detail'])->name('detail')->where('id', '[0-9]+');
+        Route::post('/create/{orderId}', [RefundManageController::class, 'store'])->name('store')->where('orderId', '[0-9]+')->middleware('throttle:10,1');
+    });
+
+    // === Shipments ===
+    Route::prefix('shipments')->name('shipments.')->group(function () {
+        Route::get('/', [ShipmentManageController::class, 'list'])->name('list');
+        Route::get('/{id}', [ShipmentManageController::class, 'detail'])->name('detail')->where('id', '[0-9]+');
+        Route::post('/create/{orderId}', [ShipmentManageController::class, 'store'])->name('store')->where('orderId', '[0-9]+')->middleware('throttle:10,1');
+    });
+
+    // === Transactions ===
+    Route::prefix('transactions')->name('transactions.')->group(function () {
+        Route::get('/', [TransactionManageController::class, 'list'])->name('list');
+        Route::get('/{id}', [TransactionManageController::class, 'detail'])->name('detail')->where('id', '[0-9]+');
+    });
+
+    // === Reporting ===
+    Route::prefix('reporting')->name('reporting.')->group(function () {
+        Route::get('/sales', [ReportingManageController::class, 'sales'])->name('sales');
+        Route::get('/customers', [ReportingManageController::class, 'customers'])->name('customers');
+        Route::get('/products', [ReportingManageController::class, 'products'])->name('products');
+    });
+
+    // === Categories (full CRUD) ===
+    Route::prefix('categories')->name('categories.')->group(function () {
+        Route::get('/', [CategoryManageController::class, 'list'])->name('list');
+        Route::get('/tree', [CategoryManageController::class, 'tree'])->name('tree');
+        Route::get('/{id}', [CategoryManageController::class, 'detail'])->name('detail')->where('id', '[0-9]+');
+        Route::post('/', [CategoryManageController::class, 'store'])->name('store')->middleware('throttle:10,1');
+        Route::put('/{id}', [CategoryManageController::class, 'update'])->name('update')->where('id', '[0-9]+')->middleware('throttle:10,1');
+        Route::delete('/{id}', [CategoryManageController::class, 'destroy'])->name('destroy')->where('id', '[0-9]+')->middleware('throttle:10,1');
+        Route::post('/mass-delete', [CategoryManageController::class, 'massDestroy'])->name('mass-delete')->middleware('throttle:10,1');
+        Route::post('/mass-update', [CategoryManageController::class, 'massUpdate'])->name('mass-update')->middleware('throttle:10,1');
     });
 });

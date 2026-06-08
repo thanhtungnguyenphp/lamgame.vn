@@ -1,0 +1,80 @@
+/* === ACCOUNT PAGES — Dark Gaming UI Override === */
+
+/* Body & Main */
+body{background:#070B14!important}
+main#main,main{background:#070B14!important}
+#app{background:#070B14!important}
+
+/* Account layout container */
+[class*="account"]{color:#F5F7FA!important}
+.main-container-wrapper{background:#070B14!important}
+
+/* Navigation sidebar */
+[class*="account"] nav,
+[class*="account"] [class*="navigation"],
+.account-navigation{background:rgba(17,24,39,.6)!important;border:1px solid rgba(124,92,255,.08)!important;border-radius:12px!important}
+[class*="account"] nav a,
+[class*="account"] [class*="navigation"] a{color:#B7C0D1!important;border-color:rgba(124,92,255,.06)!important}
+[class*="account"] nav a:hover,
+[class*="account"] [class*="navigation"] a:hover{color:#F5F7FA!important;background:rgba(124,92,255,.05)!important}
+[class*="account"] nav a[class*="active"],
+[class*="account"] [class*="navigation"] a[class*="active"]{color:#7C5CFF!important;background:rgba(124,92,255,.1)!important;border-color:#7C5CFF!important}
+
+/* Page title */
+h2[class*="font-medium"],h1[class*="font-medium"]{color:#F5F7FA!important}
+
+/* Profile info rows */
+[class*="border-b"][class*="border-zinc"]{border-color:rgba(124,92,255,.08)!important}
+[class*="border-b"] p[class*="font-medium"]:first-child{color:#7A8599!important}
+[class*="border-b"] p[class*="text-zinc"]{color:#F5F7FA!important}
+
+/* Buttons */
+.secondary-button,[class*="secondary-button"]{background:rgba(124,92,255,.1)!important;border:1px solid #7C5CFF!important;color:#7C5CFF!important;border-radius:8px!important}
+.secondary-button:hover,[class*="secondary-button"]:hover{background:rgba(124,92,255,.2)!important}
+.primary-button,[class*="primary-button"]{background:linear-gradient(135deg,#7C5CFF,#6B4FE0)!important;color:#fff!important;border:none!important;border-radius:8px!important}
+.primary-button:hover,[class*="primary-button"]:hover{box-shadow:0 4px 16px rgba(124,92,255,.3)!important}
+
+/* Cards / Panels */
+[class*="rounded-xl"][class*="border"],
+[class*="rounded-lg"][class*="border"]{background:rgba(17,24,39,.6)!important;border-color:rgba(124,92,255,.08)!important}
+
+/* Text colors */
+[class*="text-zinc-500"]{color:#7A8599!important}
+[class*="text-zinc-600"]{color:#B7C0D1!important}
+[class*="text-zinc-700"],[class*="text-zinc-800"],[class*="text-zinc-900"]{color:#F5F7FA!important}
+p[class*="text-sm"]{color:#B7C0D1!important}
+
+/* Breadcrumbs */
+[class*="breadcrumb"] a,[class*="breadcrumb"] span{color:#7A8599!important}
+[class*="breadcrumb"] a:hover{color:#7C5CFF!important}
+
+/* Forms */
+input[class*="rounded"],select[class*="rounded"],textarea[class*="rounded"]{background:rgba(7,11,20,.6)!important;border:1px solid rgba(124,92,255,.15)!important;color:#F5F7FA!important;border-radius:8px!important}
+input:focus,select:focus,textarea:focus{border-color:#7C5CFF!important;box-shadow:0 0 12px rgba(124,92,255,.1)!important;outline:none!important}
+input::placeholder{color:#7A8599!important}
+label{color:#B7C0D1!important}
+
+/* Delete profile text */
+[class*="text-red"]{color:#F87171!important}
+
+/* Modal */
+[class*="bg-white"]{background:rgba(17,24,39,.95)!important;border:1px solid rgba(124,92,255,.12)!important}
+[class*="modal"] h2{color:#F5F7FA!important}
+
+/* Header override for account pages */
+header{background:rgba(7,11,20,.95)!important;border-bottom:1px solid rgba(124,92,255,.08)!important;backdrop-filter:blur(10px)}
+header *{color:#F5F7FA!important}
+header a:hover{color:#7C5CFF!important}
+
+/* Footer */
+footer,[class*="footer"]{background:#070B14!important;border-top:1px solid rgba(124,92,255,.08)!important}
+footer *{color:#7A8599!important}
+footer a{color:#7C5CFF!important}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0B1020}
+::-webkit-scrollbar-thumb{background:rgba(124,92,255,.3);border-radius:3px}
+
+/* Shadow overrides */
+[class*="shadow"]{box-shadow:none!important}
