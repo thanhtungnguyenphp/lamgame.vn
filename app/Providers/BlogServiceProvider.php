@@ -28,6 +28,11 @@ class BlogServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // Remove Blog from admin sidebar — Migrated to Ohha Studio (2026-06-08)
+        $this->app->booted(function () {
+            $menu = $this->app['config']->get('menu.admin', []);
+            $menu = array_filter($menu, fn($item) => !str_starts_with($item['key'] ?? '', 'blog'));
+            $this->app['config']->set('menu.admin', array_values($menu));
+        });
     }
 }
