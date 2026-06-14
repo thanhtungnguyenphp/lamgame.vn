@@ -34,11 +34,17 @@
     <!-- Google AdSense -->
     <meta name="google-adsense-account" content="ca-pub-5812352607411986">
     
-    <!-- Canonical URL (strip query params to avoid duplicate) -->
+    <!-- Canonical URL -->
     @hasSection('canonical_url')
         <link rel="canonical" href="@yield('canonical_url')">
+    @elseif(request()->has('page') && request()->get('page') > 1)
+        @php
+            $canonicalParams = request()->except('page');
+            $canonicalUrl = url()->current() . ($canonicalParams ? '?' . http_build_query($canonicalParams) : '');
+        @endphp
+        <link rel="canonical" href="{{ $canonicalUrl }}">
     @else
-        <link rel="canonical" href="{{ strtok(url()->current(), '?') }}">
+        <link rel="canonical" href="{{ url()->full() }}">
     @endif
 
     <!-- Pagination rel prev/next -->

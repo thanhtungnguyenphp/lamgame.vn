@@ -28,6 +28,19 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
+    <!-- Canonical URL -->
+    @hasSection('canonical_url')
+        <link rel="canonical" href="@yield('canonical_url')" />
+    @elseif(request()->has('page') && request()->get('page') > 1)
+        @php
+            $canonicalParams = request()->except('page');
+            $canonicalUrl = url()->current() . ($canonicalParams ? '?' . http_build_query($canonicalParams) : '');
+        @endphp
+        <link rel="canonical" href="{{ $canonicalUrl }}" />
+    @else
+        <link rel="canonical" href="{{ url()->full() }}" />
+    @endif
+
     @stack('meta')
     
     <!-- Design System (bundled) -->
@@ -48,7 +61,7 @@
 
 <body>
     <!-- Header -->
-    @include('components.nav-redesign')
+    @includeIf('components.nav-redesign')
 
     <!-- Main Content -->
     <main id="main">

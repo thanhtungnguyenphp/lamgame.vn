@@ -6,12 +6,28 @@
 
     RewriteEngine On
 
+    # Force HTTPS
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Redirect www → non-www
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+    # Block port 2083 access (cPanel) — return 403
+    RewriteCond %{SERVER_PORT} ^2083$
+    RewriteRule ^ - [F,L]
+
     # Redirect index.php URLs to clean URLs (SEO Fix)
     RewriteCond %{THE_REQUEST} /index\.php [NC]
     RewriteRule ^index\.php/(.*)$ /$1 [L,R=301,NC]
 
     # Redirect .html URLs to clean URLs
     RewriteRule ^(.*)\.html$ /$1 [R=301,L]
+
+    # Strip junk query params (legacy Joomla)
+    RewriteCond %{QUERY_STRING} ^(option=|Itemid=|\$)
+    RewriteRule ^ %{REQUEST_URI}? [L,R=301]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .

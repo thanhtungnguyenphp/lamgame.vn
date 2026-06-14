@@ -10,6 +10,9 @@ Disallow: /storage/
 Disallow: /ai-thumbnail-test
 Disallow: /ai-images/
 
+# Block API endpoints
+Disallow: /api/
+
 # Block index.php URLs (duplicate of clean URLs)
 Disallow: /index.php
 Disallow: /index.php/
@@ -21,8 +24,21 @@ Disallow: /*?page=
 Disallow: /*?keyword=
 Disallow: /*?sort=
 Disallow: /*?order=
+Disallow: /*?$
+Disallow: /*?option=
 
 # Block profile pages from indexing
 Disallow: /profile/
 
+# Block tracking endpoints
+Disallow: /track-impression
+Disallow: /api/track-apply-click
+
+# Block ads.txt if not needed for monetization
+# Disallow: /ads.txt
+
 Sitemap: https://lamgame.vn/sitemap.xml
+
+# Block port 2083 URLs (cPanel) - Note: This is informational only,
+# the real fix is canonical tags and 301 redirects at server level
+Host: https://lamgame.vn

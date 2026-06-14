@@ -15,6 +15,18 @@ class SeoMetaRobots
             return redirect($cleanUrl ?: '/', 301);
         }
 
+        // 301 redirect www → non-www
+        if (str_starts_with($request->getHost(), 'www.')) {
+            $url = $request->getScheme() . '://' . substr($request->getHost(), 4) . $request->getRequestUri();
+            return redirect($url, 301);
+        }
+
+        // 301 redirect junk query params (legacy Joomla, ?$, etc.)
+        $junkParams = ['option', 'Itemid', 'lang'];
+        if ($request->hasAny($junkParams) || $request->getQueryString() === '$') {
+            return redirect($request->url(), 301);
+        }
+
         $response = $next($request);
 
         // Noindex auth/admin/seller pages
@@ -30,6 +42,11 @@ class SeoMetaRobots
         // Noindex search/filter results
         if ($request->has('keyword') || $request->has('sort') || $request->has('order')) {
             $this->addHeader($response, 'noindex, follow');
+        }
+
+        // Noindex API-like paths that shouldn't be indexed
+        if ($request->is('api/*', 'track-impression')) {
+            $this->addHeader($response, 'noindex, nofollow');
         }
 
         return $response;

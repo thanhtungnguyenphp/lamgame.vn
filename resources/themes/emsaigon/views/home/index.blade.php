@@ -12,7 +12,7 @@
 
 @section('content')
     <!-- Hero Section Redesign -->
-    @include('components.hero-redesign')
+    @includeIf('components.hero-redesign')
 
     <!-- Featured Jobs Section -->
     <section id="viec-lam-noi-bat" class="courses-section">
@@ -193,10 +193,10 @@
 
     <!-- Why Choose LamGame -->
     <!-- Forum Section Redesign -->
-    @include('components.forum-section')
+    @includeIf('components.forum-section')
 
     <!-- Blog Section Redesign -->
-    @include('components.blog-section')
+    @includeIf('components.blog-section')
 
     <section id="loi-ich" class="benefits-section">
         <div class="container">

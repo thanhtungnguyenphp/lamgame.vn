@@ -79,7 +79,7 @@
                     <span class="sd-trust__item">⭐ {{ number_format($sourceGame['rating'], 1) }}/5</span>
                     @endif
                     <span class="sd-trust__item">↓ {{ number_format($sourceGame['downloads_count']) }} lượt tải</span>
-                    <span class="sd-trust__item">💬 {{ $sourceGame['review_count'] }} đánh giá</span>
+                    <span class="sd-trust__item">💬 {{ $sourceGame['review_count'] ?? 0 }} đánh giá</span>
                     <span class="sd-trust__item">🔄 {{ $sourceGame['last_updated'] }}</span>
                 </div>
 

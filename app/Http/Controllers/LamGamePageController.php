@@ -154,14 +154,21 @@ class LamGamePageController extends Controller
             ->orderBy('name')
             ->get();
 
-        // Get popular tags for sidebar
-        $popularTags = BlogTag::active()
-            ->orderBy('name')
-            ->get()
-            ->filter(function($tag) {
-                return $tag->published_blogs_count > 0;
-            })
-            ->take(20);
+        // Get popular tags for sidebar - precompute counts to avoid N+1 queries
+        $allTags = BlogTag::active()->orderBy('name')->get();
+        $publishedBlogs = Blog::published()->whereNotNull('tags')->pluck('tags');
+        $tagCounts = [];
+        foreach ($publishedBlogs as $tagString) {
+            foreach (explode(',', $tagString) as $tagId) {
+                $tagId = trim($tagId);
+                if ($tagId !== '') {
+                    $tagCounts[$tagId] = ($tagCounts[$tagId] ?? 0) + 1;
+                }
+            }
+        }
+        $popularTags = $allTags->filter(function($tag) use ($tagCounts) {
+            return ($tagCounts[$tag->id] ?? 0) > 0;
+        })->take(20);
 
         // Get popular posts (most recent ones for now)
         $popularPosts = Blog::published()
@@ -225,14 +232,21 @@ class LamGamePageController extends Controller
             ->take(5)
             ->get();
 
-        // Get popular tags for sidebar
-        $popularTags = BlogTag::active()
-            ->orderBy('name')
-            ->get()
-            ->filter(function($tag) {
-                return $tag->published_blogs_count > 0;
-            })
-            ->take(15);
+        // Get popular tags for sidebar - precompute to avoid N+1
+        $allTags = BlogTag::active()->orderBy('name')->get();
+        $publishedBlogTags = Blog::published()->whereNotNull('tags')->pluck('tags');
+        $tagCounts = [];
+        foreach ($publishedBlogTags as $tagString) {
+            foreach (explode(',', $tagString) as $tagId) {
+                $tagId = trim($tagId);
+                if ($tagId !== '') {
+                    $tagCounts[$tagId] = ($tagCounts[$tagId] ?? 0) + 1;
+                }
+            }
+        }
+        $popularTags = $allTags->filter(function($tag) use ($tagCounts) {
+            return ($tagCounts[$tag->id] ?? 0) > 0;
+        })->take(15);
 
         return view('lamgame.pages.blog-detail', [
             'page_title' => $blog->meta_title ?: $blog->name . ' - Làm Game',
@@ -1106,6 +1120,7 @@ class LamGamePageController extends Controller
             'is_free' => true,
             'sku' => 'SAMPLE-' . strtoupper($slug),
             'downloads_count' => rand(500, 2000),
+            'review_count' => 0,
             'rating' => number_format(rand(40, 50) / 10, 1),
             'version' => '1.0',
             'last_updated' => '2024-01-15',

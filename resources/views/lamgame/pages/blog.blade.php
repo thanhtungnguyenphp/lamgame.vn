@@ -4,6 +4,8 @@
 @section('page_title', $page_title ?? 'Blog - LamGame.vn')
 @section('page_description', $page_description ?? '')
 
+@section('canonical_url'){{ route('lamgame.blog', array_filter(['tag' => $currentTag ?? null, 'category' => $currentCategory ?? null])) }}@endsection
+
 @section('content')
 <div class="bl-page">
 
