@@ -94,6 +94,10 @@ return Application::configure(basePath: dirname(__DIR__))
             ->dailyAt('02:15')
             ->appendOutputTo(storage_path('logs/google-index.log'));
 
+        $schedule->command('seo:auto-index')
+            ->everyThreeHours()
+            ->appendOutputTo(storage_path('logs/seo-auto-index.log'));
+
         // === LOTTERY SCRAPING ===
         // Retry mỗi 5 phút trong khung giờ. Tự skip nếu đã có kết quả (cache).
 

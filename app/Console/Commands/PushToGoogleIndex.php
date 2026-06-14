@@ -89,7 +89,6 @@ class PushToGoogleIndex extends Command
 
     /**
      * IndexNow — thông báo Bing/Yandex về URLs mới/cập nhật.
-     * Google không hỗ trợ IndexNow, nhưng sitemap lastmod + Search Console là đủ.
      * https://www.indexnow.org/documentation
      */
     private function pushIndexNow($limit)
@@ -101,12 +100,11 @@ class PushToGoogleIndex extends Command
 
         if (empty($key)) {
             $this->warn('⚠️  IndexNow key not set. Add INDEXNOW_KEY to .env');
-            $this->info('📖 Generate key at: https://www.bing.com/indexnow');
             return 1;
         }
 
-        // Collect recent URLs from all content types
         $urls = collect();
+        $baseUrl = config('app.url');
 
         // Source games
         \DB::table('products as p')
@@ -115,14 +113,14 @@ class PushToGoogleIndex extends Command
             ->select('pf.url_key', 'p.updated_at')
             ->orderBy('p.updated_at', 'desc')->limit($limit)
             ->get()
-            ->each(fn($p) => $p->url_key ? $urls->push(config('app.url') . '/source-game/' . $p->url_key) : null);
+            ->each(fn($p) => $p->url_key ? $urls->push($baseUrl . '/source-game/' . $p->url_key) : null);
 
         // Blogs
         \App\Models\Blog::published()
             ->select('slug', 'updated_at')
             ->orderBy('updated_at', 'desc')->limit($limit)
             ->get()
-            ->each(fn($b) => $urls->push(config('app.url') . '/blog/' . $b->slug));
+            ->each(fn($b) => $urls->push($baseUrl . '/blog/' . $b->slug));
 
         // Jobs
         \DB::table('products as p')
@@ -131,22 +129,39 @@ class PushToGoogleIndex extends Command
             ->select('pf.url_key', 'p.updated_at')
             ->orderBy('p.updated_at', 'desc')->limit($limit)
             ->get()
-            ->each(fn($j) => $j->url_key ? $urls->push(config('app.url') . '/viec-lam/' . $j->url_key) : null);
+            ->each(fn($j) => $j->url_key ? $urls->push($baseUrl . '/viec-lam/' . $j->url_key) : null);
+
+        // Forum posts
+        \DB::table('forum_posts')
+            ->where('status', 'published')
+            ->select('slug', 'id', 'updated_at')
+            ->orderBy('updated_at', 'desc')->limit($limit)
+            ->get()
+            ->each(fn($p) => $urls->push($baseUrl . '/forum/posts/' . ($p->slug ?? $p->id)));
+
+        // Landing pages
+        \App\Models\LandingPage::active()
+            ->select('slug', 'updated_at')
+            ->orderBy('updated_at', 'desc')->limit($limit)
+            ->get()
+            ->each(fn($p) => $urls->push($baseUrl . '/p/' . $p->slug));
 
         if ($urls->isEmpty()) {
             $this->info('No URLs to push.');
             return 0;
         }
 
+        $uniqueUrls = $urls->unique()->values();
+
         try {
             $response = Http::timeout(15)->post('https://api.indexnow.org/indexnow', [
                 'host' => $host,
                 'key' => $key,
-                'urlList' => $urls->unique()->values()->all(),
+                'urlList' => $uniqueUrls->all(),
             ]);
 
             if ($response->successful() || $response->status() === 202) {
-                $this->info("✅ IndexNow: {$urls->count()} URLs submitted (HTTP {$response->status()})");
+                $this->info("✅ IndexNow: {$uniqueUrls->count()} URLs submitted (HTTP {$response->status()})");
             } else {
                 $this->error("❌ IndexNow: HTTP {$response->status()} — {$response->body()}");
             }

@@ -9,6 +9,13 @@ class SeoMetaRobots
 {
     public function handle(Request $request, Closure $next)
     {
+        // 301 redirect port 2083 (cPanel) URLs to clean URLs
+        $port = $request->getPort();
+        if ($port === 2083 || str_contains($request->getHost(), ':2083')) {
+            $cleanUrl = $request->getScheme() . '://' . preg_replace('/:2083$/', '', $request->getHost()) . $request->getRequestUri();
+            return redirect($cleanUrl, 301);
+        }
+
         // 301 redirect index.php URLs to clean URLs
         if ($request->is('index.php/*') || $request->is('index.php')) {
             $cleanUrl = str_replace('/index.php', '', $request->getRequestUri());
@@ -25,6 +32,13 @@ class SeoMetaRobots
         $junkParams = ['option', 'Itemid', 'lang'];
         if ($request->hasAny($junkParams) || $request->getQueryString() === '$') {
             return redirect($request->url(), 301);
+        }
+
+        // 301 redirect ?page=1 to clean URL (duplicate of non-paginated)
+        if ($request->get('page') === '1') {
+            $cleanParams = $request->except('page');
+            $cleanUrl = $request->url() . ($cleanParams ? '?' . http_build_query($cleanParams) : '');
+            return redirect($cleanUrl, 301);
         }
 
         $response = $next($request);

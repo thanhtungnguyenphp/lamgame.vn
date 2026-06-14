@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "seo-lamgame": {
+      "command": "node",
+      "args": ["/data/www/lamgame.vn/tools/mcp-seo/server.js"],
+      "env": {}
+    }
+  }
+}

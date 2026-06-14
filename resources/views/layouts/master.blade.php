@@ -38,13 +38,9 @@
     @hasSection('canonical_url')
         <link rel="canonical" href="@yield('canonical_url')">
     @elseif(request()->has('page') && request()->get('page') > 1)
-        @php
-            $canonicalParams = request()->except('page');
-            $canonicalUrl = url()->current() . ($canonicalParams ? '?' . http_build_query($canonicalParams) : '');
-        @endphp
-        <link rel="canonical" href="{{ $canonicalUrl }}">
+        <link rel="canonical" href="{{ url()->current() }}">
     @else
-        <link rel="canonical" href="{{ url()->full() }}">
+        <link rel="canonical" href="{{ url()->current() }}">
     @endif
 
     <!-- Pagination rel prev/next -->
