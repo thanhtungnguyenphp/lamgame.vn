@@ -56,6 +56,9 @@ require __DIR__ . '/api/subscription.php';
 // Include AI Tools routes
 require __DIR__ . '/api/ai-tools.php';
 
+// Include AI Chat routes (OHHA Core proxy)
+require __DIR__ . '/api/ai-chat.php';
+
 // Include notification routes
 require __DIR__ . '/api/notifications.php';
 
@@ -119,3 +122,16 @@ Route::prefix('ai/thumbnails')->name('api.ai.thumbnails.')->middleware(['auth:sa
 | Job API Routes — V1 removed, use V2 (api-job-v2.php)
 |--------------------------------------------------------------------------
 */
+
+/*
+|--------------------------------------------------------------------------
+| Mini Game Leaderboard API
+|--------------------------------------------------------------------------
+*/
+Route::prefix('games/{gameKey}/leaderboard')
+    ->middleware('throttle:60,1')
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\GameLeaderboardController::class, 'index']);
+        Route::post('/', [\App\Http\Controllers\Api\GameLeaderboardController::class, 'store']);
+        Route::get('/player/{player}', [\App\Http\Controllers\Api\GameLeaderboardController::class, 'player']);
+    });
