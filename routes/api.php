@@ -125,6 +125,20 @@ Route::prefix('ai/thumbnails')->name('api.ai.thumbnails.')->middleware(['auth:sa
 
 /*
 |--------------------------------------------------------------------------
+| Game Rooms API (Multiplayer)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('games/rooms')
+    ->middleware('throttle:60,1')
+    ->group(function () {
+        Route::post('/', [\App\Http\Controllers\Api\GameRoomController::class, 'create']);
+        Route::post('/{code}/join', [\App\Http\Controllers\Api\GameRoomController::class, 'join']);
+        Route::get('/{code}', [\App\Http\Controllers\Api\GameRoomController::class, 'show']);
+        Route::post('/{code}/move', [\App\Http\Controllers\Api\GameRoomController::class, 'move']);
+    });
+
+/*
+|--------------------------------------------------------------------------
 | Mini Game Leaderboard API
 |--------------------------------------------------------------------------
 */
