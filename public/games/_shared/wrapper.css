@@ -1,0 +1,7 @@
+/* LamGame Shared Mini Game Styles */
+#lg-splash { font-family: system-ui, -apple-system, sans-serif; }
+.lg-brand-footer { font-family: system-ui, -apple-system, sans-serif; }
+.lg-brand-footer a { transition: opacity .2s; }
+.lg-brand-footer a:hover { opacity: .8; }
+/* Ensure games don't overlap footer */
+body { padding-bottom: 36px !important; min-height: 100vh; box-sizing: border-box; }
