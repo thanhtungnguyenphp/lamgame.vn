@@ -135,6 +135,7 @@ Route::prefix('games/rooms')
         Route::post('/{code}/join', [\App\Http\Controllers\Api\GameRoomController::class, 'join']);
         Route::get('/{code}', [\App\Http\Controllers\Api\GameRoomController::class, 'show']);
         Route::post('/{code}/move', [\App\Http\Controllers\Api\GameRoomController::class, 'move']);
+        Route::post('/{code}/rematch', [\App\Http\Controllers\Api\GameRoomController::class, 'rematch']);
     });
 
 /*
