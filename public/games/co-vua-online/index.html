@@ -1,70 +1,13 @@
 <!DOCTYPE html>
-<html lang="vi" lang="vi" dir="ltr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="description" content="Game cờ vua online miễn phí">
-    <meta name="keywords" content="cờ vua,chess,lamgame">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Cờ Vua Online - Chơi Miễn Phí | LamGame</title>
-    <meta property="og:title" content="Cờ Vua Online - Chơi Miễn Phí | LamGame">
-    <meta property="og:description" content="Game cờ vua online miễn phí">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://lamgame.vn/choi-game/co-vua-online">
-
-
-
-    <link rel="stylesheet" href="style.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
-  </head>
-  <body>
-    <div class="wrapper">
-      <!-- Mode selection screen -->
-      <div id="modeScreen" class="mode-screen">
-        <h1>♟️ Cờ Vua Online</h1>
-        <p>Choose game mode</p>
-        <div class="mode-buttons">
-          <button type="button" id="vsFriendBtn" class="mode-btn">
-            <span class="mode-icon">👥</span>
-            Vs Friend
-          </button>
-          <button type="button" id="vsAiBtn" class="mode-btn">
-            <span class="mode-icon">🤖</span>
-            Vs AI
-          </button>
-        </div>
-      </div>
-
-      <!-- Game screen -->
-      <div id="gameScreen" class="game-screen hidden">
-        <header class="header">
-          <h1>♟️ Cờ Vua Online</h1>
-          <div class="game-info">
-            <span class="turn-label" id="turnLabel">White to move</span>
-            <span class="mode-badge" id="modeBadge">Vs Friend</span>
-            <button type="button" id="newGameBtn" class="btn">New Game</button>
-            <button type="button" id="changeModeBtn" class="btn btn-ghost">Change Mode</button>
-          </div>
-        </header>
-
-        <main class="game-container">
-          <div id="board" class="board"></div>
-          <div class="promotion-overlay hidden" id="promotionOverlay">
-            <p>Promote pawn to:</p>
-            <div class="promotion-pieces" id="promotionPieces"></div>
-          </div>
-        </main>
-
-        <div id="gameOverOverlay" class="game-over-overlay hidden">
-          <div class="game-over-box">
-            <h2 id="gameOverTitle">Checkmate!</h2>
-            <p id="gameOverMessage"></p>
-            <button type="button" id="playAgainBtn" class="btn btn-large">Play Again</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="script.js"></script>
-  <div style="text-align:center;padding:12px;background:#1A1A2E;color:#E0E0E0;font-size:13px"><a href="https://lamgame.vn" style="color:#FF6B35;text-decoration:none;font-weight:bold">🎮 LamGame</a> — Chơi thêm game miễn phí</div>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Cờ Vua - Chơi Miễn Phí | LamGame</title>
+  <meta name="description" content="Cờ Vua - Game miễn phí trên LamGame.vn">
+  <style>*{margin:0;padding:0}body{background:#1A1A2E;overflow:hidden}canvas{display:block}</style>
+  <script type="module" crossorigin src="/games/co-vua/assets/index-s2Rt2T9p.js"></script>
+</head>
+<body>
 </body>
 </html>
