@@ -72,6 +72,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'api.key'         => \App\Http\Middleware\ApiKeyAuth::class,
             'forum.rate'      => \App\Http\Middleware\ForumRateLimiter::class,
             'forum.honeypot'  => \App\Http\Middleware\ForumHoneypot::class,
+            'throttle:ai'     => \App\Http\Middleware\AiRateLimit::class,
         ]);
     })
     ->withSchedule(function (Schedule $schedule) {

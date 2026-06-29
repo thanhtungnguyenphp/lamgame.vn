@@ -23,7 +23,10 @@ class SportWebController extends Controller
             'recentArticles' => SportArticle::latest()->limit(5)->get(),
         ]);
 
-        return view('sport.index', $data);
+        return view('sport.index', array_merge($data, [
+            'seo_title' => 'Bóng đá trực tiếp — Lịch thi đấu, Kết quả, BXH | LamGame',
+            'seo_description' => 'Cập nhật bóng đá trực tiếp: lịch thi đấu, kết quả, bảng xếp hạng Premier League, La Liga, V-League, Champions League.',
+        ]));
     }
 
     public function fixtures()
@@ -37,7 +40,12 @@ class SportWebController extends Controller
                 ->groupBy('league_id')
         );
 
-        return view('sport.fixtures', compact('matches', 'date'));
+        return view('sport.fixtures', [
+            'matches' => $matches,
+            'date' => $date,
+            'seo_title' => 'Lịch thi đấu bóng đá hôm nay ' . \Carbon\Carbon::parse($date)->format('d/m/Y'),
+            'seo_description' => 'Lịch thi đấu bóng đá hôm nay — Premier League, La Liga, Serie A, V-League. Cập nhật giờ đá, kênh truyền hình.',
+        ]);
     }
 
     public function standings(string $leagueSlug)
@@ -50,13 +58,25 @@ class SportWebController extends Controller
                 ->get()
         );
 
-        return view('sport.standings', compact('league', 'standings'));
+        return view('sport.standings', [
+            'league' => $league,
+            'standings' => $standings,
+            'seo_title' => "Bảng xếp hạng {$league->name} mùa giải " . config('sport-crawl.season'),
+            'seo_description' => "BXH {$league->name} cập nhật mới nhất: thứ hạng, điểm số, hiệu số bàn thắng.",
+        ]);
     }
 
     public function match(string $id)
     {
         $match = SportMatch::with(['homeTeam', 'awayTeam', 'league', 'events', 'lineups'])->findOrFail($id);
-        return view('sport.match', compact('match'));
+        $homeName = $match->homeTeam->name ?? 'Home';
+        $awayName = $match->awayTeam->name ?? 'Away';
+
+        return view('sport.match', [
+            'match' => $match,
+            'seo_title' => "{$homeName} vs {$awayName} — Kết quả, Đội hình, Sự kiện",
+            'seo_description' => "Trận đấu {$homeName} vs {$awayName}: tỷ số trực tiếp, đội hình, sự kiện, thống kê chi tiết.",
+        ]);
     }
 
     public function team(string $slug)

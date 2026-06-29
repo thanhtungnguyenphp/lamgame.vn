@@ -16,7 +16,11 @@ class SyncFixturesService extends SportDataService
 
         $leagues = config('sport-crawl.leagues');
 
-        foreach ($leagues as $leagueId) {
+        foreach ($leagues as $index => $leagueId) {
+            if ($index > 0) {
+                usleep(500000); // 500ms delay between requests to avoid rate limiting
+            }
+
             $data = $this->apiFootball('/fixtures', [
                 'league' => $leagueId,
                 'season' => config('sport-crawl.season'),

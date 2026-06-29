@@ -17,25 +17,46 @@ class SportDataService
     protected function apiFootball(string $endpoint, array $params = []): ?array
     {
         $config = config('sport-crawl.api_football');
-        try {
-            $response = Http::timeout(config('sport-crawl.timeout'))
-                ->retry(config('sport-crawl.retry.times'), config('sport-crawl.retry.sleep_ms'), throw: false)
-                ->withHeaders(['x-apisports-key' => $config['key']])
-                ->get($config['base_url'] . $endpoint, $params);
+        $maxRetries = config('sport-crawl.retry.times', 3);
+        $baseSleepMs = config('sport-crawl.retry.sleep_ms', 1000);
 
-            if ($response->failed()) {
+        for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
+            try {
+                $response = Http::timeout(config('sport-crawl.timeout'))
+                    ->withHeaders(['x-apisports-key' => $config['key']])
+                    ->get($config['base_url'] . $endpoint, $params);
+
+                if ($response->successful()) {
+                    return $response->json('response');
+                }
+
+                if ($response->status() === 429) {
+                    $retryAfter = (int) $response->header('Retry-After', $baseSleepMs * $attempt / 1000);
+                    $sleepMs = max($retryAfter * 1000, $baseSleepMs * pow(2, $attempt));
+                    Log::warning("SportCrawl [{$this->crawler}] Rate limited (429), waiting {$sleepMs}ms (attempt {$attempt}/{$maxRetries})", [
+                        'endpoint' => $endpoint,
+                    ]);
+                    usleep($sleepMs * 1000);
+                    continue;
+                }
+
                 Log::error("SportCrawl [{$this->crawler}] API-Football failed", [
                     'endpoint' => $endpoint,
                     'status' => $response->status(),
                 ]);
                 return null;
+            } catch (\Exception $e) {
+                if ($attempt < $maxRetries) {
+                    usleep($baseSleepMs * pow(2, $attempt) * 1000);
+                    continue;
+                }
+                Log::error("SportCrawl [{$this->crawler}] API-Football exception", ['error' => $e->getMessage()]);
+                return null;
             }
-
-            return $response->json('response');
-        } catch (\Exception $e) {
-            Log::error("SportCrawl [{$this->crawler}] API-Football exception", ['error' => $e->getMessage()]);
-            return null;
         }
+
+        Log::error("SportCrawl [{$this->crawler}] API-Football max retries exhausted", ['endpoint' => $endpoint]);
+        return null;
     }
 
     protected function httpGet(string $url, array $headers = []): ?string

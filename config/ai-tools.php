@@ -6,6 +6,12 @@ return [
         'timeout' => (int) env('II_AGENT_TIMEOUT', 120),
     ],
 
+    // OHHA Core API key (for proxy auth)
+    'ohha_api_key' => env('OHHA_API_KEY', ''),
+
+    // OHHA public URL (accessible from browser)
+    'ohha_public_url' => env('OHHA_PUBLIC_URL', 'http://45.77.241.79:8100'),
+
     // LLM provider keys
     'openai_key'    => env('OPENAI_API_KEY'),
     'deepseek_key'  => env('DEEPSEEK_API_KEY'),
@@ -14,11 +20,11 @@ return [
 
     // Model per plan
     'models' => [
-        'free'     => 'gemini-2.0-flash',
-        'pro'      => 'gemini-2.0-flash',
+        'free'     => 'gemini-2.5-flash',
+        'pro'      => 'gemini-2.5-flash',
         'business' => [
-            'default' => 'gemini-2.0-flash',
-            'code'    => 'gemini-2.0-flash',
+            'default' => 'gemini-2.5-flash',
+            'code'    => 'gemini-2.5-flash',
         ],
     ],
 
@@ -38,6 +44,9 @@ return [
         'test'    => 'ai_test',
         'review'  => 'ai_code_review',
         'asset'   => 'ai_asset',
+        'generate_image' => 'ai_asset',
+        'gdd_generator'  => 'ai_generate',
+        'chat'    => 'ai_concept',  // Chat uses same quota as concept
     ],
 
     'rate_limit' => [

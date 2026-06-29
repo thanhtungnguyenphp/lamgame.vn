@@ -23,6 +23,11 @@ class LotteryDraw extends Model
         return $this->hasMany(LotteryResult::class, 'draw_id');
     }
 
+    public function result()
+    {
+        return $this->hasOne(LotteryResult::class, 'draw_id');
+    }
+
     public function scopeTraditional($query)
     {
         return $query->where('type', 'traditional');

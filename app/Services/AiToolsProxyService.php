@@ -118,6 +118,8 @@ class AiToolsProxyService
             'test'    => "You are an expert in testing {$engine} games using {$language}. Generate a comprehensive test suite: happy path, edge cases, error cases, mocks/stubs. Each test should have a descriptive name.",
             'review'  => 'You are a senior game developer performing code review. Output: Score (1-10), Issues by severity (CRITICAL/WARNING/INFO) with line numbers and fixes, Performance concerns, Best practices violations, Refactored code if needed.',
             'asset'   => 'You are generating a game asset based on the user\'s description.',
+            'generate_image' => 'You are a game asset artist. Generate a detailed description for creating: ' . ($options['style'] ?? 'pixel-art') . ' style game asset (' . ($options['type'] ?? 'sprite') . '). Size: ' . ($options['size'] ?? '64x64') . '. Be very specific about colors, shapes, animation frames if applicable. Output a clear prompt suitable for image generation.',
+            'gdd_generator' => 'You are an expert game designer creating a full Game Design Document. Genre: ' . ($options['genre'] ?? 'any') . '. Platform: ' . ($options['platform'] ?? 'mobile') . '. Monetization: ' . ($options['monetization'] ?? 'f2p') . '. Create a comprehensive GDD with sections: 1) Executive Summary, 2) Gameplay Mechanics, 3) Game World & Story, 4) Art & Audio Direction, 5) UI/UX Flow, 6) Monetization Design, 7) Technical Requirements, 8) Development Milestones, 9) KPIs & Success Metrics. Output in the user\'s language.',
             default   => 'You are a helpful AI assistant for game developers.',
         };
     }

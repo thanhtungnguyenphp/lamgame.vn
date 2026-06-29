@@ -14,6 +14,8 @@ return [
         'sources'    => [
             'traditional' => 'https://xoso.com.vn',
             'vietlot'     => 'https://vietlott.vn',
+            'xoso_me'     => 'https://xoso.me',
+            'github_raw'  => 'https://raw.githubusercontent.com/vietvudanh/vietlott-data/main/data',
         ],
     ],
     'draw_times' => [

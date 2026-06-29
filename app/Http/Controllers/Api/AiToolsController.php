@@ -179,4 +179,35 @@ class AiToolsController extends Controller
 
         return response()->json($result);
     }
+
+    /**
+     * POST /api/v1/ai-tools/generate-asset
+     */
+    public function generateAsset(Request $request): JsonResponse
+    {
+        $request->validate([
+            'prompt'           => 'required|string|min:5|max:1000',
+            'options.style'    => 'required|string|in:pixel-art,low-poly,realistic,cartoon,icon',
+            'options.size'     => 'nullable|string|in:32x32,64x64,128x128,256x256,512x512',
+            'options.type'     => 'nullable|string|in:sprite,tilemap,ui,character,item,background',
+        ]);
+
+        return $this->executeToolRequest($request, 'generate_image');
+    }
+
+    /**
+     * POST /api/v1/ai-tools/gdd
+     */
+    public function generateGDD(Request $request): JsonResponse
+    {
+        $request->validate([
+            'prompt'             => 'required|string|min:10|max:3000',
+            'options.genre'      => 'required|string',
+            'options.platform'   => 'nullable|string|in:mobile,pc,web,console',
+            'options.target'     => 'nullable|string',
+            'options.monetization' => 'nullable|string|in:free,paid,f2p,ads,subscription',
+        ]);
+
+        return $this->executeToolRequest($request, 'gdd_generator');
+    }
 }

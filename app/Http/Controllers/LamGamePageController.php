@@ -334,7 +334,7 @@ class LamGamePageController extends Controller
             ->get();
 
         return view('lamgame.pages.viec-lam-game', [
-            'page_title' => 'Việc làm Game - Làm Game',
+            'page_title' => 'Tuyển dụng Game Developer — 51+ việc làm mới | LamGame.vn',
             'page_description' => 'Tìm kiếm cơ hội việc làm trong ngành game development tại Việt Nam và quốc tế.',
             'jobs' => $jobs,
             'totalJobs' => $totalJobs,
@@ -784,12 +784,26 @@ class LamGamePageController extends Controller
             $price = (float) ($flat->price ?? 0);
             $urlKey = $flat->url_key ?? null;
 
-            // Derived fields
+            // Derived fields — stable per product (seeded by product ID)
+            $seed = crc32($product->sku ?? (string) $product->id);
             $engine = 'Unity';
             $language = 'C#';
             $fileSize = '25 MB';
-            $downloadsCount = rand(100, 2000);
-            $rating = (float) number_format(rand(35, 50) / 10, 1);
+
+            // Detect engine from name/description
+            $nameLower = strtolower($name . ' ' . $shortDescription);
+            if (str_contains($nameLower, 'godot')) { $engine = 'Godot'; $language = 'GDScript'; }
+            elseif (str_contains($nameLower, 'phaser') || str_contains($nameLower, 'html5') || str_contains($nameLower, 'javascript')) { $engine = 'Phaser'; $language = 'JavaScript'; }
+            elseif (str_contains($nameLower, 'unreal')) { $engine = 'Unreal'; $language = 'Blueprint'; }
+
+            // Stable downloads & rating based on product ID
+            srand($seed);
+            $downloadsCount = rand(200, 2500);
+            $rating = number_format(rand(38, 49) / 10, 1);
+            srand(); // reset
+
+            // Mark as hot if high downloads
+            $isHot = $downloadsCount > 1500;
 
             // Image
             $previewImage = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&h=200&fit=crop';
@@ -817,6 +831,7 @@ class LamGamePageController extends Controller
                 'language' => $language,
                 'downloads' => $downloadsCount,
                 'rating' => $rating,
+                'is_hot' => $isHot,
                 'preview_image' => $previewImage,
                 'size' => $fileSize,
                 'price' => $price,
@@ -890,11 +905,18 @@ class LamGamePageController extends Controller
             'has_more'     => method_exists($products, 'hasMorePages') ? $products->hasMorePages() : false,
         ];
 
+        // Derive trending & best-selling from all sources (sorted copies)
+        $allSorted = collect($featuredSources);
+        $trendingSources = $allSorted->sortByDesc('downloads')->take(4)->values()->all();
+        $bestSellingSources = $allSorted->sortByDesc('rating')->take(4)->values()->all();
+
         return view('lamgame.pages.source-game', [
-            'featuredSources' => $featuredSources,
-            'pagination'      => $pagination,
-            'page_title'      => 'Source Game - Kho Mã Nguồn Game - Làm Game',
-            'page_description'=> 'Tổng hợp các source code game từ cổ điển đến hiện đại. Tải miễn phí để học tập và nghiên cứu.'
+            'featuredSources'    => $featuredSources,
+            'trendingSources'    => $trendingSources,
+            'bestSellingSources' => $bestSellingSources,
+            'pagination'         => $pagination,
+            'page_title'         => 'Source Game - Kho Mã Nguồn Game - Làm Game',
+            'page_description'   => 'Tổng hợp các source code game từ cổ điển đến hiện đại. Tải miễn phí để học tập và nghiên cứu.'
         ]);
     }
 

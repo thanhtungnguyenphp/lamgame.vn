@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\LotteryDraw;
 use App\Services\Lottery\LotteryNotificationService;
+use App\Services\Lottery\XosoMeScraper;
 use App\Services\Lottery\VietlotScraper;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -24,7 +25,7 @@ class ScrapeVietlotLottery implements ShouldQueue
         private ?string $game = null,
     ) {}
 
-    public function handle(VietlotScraper $scraper, LotteryNotificationService $notifyService): void
+    public function handle(XosoMeScraper $primaryScraper, VietlotScraper $fallbackScraper, LotteryNotificationService $notifyService): void
     {
         $games = $this->game ? [$this->game] : config('lottery.games');
         $date = Carbon::today()->toDateString();
@@ -37,7 +38,13 @@ class ScrapeVietlotLottery implements ShouldQueue
                 continue;
             }
 
-            $success = $scraper->scrape($game);
+            // Primary: xoso.me + GitHub fallback (handles all games)
+            $success = $primaryScraper->scrape($game, $date);
+
+            // Fallback: vietlott.vn (may fail due to Cloudflare)
+            if (!$success) {
+                $success = $fallbackScraper->scrape($game, $date);
+            }
 
             if ($success && $game !== 'keno') {
                 Cache::put($cacheKey, true, Carbon::tomorrow());

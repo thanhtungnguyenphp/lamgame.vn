@@ -14,7 +14,11 @@ class SyncStandingsService extends SportDataService
         $start = microtime(true);
         $this->resetCounters();
 
-        foreach (config('sport-crawl.leagues') as $leagueId) {
+        foreach (config('sport-crawl.leagues') as $index => $leagueId) {
+            if ($index > 0) {
+                usleep(500000); // 500ms delay between requests to avoid rate limiting
+            }
+
             $data = $this->apiFootball('/standings', [
                 'league' => $leagueId,
                 'season' => config('sport-crawl.season'),
