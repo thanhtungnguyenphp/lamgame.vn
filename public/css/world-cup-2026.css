@@ -127,3 +127,44 @@
     .wc26-match__venue { text-align: left; }
     .wc26-teams__grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
 }
+
+/* Live updates */
+.wc26-hero__highlights { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 16px 0 24px; }
+.wc26-hero__result { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 8px; padding: 6px 14px; font-size: .85rem; color: #e2e8f0; backdrop-filter: blur(4px); }
+.wc26-live-badge { font-size: 1.3rem; color: var(--wc-gold, #fbbf24); font-weight: 700; animation: livePulse 2s infinite; }
+@keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+.wc26-hero__badge { animation: livePulse 2s infinite; }
+.wc26-match--ft .wc26-match__status { color: #22c55e; font-weight: 600; }
+.wc26-match--live .wc26-match__status { color: #ef4444; font-weight: 700; animation: livePulse 1s infinite; }
+.wc26-match--live { border-left: 3px solid #ef4444; }
+.wc26-group__stats { margin-left: auto; font-size: .75rem; color: #94a3b8; }
+
+/* === Updated styles for new schedule/groups format (23/06/2026) === */
+
+/* Schedule panels */
+.wc26-schedule__panels { max-width: 800px; margin: 0 auto; }
+.wc26-panel__date { font-size: 1rem; font-weight: 700; color: var(--wc-primary); margin: 1.5rem 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 2px solid #eee; }
+.wc26-panel .wc26-match { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: #fff; border-radius: 0.5rem; margin-bottom: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1px solid #f0f0f0; }
+.wc26-panel .wc26-match__group { background: var(--wc-primary); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 0.3rem; min-width: 22px; text-align: center; }
+.wc26-panel .wc26-match__teams { flex: 1; font-size: 0.9rem; }
+.wc26-panel .wc26-match__time { font-size: 0.8rem; color: #666; font-weight: 600; }
+.wc26-panel .wc26-match__info { font-size: 0.75rem; color: #888; margin-left: auto; }
+.wc26-panel .wc26-match--done { border-left: 3px solid #22c55e; }
+.wc26-panel .wc26-match--done .wc26-match__teams strong { color: var(--wc-primary); }
+
+/* Groups table format */
+.wc26-group__table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+.wc26-group__table thead th { padding: 0.3rem 0.4rem; color: #999; font-weight: 600; text-align: center; border-bottom: 1px solid #eee; }
+.wc26-group__table thead th:nth-child(2) { text-align: left; }
+.wc26-group__table tbody td { padding: 0.4rem; text-align: center; border-bottom: 1px solid #f5f5f5; }
+.wc26-group__table .wc26-group__pos { width: 20px; text-align: center; font-weight: 700; }
+.wc26-group__table .wc26-group__name { text-align: left; font-weight: 600; font-size: 0.85rem; }
+.wc26-group__table .wc26-group__pts { color: var(--wc-primary); font-weight: 800; }
+.wc26-group__table .wc26-group__team--qualify { background: rgba(0,180,216,0.06); }
+.wc26-group__table .wc26-group__team--qualify .wc26-group__pos { color: var(--wc-accent); }
+
+/* Hero scorer info */
+.wc26-hero__scorer { display: block; font-size: 0.75rem; color: var(--wc-gold); margin-top: 2px; }
+
+/* Countdown desc */
+.wc26-countdown__desc { color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 1rem; }

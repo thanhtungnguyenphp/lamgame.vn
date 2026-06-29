@@ -1,0 +1,141 @@
+/* Job Detail — Dark Theme Override (match jobs-dark.css) */
+
+/* Base font fix */
+body .job-detail-page {
+  background: #0f172a !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  color: #e2e8f0 !important;
+  padding: 20px !important;
+}
+body .job-detail-page * { font-family: inherit !important; }
+
+/* Header card — compact */
+body .job-header-card {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 14px !important;
+  padding: 24px !important;
+}
+body .job-header-card .job-title { color: #f8fafc !important; font-size: 1.3rem !important; font-weight: 700 !important; margin-bottom: 8px !important; }
+body .job-header-card .company-name { color: #94a3b8 !important; font-size: .9rem !important; }
+body .job-header-card .job-meta { color: #64748b !important; font-size: .82rem !important; }
+body .job-header-card [class*="salary"] { color: #10b981 !important; font-weight: 700 !important; font-size: .95rem !important; }
+
+/* Quick info grid */
+body .job-quick-info { 
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+  gap: 10px !important;
+  margin: 16px 0 !important;
+}
+body .job-quick-info > *, body .info-card, body .quick-info-item {
+  background: #0f172a !important;
+  border: 1px solid #334155 !important;
+  border-radius: 10px !important;
+  padding: 12px !important;
+}
+body .job-quick-info label, body .info-card label { color: #64748b !important; font-size: .72rem !important; text-transform: uppercase !important; letter-spacing: .5px !important; display: block !important; margin-bottom: 4px !important; }
+body .job-quick-info span, body .info-card span { color: #e2e8f0 !important; font-size: .85rem !important; font-weight: 600 !important; }
+
+/* Content sections */
+body .job-content, body .job-description-section, body .content-section {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 14px !important;
+  padding: 24px !important;
+  margin: 16px 0 !important;
+}
+body .job-content h2, body .content-section h2 { color: #f1f5f9 !important; font-size: 1.1rem !important; font-weight: 700 !important; margin-bottom: 12px !important; border-bottom: 1px solid #334155 !important; padding-bottom: 8px !important; }
+body .job-content h3, body .content-section h3 { color: #cbd5e1 !important; font-size: .95rem !important; font-weight: 600 !important; }
+body .job-content p, body .job-content li,
+body .content-section p, body .content-section li { color: #94a3b8 !important; font-size: .88rem !important; line-height: 1.7 !important; }
+body .job-content ul { padding-left: 18px !important; }
+body .job-content li { margin-bottom: 6px !important; }
+
+/* Skills card */
+body .skills-highlight-card { background: linear-gradient(135deg, #4338ca, #6d28d9) !important; border-radius: 14px !important; padding: 16px !important; }
+
+/* Similar jobs */
+body .similar-jobs { background: #1e293b !important; border: 1px solid #334155 !important; border-radius: 14px !important; padding: 20px !important; margin-top: 16px !important; }
+body .similar-jobs h3 { color: #f1f5f9 !important; font-size: 1rem !important; margin-bottom: 12px !important; }
+body .similar-job { border-bottom: 1px solid #1e293b !important; padding: 10px 0 !important; }
+body .similar-job:last-child { border: none !important; }
+body .similar-job-title { color: #e2e8f0 !important; font-size: .88rem !important; font-weight: 600 !important; text-decoration: none !important; }
+body .similar-job-title:hover { color: #a5b4fc !important; }
+body .similar-job-company { color: #64748b !important; font-size: .78rem !important; }
+body .similar-job-salary { color: #10b981 !important; font-size: .82rem !important; }
+
+/* Apply buttons */
+body .btn-apply, body .btn-apply-bottom {
+  background: #6366f1 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 12px 28px !important;
+  font-weight: 600 !important;
+  font-size: .9rem !important;
+}
+body .btn-apply:hover, body .btn-apply-bottom:hover { background: #4f46e5 !important; }
+
+/* Bottom CTA */
+body .bottom-apply-section {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 14px !important;
+  padding: 20px !important;
+  margin-top: 16px !important;
+}
+body .bottom-apply-section h3 { color: #f1f5f9 !important; font-size: 1rem !important; }
+body .bottom-apply-section p { color: #94a3b8 !important; font-size: .85rem !important; }
+
+/* Modal */
+body .modal-overlay { background: rgba(0,0,0,.75) !important; backdrop-filter: blur(4px) !important; }
+body .modal-content, body #applyModal > div {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 16px !important;
+  color: #e2e8f0 !important;
+  max-width: 500px !important;
+}
+body .apply-form input, body .apply-form textarea, body .apply-form select {
+  background: #0f172a !important;
+  border: 1px solid #475569 !important;
+  color: #f1f5f9 !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  font-size: .88rem !important;
+}
+body .apply-form input:focus, body .apply-form textarea:focus { border-color: #6366f1 !important; }
+body .apply-form label { color: #94a3b8 !important; font-size: .82rem !important; font-weight: 500 !important; }
+body .btn-submit { background: #6366f1 !important; color: #fff !important; border: none !important; border-radius: 10px !important; padding: 12px 24px !important; font-weight: 600 !important; }
+body .btn-cancel { background: transparent !important; border: 1px solid #475569 !important; color: #94a3b8 !important; border-radius: 10px !important; }
+body .modal-close { color: #94a3b8 !important; }
+
+/* Tags */
+body .skill-tag, body .job-tags span, body .tag {
+  background: #334155 !important;
+  color: #cbd5e1 !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 4px 10px !important;
+  font-size: .76rem !important;
+}
+
+/* Override ALL inline light backgrounds */
+body [style*="background: #f8f9fa"],
+body [style*="background: #f0f4ff"],
+body [style*="background: #f3f4f6"],
+body [style*="background: #e9ecef"],
+body [style*="background: #f0fdf4"],
+body [style*="background:#f8f9fa"],
+body [style*="background:#f0f4ff"],
+body [style*="background:#f3f4f6"] { background: #1e293b !important; }
+
+body [style*="color: #333"],
+body [style*="color:#333"],
+body [style*="color: #1a1a2e"],
+body [style*="color:#1a1a2e"] { color: #e2e8f0 !important; }
+
+body [style*="border: 1px solid #e"],
+body [style*="border:1px solid #e"] { border-color: #334155 !important; }
+
