@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    <script>try{var t=localStorage.getItem('lamgame-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="format-detection" content="telephone=no">
@@ -319,7 +320,7 @@
     <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-homepage.css') }}">
 
     <!-- Design System (bundled) -->
-    <link rel="stylesheet" href="{{ asset('css/redesign-bundle.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/redesign-bundle.min.css') }}?v={{ filemtime(public_path('css/redesign-bundle.min.css')) }}">
     <script src="{{ asset('themes/shop/emsaigon/assets/js/dark-mode.js') }}"></script>
 
     <!-- Dynamic styles from pages -->
@@ -589,6 +590,16 @@
             navigator.serviceWorker.controller?.postMessage('retry-queue');
         });
     }
+    </script>
+
+    {{-- OHHA AI Chat Widget --}}
+    <script src="/ai-widget.js"
+            data-host="/ohha-ai"
+            data-persona="game"
+            data-api-key="{{ config('ai-tools.ohha_api_key') }}"
+            data-title="LamGame AI"
+            data-position="bottom-right"
+            data-theme="dark">
     </script>
 </body>
 </html>

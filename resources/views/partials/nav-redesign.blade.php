@@ -3,7 +3,7 @@
     <div class="nav-redesign__inner">
         {{-- Logo --}}
         <a href="{{ url('/') }}" class="nav-redesign__logo" aria-label="Trang chủ Làm Game">
-            <img src="{{ asset('assets/logos/png/logo-horizontal-200.png') }}" alt="LamGame.vn" height="36" style="height:36px;width:auto;">
+            <img src="{{ asset('assets/logos/svg/logo-dark.svg') . '?v=' . time() }}" alt="LamGame.vn">
         </a>
 
         {{-- Desktop Menu --}}
@@ -92,7 +92,41 @@
                 </div>
             </li>
             <li class="nav-redesign__item">
-                <a href="{{ route('mini-game.index') }}" class="nav-redesign__link {{ request()->routeIs('mini-game.*') ? 'nav-redesign__link--active' : '' }}">Chơi Game</a>
+                <a href="#" class="nav-redesign__link {{ request()->routeIs('sport*') || request()->routeIs('lottery*') || request()->routeIs('mini-game.*') ? 'nav-redesign__link--active' : '' }}">
+                    Giải trí <span class="nav-redesign__link-arrow">▾</span>
+                </a>
+                <div class="nav-redesign__mega">
+                    <div class="nav-redesign__mega-grid">
+                        <a href="{{ route('world-cup-2026') }}" class="nav-redesign__mega-item nav-redesign__mega-item--hot">
+                            <div class="nav-redesign__mega-icon">🏆</div>
+                            <div class="nav-redesign__mega-text">
+                                <h4>World Cup 2026 <span class="nav-redesign__hot-badge">HOT</span></h4>
+                                <p>Lịch thi đấu, kết quả, tin tức</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('mini-game.index') }}" class="nav-redesign__mega-item">
+                            <div class="nav-redesign__mega-icon">🕹️</div>
+                            <div class="nav-redesign__mega-text">
+                                <h4>Chơi Game</h4>
+                                <p>50+ mini games HTML5</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('sport.index') }}" class="nav-redesign__mega-item">
+                            <div class="nav-redesign__mega-icon">⚽</div>
+                            <div class="nav-redesign__mega-text">
+                                <h4>Thể thao</h4>
+                                <p>Lịch thi đấu, BXH, live score</p>
+                            </div>
+                        </a>
+                        <a href="{{ route('lottery.index') }}" class="nav-redesign__mega-item">
+                            <div class="nav-redesign__mega-icon">🎰</div>
+                            <div class="nav-redesign__mega-text">
+                                <h4>Xổ số</h4>
+                                <p>KQXS 3 miền, Vietlott</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </li>
         </ul>
 
@@ -112,10 +146,24 @@
             </button>
 
             {{-- Notifications --}}
-            <button class="nav-redesign__notif" aria-label="Thông báo">
-                <i class="fa fa-bell-o"></i>
-                <span class="nav-redesign__notif-badge">3</span>
-            </button>
+            <div class="nav-redesign__notif-wrap" id="notif-wrap">
+                <button class="nav-redesign__notif" aria-label="Thông báo" onclick="toggleNotifDropdown()">
+                    <i class="fa fa-bell-o"></i>
+                    <span class="nav-redesign__notif-badge" id="notif-badge">0</span>
+                </button>
+                <div class="nav-redesign__notif-dropdown" id="notif-dropdown">
+                    <div class="notif-dropdown__header">
+                        <strong>Thông báo</strong>
+                        <a href="#" onclick="markAllRead()" class="notif-dropdown__mark-read">Đánh dấu đã đọc</a>
+                    </div>
+                    <div class="notif-dropdown__list" id="notif-list">
+                        <p class="notif-dropdown__empty">Không có thông báo mới</p>
+                    </div>
+                    @auth('customer')
+                    <a href="{{ route('shop.customers.account.profile.index') }}" class="notif-dropdown__footer">Xem tất cả →</a>
+                    @endauth
+                </div>
+            </div>
 
             {{-- CTA / User --}}
             @guest('customer')
@@ -140,12 +188,15 @@
 <div class="nav-redesign__mobile-backdrop" id="mobile-backdrop"></div>
 <nav class="nav-redesign__mobile-menu" id="mobile-menu" aria-label="Menu di động">
     <ul class="nav-redesign__mobile-nav">
+        <li><a href="{{ route('world-cup-2026') }}">🏆 World Cup 2026 <span class="nav-redesign__hot-badge">HOT</span></a></li>
         <li><a href="{{ route('lamgame.blog') }}">📝 Blog</a></li>
         <li><a href="{{ route('lamgame.source-game') }}">🎮 Source Game</a></li>
         <li><a href="{{ route('forum.index') }}">💬 Forum</a></li>
         <li><a href="{{ route('lamgame.viec-lam-game') }}">💼 Việc làm</a></li>
         <li><a href="{{ route('lamgame.ai-tools') }}">🤖 AI Tools</a></li>
         <li><a href="{{ route('mini-game.index') }}">🕹️ Chơi Game</a></li>
+        <li><a href="{{ route('sport.index') }}">⚽ Thể thao</a></li>
+        <li><a href="{{ route('lottery.index') }}">🎰 Xổ số</a></li>
     </ul>
 </nav>
 
@@ -199,5 +250,34 @@ function toggleNavSearch() {
         input.focus();
     }
 }
+
+// Notifications
+function toggleNotifDropdown() {
+    var dd = document.getElementById('notif-dropdown');
+    dd.classList.toggle('active');
+}
+function markAllRead() {
+    var badge = document.getElementById('notif-badge');
+    badge.classList.remove('has-notif');
+    badge.textContent = '0';
+    document.getElementById('notif-list').innerHTML = '<p class="notif-dropdown__empty">Không có thông báo mới</p>';
+}
+// Show badge only when count > 0
+function updateNotifBadge(count) {
+    var badge = document.getElementById('notif-badge');
+    if (count > 0) {
+        badge.classList.add('has-notif');
+        badge.textContent = count > 99 ? '99+' : count;
+    } else {
+        badge.classList.remove('has-notif');
+    }
+}
+// Close dropdown on outside click
+document.addEventListener('click', function(e) {
+    var wrap = document.getElementById('notif-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+        document.getElementById('notif-dropdown').classList.remove('active');
+    }
+});
 </script>
 @endpush

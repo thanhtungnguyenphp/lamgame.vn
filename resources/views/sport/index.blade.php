@@ -1,7 +1,25 @@
-@extends('shop::layouts.master')
-@section('page_title') Thể thao — Tin tức, Lịch thi đấu, BXH @endsection
+@extends('layouts.master')
+@section('page_title') {{ $seo_title ?? 'Thể thao — Tin tức, Lịch thi đấu, BXH' }} @endsection
+@section('page_description', $seo_description ?? '')
+@push('schema_markup')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "SportsOrganization",
+    "name": "LamGame Thể Thao",
+    "url": "{{ route('sport.index') }}",
+    "description": "{{ $seo_description ?? '' }}"
+}
+</script>
+@endpush
 
-@section('content-wrapper')
+@push('styles')
+<style>.container{max-width:1100px}</style>
+@endpush
+@push('styles')
+<link rel="stylesheet" href="/css/sport-utils.css">
+@endpush
+@section('content')
 <div class="container mx-auto px-4 py-6">
     <h1 class="text-2xl font-bold mb-6">⚽ Thể thao</h1>
 

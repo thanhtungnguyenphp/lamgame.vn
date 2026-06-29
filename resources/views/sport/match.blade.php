@@ -1,7 +1,31 @@
-@extends('shop::layouts.master')
-@section('page_title') {{ $match->homeTeam->name }} vs {{ $match->awayTeam->name }} @endsection
+@extends('layouts.master')
+@section('page_title') {{ $seo_title ?? $match->homeTeam->name . ' vs ' . $match->awayTeam->name }} @endsection
+@section('page_description', $seo_description ?? '')
+@push('schema_markup')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "SportsEvent",
+    "name": "{{ $match->homeTeam->name ?? '' }} vs {{ $match->awayTeam->name ?? '' }}",
+    "startDate": "{{ $match->start_time?->toIso8601String() }}",
+    "location": { "@type": "Place", "name": "{{ $match->venue ?? 'TBD' }}" },
+    "homeTeam": { "@type": "SportsTeam", "name": "{{ $match->homeTeam->name ?? '' }}" },
+    "awayTeam": { "@type": "SportsTeam", "name": "{{ $match->awayTeam->name ?? '' }}" },
+    "competitor": [
+        { "@type": "SportsTeam", "name": "{{ $match->homeTeam->name ?? '' }}" },
+        { "@type": "SportsTeam", "name": "{{ $match->awayTeam->name ?? '' }}" }
+    ]
+}
+</script>
+@endpush
 
-@section('content-wrapper')
+@push('styles')
+<style>.container{max-width:1100px}</style>
+@endpush
+@push('styles')
+<link rel="stylesheet" href="/css/sport-utils.css">
+@endpush
+@section('content')
 <div class="container mx-auto px-4 py-6">
     {{-- Score header --}}
     <div class="text-center p-6 bg-gray-800 rounded-lg mb-6">

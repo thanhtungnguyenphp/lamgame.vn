@@ -1,4 +1,4 @@
-{{-- LAMGAME.VN HOMEPAGE — Dark Gaming UI --}}
+{{-- LAMGAME.VN HOMEPAGE — Redesign: Product-first layout --}}
 @extends('layouts.master')
 
 @section('page_title', $page_title ?? 'LamGame.vn — Cộng đồng Game Developer Việt Nam')
@@ -7,58 +7,35 @@
 @section('content')
 <div class="lg-home">
 
-{{-- HERO --}}
+{{-- HERO — Compact, 3 CTA only --}}
 <section class="lg-hero">
     <div class="lg-hero__bg"></div>
     <div class="lg-hero__content">
-        <span class="lg-hero__badge"><span class="lg-hero__badge-dot"></span> Cộng đồng #1 Việt Nam</span>
-        <h1 class="lg-hero__title">Học hỏi. Chia sẻ.<br>Phát triển cùng nhau.</h1>
-        <p class="lg-hero__sub">Nơi quy tụ các Game Developer Việt Nam — Forum, Marketplace, AI Tools, Việc làm & hơn thế nữa.</p>
+        <span class="lg-hero__badge"><span class="lg-hero__badge-dot"></span> Cộng đồng Game Dev #1 Việt Nam</span>
+        <h1 class="lg-hero__title">Biến ý tưởng thành<br><span class="lg-hero__gradient-text">Game thực tế.</span></h1>
+        <p class="lg-hero__sub">Source code production-ready, AI tools, cộng đồng 12.000+ developers.</p>
         <div class="lg-hero__cta">
-            <a href="/choi-game" class="lg-btn lg-btn--primary">Khám phá ngay</a>
-            <a href="/cong-dong" class="lg-btn lg-btn--outline">Tham gia cộng đồng</a>
+            <a href="{{ route('lamgame.source-game') }}" class="lg-btn lg-btn--primary">🎮 Mua Source Game</a>
+            <a href="{{ route('lamgame.ai-tools') }}" class="lg-btn lg-btn--glow">🤖 Dùng AI Tools</a>
+            <a href="{{ route('forum.index') }}" class="lg-btn lg-btn--outline">💬 Vào Forum</a>
         </div>
     </div>
 </section>
 
-{{-- STATS --}}
-<section class="lg-stats">
-    <div class="lg-container">
-        <div class="lg-stats__grid">
-            <div class="lg-stats__item"><span class="lg-stats__num">12.000+</span><span class="lg-stats__label">Thành viên</span></div>
-            <div class="lg-stats__item"><span class="lg-stats__num">1.250+</span><span class="lg-stats__label">Source Code</span></div>
-            <div class="lg-stats__item"><span class="lg-stats__num">{{ $stats['blog_posts'] ?? 850 }}+</span><span class="lg-stats__label">Bài viết</span></div>
-            <div class="lg-stats__item"><span class="lg-stats__num">450+</span><span class="lg-stats__label">Việc làm</span></div>
-            <div class="lg-stats__item"><span class="lg-stats__num">80+</span><span class="lg-stats__label">Studio</span></div>
-        </div>
-    </div>
-</section>
-
-{{-- QUICK MENU --}}
-<section class="lg-section">
-    <div class="lg-container">
-        <div class="lg-quick">
-            <a href="/choi-game" class="lg-quick__item"><span class="lg-quick__icon">🎮</span><span class="lg-quick__text">Chơi Game</span></a>
-            <a href="/source-game" class="lg-quick__item"><span class="lg-quick__icon">💾</span><span class="lg-quick__text">Source Game</span></a>
-            <a href="/ai-tools" class="lg-quick__item"><span class="lg-quick__icon">🤖</span><span class="lg-quick__text">AI Tools</span></a>
-            <a href="/viec-lam-game" class="lg-quick__item"><span class="lg-quick__icon">💼</span><span class="lg-quick__text">Việc làm</span></a>
-            <a href="/cong-dong" class="lg-quick__item"><span class="lg-quick__icon">💬</span><span class="lg-quick__text">Forum</span></a>
-            <a href="/blog" class="lg-quick__item"><span class="lg-quick__icon">📝</span><span class="lg-quick__text">Blog</span></a>
-        </div>
-    </div>
-</section>
-
-{{-- SOURCE MARKETPLACE --}}
+{{-- SOURCE GAME — Featured, ngay sau hero --}}
 @if(!empty($sourceGames['featured']))
-<section class="lg-section">
+<section class="lg-section" id="source-games">
     <div class="lg-container">
         <div class="lg-section__head">
-            <h2 class="lg-section__title">Source Game Marketplace</h2>
-            <a href="/source-game" class="lg-section__more">Xem tất cả →</a>
+            <div>
+                <h2 class="lg-section__title">🎮 Source Game Hot</h2>
+                <p class="lg-section__desc">Production-ready · Unity, Godot, Phaser · Bắt đầu từ $0</p>
+            </div>
+            <a href="/source-game" class="lg-btn lg-btn--sm">Xem tất cả →</a>
         </div>
         <div class="lg-grid lg-grid--3">
-            @foreach(array_slice($sourceGames['featured'], 0, 6) as $game)
-            <a href="{{ $game['url'] ?? '#' }}" class="lg-card">
+            @foreach(array_slice($sourceGames['featured'], 0, 6) as $i => $game)
+            <a href="{{ $game['url'] ?? '#' }}" class="lg-card {{ $i === 0 ? 'lg-card--featured' : '' }}">
                 <div class="lg-card__img">
                     <img src="{{ $game['thumbnail'] ?? '' }}" alt="{{ $game['title'] }}" loading="lazy">
                     @if(($game['price'] ?? 0) > 0)
@@ -66,13 +43,17 @@
                     @else
                     <span class="lg-card__price lg-card__price--free">Free</span>
                     @endif
+                    @if($i < 2)<span class="lg-card__hot">🔥 Hot</span>@endif
                 </div>
                 <div class="lg-card__body">
                     <h3 class="lg-card__title">{{ Str::limit($game['title'], 40) }}</h3>
                     <p class="lg-card__desc">{{ Str::limit($game['short_description'] ?? '', 60) }}</p>
                     <div class="lg-card__meta">
                         <span class="lg-tag">{{ $game['engine'] ?? 'Unity' }}</span>
-                        <span>⬇ {{ $game['downloads'] ?? 0 }}</span>
+                        <div class="lg-card__stats-row">
+                            <span>⬇ {{ $game['downloads'] ?? 0 }}</span>
+                            <span>⭐ {{ number_format($game['rating'] ?? 4.5, 1) }}</span>
+                        </div>
                     </div>
                 </div>
             </a>
@@ -82,70 +63,16 @@
 </section>
 @endif
 
-{{-- JOBS --}}
-@if(!empty($jobs['featured']))
-<section class="lg-section lg-section--alt">
-    <div class="lg-container">
-        <div class="lg-section__head">
-            <h2 class="lg-section__title">Việc làm Game Dev</h2>
-            <a href="/viec-lam-game" class="lg-section__more">Xem tất cả →</a>
-        </div>
-        <div class="lg-grid lg-grid--2">
-            @foreach($jobs['featured'] as $job)
-            <div class="lg-job">
-                <div class="lg-job__logo">{{ strtoupper(substr($job['company'] ?? 'G', 0, 1)) }}</div>
-                <div class="lg-job__info">
-                    <h3 class="lg-job__title">{{ Str::limit($job['title'] ?? $job['name'] ?? '', 50) }}</h3>
-                    <p class="lg-job__company">{{ $job['company'] ?? 'Game Studio' }}</p>
-                    <div class="lg-job__tags">
-                        @if($job['salary'] ?? null)<span class="lg-tag lg-tag--cyan">{{ $job['salary'] }}</span>@endif
-                        @if($job['location'] ?? null)<span class="lg-tag">{{ $job['location'] }}</span>@endif
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-</section>
-@endif
-
-{{-- BLOG --}}
-@if(!empty($latestBlogs['featured']))
-<section class="lg-section">
-    <div class="lg-container">
-        <div class="lg-section__head">
-            <h2 class="lg-section__title">Blog & Tutorial</h2>
-            <a href="/blog" class="lg-section__more">Xem tất cả →</a>
-        </div>
-        <div class="lg-grid lg-grid--3">
-            @foreach($latestBlogs['featured'] as $blog)
-            <a href="{{ $blog['url'] ?? '#' }}" class="lg-card">
-                <div class="lg-card__img">
-                    <img src="{{ $blog['featured_image'] ?? '' }}" alt="{{ $blog['title'] ?? '' }}" loading="lazy">
-                    <span class="lg-card__badge">{{ $blog['category'] ?? 'Tutorial' }}</span>
-                </div>
-                <div class="lg-card__body">
-                    <h3 class="lg-card__title">{{ Str::limit($blog['title'] ?? '', 50) }}</h3>
-                    <p class="lg-card__desc">{{ Str::limit($blog['excerpt'] ?? '', 80) }}</p>
-                    <div class="lg-card__meta">
-                        <span>{{ $blog['author'] ?? 'LamGame' }} · {{ $blog['time_ago'] ?? '' }}</span>
-                        <span>📖 {{ $blog['reading_time'] ?? 0 }} phút</span>
-                    </div>
-                </div>
-            </a>
-            @endforeach
-        </div>
-    </div>
-</section>
-@endif
-
-{{-- FORUM --}}
+{{-- FORUM — Cộng đồng sôi động --}}
 @if(!empty($hotForumTopics['featured']))
 <section class="lg-section lg-section--alt">
     <div class="lg-container">
         <div class="lg-section__head">
-            <h2 class="lg-section__title">Thảo luận nổi bật</h2>
-            <a href="/cong-dong" class="lg-section__more">Xem tất cả →</a>
+            <div>
+                <h2 class="lg-section__title">💬 Cộng đồng đang bàn</h2>
+                <p class="lg-section__desc">Thảo luận, chia sẻ project, hỏi đáp kỹ thuật</p>
+            </div>
+            <a href="/cong-dong" class="lg-btn lg-btn--sm">Xem Forum →</a>
         </div>
         <div class="lg-forum-list">
             @foreach($hotForumTopics['featured'] as $topic)
@@ -166,30 +93,86 @@
 </section>
 @endif
 
-{{-- AI TOOLS --}}
+{{-- BLOG --}}
+@if(!empty($latestBlogs['featured']))
 <section class="lg-section">
     <div class="lg-container">
         <div class="lg-section__head">
-            <h2 class="lg-section__title">AI Tools cho Game Dev</h2>
-            <a href="/ai-tools" class="lg-section__more">Xem tất cả →</a>
+            <h2 class="lg-section__title">📝 Blog & Tutorial</h2>
+            <a href="/blog" class="lg-btn lg-btn--sm">Xem tất cả →</a>
+        </div>
+        <div class="lg-grid lg-grid--3">
+            @foreach(array_slice($latestBlogs['featured'], 0, 3) as $blog)
+            <a href="{{ $blog['url'] ?? '#' }}" class="lg-card">
+                <div class="lg-card__img">
+                    <img src="{{ $blog['featured_image'] ?? '' }}" alt="{{ $blog['title'] ?? '' }}" loading="lazy">
+                    <span class="lg-card__badge">{{ $blog['category'] ?? 'Tutorial' }}</span>
+                </div>
+                <div class="lg-card__body">
+                    <h3 class="lg-card__title">{{ Str::limit($blog['title'] ?? '', 50) }}</h3>
+                    <p class="lg-card__desc">{{ Str::limit($blog['excerpt'] ?? '', 80) }}</p>
+                    <div class="lg-card__meta">
+                        <span>{{ $blog['author'] ?? 'LamGame' }} · {{ $blog['time_ago'] ?? '' }}</span>
+                    </div>
+                </div>
+            </a>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- AI TOOLS — Compact row --}}
+<section class="lg-section lg-section--alt">
+    <div class="lg-container">
+        <div class="lg-section__head">
+            <div>
+                <h2 class="lg-section__title">🤖 AI Tools cho Game Dev</h2>
+                <p class="lg-section__desc">Tăng tốc 10x với AI — miễn phí cho thành viên</p>
+            </div>
+            <a href="/ai-tools" class="lg-btn lg-btn--sm">Dùng ngay →</a>
         </div>
         <div class="lg-grid lg-grid--4">
-            <div class="lg-ai-card"><span class="lg-ai-card__icon">🎨</span><h3>AI Asset Generator</h3><p>Tạo sprite, tilemap, UI assets</p></div>
-            <div class="lg-ai-card"><span class="lg-ai-card__icon">🗣️</span><h3>AI NPC Voice</h3><p>Tạo giọng nói NPC tự nhiên</p></div>
-            <div class="lg-ai-card"><span class="lg-ai-card__icon">📜</span><h3>AI Quest Generator</h3><p>Tạo quest & storyline tự động</p></div>
-            <div class="lg-ai-card"><span class="lg-ai-card__icon">💻</span><h3>AI Code Assistant</h3><p>Debug & optimize game code</p></div>
+            <a href="/ai-tools" class="lg-ai-card"><span class="lg-ai-card__icon">🎨</span><h3>Asset Generator</h3><p>Sprite, tilemap, UI</p></a>
+            <a href="/ai-tools" class="lg-ai-card"><span class="lg-ai-card__icon">📜</span><h3>GDD Generator</h3><p>Game Design Document</p></a>
+            <a href="/ai-tools" class="lg-ai-card"><span class="lg-ai-card__icon">💻</span><h3>Code Assistant</h3><p>Debug & optimize</p></a>
+            <a href="/ai-tools" class="lg-ai-card"><span class="lg-ai-card__icon">🗣️</span><h3>NPC Voice</h3><p>Giọng nói NPC tự nhiên</p></a>
         </div>
     </div>
 </section>
 
-{{-- CTA --}}
+{{-- BANNER PROMO (if active) --}}
+@if(!empty($homepageBanners['has_banners']) && !empty($homepageBanners['banners']))
+<section class="lg-section">
+    <div class="lg-container">
+        @foreach($homepageBanners['banners'] as $banner)
+        <a href="{{ $banner['link'] }}" target="{{ $banner['target'] }}" class="lg-banner-promo__item">
+            <img src="{{ $banner['image'] }}" alt="{{ $banner['image_alt'] ?? $banner['title'] }}" loading="lazy">
+            @if($banner['title'])
+            <div class="lg-banner-promo__overlay">
+                <span class="lg-banner-promo__title">{{ $banner['title'] }}</span>
+                @if($banner['content'])<span class="lg-banner-promo__desc">{{ $banner['content'] }}</span>@endif
+            </div>
+            @endif
+        </a>
+        @endforeach
+    </div>
+</section>
+@endif
+
+{{-- SOCIAL PROOF + CTA --}}
 <section class="lg-cta">
     <div class="lg-container">
-        <h2 class="lg-cta__title">Sẵn sàng tham gia cộng đồng?</h2>
-        <p class="lg-cta__sub">Kết nối với hàng nghìn Game Developer Việt Nam</p>
+        <div class="lg-stats__grid">
+            <div class="lg-stats__item"><span class="lg-stats__num">12.000+</span><span class="lg-stats__label">Developers</span></div>
+            <div class="lg-stats__item"><span class="lg-stats__num">1.250+</span><span class="lg-stats__label">Source Code</span></div>
+            <div class="lg-stats__item"><span class="lg-stats__num">{{ $stats['blog_posts'] ?? 850 }}+</span><span class="lg-stats__label">Bài viết</span></div>
+            <div class="lg-stats__item"><span class="lg-stats__num">80+</span><span class="lg-stats__label">Game Studio</span></div>
+        </div>
+        <h2 class="lg-cta__title">Ship game nhanh hơn, bắt đầu ngay hôm nay.</h2>
         <div class="lg-cta__btns">
-            <a href="/cong-dong" class="lg-btn lg-btn--primary">Tham gia ngay</a>
-            <a href="https://discord.gg/lamgame" target="_blank" class="lg-btn lg-btn--outline">Discord Community</a>
+            <a href="{{ route('lamgame.source-game') }}" class="lg-btn lg-btn--primary">🎮 Xem Source Game</a>
+            <a href="{{ route('forum.index') }}" class="lg-btn lg-btn--outline">💬 Tham gia cộng đồng</a>
         </div>
     </div>
 </section>
@@ -198,80 +181,102 @@
 @endsection
 
 @push('styles')
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>.lg-home{background:#070B14;min-height:100vh}</style>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"></noscript>
 <style>
 .lg-home{background:#070B14;color:#F5F7FA;font-family:'Inter',sans-serif}
 .lg-container{max-width:1200px;margin:0 auto;padding:0 24px}
-.lg-hero{position:relative;min-height:520px;display:flex;align-items:center;justify-content:center;text-align:center;padding:100px 24px;overflow:hidden}
+
+/* HERO — compact */
+.lg-hero{position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 24px 60px;overflow:hidden}
 .lg-hero__bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 40%,rgba(124,92,255,.12) 0%,transparent 60%),radial-gradient(ellipse at 70% 60%,rgba(0,209,255,.08) 0%,transparent 50%)}
 .lg-hero__content{position:relative;z-index:1;max-width:700px}
-.lg-hero__badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,92,255,.1);border:1px solid rgba(124,92,255,.3);border-radius:20px;padding:6px 16px;font-size:.85rem;color:#B7C0D1;margin-bottom:24px}
+.lg-hero__badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,92,255,.1);border:1px solid rgba(124,92,255,.3);border-radius:20px;padding:6px 16px;font-size:.85rem;color:#B7C0D1;margin-bottom:20px}
 .lg-hero__badge-dot{width:8px;height:8px;background:#7C5CFF;border-radius:50%;animation:pulse 2s infinite}
-.lg-hero__title{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.2rem,5vw,3.5rem);font-weight:700;line-height:1.15;margin-bottom:20px;background:linear-gradient(135deg,#F5F7FA,#B7C0D1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.lg-hero__sub{font-size:1.15rem;color:#7A8599;margin-bottom:32px;line-height:1.6}
-.lg-hero__cta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-.lg-btn{display:inline-flex;align-items:center;padding:12px 28px;border-radius:8px;font-weight:600;font-size:.95rem;text-decoration:none!important;transition:all .3s ease}
+.lg-hero__title{font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;line-height:1.15;margin-bottom:16px;background:linear-gradient(135deg,#F5F7FA,#B7C0D1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lg-hero__gradient-text{background:linear-gradient(135deg,#7C5CFF,#00D1FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lg-hero__sub{font-size:1.05rem;color:#7A8599;margin-bottom:28px;line-height:1.6}
+.lg-hero__cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* BUTTONS */
+.lg-btn{display:inline-flex;align-items:center;padding:12px 24px;border-radius:8px;font-weight:600;font-size:.9rem;text-decoration:none!important;transition:all .3s}
 .lg-btn--primary{background:linear-gradient(135deg,#7C5CFF,#5B3FCC);color:#fff!important;box-shadow:0 4px 20px rgba(124,92,255,.3)}
 .lg-btn--primary:hover{box-shadow:0 6px 30px rgba(124,92,255,.5);transform:translateY(-2px)}
+.lg-btn--glow{background:linear-gradient(135deg,#10b981,#059669);color:#fff!important;box-shadow:0 4px 20px rgba(16,185,129,.3)}
+.lg-btn--glow:hover{box-shadow:0 6px 30px rgba(16,185,129,.5);transform:translateY(-2px)}
 .lg-btn--outline{background:transparent;color:#00D1FF!important;border:1.5px solid #00D1FF}
-.lg-btn--outline:hover{background:rgba(0,209,255,.1);box-shadow:0 0 20px rgba(0,209,255,.2)}
-.lg-stats{padding:48px 0;border-bottom:1px solid rgba(124,92,255,.1)}
-.lg-stats__grid{display:grid;grid-template-columns:repeat(5,1fr);gap:24px;text-align:center}
-.lg-stats__item{padding:20px;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.1);border-radius:12px;backdrop-filter:blur(8px);transition:all .3s}
-.lg-stats__item:hover{border-color:#7C5CFF;box-shadow:0 0 20px rgba(124,92,255,.2)}
-.lg-stats__num{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:#00D1FF}
-.lg-stats__label{font-size:.85rem;color:#7A8599;margin-top:4px}
-.lg-section{padding:64px 0}
+.lg-btn--outline:hover{background:rgba(0,209,255,.1)}
+.lg-btn--sm{padding:8px 18px;font-size:.82rem;border-radius:6px;background:rgba(124,92,255,.1);color:#B7C0D1!important;border:1px solid rgba(124,92,255,.2)}
+.lg-btn--sm:hover{background:rgba(124,92,255,.2);color:#fff!important}
+
+/* SECTIONS */
+.lg-section{padding:56px 0}
 .lg-section--alt{background:#0B1020}
-.lg-section__head{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
-.lg-section__title{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:#F5F7FA}
-.lg-section__more{color:#7C5CFF!important;font-weight:500;text-decoration:none;font-size:.9rem}
-.lg-grid{display:grid;gap:24px}
+.lg-section__head{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.lg-section__title{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#F5F7FA;margin:0}
+.lg-section__desc{font-size:.85rem;color:#7A8599;margin-top:4px}
+.lg-section__more{color:#7C5CFF!important;font-weight:500;text-decoration:none;font-size:.85rem}
+
+/* GRID */
+.lg-grid{display:grid;gap:20px}
 .lg-grid--2{grid-template-columns:repeat(2,1fr)}
 .lg-grid--3{grid-template-columns:repeat(3,1fr)}
 .lg-grid--4{grid-template-columns:repeat(4,1fr)}
+
+/* CARDS — Source Game (enhanced) */
 .lg-card{background:rgba(17,24,39,.8);border:1px solid rgba(124,92,255,.1);border-radius:14px;overflow:hidden;transition:all .3s;text-decoration:none!important}
 .lg-card:hover{border-color:#7C5CFF;box-shadow:0 8px 30px rgba(124,92,255,.15);transform:translateY(-4px)}
+.lg-card--featured{border-color:rgba(0,209,255,.3);box-shadow:0 0 20px rgba(0,209,255,.08)}
 .lg-card__img{position:relative;aspect-ratio:16/10;overflow:hidden;background:#111827}
-.lg-card__img img{width:100%;height:100%;object-fit:cover}
+.lg-card__img img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.lg-card:hover .lg-card__img img{transform:scale(1.05)}
 .lg-card__price{position:absolute;top:12px;right:12px;background:rgba(0,209,255,.9);color:#070B14;padding:4px 10px;border-radius:6px;font-weight:700;font-size:.85rem}
-.lg-card__price--free{background:rgba(77,163,255,.9)}
+.lg-card__price--free{background:rgba(16,185,129,.9)}
+.lg-card__hot{position:absolute;top:12px;left:12px;background:rgba(239,68,68,.9);color:#fff;padding:3px 8px;border-radius:5px;font-size:.72rem;font-weight:700}
 .lg-card__badge{position:absolute;top:12px;left:12px;background:rgba(124,92,255,.85);color:#fff;padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600}
 .lg-card__body{padding:16px}
-.lg-card__title{font-size:1rem;font-weight:600;color:#F5F7FA;margin-bottom:8px}
-.lg-card__desc{font-size:.85rem;color:#7A8599;margin-bottom:12px}
-.lg-card__meta{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:#7A8599}
-.lg-tag{display:inline-block;background:rgba(124,92,255,.1);color:#B7C0D1;border:1px solid rgba(124,92,255,.2);border-radius:5px;padding:2px 8px;font-size:.75rem}
-.lg-tag--cyan{background:rgba(0,209,255,.1);border-color:rgba(0,209,255,.3);color:#00D1FF}
-.lg-job{display:flex;gap:16px;align-items:center;padding:20px;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.1);border-radius:12px;transition:all .3s}
-.lg-job:hover{border-color:#7C5CFF;box-shadow:0 0 20px rgba(124,92,255,.15)}
-.lg-job__logo{width:48px;height:48px;background:linear-gradient(135deg,#7C5CFF,#00D1FF);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;color:#fff;flex-shrink:0}
-.lg-job__title{font-size:1rem;font-weight:600;color:#F5F7FA;margin-bottom:4px}
-.lg-job__company{font-size:.85rem;color:#7A8599;margin-bottom:8px}
-.lg-job__tags{display:flex;gap:8px;flex-wrap:wrap}
-.lg-forum-list{display:flex;flex-direction:column;gap:12px}
-.lg-forum-item{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.08);border-radius:10px;text-decoration:none!important;transition:all .3s}
+.lg-card__title{font-size:1rem;font-weight:600;color:#F5F7FA;margin-bottom:6px}
+.lg-card__desc{font-size:.82rem;color:#7A8599;margin-bottom:10px;line-height:1.4}
+.lg-card__meta{display:flex;justify-content:space-between;align-items:center;font-size:.78rem;color:#7A8599}
+.lg-card__stats-row{display:flex;gap:10px}
+.lg-tag{display:inline-block;background:rgba(124,92,255,.1);color:#B7C0D1;border:1px solid rgba(124,92,255,.2);border-radius:5px;padding:2px 8px;font-size:.72rem}
+
+/* FORUM */
+.lg-forum-list{display:flex;flex-direction:column;gap:10px}
+.lg-forum-item{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.08);border-radius:10px;text-decoration:none!important;transition:all .3s}
 .lg-forum-item:hover{border-color:#7C5CFF;background:rgba(124,92,255,.05)}
-.lg-forum-item__title{font-size:.95rem;font-weight:500;color:#F5F7FA;margin-bottom:4px}
-.lg-forum-item__author{font-size:.8rem;color:#7A8599}
-.lg-forum-item__stats{display:flex;gap:16px;font-size:.8rem;color:#7A8599}
-.lg-ai-card{padding:24px;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.1);border-radius:14px;text-align:center;transition:all .3s}
-.lg-ai-card:hover{border-color:#00D1FF;box-shadow:0 0 25px rgba(0,209,255,.15);transform:translateY(-4px)}
-.lg-ai-card__icon{font-size:2.5rem;display:block;margin-bottom:12px}
-.lg-ai-card h3{font-size:1rem;font-weight:600;color:#F5F7FA;margin-bottom:8px}
-.lg-ai-card p{font-size:.85rem;color:#7A8599}
-.lg-quick{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
-.lg-quick__item{display:flex;flex-direction:column;align-items:center;gap:10px;padding:24px 16px;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.1);border-radius:12px;text-decoration:none!important;transition:all .3s}
-.lg-quick__item:hover{border-color:#7C5CFF;box-shadow:0 0 20px rgba(124,92,255,.2);transform:translateY(-3px)}
-.lg-quick__icon{font-size:2rem}
-.lg-quick__text{font-size:.85rem;font-weight:500;color:#B7C0D1}
-.lg-cta{padding:80px 24px;text-align:center;background:radial-gradient(ellipse at center,rgba(124,92,255,.08) 0%,transparent 70%)}
-.lg-cta__title{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;color:#F5F7FA;margin-bottom:12px}
-.lg-cta__sub{color:#7A8599;margin-bottom:32px;font-size:1.1rem}
+.lg-forum-item__title{font-size:.92rem;font-weight:500;color:#F5F7FA;margin-bottom:4px}
+.lg-forum-item__author{font-size:.78rem;color:#7A8599}
+.lg-forum-item__stats{display:flex;gap:14px;font-size:.78rem;color:#7A8599}
+
+/* AI TOOLS */
+.lg-ai-card{display:block;padding:20px;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.1);border-radius:14px;text-align:center;text-decoration:none!important;transition:all .3s}
+.lg-ai-card:hover{border-color:#00D1FF;box-shadow:0 0 25px rgba(0,209,255,.12);transform:translateY(-3px)}
+.lg-ai-card__icon{font-size:2rem;display:block;margin-bottom:10px}
+.lg-ai-card h3{font-size:.9rem;font-weight:600;color:#F5F7FA;margin-bottom:6px}
+.lg-ai-card p{font-size:.8rem;color:#7A8599;margin:0}
+
+/* BANNER */
+.lg-banner-promo__item{display:block;border-radius:14px;overflow:hidden;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.4);transition:transform .3s}
+.lg-banner-promo__item:hover{transform:translateY(-3px)}
+.lg-banner-promo__item img{width:100%;height:180px;object-fit:cover;display:block}
+.lg-banner-promo__overlay{position:absolute;bottom:0;left:0;right:0;padding:14px 18px;background:linear-gradient(transparent,rgba(0,0,0,.8))}
+.lg-banner-promo__title{display:block;color:#fff;font-weight:700;font-size:1rem}
+.lg-banner-promo__desc{display:block;color:#cbd5e1;font-size:.82rem;margin-top:3px}
+
+/* CTA + STATS */
+.lg-cta{padding:64px 24px;text-align:center;background:radial-gradient(ellipse at center,rgba(124,92,255,.06) 0%,transparent 70%)}
+.lg-cta__title{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:#F5F7FA;margin:32px 0 24px}
 .lg-cta__btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.lg-stats__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center;margin-bottom:8px}
+.lg-stats__item{padding:16px;background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.1);border-radius:10px}
+.lg-stats__num{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:#00D1FF}
+.lg-stats__label{font-size:.8rem;color:#7A8599;margin-top:2px}
+
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-@media(max-width:1024px){.lg-grid--4{grid-template-columns:repeat(2,1fr)}.lg-quick{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:768px){.lg-hero{min-height:400px;padding:60px 20px}.lg-hero__title{font-size:2rem}.lg-stats__grid{grid-template-columns:repeat(3,1fr)}.lg-grid--2,.lg-grid--3{grid-template-columns:1fr}.lg-quick{grid-template-columns:repeat(3,1fr)}.lg-section__head{flex-direction:column;gap:8px;align-items:flex-start}.lg-forum-item{flex-direction:column;align-items:flex-start;gap:8px}}
-@media(max-width:480px){.lg-stats__grid{grid-template-columns:repeat(2,1fr)}.lg-quick{grid-template-columns:repeat(2,1fr)}.lg-grid--4{grid-template-columns:1fr}.lg-hero__cta{flex-direction:column;align-items:center}}
+@media(max-width:1024px){.lg-grid--4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.lg-hero{padding:60px 20px 40px}.lg-hero__title{font-size:1.8rem}.lg-hero__cta{flex-direction:column;align-items:center}.lg-grid--2,.lg-grid--3{grid-template-columns:1fr}.lg-stats__grid{grid-template-columns:repeat(2,1fr)}.lg-section__head{flex-direction:column;gap:8px;align-items:flex-start}.lg-forum-item{flex-direction:column;align-items:flex-start;gap:8px}}
+@media(max-width:480px){.lg-grid--4{grid-template-columns:1fr}.lg-stats__grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 @endpush

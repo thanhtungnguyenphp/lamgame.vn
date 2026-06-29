@@ -1,7 +1,13 @@
-@extends('shop::layouts.master')
+@extends('layouts.master')
 @section('page_title') {{ $article->title }} @endsection
 
-@section('content-wrapper')
+@push('styles')
+<style>.container{max-width:1100px}</style>
+@endpush
+@push('styles')
+<link rel="stylesheet" href="/css/sport-utils.css">
+@endpush
+@section('content')
 <div class="container mx-auto px-4 py-6 max-w-3xl">
     <a href="{{ route('sport.articles') }}" class="text-blue-400 text-sm">← Tin tức thể thao</a>
     <h1 class="text-2xl font-bold mt-3 mb-4">{{ $article->title }}</h1>

@@ -24,6 +24,7 @@
     </script>
     <!-- Highlight Cards CSS -->
     <link rel="stylesheet" href="{{ asset('css/job-detail-highlight.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/job-detail-dark.css') }}">
     
     <!-- Editor Content CSS -->
     <link rel="stylesheet" href="{{ asset('css/editor-content.css') }}">

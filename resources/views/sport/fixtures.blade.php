@@ -1,7 +1,24 @@
-@extends('shop::layouts.master')
-@section('page_title') Lịch thi đấu — {{ $date }} @endsection
+@extends('layouts.master')
+@section('page_title') {{ $seo_title ?? "Lịch thi đấu — {$date}" }} @endsection
+@section('page_description', $seo_description ?? '')
+@push('schema_markup')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "{{ $seo_title ?? '' }}",
+    "numberOfItems": {{ $matches->flatten()->count() }}
+}
+</script>
+@endpush
 
-@section('content-wrapper')
+@push('styles')
+<style>.container{max-width:1100px}</style>
+@endpush
+@push('styles')
+<link rel="stylesheet" href="/css/sport-utils.css">
+@endpush
+@section('content')
 <div class="container mx-auto px-4 py-6">
     <h1 class="text-2xl font-bold mb-4">📅 Lịch thi đấu</h1>
 

@@ -1,7 +1,13 @@
-@extends('shop::layouts.master')
+@extends('layouts.master')
 @section('page_title') {{ $team->name }} @endsection
 
-@section('content-wrapper')
+@push('styles')
+<style>.container{max-width:1100px}</style>
+@endpush
+@push('styles')
+<link rel="stylesheet" href="/css/sport-utils.css">
+@endpush
+@section('content')
 <div class="container mx-auto px-4 py-6">
     <h1 class="text-2xl font-bold mb-4">{{ $team->name }}</h1>
 

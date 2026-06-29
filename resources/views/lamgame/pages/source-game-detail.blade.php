@@ -125,14 +125,14 @@
 
                 {{-- Author --}}
                 <div class="sd-author">
-                    @if($sourceGame['author_logo'])
-                    <img src="{{ $sourceGame['author_logo'] }}" alt="{{ $sourceGame['author_name'] }}" class="sd-author__avatar">
+                    @if(!empty($sourceGame['author_logo']))
+                    <img src="{{ $sourceGame['author_logo'] }}" alt="{{ $sourceGame['author_name'] ?? '' }}" class="sd-author__avatar">
                     @else
-                    <div class="sd-author__avatar sd-author__avatar--placeholder">{{ mb_strtoupper(mb_substr($sourceGame['author_name'], 0, 1)) }}</div>
+                    <div class="sd-author__avatar sd-author__avatar--placeholder">{{ mb_strtoupper(mb_substr($sourceGame['author_name'] ?? 'U', 0, 1)) }}</div>
                     @endif
                     <div>
-                        <span class="sd-author__name">{{ $sourceGame['author_name'] }} @if($sourceGame['author_verified'])✓@endif</span>
-                        @if($sourceGame['author_slug'])
+                        <span class="sd-author__name">{{ $sourceGame['author_name'] ?? 'Unknown' }} @if(!empty($sourceGame['author_verified']))✓@endif</span>
+                        @if(!empty($sourceGame['author_slug']))
                         <a href="{{ url('seller/' . $sourceGame['author_slug']) }}" class="sd-author__link">Xem portfolio →</a>
                         @endif
                     </div>
