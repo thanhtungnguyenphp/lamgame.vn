@@ -55,6 +55,23 @@ Route::prefix('the-thao')->group(function () {
     Route::get('tin-tuc/{id}', [App\Http\Controllers\SportWebController::class, 'article'])->name('sport.article');
 });
 
+// Lottery / Xổ số Web Views
+Route::prefix('xo-so')->group(function () {
+    Route::get('/', [App\Http\Controllers\LotteryWebController::class, 'index'])->name('lottery.index');
+    Route::get('mien-bac', [App\Http\Controllers\LotteryWebController::class, 'mienBac'])->name('lottery.mien-bac');
+    Route::get('mien-trung', [App\Http\Controllers\LotteryWebController::class, 'mienTrung'])->name('lottery.mien-trung');
+    Route::get('mien-nam', [App\Http\Controllers\LotteryWebController::class, 'mienNam'])->name('lottery.mien-nam');
+    Route::get('vietlott', [App\Http\Controllers\LotteryWebController::class, 'vietlott'])->name('lottery.vietlott');
+    Route::get('vietlott/keno', [App\Http\Controllers\LotteryWebController::class, 'kenoResult'])->name('lottery.keno');
+    Route::get('vietlott/power-655', [App\Http\Controllers\LotteryWebController::class, 'power655'])->name('lottery.power655');
+    Route::get('vietlott/mega-645', [App\Http\Controllers\LotteryWebController::class, 'mega645'])->name('lottery.mega645');
+    // SEO Landing Pages
+    Route::get('thong-ke', [App\Http\Controllers\LotteryWebController::class, 'statistics'])->name('lottery.statistics');
+    Route::get('do-so', [App\Http\Controllers\LotteryWebController::class, 'check'])->name('lottery.check');
+    Route::get('lich-quay', [App\Http\Controllers\LotteryWebController::class, 'schedule'])->name('lottery.schedule');
+    Route::get('dai/{code}', [App\Http\Controllers\LotteryWebController::class, 'province'])->name('lottery.province');
+});
+
 // Blog routes
 Route::get('blog', [LamGamePageController::class, 'blog'])->name('lamgame.blog');
 Route::get('blog/{slug}', [LamGamePageController::class, 'blogShow'])->name('blog.show');
