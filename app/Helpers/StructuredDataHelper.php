@@ -189,6 +189,70 @@ class StructuredDataHelper
     }
 
     /**
+     * Generate HowTo schema from blog with step headings (h2/h3 containing "Bước")
+     */
+    public static function howTo($blog)
+    {
+        $steps = [];
+        preg_match_all('/<h[23][^>]*>(.*?Bước\s*\d+[^<]*)<\/h[23]>/iu', $blog->description, $headings);
+        if (empty($headings[1])) return null;
+
+        foreach ($headings[1] as $i => $heading) {
+            $steps[] = [
+                '@type' => 'HowToStep',
+                'position' => $i + 1,
+                'name' => strip_tags($heading),
+            ];
+        }
+
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'HowTo',
+            'name' => $blog->name,
+            'description' => Str::limit(strip_tags($blog->short_description ?? $blog->description), 200),
+            'step' => $steps,
+        ];
+
+        return json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    /**
+     * Auto-inject internal links into blog content based on keywords
+     */
+    public static function autoInternalLinks(string $html): string
+    {
+        $links = [
+            'Phaser 3' => '/source-game',
+            'source game' => '/source-game',
+            'source code' => '/source-game',
+            'mini game' => '/choi-game',
+            'chơi game' => '/choi-game',
+            'AI tools' => '/ai-tools',
+            'GDD Generator' => '/ai-tools#gdd',
+            'Asset Generator' => '/ai-tools#asset',
+            'việc làm' => '/viec-lam-game',
+            'tuyển dụng' => '/viec-lam-game',
+            'game developer' => '/viec-lam-game',
+            'forum' => '/forum',
+            'cộng đồng' => '/forum',
+            'World Cup' => '/world-cup-2026',
+            'leaderboard' => '/choi-game',
+        ];
+
+        $linked = [];
+        foreach ($links as $keyword => $url) {
+            // Only link first occurrence, skip if already inside <a> tag
+            if (in_array($url, $linked)) continue;
+            $pattern = '/(?<!["\'>\/])(' . preg_quote($keyword, '/') . ')(?![^<]*<\/a>)/iu';
+            $replacement = '<a href="' . $url . '" class="bd-autolink">$1</a>';
+            $html = preg_replace($pattern, $replacement, $html, 1, $count);
+            if ($count > 0) $linked[] = $url;
+        }
+
+        return $html;
+    }
+
+    /**
      * Generate Organization schema
      */
     public static function organization()

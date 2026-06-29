@@ -2888,3 +2888,4 @@ img[loading="lazy"].loaded, img:not([loading="lazy"]) { opacity: 1; }
 @media (max-width: 768px) {
   .nav-redesign__notif-dropdown { width: 280px; right: -60px; }
 }
+.bd-autolink{color:#6C63FF;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.bd-autolink:hover{text-decoration-style:solid}

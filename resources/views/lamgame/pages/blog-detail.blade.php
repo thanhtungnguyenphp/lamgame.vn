@@ -55,6 +55,12 @@
     {!! \App\Helpers\StructuredDataHelper::faq($faqs) !!}
     </script>
     @endif
+    @php $howTo = \App\Helpers\StructuredDataHelper::howTo($blog); @endphp
+    @if($howTo)
+    <script type="application/ld+json">
+    {!! $howTo !!}
+    </script>
+    @endif
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         if (typeof window.trackEvent === 'function') {
@@ -123,7 +129,7 @@
 
                 {{-- Content Body --}}
                 <div class="bd-content" id="articleContent">
-                    {!! $blog->description !!}
+                    {!! \App\Helpers\StructuredDataHelper::autoInternalLinks($blog->description) !!}
                 </div>
 
                 {{-- Tags --}}
