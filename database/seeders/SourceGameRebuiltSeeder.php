@@ -105,7 +105,7 @@ class SourceGameRebuiltSeeder extends Seeder
         ];
 
         $now = Carbon::now();
-        $categoryId = DB::table('categories')->where('slug', 'source-game')->value('id') ?? 2;
+        $categoryId = DB::table('category_translations')->where('slug', 'source-game')->value('category_id') ?? 2;
 
         foreach ($games as $i => $game) {
             $productId = DB::table('products')->insertGetId([
