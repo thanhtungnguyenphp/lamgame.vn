@@ -1,0 +1,37 @@
+name: Build & Deploy Games
+on:
+  push:
+    branches: [main]
+    paths: ['games/**', 'shared/**']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        game: [2048-ghep-so, xep-gach, chim-bay, ran-san-moi, keo-ngot-xep-3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: pnpm }
+      - run: pnpm install
+      - run: pnpm --filter @lamgame/${{ matrix.game }} build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.game }}
+          path: games/${{ matrix.game }}/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: dist }
+      - name: Deploy to server
+        run: |
+          for game in dist/*/; do
+            slug=$(basename "$game")
+            rsync -avz "$game" deploy@lamgame.vn:/data/www/lamgame.vn/public/games/$slug/
+          done

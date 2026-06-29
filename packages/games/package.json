@@ -1,0 +1,28 @@
+{
+  "name": "@lamgame/games",
+  "private": true,
+  "version": "1.0.0",
+  "description": "LamGame Mini Games — Phaser 3 + TypeScript Monorepo",
+  "author": "LamGame Team <dev@lamgame.vn>",
+  "license": "MIT",
+  "workspaces": [
+    "shared",
+    "games/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter $GAME dev",
+    "build": "pnpm --filter $GAME build",
+    "build:all": "pnpm -r build",
+    "new-game": "node scripts/new-game.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "phaser": "^3.80.0",
+    "typescript": "^5.5.0",
+    "vite": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  }
+}
