@@ -117,6 +117,38 @@ importers:
         specifier: ^5.4.0
         version: 5.4.21(@types/node@20.19.43)
 
+  games/doan-tu-wordle:
+    dependencies:
+      '@lamgame/shared':
+        specifier: workspace:*
+        version: link:../../shared
+      phaser:
+        specifier: ^3.80.0
+        version: 3.90.0
+    devDependencies:
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+      vite:
+        specifier: ^5.4.0
+        version: 5.4.21(@types/node@20.19.43)
+
+  games/idle-clicker:
+    dependencies:
+      '@lamgame/shared':
+        specifier: workspace:*
+        version: link:../../shared
+      phaser:
+        specifier: ^3.80.0
+        version: 3.90.0
+    devDependencies:
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+      vite:
+        specifier: ^5.4.0
+        version: 5.4.21(@types/node@20.19.43)
+
   games/keo-ngot-xep-3:
     dependencies:
       '@lamgame/shared':
@@ -134,6 +166,22 @@ importers:
         version: 5.4.21(@types/node@20.19.43)
 
   games/lat-the-nho:
+    dependencies:
+      '@lamgame/shared':
+        specifier: workspace:*
+        version: link:../../shared
+      phaser:
+        specifier: ^3.80.0
+        version: 3.90.0
+    devDependencies:
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+      vite:
+        specifier: ^5.4.0
+        version: 5.4.21(@types/node@20.19.43)
+
+  games/merge-fruit:
     dependencies:
       '@lamgame/shared':
         specifier: workspace:*
