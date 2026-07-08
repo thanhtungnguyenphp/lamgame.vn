@@ -32,6 +32,17 @@ class HomeController extends Controller
     }
 
     /**
+     * Homepage V2 — Dark theme marketplace (preview)
+     */
+    public function indexV2()
+    {
+        $service = new \App\Services\HomepageV2Service();
+        $data = $service->getHomepageData();
+
+        return view('home-v2.index', $data);
+    }
+
+    /**
      * Get all dynamic data for homepage
      */
     private function getHomepageData()

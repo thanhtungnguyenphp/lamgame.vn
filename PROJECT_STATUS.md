@@ -9,7 +9,7 @@
 | Kênh | Trạng thái | Ghi chú |
 |------|:----------:|---------|
 | PayPal | ✅ LIVE | Production go-live 23/04 — AI Subscription + Source Game checkout hoạt động |
-| Lemon Squeezy | ⏳ Đang chờ duyệt | Store #334725 — Chờ Stripe identity verification |
+| Lemon Squeezy | ⏳ Chờ support | Store #334725 — KYC bị reject, đã gửi email hello@lemonsqueezy.com (01/07/2026) chờ phản hồi |
 
 ---
 
@@ -46,7 +46,7 @@
 
 | Việc | Trạng thái | Chi tiết |
 |------|:----------:|----------|
-| Lemon Squeezy | ⏳ Chờ Stripe duyệt | Chờ verify → kích hoạt live mode |
+| Lemon Squeezy | ⏳ Chờ support | Đã gửi email 01/07 → chờ phản hồi re-verify KYC |
 
 ---
 
@@ -70,7 +70,7 @@
 - [ ] Forum Phase 4 (tuỳ chọn): Polls, Private Messages, Follow User/Tag, WebSocket real-time
 
 ### Kỹ thuật (backlog)
-- [ ] Dọn file macOS metadata (._*) — Script sẵn, 1098 files chờ xóa
+- [x] Dọn file macOS metadata (._*) — ✅ Done 01/07 (đã xóa hết)
 - [ ] CI/CD pipeline
 - [x] Unit/Feature tests — ✅ Smoke tests 14/05 (30+ test cases)
 

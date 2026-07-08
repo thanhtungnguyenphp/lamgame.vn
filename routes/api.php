@@ -68,6 +68,13 @@ require __DIR__ . '/api/sport.php';
 // Include forum API routes
 Route::prefix('v1/forum')->group(base_path('routes/api/forum.php'));
 
+// Homepage V2 API (public, cached)
+Route::prefix('v1/homepage')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\HomepageApiController::class, 'index']);
+    Route::get('/products', [\App\Http\Controllers\Api\HomepageApiController::class, 'products']);
+    Route::get('/categories', [\App\Http\Controllers\Api\HomepageApiController::class, 'categories']);
+});
+
 // Blog Publish API (key-based auth)
 Route::prefix('blog')->name('api.blog.')->middleware('api.key')->group(function () {
     Route::post('/publish', [\App\Http\Controllers\Api\BlogPublishController::class, 'publish'])->middleware('throttle:10,1')->name('publish');

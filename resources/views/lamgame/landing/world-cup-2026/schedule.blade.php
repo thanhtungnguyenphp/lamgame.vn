@@ -1,8 +1,8 @@
-{{-- Schedule Section — Real results updated 01/07/2026 --}}
+{{-- Schedule Section — Real results updated 08/07/2026 --}}
 <section class="wc26-schedule" id="schedule">
     <div class="container">
         <h2 class="wc26-section__title">📅 Lịch thi đấu & Kết quả</h2>
-        <p class="wc26-section__desc">Cập nhật kết quả World Cup 2026 — VÒNG 32 đang diễn ra (28/06 - 03/07)</p>
+        <p class="wc26-section__desc">Cập nhật kết quả World Cup 2026 — VÒNG 16 KẾT THÚC ✅ • TỨ KẾT bắt đầu 09/07</p>
 
         {{-- Phase tabs --}}
         <div class="wc26-tabs" role="tablist">
@@ -17,10 +17,10 @@
 
             {{-- Round of 32 (default view) --}}
             <div class="wc26-panel" id="panel-recent">
-                <h3 class="wc26-panel__date">📌 Lịch thi đấu hôm nay 01/07 (Vòng 32)</h3>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Anh vs DR Congo 🇨🇩</span><span class="wc26-match__info">Match 80</span></div>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇺🇸 Mỹ vs Bosnia 🇧🇦</span><span class="wc26-match__info">Match 81</span></div>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇧🇪 Bỉ vs Senegal 🇸🇳</span><span class="wc26-match__info">Match 82</span></div>
+                <h3 class="wc26-panel__date">📌 Kết quả 01/07 (Vòng 32)</h3>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Anh <strong>2-1</strong> DR Congo 🇨🇩</span><span class="wc26-match__info">⚽ Kane x2 (vượt Pelé) — Anh vào vòng 16</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇧🇪 Bỉ <strong>3-2</strong> Senegal 🇸🇳 (AET)</span><span class="wc26-match__info">⚽ Bỉ ngược dòng từ 0-2! Vào vòng 16</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇺🇸 Mỹ <strong>2-0</strong> Bosnia 🇧🇦</span><span class="wc26-match__info">⚽ Mỹ thắng knockout lần đầu từ 2002! Balogun thẻ đỏ oan</span></div>
 
                 <h3 class="wc26-panel__date">📌 Kết quả 30/06</h3>
                 <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇫🇷 Pháp <strong>3-0</strong> Thụy Điển 🇸🇪</span><span class="wc26-match__info">⚽ Mbappé x2 — Pháp vào vòng 16</span></div>
@@ -34,13 +34,29 @@
                 <h3 class="wc26-panel__date">📌 Kết quả 28/06</h3>
                 <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇨🇦 Canada <strong>1-0</strong> Nam Phi 🇿🇦</span><span class="wc26-match__info">⚽ Eustáquio 90+2' — Canada lần đầu vào vòng 16!</span></div>
 
-                <h3 class="wc26-panel__date">📌 Lịch sắp tới</h3>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇵🇹 Bồ Đào Nha vs Croatia 🇭🇷</span><span class="wc26-match__info">02/07 — Match 83</span></div>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇪🇸 Tây Ban Nha vs Áo 🇦🇹</span><span class="wc26-match__info">02/07 — Match 84</span></div>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇨🇭 Thụy Sĩ vs Algeria 🇩🇿</span><span class="wc26-match__info">02/07 — Match 85</span></div>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇦🇷 Argentina vs Cape Verde 🇨🇻</span><span class="wc26-match__info">03/07 — Match 86</span></div>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇨🇴 Colombia vs Ghana 🇬🇭</span><span class="wc26-match__info">03/07 — Match 87</span></div>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇦🇺 Australia vs Ai Cập 🇪🇬</span><span class="wc26-match__info">03/07 — Match 88</span></div>
+                <h3 class="wc26-panel__date">📌 Kết quả 02-03/07 (Vòng 32 kết thúc!)</h3>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇵🇹 Bồ Đào Nha <strong>2-1</strong> Croatia 🇭🇷</span><span class="wc26-match__info">⚽ Ronaldo ghi bàn — BĐN vào vòng 16</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇪🇸 Tây Ban Nha <strong>3-0</strong> Áo 🇦🇹</span><span class="wc26-match__info">⚽ TBN hủy diệt — vào vòng 16</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇨🇭 Thụy Sĩ <strong>2-0</strong> Algeria 🇩🇿</span><span class="wc26-match__info">⚽ Thụy Sĩ vào vòng 16</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇦🇷 Argentina <strong>3-2</strong> Cape Verde (AET) 🇨🇻</span><span class="wc26-match__info">⚽ Argentina suýt bị loại! Messi 111' — vào vòng 16</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇨🇴 Colombia <strong>1-0</strong> Ghana 🇬🇭</span><span class="wc26-match__info">⚽ Colombia vào vòng 16</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R32</span><span class="wc26-match__teams">🇦🇺 Ai Cập <strong>1-1</strong> Australia (pen 4-2) 🇪🇬</span><span class="wc26-match__info">⚽ AUSTRALIA BỊ LOẠI! Ai Cập vào vòng 16</span></div>
+
+                <h3 class="wc26-panel__date">📌 VÒNG 16 (04/07 - 07/07)</h3>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R16</span><span class="wc26-match__teams">🇨🇦 Canada 0-<strong>3</strong> Morocco 🇲🇦</span><span class="wc26-match__info">⚽ Morocco hủy diệt! Vào tứ kết</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R16</span><span class="wc26-match__teams">🇫🇷 Pháp <strong>1-0</strong> Paraguay 🇵🇾</span><span class="wc26-match__info">⚽ Mbappé penalty — Pháp vào tứ kết</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R16</span><span class="wc26-match__teams">🇧🇷 Brazil 1-<strong>2</strong> Na Uy 🇳🇴</span><span class="wc26-match__info">⚽ Haaland x2! BRAZIL BỊ LOẠI! Na Uy vào tứ kết</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R16</span><span class="wc26-match__teams">🇲🇽 Mexico 2-<strong>3</strong> Anh 🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="wc26-match__info">⚽ Trận hay nhất giải! Bellingham rực sáng — Anh vào tứ kết 🔥</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R16</span><span class="wc26-match__teams">🇪🇸 TBN <strong>1-0</strong> Bồ Đào Nha 🇵🇹</span><span class="wc26-match__info">⚽ Merino 90+3'! Ronaldo chia tay World Cup — TBN vào tứ kết</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R16</span><span class="wc26-match__teams">🇧🇪 Bỉ <strong>4-1</strong> Mỹ 🇺🇸</span><span class="wc26-match__info">⚽ De Ketelaere x2 — MỸ BỊ LOẠI! Bỉ vào tứ kết — vào tứ kết</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R16</span><span class="wc26-match__teams">🇪🇬 Ai Cập 2-<strong>3</strong> Argentina 🇦🇷</span><span class="wc26-match__info">⚽ NGƯỢC DÒNG từ 0-2! Messi ghi bàn thứ 8 — Argentina vào tứ kết</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R16</span><span class="wc26-match__teams">🇨🇭 Thụy Sĩ 0-<strong>0</strong> Colombia (pen 4-3) 🇨🇴</span><span class="wc26-match__info">⚽ Thụy Sĩ vào tứ kết qua loạt pen!</span></div>
+
+                <h3 class="wc26-panel__date">📌 TỨ KẾT (09/07 - 11/07)</h3>
+                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">QF</span><span class="wc26-match__teams">🇫🇷 Pháp vs Morocco 🇲🇦</span><span class="wc26-match__info">09/07 — Boston</span></div>
+                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">QF</span><span class="wc26-match__teams">🇪🇸 TBN vs Bỉ 🇧🇪</span><span class="wc26-match__info">10/07 — Los Angeles</span></div>
+                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">QF</span><span class="wc26-match__teams">🇳🇴 Na Uy vs Anh 🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="wc26-match__info">11/07 — Miami</span></div>
+                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">QF</span><span class="wc26-match__teams">🇦🇷 Argentina 🇦🇷 vs Thụy Sĩ 🇨🇭</span><span class="wc26-match__info">11/07 — Kansas City</span></div>
             </div>
 
             {{-- Matchday 3 --}}
@@ -67,7 +83,7 @@
                 {{-- Bảng J, K, L — 27/06 (chưa đấu) --}}
                 <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">L</span><span class="wc26-match__teams">🇵🇦 Panama vs Anh 🏴</span><span class="wc26-match__info">27/06 — East Rutherford</span></div>
                 <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">L</span><span class="wc26-match__teams">🇭🇷 Croatia vs Ghana 🇬🇭</span><span class="wc26-match__info">27/06 — Philadelphia</span></div>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">K</span><span class="wc26-match__teams">🇨🇴 Colombia vs Bồ Đào Nha 🇵🇹</span><span class="wc26-match__info">27/06 — Miami</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">K</span><span class="wc26-match__teams">🇨🇴 Colombia vs Bồ Đào Nha 🇵🇹</span><span class="wc26-match__info">27/06 — Miami</span></div>
                 <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">K</span><span class="wc26-match__teams">🇨🇩 DR Congo vs Uzbekistan 🇺🇿</span><span class="wc26-match__info">27/06 — Atlanta</span></div>
                 <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">J</span><span class="wc26-match__teams">🇩🇿 Algeria vs Áo 🇦🇹</span><span class="wc26-match__info">27/06 — Kansas City</span></div>
                 <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">J</span><span class="wc26-match__teams">🇯🇴 Jordan vs Argentina 🇦🇷</span><span class="wc26-match__info">27/06 — Arlington (Dallas)</span></div>

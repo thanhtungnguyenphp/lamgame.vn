@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Route;
 // Homepage route (shop.home.index alias needed by Bagisto)
 Route::get('/', [HomeController::class, 'index'])->name('shop.home.index');
 
+// Homepage V2 preview (remove after go-live)
+Route::get('/home-v2', [HomeController::class, 'indexV2'])->name('shop.home.v2');
+
 // Checkout routes (override Bagisto)
 Route::get('checkout/cart', fn() => view('checkout.cart'))->name('shop.checkout.cart.index');
 Route::get('checkout/onepage', fn() => view('checkout.onepage'))->name('shop.checkout.onepage.index');
