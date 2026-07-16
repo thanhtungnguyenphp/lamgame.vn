@@ -262,8 +262,8 @@ class ForumPost extends Model
                 // 301 redirect to the slug-based URL
                 abort(redirect("/forum/posts/{$post->slug}", 301));
             }
-            // Post doesn't exist → 410 Gone
-            abort(410);
+            // Post doesn't exist → 404
+            abort(404);
         }
 
         // Normal slug-based resolution
