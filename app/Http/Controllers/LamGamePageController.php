@@ -111,20 +111,24 @@ class LamGamePageController extends Controller
         // Filter by category if specified
         if ($categorySlug) {
             $category = BlogCategory::where('slug', $categorySlug)->active()->first();
-            if ($category) {
-                $blogsQuery->where(function($query) use ($category) {
-                    $query->where('default_category', $category->id)
-                          ->orWhere('categorys', 'LIKE', '%' . $category->id . '%');
-                });
+            if (!$category) {
+                // Category doesn't exist → 404
+                abort(404);
             }
+            $blogsQuery->where(function($query) use ($category) {
+                $query->where('default_category', $category->id)
+                      ->orWhere('categorys', 'LIKE', '%' . $category->id . '%');
+            });
         }
 
         // Filter by tag if specified
         if ($tagSlug) {
             $tag = BlogTag::where('slug', $tagSlug)->active()->first();
-            if ($tag) {
-                $blogsQuery->where('tags', 'LIKE', '%' . $tag->id . '%');
+            if (!$tag) {
+                // Tag doesn't exist → 404
+                abort(404);
             }
+            $blogsQuery->where('tags', 'LIKE', '%' . $tag->id . '%');
         }
 
         // Search functionality
@@ -187,6 +191,7 @@ class LamGamePageController extends Controller
             'currentCategory' => $categorySlug,
             'currentTag' => $tagSlug,
             'searchQuery' => $search,
+            'shouldNoindex' => ($categorySlug || $tagSlug) && $blogs->total() < 5,
         ]);
     }
 

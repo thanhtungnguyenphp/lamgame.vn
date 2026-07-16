@@ -74,7 +74,7 @@ class Handler extends BaseHandler
                 $viewPath = "{$namespace}::errors.index";
             }
 
-            return response()->view($viewPath, compact('errorCode'));
+            return response()->view($viewPath, compact('errorCode'), $errorCode);
         });
     }
 
@@ -94,6 +94,19 @@ class Handler extends BaseHandler
     protected function handleServerException(): void
     {
         $this->renderable(function (Throwable $throwable, Request $request) {
+            // Don't catch HttpResponseException — these are intentional responses
+            if ($throwable instanceof \Illuminate\Http\Exceptions\HttpResponseException) {
+                return $throwable->getResponse();
+            }
+
+            // Don't catch ModelNotFoundException — render as 404
+            if ($throwable instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                $namespace = $request->is(config('app.admin_url').'/*') ? 'admin' : 'shop';
+                $errorCode = 404;
+                $viewPath = "{$namespace}::errors.index";
+                return response()->view($viewPath, compact('errorCode'), $errorCode);
+            }
+
             $namespace = $request->is(config('app.admin_url').'/*') ? 'admin' : 'shop';
 
             $errorCode = 500;
@@ -111,7 +124,7 @@ class Handler extends BaseHandler
                 $viewPath = "{$namespace}::errors.index";
             }
 
-            return response()->view($viewPath, compact('errorCode'));
+            return response()->view($viewPath, compact('errorCode'), $errorCode);
         });
     }
 }

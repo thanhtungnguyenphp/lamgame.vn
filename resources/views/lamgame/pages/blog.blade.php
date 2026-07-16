@@ -6,6 +6,13 @@
 
 @section('canonical_url'){{ route('lamgame.blog', array_filter(['tag' => $currentTag ?? null, 'category' => $currentCategory ?? null])) }}@endsection
 
+{{-- SEO: Noindex ALL tag/category listing pages (only individual posts should be indexed) --}}
+@push('meta')
+@if(($currentTag ?? null) || ($currentCategory ?? null))
+<meta name="robots" content="noindex, follow">
+@endif
+@endpush
+
 @section('content')
 <div class="bl-page">
 

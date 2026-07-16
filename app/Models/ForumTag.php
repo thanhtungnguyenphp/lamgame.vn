@@ -65,6 +65,33 @@ class ForumTag extends Model
     }
 
     /**
+     * Resolve the route binding for implicit model binding.
+     * Handles legacy duplicate tag slugs like "unity-1", "unity-2" by
+     * redirecting to the clean tag slug "unity".
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        // Try normal resolution first
+        $model = parent::resolveRouteBinding($value, $field);
+        
+        if ($model) {
+            return $model;
+        }
+
+        // If not found, check if it's a suffixed duplicate (e.g., unity-1 → unity)
+        $cleanSlug = preg_replace('/-\d+$/', '', $value);
+        if ($cleanSlug !== $value) {
+            $cleanModel = static::where('slug', $cleanSlug)->first();
+            if ($cleanModel) {
+                abort(redirect("/forum/tag/{$cleanSlug}", 301));
+            }
+        }
+
+        // Not found at all — will trigger Laravel's ModelNotFoundException → 404
+        return null;
+    }
+
+    /**
      * Update posts count.
      */
     public function updatePostsCount()

@@ -250,6 +250,27 @@ class ForumPost extends Model
     }
 
     /**
+     * Resolve the route binding for implicit model binding.
+     * Handles legacy numeric ID URLs by redirecting to slug-based URLs.
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        // If the value is numeric, it might be a legacy ID-based URL
+        if (is_numeric($value)) {
+            $post = static::find($value);
+            if ($post && $post->slug) {
+                // 301 redirect to the slug-based URL
+                abort(redirect("/forum/posts/{$post->slug}", 301));
+            }
+            // Post doesn't exist → 410 Gone
+            abort(410);
+        }
+
+        // Normal slug-based resolution
+        return parent::resolveRouteBinding($value, $field);
+    }
+
+    /**
      * Get the post URL.
      */
     public function getUrlAttribute()

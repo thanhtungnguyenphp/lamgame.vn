@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\NoIndexApiResponse;
 use App\Http\Middleware\SeoMetaRobots;
 use App\Http\Middleware\TrustProxies;
 use Sentry\Laravel\Integration;
@@ -55,6 +56,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(SecureHeaders::class);
         $middleware->append(CanInstall::class);
         $middleware->append(SeoMetaRobots::class);
+
+        // Add X-Robots-Tag: noindex to all API responses
+        $middleware->appendToGroup('api', NoIndexApiResponse::class);
 
         /**
          * Add the overridden middleware at the end of the list.
@@ -132,6 +136,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->job(new \App\Jobs\ScrapeVietlotLottery('keno'))
             ->everyTenMinutes()
             ->between('6:00', '22:00');
+
+        // RETRY — chạy lại tất cả miền lúc 20:00 để bắt data thiếu đài
+        $schedule->command('lottery:scrape --region=all --force')
+            ->dailyAt('20:00')
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/lottery-scrape.log'));
 
         // === SPORT CRAWL ===
         $schedule->command('sport:sync-fixtures')->dailyAt('06:00')->withoutOverlapping();

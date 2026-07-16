@@ -18,12 +18,23 @@
     RewriteCond %{SERVER_PORT} ^2083$
     RewriteRule ^ - [F,L]
 
+    # SEO: Return 410 Gone for ghost URLs that should never have existed
+    RewriteRule ^game-reviews/.* - [G,L]
+    RewriteRule ^tags/.* - [G,L]
+
+    # SEO: Redirect category/* to /blog
+    RewriteRule ^category/.* /blog [R=301,L]
+
     # Redirect index.php URLs to clean URLs (SEO Fix)
     RewriteCond %{THE_REQUEST} /index\.php [NC]
     RewriteRule ^index\.php/(.*)$ /$1 [L,R=301,NC]
 
-    # Redirect .html URLs to clean URLs
-    RewriteRule ^(.*)\.html$ /$1 [R=301,L]
+    # Redirect /index.html and /index to homepage
+    RewriteRule ^index\.html$ https://%{HTTP_HOST}/ [R=301,L]
+    RewriteRule ^index$ https://%{HTTP_HOST}/ [R=301,L]
+
+    # Redirect .html URLs to clean URLs (general rule, after specific index rule)
+    RewriteRule ^(.*)\.html$ https://%{HTTP_HOST}/$1 [R=301,L]
 
     # Strip junk query params (legacy Joomla)
     RewriteCond %{QUERY_STRING} ^(option=|Itemid=|\$)
