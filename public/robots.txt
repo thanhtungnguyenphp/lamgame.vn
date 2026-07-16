@@ -18,9 +18,6 @@ Disallow: /api-sport/
 Disallow: /index.php
 Disallow: /index.php/
 
-# Block all paginated URLs (handled via canonical + noindex)
-Disallow: /*?page=
-
 # Block search/filter query params that create duplicates
 Disallow: /*?keyword=
 Disallow: /*?sort=

@@ -4,7 +4,8 @@
 @section('page_title', $page_title ?? 'Blog - LamGame.vn')
 @section('page_description', $page_description ?? '')
 
-@section('canonical_url'){{ route('lamgame.blog', array_filter(['tag' => $currentTag ?? null, 'category' => $currentCategory ?? null])) }}@endsection
+{{-- SEO: Tag/category pages canonical to /blog (Google already chose /blog as canonical) --}}
+@section('canonical_url'){{ route('lamgame.blog') }}@endsection
 
 {{-- SEO: Noindex ALL tag/category listing pages (only individual posts should be indexed) --}}
 @push('meta')

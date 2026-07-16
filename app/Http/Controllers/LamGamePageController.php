@@ -920,8 +920,8 @@ class LamGamePageController extends Controller
             'trendingSources'    => $trendingSources,
             'bestSellingSources' => $bestSellingSources,
             'pagination'         => $pagination,
-            'page_title'         => 'Source Game - Kho Mã Nguồn Game - Làm Game',
-            'page_description'   => 'Tổng hợp các source code game từ cổ điển đến hiện đại. Tải miễn phí để học tập và nghiên cứu.'
+            'page_title'         => 'Mua Bán Source Game Unity, Unreal | Mã Nguồn Game Giá Rẻ — LamGame.vn',
+            'page_description'   => 'Kho source game Unity, Unreal Engine đa dạng thể loại. Mua bán mã nguồn game 2D, 3D chất lượng cao, giá từ 99K. Code sạch, document đầy đủ, hỗ trợ cài đặt miễn phí.',
         ]);
     }
 

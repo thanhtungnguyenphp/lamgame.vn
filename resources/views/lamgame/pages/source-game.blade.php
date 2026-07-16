@@ -3,6 +3,16 @@
 @section('page_title', $page_title ?? 'Source Game Marketplace - Mã Nguồn Game Production-Ready - Làm Game')
 @section('page_description', $page_description ?? 'Marketplace source code game production-ready. Unity, Unreal, Godot. 1200+ source từ cộng đồng developer Việt Nam.')
 
+{{-- SEO: Canonical always points to /source-game (filter pages are variations, not unique) --}}
+@section('canonical_url'){{ route('lamgame.source-game') }}@endsection
+
+{{-- SEO: Noindex filter/sort/search pages (only main /source-game should be indexed) --}}
+@push('meta')
+@if(request()->hasAny(['cat', 'engine', 'genre', 'platform', 'pricing', 'search', 'sort']))
+<meta name="robots" content="noindex, follow">
+@endif
+@endpush
+
 @push('schema_markup')
 <script type="application/ld+json">
 {
