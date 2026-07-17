@@ -1,8 +1,8 @@
-{{-- Schedule Section — Real results updated 08/07/2026 --}}
+{{-- Schedule Section — Real results updated 16/07/2026 --}}
 <section class="wc26-schedule" id="schedule">
     <div class="container">
         <h2 class="wc26-section__title">📅 Lịch thi đấu & Kết quả</h2>
-        <p class="wc26-section__desc">Cập nhật kết quả World Cup 2026 — VÒNG 16 KẾT THÚC ✅ • TỨ KẾT bắt đầu 09/07</p>
+        <p class="wc26-section__desc">Cập nhật kết quả World Cup 2026 — 🏆 CHUNG KẾT: TBN vs Argentina — 19/07 New York</p>
 
         {{-- Phase tabs --}}
         <div class="wc26-tabs" role="tablist">
@@ -53,10 +53,18 @@
                 <div class="wc26-match wc26-match--done"><span class="wc26-match__group">R16</span><span class="wc26-match__teams">🇨🇭 Thụy Sĩ 0-<strong>0</strong> Colombia (pen 4-3) 🇨🇴</span><span class="wc26-match__info">⚽ Thụy Sĩ vào tứ kết qua loạt pen!</span></div>
 
                 <h3 class="wc26-panel__date">📌 TỨ KẾT (09/07 - 11/07)</h3>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">QF</span><span class="wc26-match__teams">🇫🇷 Pháp vs Morocco 🇲🇦</span><span class="wc26-match__info">09/07 — Boston</span></div>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">QF</span><span class="wc26-match__teams">🇪🇸 TBN vs Bỉ 🇧🇪</span><span class="wc26-match__info">10/07 — Los Angeles</span></div>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">QF</span><span class="wc26-match__teams">🇳🇴 Na Uy vs Anh 🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="wc26-match__info">11/07 — Miami</span></div>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">QF</span><span class="wc26-match__teams">🇦🇷 Argentina 🇦🇷 vs Thụy Sĩ 🇨🇭</span><span class="wc26-match__info">11/07 — Kansas City</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">QF</span><span class="wc26-match__teams">🇫🇷 Pháp <strong>2-0</strong> Morocco 🇲🇦</span><span class="wc26-match__info">⚽ Mbappé + Dembélé — Pháp vào bán kết</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">QF</span><span class="wc26-match__teams">🇪🇸 TBN <strong>2-1</strong> Bỉ 🇧🇪</span><span class="wc26-match__info">⚽ Merino lại ghi bàn phút cuối! TBN vào bán kết</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">QF</span><span class="wc26-match__teams">🇳🇴 Na Uy 1-<strong>2</strong> Anh (AET) 🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="wc26-match__info">⚽ Bellingham 105' — Anh vào bán kết!</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">QF</span><span class="wc26-match__teams">🇦🇷 Argentina <strong>3-1</strong> Thụy Sĩ (AET) 🇨🇭</span><span class="wc26-match__info">⚽ Mac Allister + Álvarez + Martínez — Argentina vào bán kết</span></div>
+
+                <h3 class="wc26-panel__date">📌 BÁN KẾT (14-15/07)</h3>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">SF</span><span class="wc26-match__teams">🇫🇷 Pháp 0-<strong>2</strong> Tây Ban Nha 🇪🇸</span><span class="wc26-match__info">⚽ Oyarzabal (pen) + Porro — TBN VÀO CHUNG KẾT!
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">SF</span><span class="wc26-match__teams">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Anh 1-<strong>2</strong> Argentina 🇦🇷</span><span class="wc26-match__info">⚽ Fernández 85' + Martínez 90' — ARGENTINA VÀO CHUNG KẾT!
+
+                <h3 class="wc26-panel__date">📌 TRANH HẠNG 3 & CHUNG KẾT</h3>
+                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">3rd</span><span class="wc26-match__teams">🇫🇷 Pháp 🇫🇷 vs Anh 🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="wc26-match__info">18/07 — Miami</span></div>
+                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">FINAL</span><span class="wc26-match__teams">🏆 🇪🇸 TÂY BAN NHA 🇪🇸 vs ARGENTINA 🇦🇷</span><span class="wc26-match__info">19/07 15:00 ET — New York/New Jersey 🏆</span></div>
             </div>
 
             {{-- Matchday 3 --}}

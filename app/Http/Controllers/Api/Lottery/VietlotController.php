@@ -11,13 +11,14 @@ class VietlotController extends Controller
 {
     public function index(Request $request, LotteryService $service): JsonResponse
     {
-        $request->validate([
-            'game'   => 'required|in:mega645,power655,max3d,max3d_pro,keno',
-            'date'   => 'nullable|date_format:Y-m-d',
-            'period' => 'nullable|string|max:10',
-        ]);
+        $game = $request->input('game');
+        if (!$game || !in_array($game, ['mega645', 'power655', 'max3d', 'max3d_pro', 'keno'])) {
+            return response()->json([
+                'status' => 'error',
+                'error'  => ['code' => 'INVALID_GAME', 'message' => 'Game required: mega645, power655, max3d, max3d_pro, keno'],
+            ], 400);
+        }
 
-        $game   = $request->input('game');
         $date   = $request->input('date');
         $period = $request->input('period');
 
@@ -26,6 +27,11 @@ class VietlotController extends Controller
             $data = $service->getKenoPeriods($date);
         } else {
             $data = $service->getVietlot($game, $date, $period);
+        }
+
+        // Fallback: lấy draw mới nhất nếu không có data hôm nay
+        if (!$data && !$date) {
+            $data = $service->getVietlotLatest($game);
         }
 
         if (!$data) {

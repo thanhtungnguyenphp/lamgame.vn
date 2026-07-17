@@ -11,19 +11,22 @@ class LotteryStatisticsController extends Controller
 {
     public function index(Request $request, LotteryStatisticsService $service): JsonResponse
     {
-        $request->validate([
-            'region'        => 'required|in:mien-nam,mien-trung,mien-bac',
-            'province_code' => 'nullable|string|max:10',
-            'days'          => 'nullable|integer|min:1|max:90',
-            'type'          => 'nullable|in:all,frequency,streak,head_tail',
-        ]);
+        $region = $request->input('region');
 
-        $data = $service->getStatistics(
-            $request->input('region'),
-            $request->input('province_code'),
-            (int) $request->input('days', 30),
-            $request->input('type', 'all'),
-        );
+        // Nếu không truyền region, default mien-bac
+        if (!$region || !in_array($region, ['mien-nam', 'mien-trung', 'mien-bac'])) {
+            $region = 'mien-bac';
+        }
+
+        $days = max(1, min(90, (int) $request->input('days', 30)));
+        $provinceCode = $request->input('province_code');
+        $type = $request->input('type', 'all');
+
+        if (!in_array($type, ['all', 'frequency', 'streak', 'head_tail', 'gap', 'prediction', 'pattern', 'special', 'summary'])) {
+            $type = 'all';
+        }
+
+        $data = $service->getStatistics($region, $provinceCode, $days, $type);
 
         return response()->json([
             'status' => 'ok',

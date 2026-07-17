@@ -29,25 +29,53 @@ class LotteryService
                 return null;
             }
 
-            $results = $draw->results;
-            if ($provinceCode) {
-                $results = $results->filter(fn ($r) => $r->province?->code === strtoupper($provinceCode));
+            return $this->formatTraditionalDraw($draw, $region, $provinceCode);
+        });
+    }
+
+    /**
+     * Get latest traditional result (most recent date with data)
+     */
+    public function getTraditionalLatest(string $region, ?string $provinceCode = null): ?array
+    {
+        $cacheKey = "lottery:traditional_latest:{$region}" . ($provinceCode ? ":{$provinceCode}" : '');
+
+        return Cache::remember($cacheKey, 300, function () use ($region, $provinceCode) {
+            $draw = LotteryDraw::traditional()
+                ->forRegion($region)
+                ->completed()
+                ->with(['results.province'])
+                ->orderByDesc('date')
+                ->first();
+
+            if (!$draw) {
+                return null;
             }
 
-            $regionNames = ['mien-nam' => 'Miền Nam', 'mien-trung' => 'Miền Trung', 'mien-bac' => 'Miền Bắc'];
-
-            return [
-                'date'        => $draw->date->toDateString(),
-                'region'      => $region,
-                'region_name' => $regionNames[$region] ?? $region,
-                'draw_time'   => $draw->draw_time,
-                'results'     => $results->map(fn ($r) => [
-                    'province'      => $r->province?->name,
-                    'province_code' => $r->province?->code,
-                    'prizes'        => $r->prize_data,
-                ])->values()->toArray(),
-            ];
+            return $this->formatTraditionalDraw($draw, $region, $provinceCode);
         });
+    }
+
+    private function formatTraditionalDraw($draw, string $region, ?string $provinceCode = null): array
+    {
+        $results = $draw->results;
+        if ($provinceCode) {
+            $results = $results->filter(fn ($r) => $r->province?->code === strtoupper($provinceCode));
+        }
+
+        $regionNames = ['mien-nam' => 'Miền Nam', 'mien-trung' => 'Miền Trung', 'mien-bac' => 'Miền Bắc'];
+
+        return [
+            'date'        => $draw->date->toDateString(),
+            'region'      => $region,
+            'region_name' => $regionNames[$region] ?? $region,
+            'draw_time'   => $draw->draw_time,
+            'results'     => $results->map(fn ($r) => [
+                'province'      => $r->province?->name,
+                'province_code' => $r->province?->code,
+                'prizes'        => $r->prize_data,
+            ])->values()->toArray(),
+        ];
     }
 
     public function getVietlot(string $game, ?string $date = null, ?string $period = null): array|null
@@ -108,6 +136,47 @@ class LotteryService
         });
     }
 
+    /**
+     * Get latest Vietlot result (most recent draw for a game)
+     */
+    public function getVietlotLatest(string $game): ?array
+    {
+        $cacheKey = "lottery:vietlot_latest:{$game}";
+
+        return Cache::remember($cacheKey, 300, function () use ($game) {
+            $draw = LotteryDraw::vietlot()
+                ->forGame($game)
+                ->completed()
+                ->with('results')
+                ->orderByDesc('date')
+                ->first();
+
+            if (!$draw || $draw->results->isEmpty()) {
+                return null;
+            }
+
+            $result = $draw->results->first();
+            $gameNames = [
+                'mega645' => 'Mega 6/45', 'power655' => 'Power 6/55',
+                'max3d' => 'Max 3D', 'max3d_pro' => 'Max 3D Pro', 'keno' => 'Keno',
+            ];
+
+            $data = [
+                'game' => $game,
+                'game_name' => $gameNames[$game] ?? $game,
+                'date' => $draw->date->toDateString(),
+                'draw_time' => $draw->draw_time,
+            ];
+
+            if ($draw->draw_id) $data['draw_id'] = $draw->draw_id;
+            if ($draw->period) $data['period'] = $draw->period;
+            $data = array_merge($data, $result->prize_data ?? []);
+            if ($result->jackpot_data) $data = array_merge($data, $result->jackpot_data);
+
+            return $data;
+        });
+    }
+
     public function getKenoPeriods(string $date): array|null
     {
         $cacheKey = "lottery:vietlot:keno:periods:{$date}";
@@ -152,7 +221,12 @@ class LotteryService
             if (in_array($include, ['all', 'traditional'])) {
                 $data['traditional'] = [];
                 foreach (config('lottery.regions') as $region) {
-                    $data['traditional'][$this->regionKey($region)] = $this->getTraditional($region);
+                    // Try today first, fallback to latest available
+                    $result = $this->getTraditional($region);
+                    if (!$result) {
+                        $result = $this->getTraditionalLatest($region);
+                    }
+                    $data['traditional'][$this->regionKey($region)] = $result;
                 }
             }
 
@@ -160,6 +234,9 @@ class LotteryService
                 $data['vietlot'] = [];
                 foreach (config('lottery.games') as $game) {
                     $result = $this->getVietlot($game);
+                    if (!$result) {
+                        $result = $this->getVietlotLatest($game);
+                    }
                     if ($result) {
                         $data['vietlot'][$game] = $result;
                     }

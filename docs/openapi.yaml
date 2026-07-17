@@ -69,7 +69,9 @@ tags:
   - name: Sport (User)
     description: SportPulse — profile, favorites, reminders (Firebase auth)
   - name: Lottery
-    description: Xổ số — kết quả, dò số, thống kê
+    description: Xổ số — kết quả, dò số, thống kê (8 loại phân tích)
+  - name: Homepage
+    description: Homepage V2 API — products, categories, filtering
   - name: Notifications
     description: Push notification FCM
   - name: Banner
@@ -2227,20 +2229,94 @@ paths:
   /v1/lottery/statistics:
     get:
       tags: [Lottery]
-      summary: Thống kê (tần suất, loto gan, đầu đuôi)
+      summary: Thống kê xổ số (8 loại phân tích)
+      description: |
+        Trả về thống kê xổ số theo region, đài cụ thể, số ngày.
+        
+        **Các loại thống kê (type):**
+        - `frequency` — Tần suất xuất hiện (top 20 hot/cold)
+        - `streak` — Chuỗi liên tiếp (đang về, dài nhất)
+        - `head_tail` — Phân bố đầu đuôi (0-9)
+        - `gap` — Lô gan (chưa về lâu nhất, vừa trở lại)
+        - `prediction` — Dự đoán tham khảo (hot/due candidates)
+        - `pattern` — Cặp hay đi cùng, chẵn/lẻ, phân bố tổng
+        - `special` — Giải Đặc Biệt (tần suất, chưa ra)
+        - `summary` — Tổng hợp dashboard
+        - `all` — Tất cả (default)
       parameters:
-        - name: type
+        - name: region
           in: query
+          description: Miền (mặc định mien-bac nếu không truyền)
           schema:
             type: string
+            enum: [mien-nam, mien-trung, mien-bac]
+            default: mien-bac
+        - name: province_code
+          in: query
+          description: Mã đài cụ thể (VD HCM, DT, DN). Nếu không truyền = tổng hợp cả miền.
+          schema:
+            type: string
+            example: HCM
         - name: days
           in: query
+          description: Số ngày phân tích (1-90)
           schema:
             type: integer
             default: 30
+            minimum: 1
+            maximum: 90
+        - name: type
+          in: query
+          description: Loại thống kê
+          schema:
+            type: string
+            enum: [all, frequency, streak, head_tail, gap, prediction, pattern, special, summary]
+            default: all
       responses:
         '200':
           description: Statistics data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      region:
+                        type: string
+                      province_code:
+                        type: string
+                        nullable: true
+                      days:
+                        type: integer
+                      frequency:
+                        type: object
+                        description: top_pairs[], cold_pairs[]
+                      streaks:
+                        type: object
+                        description: current[], longest[]
+                      head_tail:
+                        type: object
+                        description: heads{0-9}, tails{0-9}
+                      gap:
+                        type: object
+                        description: longest_absent[], just_returned[]
+                      prediction:
+                        type: object
+                        description: hot_candidates[], due_candidates[], disclaimer
+                      pattern:
+                        type: object
+                        description: frequent_pairs[], even_odd_trend[], sum_distribution[]
+                      special:
+                        type: object
+                        description: recent_special[], special_frequency[], never_appeared[]
+                      summary:
+                        type: object
+                        description: total_days, coverage_percent, top_5_hot[], top_5_cold[]
 
   /v1/lottery/check:
     post:
@@ -3166,3 +3242,137 @@ paths:
       responses:
         '200':
           description: All marked read
+
+  # ===== HOMEPAGE V2 API =====
+  /v1/homepage:
+    get:
+      tags: [Homepage]
+      summary: Full homepage data (cached 5min)
+      description: Trả về categories, trending, best_selling, staff_picks, products grid, stats, blogs, forum topics
+      responses:
+        '200':
+          description: Homepage data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      categories:
+                        type: array
+                      trending:
+                        type: array
+                      best_selling:
+                        type: array
+                      staff_picks:
+                        type: array
+                      products:
+                        type: object
+                        properties:
+                          items:
+                            type: array
+                          total:
+                            type: integer
+                          has_more:
+                            type: boolean
+                      stats:
+                        type: object
+                      latestBlogs:
+                        type: array
+                      hotForumTopics:
+                        type: array
+
+  /v1/homepage/products:
+    get:
+      tags: [Homepage]
+      summary: Filtered products (AJAX)
+      parameters:
+        - name: engine
+          in: query
+          schema:
+            type: string
+            enum: [Unity, Unreal, Godot, Phaser]
+        - name: genre
+          in: query
+          schema:
+            type: string
+            enum: [FPS, RPG, Action, MOBA, Racing, Puzzle, Strategy, Survival, Platformer]
+        - name: difficulty
+          in: query
+          schema:
+            type: string
+            enum: [beginner, intermediate, advanced]
+        - name: price_min
+          in: query
+          schema:
+            type: number
+        - name: price_max
+          in: query
+          schema:
+            type: number
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [trending, newest, best_selling, price_low, price_high, rating]
+            default: trending
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Filtered products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      per_page:
+                        type: integer
+                      has_more:
+                        type: boolean
+
+  /v1/homepage/categories:
+    get:
+      tags: [Homepage]
+      summary: Categories with product counts
+      responses:
+        '200':
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        slug:
+                          type: string
+                        count:
+                          type: integer
+                        icon:
+                          type: string

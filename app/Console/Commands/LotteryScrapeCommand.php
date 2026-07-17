@@ -32,17 +32,42 @@ class LotteryScrapeCommand extends Command
         foreach ($regions as $region) {
             $cacheKey = "lottery:scraped:{$region}:{$date}";
 
-            // Skip nếu đã scrape thành công
+            // Skip nếu đã scrape thành công VÀ đủ đài
             if (!$force && Cache::get($cacheKey)) {
-                $this->line("⏭ {$region} {$date} — đã có kết quả, skip.");
-                continue;
+                // Verify có đủ đài không
+                if ($this->hasCompleteData($region, $date)) {
+                    $this->line("⏭ {$region} {$date} — đã có kết quả, skip.");
+                    continue;
+                }
+                // Thiếu đài → force re-scrape
+                $this->warn("⚠ {$region} {$date} — thiếu đài, re-scraping...");
+                Cache::forget($cacheKey);
             }
 
-            // Kiểm tra DB
+            // Kiểm tra DB — chỉ skip nếu đủ đài
             if (!$force && LotteryDraw::traditional()->forRegion($region)->forDate($date)->completed()->exists()) {
-                Cache::put($cacheKey, true, Carbon::tomorrow());
-                $this->line("⏭ {$region} {$date} — đã có trong DB, skip.");
-                continue;
+                if ($this->hasCompleteData($region, $date)) {
+                    Cache::put($cacheKey, true, Carbon::tomorrow());
+                    $this->line("⏭ {$region} {$date} — đã có trong DB, skip.");
+                    continue;
+                }
+                // Thiếu → xóa data cũ để scrape lại
+                $this->warn("⚠ {$region} {$date} — DB thiếu đài, clearing & re-scraping...");
+                $draw = LotteryDraw::traditional()->forRegion($region)->forDate($date)->first();
+                if ($draw) {
+                    \App\Models\LotteryResult::where('draw_id', $draw->id)->delete();
+                    $draw->delete();
+                }
+            }
+
+            // Force mode: xóa data cũ
+            if ($force) {
+                $draw = LotteryDraw::traditional()->forRegion($region)->forDate($date)->first();
+                if ($draw) {
+                    \App\Models\LotteryResult::where('draw_id', $draw->id)->delete();
+                    $draw->delete();
+                }
+                Cache::forget($cacheKey);
             }
 
             $this->info("Scraping {$region} — {$date}...");
@@ -55,10 +80,32 @@ class LotteryScrapeCommand extends Command
                 CheckUserTickets::dispatch($region, $date);
             } else {
                 $this->error("❌ {$region} FAILED — sẽ retry lần sau.");
-                return self::FAILURE;
             }
         }
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Kiểm tra data có đủ đài theo lịch không
+     */
+    private function hasCompleteData(string $region, string $date): bool
+    {
+        if ($region === 'mien-bac') return true; // Miền Bắc chỉ 1 đài
+
+        $dow = Carbon::parse($date)->dayOfWeek;
+        $dbDow = $dow === 0 ? 7 : $dow;
+
+        $expectedCount = \DB::table('lottery_schedules as s')
+            ->join('lottery_provinces as p', 'p.id', '=', 's.province_id')
+            ->where('p.region', $region)
+            ->where('s.day_of_week', $dbDow)
+            ->count();
+
+        $draw = LotteryDraw::traditional()->forRegion($region)->forDate($date)->first();
+        if (!$draw) return false;
+
+        $actualCount = \App\Models\LotteryResult::where('draw_id', $draw->id)->count();
+        return $actualCount >= $expectedCount;
     }
 }

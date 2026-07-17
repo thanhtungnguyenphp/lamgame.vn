@@ -1,0 +1,5723 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "LamGame.vn API",
+    "description": "API documentation cho dự án LamGame.vn — Nền tảng game development community.\n\n## Xác thực (Authentication)\n\nHệ thống sử dụng 3 phương thức xác thực:\n\n1. **Bearer Token (Sanctum)** — Cho user/customer endpoints\n   - Login → nhận token → gửi header `Authorization: Bearer {token}`\n2. **API Key** — Cho management/admin endpoints\n   - Header: `X-Api-Key: {admin_api_token}`\n3. **Firebase Auth** — Cho Sport user endpoints\n   - Header: `Authorization: Bearer {firebase_id_token}`\n\n## Rate Limiting\n\n- Default: 60 requests/phút\n- Write operations: 10 requests/phút  \n- Sensitive operations (apply job, hire request): 3-5 requests/phút\n\n## Base URL\n\n- Production: `https://lamgame.vn/api`\n- Staging: `https://staging.lamgame.vn/api`\n",
+    "version": "2.0.0",
+    "contact": {
+      "name": "LamGame Dev Team",
+      "url": "https://lamgame.vn"
+    },
+    "license": {
+      "name": "Proprietary"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://lamgame.vn/api",
+      "description": "Production"
+    },
+    {
+      "url": "https://staging.lamgame.vn/api",
+      "description": "Staging"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Đăng ký, đăng nhập, quản lý profile"
+    },
+    {
+      "name": "AI Tools",
+      "description": "AI-powered game development tools"
+    },
+    {
+      "name": "Subscription",
+      "description": "Gói subscription & thanh toán PayPal"
+    },
+    {
+      "name": "Forum (Public)",
+      "description": "Forum cộng đồng — đọc, tìm kiếm"
+    },
+    {
+      "name": "Forum (User)",
+      "description": "Forum — tạo bài, comment, vote, bookmark"
+    },
+    {
+      "name": "Forum (Messages)",
+      "description": "Tin nhắn riêng giữa users"
+    },
+    {
+      "name": "Forum (Management)",
+      "description": "Admin quản lý forum (API Key auth)"
+    },
+    {
+      "name": "Blog (Publish)",
+      "description": "Blog publish API (API Key auth)"
+    },
+    {
+      "name": "Blog (Management)",
+      "description": "Admin quản lý blog (API Key auth)"
+    },
+    {
+      "name": "Job Posting",
+      "description": "Đăng tuyển & ứng tuyển việc làm game"
+    },
+    {
+      "name": "Source Game",
+      "description": "Marketplace source game — reviews, licenses, demo"
+    },
+    {
+      "name": "E-Commerce (Management)",
+      "description": "Admin quản lý e-commerce (API Key auth)"
+    },
+    {
+      "name": "Sport (Public)",
+      "description": "SportPulse — dữ liệu thể thao công khai"
+    },
+    {
+      "name": "Sport (User)",
+      "description": "SportPulse — profile, favorites, reminders (Firebase auth)"
+    },
+    {
+      "name": "Lottery",
+      "description": "Xổ số — kết quả, dò số, thống kê (8 loại phân tích)"
+    },
+    {
+      "name": "Homepage",
+      "description": "Homepage V2 API — products, categories, filtering"
+    },
+    {
+      "name": "Notifications",
+      "description": "Push notification FCM"
+    },
+    {
+      "name": "Banner",
+      "description": "Banner dynamic content"
+    },
+    {
+      "name": "Settings & Config",
+      "description": "Admin settings, configuration (API Key auth)"
+    },
+    {
+      "name": "Marketing",
+      "description": "Admin marketing — SEO, promotions, communications"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Sanctum Token",
+        "description": "Login -> nhan token -> gui Authorization: Bearer {token}"
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Api-Key",
+        "description": "Admin API Key cho management endpoints"
+      },
+      "FirebaseAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Firebase ID Token",
+        "description": "Firebase Authentication token"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Validation error"
+          },
+          "errors": {
+            "type": "object"
+          }
+        }
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "current_page": {
+            "type": "integer"
+          },
+          "last_page": {
+            "type": "integer"
+          },
+          "per_page": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "avatar": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AuthToken": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "token": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "SubscriptionPlan": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "interval": {
+            "type": "string",
+            "enum": [
+              "monthly",
+              "yearly"
+            ]
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "quotas": {
+            "type": "object"
+          }
+        }
+      },
+      "ForumPost": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "category_id": {
+            "type": "integer"
+          },
+          "author": {
+            "$ref": "#/components/schemas/User"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "votes": {
+            "type": "integer"
+          },
+          "comments_count": {
+            "type": "integer"
+          },
+          "views": {
+            "type": "integer"
+          },
+          "is_pinned": {
+            "type": "boolean"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "JobPosting": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "company_name": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "job_type": {
+            "type": "string",
+            "enum": [
+              "full-time",
+              "part-time",
+              "contract",
+              "freelance",
+              "internship"
+            ]
+          },
+          "salary_min": {
+            "type": "number",
+            "nullable": true
+          },
+          "salary_max": {
+            "type": "number",
+            "nullable": true
+          },
+          "description": {
+            "type": "string"
+          },
+          "requirements": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published",
+              "closed",
+              "expired"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SportMatch": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "home_team": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "logo": {
+                "type": "string"
+              }
+            }
+          },
+          "away_team": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "logo": {
+                "type": "string"
+              }
+            }
+          },
+          "score_home": {
+            "type": "integer",
+            "nullable": true
+          },
+          "score_away": {
+            "type": "integer",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "scheduled",
+              "live",
+              "finished",
+              "postponed",
+              "cancelled"
+            ]
+          },
+          "kickoff_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "league": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "LotteryResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "traditional",
+              "vietlot"
+            ]
+          },
+          "draw_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "numbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "province": {
+            "type": "string",
+            "nullable": true
+          },
+          "prize_data": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Đăng ký tài khoản mới",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email",
+                  "password",
+                  "password_confirmation"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Nguyen Van A"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "MyStr0ng!Pass"
+                  },
+                  "password_confirmation": {
+                    "type": "string",
+                    "example": "MyStr0ng!Pass"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Đăng ký thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthToken"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Đăng nhập",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login thành công",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthToken"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sai credentials"
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Gửi email reset password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email đã gửi"
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Reset password bằng token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "token",
+                  "password",
+                  "password_confirmation"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "token": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8
+                  },
+                  "password_confirmation": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password đã reset"
+          }
+        }
+      }
+    },
+    "/auth/user": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Lấy thông tin user hiện tại",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logout (revoke token)",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out"
+          }
+        }
+      }
+    },
+    "/auth/profile": {
+      "put": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Cập nhật profile",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated"
+          }
+        }
+      }
+    },
+    "/auth/password": {
+      "put": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Đổi password",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "current_password",
+                  "password",
+                  "password_confirmation"
+                ],
+                "properties": {
+                  "current_password": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8
+                  },
+                  "password_confirmation": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password changed"
+          }
+        }
+      }
+    },
+    "/auth/avatar": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Upload avatar",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Avatar uploaded"
+          }
+        }
+      }
+    },
+    "/auth/profile/extended": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Lấy extended profile",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Extended profile data"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Cập nhật extended profile",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bio": {
+                    "type": "string"
+                  },
+                  "skills": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "social_links": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Extended profile updated"
+          }
+        }
+      }
+    },
+    "/v1/ai-tools/dashboard": {
+      "get": {
+        "tags": [
+          "AI Tools"
+        ],
+        "summary": "Dashboard — thống kê sử dụng AI tools",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dashboard data (tools list, usage stats, quota remaining)"
+          }
+        }
+      }
+    },
+    "/v1/ai-tools/concept": {
+      "post": {
+        "tags": [
+          "AI Tools"
+        ],
+        "summary": "AI Game Concept Generator",
+        "description": "Tạo ý tưởng game dựa trên input (genre, platform, target audience)",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "prompt"
+                ],
+                "properties": {
+                  "prompt": {
+                    "type": "string",
+                    "description": "Mô tả ý tưởng game",
+                    "example": "2D puzzle platformer cho mobile, target casual gamers"
+                  },
+                  "genre": {
+                    "type": "string",
+                    "example": "puzzle"
+                  },
+                  "platform": {
+                    "type": "string",
+                    "example": "mobile"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generated concept",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "concept": {
+                          "type": "string"
+                        },
+                        "mechanics": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "monetization": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Quota exceeded"
+          }
+        }
+      }
+    },
+    "/v1/ai-tools/codegen": {
+      "post": {
+        "tags": [
+          "AI Tools"
+        ],
+        "summary": "AI Code Generator",
+        "description": "Sinh code game logic dựa trên mô tả",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "prompt"
+                ],
+                "properties": {
+                  "prompt": {
+                    "type": "string",
+                    "example": "Player movement script cho Unity 2D platformer"
+                  },
+                  "language": {
+                    "type": "string",
+                    "enum": [
+                      "csharp",
+                      "gdscript",
+                      "javascript",
+                      "python"
+                    ],
+                    "example": "csharp"
+                  },
+                  "engine": {
+                    "type": "string",
+                    "enum": [
+                      "unity",
+                      "godot",
+                      "unreal",
+                      "web"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generated code"
+          }
+        }
+      }
+    },
+    "/v1/ai-tools/debug": {
+      "post": {
+        "tags": [
+          "AI Tools"
+        ],
+        "summary": "AI Debug Assistant",
+        "description": "Phân tích và gợi ý fix lỗi code",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "error"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "error": {
+                    "type": "string"
+                  },
+                  "language": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Debug suggestions"
+          }
+        }
+      }
+    },
+    "/v1/ai-tools/test": {
+      "post": {
+        "tags": [
+          "AI Tools"
+        ],
+        "summary": "AI Test Generator",
+        "description": "Tạo unit tests từ code",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "framework": {
+                    "type": "string",
+                    "enum": [
+                      "nunit",
+                      "xunit",
+                      "jest",
+                      "pytest",
+                      "gdunit"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generated tests"
+          }
+        }
+      }
+    },
+    "/v1/ai-tools/review": {
+      "post": {
+        "tags": [
+          "AI Tools"
+        ],
+        "summary": "AI Code Review",
+        "description": "Review code và đưa ra nhận xét chất lượng",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "language": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Code review feedback"
+          }
+        }
+      }
+    },
+    "/v1/ai-tools/history": {
+      "get": {
+        "tags": [
+          "AI Tools"
+        ],
+        "summary": "Lịch sử sử dụng AI tools",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "name": "tool",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "concept",
+                "codegen",
+                "debug",
+                "test",
+                "review"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated history list"
+          }
+        }
+      }
+    },
+    "/v1/ai-tools/history/{id}": {
+      "get": {
+        "tags": [
+          "AI Tools"
+        ],
+        "summary": "Chi tiết một lần sử dụng AI tool",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "History detail (input + output)"
+          }
+        }
+      }
+    },
+    "/v1/subscription/plans": {
+      "get": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Danh sách gói subscription",
+        "responses": {
+          "200": {
+            "description": "Available plans",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SubscriptionPlan"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/subscription/subscribe": {
+      "post": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Đăng ký subscription (redirect PayPal)",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "plan_id"
+                ],
+                "properties": {
+                  "plan_id": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "PayPal approval URL",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "approval_url": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/subscription/status": {
+      "get": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Trạng thái subscription hiện tại",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current subscription status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "active": {
+                      "type": "boolean"
+                    },
+                    "plan": {
+                      "$ref": "#/components/schemas/SubscriptionPlan"
+                    },
+                    "expires_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/subscription/cancel": {
+      "post": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Hủy subscription",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription cancelled"
+          }
+        }
+      }
+    },
+    "/v1/subscription/usage": {
+      "get": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Xem usage/quota còn lại",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usage data"
+          }
+        }
+      }
+    },
+    "/v1/subscription/check-quota": {
+      "post": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Kiểm tra quota trước khi dùng",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "tool"
+                ],
+                "properties": {
+                  "tool": {
+                    "type": "string",
+                    "example": "codegen"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quota check result"
+          }
+        }
+      }
+    },
+    "/v1/subscription/use-quota": {
+      "post": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Trừ quota sau khi sử dụng",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "tool"
+                ],
+                "properties": {
+                  "tool": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quota deducted"
+          }
+        }
+      }
+    },
+    "/v1/subscription/webhook": {
+      "post": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "PayPal webhook callback",
+        "description": "PayPal gọi khi subscription status thay đổi. Không gọi trực tiếp.",
+        "responses": {
+          "200": {
+            "description": "Webhook processed"
+          }
+        }
+      }
+    },
+    "/v1/forum/posts": {
+      "get": {
+        "tags": [
+          "Forum (Public)"
+        ],
+        "summary": "Danh sách bài viết forum",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Filter by category ID"
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "latest",
+                "popular",
+                "most_voted"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated posts"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Forum (User)"
+        ],
+        "summary": "Tạo bài viết mới",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "content",
+                  "category_id"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "category_id": {
+                    "type": "integer"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "poll": {
+                    "type": "object",
+                    "description": "Tạo poll kèm bài viết",
+                    "properties": {
+                      "question": {
+                        "type": "string"
+                      },
+                      "options": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "expires_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Post created"
+          }
+        }
+      }
+    },
+    "/v1/forum/posts/{slug}": {
+      "get": {
+        "tags": [
+          "Forum (Public)"
+        ],
+        "summary": "Chi tiết bài viết (theo slug)",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post detail with comments"
+          }
+        }
+      }
+    },
+    "/v1/forum/posts/{id}": {
+      "put": {
+        "tags": [
+          "Forum (User)"
+        ],
+        "summary": "Sửa bài viết",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "category_id": {
+                    "type": "integer"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Forum (User)"
+        ],
+        "summary": "Xóa bài viết",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post deleted"
+          }
+        }
+      }
+    },
+    "/v1/forum/posts/{id}/comments": {
+      "post": {
+        "tags": [
+          "Forum (User)"
+        ],
+        "summary": "Comment vào bài viết",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "content"
+                ],
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  },
+                  "parent_id": {
+                    "type": "integer",
+                    "nullable": true,
+                    "description": "Reply to comment ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Comment created"
+          }
+        }
+      }
+    },
+    "/v1/forum/posts/{id}/bookmark": {
+      "post": {
+        "tags": [
+          "Forum (User)"
+        ],
+        "summary": "Bookmark/unbookmark bài viết",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bookmark toggled"
+          }
+        }
+      }
+    },
+    "/v1/forum/vote": {
+      "post": {
+        "tags": [
+          "Forum (User)"
+        ],
+        "summary": "Vote (upvote/downvote) cho post hoặc comment",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "votable_type",
+                  "votable_id",
+                  "value"
+                ],
+                "properties": {
+                  "votable_type": {
+                    "type": "string",
+                    "enum": [
+                      "post",
+                      "comment"
+                    ]
+                  },
+                  "votable_id": {
+                    "type": "integer"
+                  },
+                  "value": {
+                    "type": "integer",
+                    "enum": [
+                      1,
+                      -1
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vote recorded"
+          }
+        }
+      }
+    },
+    "/v1/forum/categories": {
+      "get": {
+        "tags": [
+          "Forum (Public)"
+        ],
+        "summary": "Danh sách categories",
+        "responses": {
+          "200": {
+            "description": "Category list"
+          }
+        }
+      }
+    },
+    "/v1/forum/tags": {
+      "get": {
+        "tags": [
+          "Forum (Public)"
+        ],
+        "summary": "Danh sách tags",
+        "responses": {
+          "200": {
+            "description": "Tag list"
+          }
+        }
+      }
+    },
+    "/v1/forum/trending": {
+      "get": {
+        "tags": [
+          "Forum (Public)"
+        ],
+        "summary": "Bài viết trending",
+        "responses": {
+          "200": {
+            "description": "Trending posts"
+          }
+        }
+      }
+    },
+    "/v1/forum/leaderboard": {
+      "get": {
+        "tags": [
+          "Forum (Public)"
+        ],
+        "summary": "Bảng xếp hạng users (reputation)",
+        "responses": {
+          "200": {
+            "description": "Leaderboard"
+          }
+        }
+      }
+    },
+    "/v1/forum/polls/{id}/results": {
+      "get": {
+        "tags": [
+          "Forum (Public)"
+        ],
+        "summary": "Kết quả poll",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Poll results"
+          }
+        }
+      }
+    },
+    "/v1/forum/polls/{id}/vote": {
+      "post": {
+        "tags": [
+          "Forum (User)"
+        ],
+        "summary": "Vote vào poll",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "option_id"
+                ],
+                "properties": {
+                  "option_id": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vote recorded"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Forum (User)"
+        ],
+        "summary": "Rút lại vote poll",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vote retracted"
+          }
+        }
+      }
+    },
+    "/v1/forum/conversations": {
+      "get": {
+        "tags": [
+          "Forum (Messages)"
+        ],
+        "summary": "Danh sách conversations",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversation list"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Forum (Messages)"
+        ],
+        "summary": "Tạo conversation mới",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "recipient_id",
+                  "message"
+                ],
+                "properties": {
+                  "recipient_id": {
+                    "type": "integer"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Conversation created"
+          }
+        }
+      }
+    },
+    "/v1/forum/conversations/{id}/messages": {
+      "get": {
+        "tags": [
+          "Forum (Messages)"
+        ],
+        "summary": "Xem tin nhắn trong conversation",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Messages list"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Forum (Messages)"
+        ],
+        "summary": "Gửi tin nhắn",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "message"
+                ],
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Message sent"
+          }
+        }
+      }
+    },
+    "/v1/forum/conversations/{id}/read": {
+      "patch": {
+        "tags": [
+          "Forum (Messages)"
+        ],
+        "summary": "Đánh dấu đã đọc",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Marked as read"
+          }
+        }
+      }
+    },
+    "/v1/forum/follow": {
+      "post": {
+        "tags": [
+          "Forum (User)"
+        ],
+        "summary": "Follow user/category/tag",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "followable_type",
+                  "followable_id"
+                ],
+                "properties": {
+                  "followable_type": {
+                    "type": "string",
+                    "enum": [
+                      "user",
+                      "category",
+                      "tag"
+                    ]
+                  },
+                  "followable_id": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Followed"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Forum (User)"
+        ],
+        "summary": "Unfollow",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "followable_type",
+                  "followable_id"
+                ],
+                "properties": {
+                  "followable_type": {
+                    "type": "string"
+                  },
+                  "followable_id": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Unfollowed"
+          }
+        }
+      }
+    },
+    "/v1/forum/feed": {
+      "get": {
+        "tags": [
+          "Forum (User)"
+        ],
+        "summary": "Personalized feed (based on follows)",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Personalized feed"
+          }
+        }
+      }
+    },
+    "/v2/jobs": {
+      "get": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "Danh sách việc làm game",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "job_type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "full-time",
+                "part-time",
+                "contract",
+                "freelance",
+                "internship"
+              ]
+            }
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "salary_min",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated job listings"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "Tạo job posting mới",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "company_name",
+                  "description",
+                  "job_type"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "company_name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "requirements": {
+                    "type": "string"
+                  },
+                  "job_type": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "salary_min": {
+                    "type": "number"
+                  },
+                  "salary_max": {
+                    "type": "number"
+                  },
+                  "contact_email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Job created"
+          }
+        }
+      }
+    },
+    "/v2/jobs/filters": {
+      "get": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "Lấy filter options (job types, locations, companies)",
+        "responses": {
+          "200": {
+            "description": "Filter options"
+          }
+        }
+      }
+    },
+    "/v2/jobs/{id}": {
+      "get": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "Chi tiết job posting (by ID)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job detail"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "Cập nhật job posting",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Job updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "Xóa job posting",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job deleted"
+          }
+        }
+      }
+    },
+    "/v2/jobs/slug/{slug}": {
+      "get": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "Chi tiết job posting (by slug)",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job detail"
+          }
+        }
+      }
+    },
+    "/v2/jobs/{id}/apply": {
+      "post": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "Ứng tuyển (rate limit 5/60min)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "cover_letter": {
+                    "type": "string"
+                  },
+                  "resume": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Application submitted"
+          },
+          "429": {
+            "description": "Too many applications"
+          }
+        }
+      }
+    },
+    "/v2/jobs/{id}/publish": {
+      "post": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "Publish job",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job published"
+          }
+        }
+      }
+    },
+    "/v2/jobs/statistics": {
+      "get": {
+        "tags": [
+          "Job Posting"
+        ],
+        "summary": "Thống kê jobs (owner)",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job statistics"
+          }
+        }
+      }
+    },
+    "/v1/source-game/{productId}/reviews": {
+      "get": {
+        "tags": [
+          "Source Game"
+        ],
+        "summary": "Danh sách reviews cho source game",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "latest",
+                "helpful"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated reviews"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Source Game"
+        ],
+        "summary": "Viết review",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "rating",
+                  "content"
+                ],
+                "properties": {
+                  "rating": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Review created"
+          }
+        }
+      }
+    },
+    "/v1/source-game/{productId}/review-stats": {
+      "get": {
+        "tags": [
+          "Source Game"
+        ],
+        "summary": "Thống kê rating (average, distribution)",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review statistics"
+          }
+        }
+      }
+    },
+    "/v1/reviews/{id}/helpful": {
+      "post": {
+        "tags": [
+          "Source Game"
+        ],
+        "summary": "Đánh dấu review hữu ích",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Helpful toggled"
+          }
+        }
+      }
+    },
+    "/source-game/{id}/licenses": {
+      "get": {
+        "tags": [
+          "Source Game"
+        ],
+        "summary": "Xem license types cho product",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Available licenses (personal, commercial, extended)"
+          }
+        }
+      }
+    },
+    "/licenses/verify": {
+      "post": {
+        "tags": [
+          "Source Game"
+        ],
+        "summary": "Verify license key",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "license_key"
+                ],
+                "properties": {
+                  "license_key": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "License verification result"
+          }
+        }
+      }
+    },
+    "/my-licenses": {
+      "get": {
+        "tags": [
+          "Source Game"
+        ],
+        "summary": "Danh sách licenses đã mua",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User's licenses"
+          }
+        }
+      }
+    },
+    "/licenses/{id}/transfer": {
+      "post": {
+        "tags": [
+          "Source Game"
+        ],
+        "summary": "Transfer license cho user khác",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "recipient_email"
+                ],
+                "properties": {
+                  "recipient_email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "License transferred"
+          }
+        }
+      }
+    },
+    "/source-game/{id}/demo-info": {
+      "get": {
+        "tags": [
+          "Source Game"
+        ],
+        "summary": "Lấy thông tin demo (iframe URL, status)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Demo info"
+          }
+        }
+      }
+    },
+    "/source-game/{id}/demo": {
+      "post": {
+        "tags": [
+          "Source Game"
+        ],
+        "summary": "Upload/create demo cho product (seller)",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Demo created"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Source Game"
+        ],
+        "summary": "Xóa demo",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Demo deleted"
+          }
+        }
+      }
+    },
+    "/v1/hire-request": {
+      "post": {
+        "tags": [
+          "Source Game"
+        ],
+        "summary": "Gửi yêu cầu thuê team dev (rate limit 3/60min)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email",
+                  "project_description"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  },
+                  "project_description": {
+                    "type": "string"
+                  },
+                  "budget": {
+                    "type": "string"
+                  },
+                  "timeline": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request submitted"
+          }
+        }
+      }
+    },
+    "/v1/sport/sports": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Danh sách môn thể thao",
+        "responses": {
+          "200": {
+            "description": "Sports list"
+          }
+        }
+      }
+    },
+    "/v1/sport/leagues": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Danh sách giải đấu",
+        "parameters": [
+          {
+            "name": "sport_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Leagues list"
+          }
+        }
+      }
+    },
+    "/v1/sport/leagues/{id}/standings": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Bảng xếp hạng giải đấu",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Standings table"
+          }
+        }
+      }
+    },
+    "/v1/sport/leagues/{id}/top-scorers": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Vua phá lưới",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Top scorers"
+          }
+        }
+      }
+    },
+    "/v1/sport/matches/live": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Trận đang diễn ra (live)",
+        "responses": {
+          "200": {
+            "description": "Live matches",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SportMatch"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/sport/matches/schedule": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Lịch thi đấu theo ngày",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Default: today"
+          },
+          {
+            "name": "league_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Schedule"
+          }
+        }
+      }
+    },
+    "/v1/sport/matches/results": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Kết quả trận đấu",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "league_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Match results"
+          }
+        }
+      }
+    },
+    "/v1/sport/matches/{id}": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Chi tiết trận đấu",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Match detail"
+          }
+        }
+      }
+    },
+    "/v1/sport/matches/{id}/events": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Sự kiện trận đấu (goals, cards, substitutions)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Match events"
+          }
+        }
+      }
+    },
+    "/v1/sport/matches/{id}/lineups": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Đội hình ra sân",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lineups"
+          }
+        }
+      }
+    },
+    "/v1/sport/matches/{id}/h2h": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Lịch sử đối đầu",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Head-to-head history"
+          }
+        }
+      }
+    },
+    "/v1/sport/highlights": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Video highlights",
+        "parameters": [
+          {
+            "name": "league_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Highlights list"
+          }
+        }
+      }
+    },
+    "/v1/sport/articles": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Danh sách bài viết thể thao",
+        "responses": {
+          "200": {
+            "description": "Articles list"
+          }
+        }
+      }
+    },
+    "/v1/sport/articles/{id}": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Chi tiết bài viết",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Article detail"
+          }
+        }
+      }
+    },
+    "/v1/sport/discover": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Feed khám phá (mix highlights + articles)",
+        "responses": {
+          "200": {
+            "description": "Discover feed"
+          }
+        }
+      }
+    },
+    "/v1/sport/teams/{id}": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Thông tin đội bóng",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team info"
+          }
+        }
+      }
+    },
+    "/v1/sport/teams/{id}/matches": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Lịch sử trận đấu của đội",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team matches"
+          }
+        }
+      }
+    },
+    "/v1/sport/search": {
+      "get": {
+        "tags": [
+          "Sport (Public)"
+        ],
+        "summary": "Tìm kiếm teams + leagues",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results"
+          }
+        }
+      }
+    },
+    "/v1/sport/user/profile": {
+      "get": {
+        "tags": [
+          "Sport (User)"
+        ],
+        "summary": "Profile user (favorites, settings)",
+        "security": [
+          {
+            "FirebaseAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User sport profile"
+          }
+        }
+      }
+    },
+    "/v1/sport/user/favorites": {
+      "put": {
+        "tags": [
+          "Sport (User)"
+        ],
+        "summary": "Cập nhật đội yêu thích",
+        "security": [
+          {
+            "FirebaseAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "team_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "league_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Favorites updated"
+          }
+        }
+      }
+    },
+    "/v1/sport/user/notification-settings": {
+      "put": {
+        "tags": [
+          "Sport (User)"
+        ],
+        "summary": "Cập nhật notification settings",
+        "security": [
+          {
+            "FirebaseAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "match_start": {
+                    "type": "boolean"
+                  },
+                  "goals": {
+                    "type": "boolean"
+                  },
+                  "match_end": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Settings updated"
+          }
+        }
+      }
+    },
+    "/v1/sport/user/reminders": {
+      "get": {
+        "tags": [
+          "Sport (User)"
+        ],
+        "summary": "Danh sách reminders",
+        "security": [
+          {
+            "FirebaseAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reminders list"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Sport (User)"
+        ],
+        "summary": "Tạo reminder cho trận đấu",
+        "security": [
+          {
+            "FirebaseAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "match_id",
+                  "minutes_before"
+                ],
+                "properties": {
+                  "match_id": {
+                    "type": "integer"
+                  },
+                  "minutes_before": {
+                    "type": "integer",
+                    "enum": [
+                      15,
+                      30,
+                      60
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reminder created"
+          }
+        }
+      }
+    },
+    "/v1/sport/user/reminders/{matchId}": {
+      "delete": {
+        "tags": [
+          "Sport (User)"
+        ],
+        "summary": "Xóa reminder",
+        "security": [
+          {
+            "FirebaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "matchId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reminder deleted"
+          }
+        }
+      }
+    },
+    "/v1/sport/user/fcm-token": {
+      "post": {
+        "tags": [
+          "Sport (User)"
+        ],
+        "summary": "Đăng ký FCM token cho push notification",
+        "security": [
+          {
+            "FirebaseAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "token"
+                ],
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "platform": {
+                    "type": "string",
+                    "enum": [
+                      "android",
+                      "ios"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token registered"
+          }
+        }
+      }
+    },
+    "/v1/sport/user/account": {
+      "delete": {
+        "tags": [
+          "Sport (User)"
+        ],
+        "summary": "Xóa tài khoản",
+        "security": [
+          {
+            "FirebaseAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account deleted"
+          }
+        }
+      }
+    },
+    "/v1/lottery/health": {
+      "get": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "Service status"
+          }
+        }
+      }
+    },
+    "/v1/lottery/latest": {
+      "get": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "Kết quả xổ số mới nhất",
+        "responses": {
+          "200": {
+            "description": "Latest results"
+          }
+        }
+      }
+    },
+    "/v1/lottery/traditional": {
+      "get": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "Kết quả xổ số truyền thống",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "province",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Traditional lottery results"
+          }
+        }
+      }
+    },
+    "/v1/lottery/vietlot": {
+      "get": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "Kết quả Vietlot (Power 6/55, Mega 6/45, etc.)",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "power655",
+                "mega645",
+                "max3d",
+                "keno"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vietlot results"
+          }
+        }
+      }
+    },
+    "/v1/lottery/schedule": {
+      "get": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "Lịch quay số",
+        "responses": {
+          "200": {
+            "description": "Draw schedule"
+          }
+        }
+      }
+    },
+    "/v1/lottery/statistics": {
+      "get": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "Thống kê xổ số (8 loại phân tích)",
+        "description": "Trả về thống kê xổ số theo region, đài cụ thể, số ngày.\n\n**Các loại thống kê (type):**\n- `frequency` — Tần suất xuất hiện (top 20 hot/cold)\n- `streak` — Chuỗi liên tiếp (đang về, dài nhất)\n- `head_tail` — Phân bố đầu đuôi (0-9)\n- `gap` — Lô gan (chưa về lâu nhất, vừa trở lại)\n- `prediction` — Dự đoán tham khảo (hot/due candidates)\n- `pattern` — Cặp hay đi cùng, chẵn/lẻ, phân bố tổng\n- `special` — Giải Đặc Biệt (tần suất, chưa ra)\n- `summary` — Tổng hợp dashboard\n- `all` — Tất cả (default)\n",
+        "parameters": [
+          {
+            "name": "region",
+            "in": "query",
+            "description": "Miền (mặc định mien-bac nếu không truyền)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "mien-nam",
+                "mien-trung",
+                "mien-bac"
+              ],
+              "default": "mien-bac"
+            }
+          },
+          {
+            "name": "province_code",
+            "in": "query",
+            "description": "Mã đài cụ thể (VD HCM, DT, DN). Nếu không truyền = tổng hợp cả miền.",
+            "schema": {
+              "type": "string",
+              "example": "HCM"
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "description": "Số ngày phân tích (1-90)",
+            "schema": {
+              "type": "integer",
+              "default": 30,
+              "minimum": 1,
+              "maximum": 90
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Loại thống kê",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "all",
+                "frequency",
+                "streak",
+                "head_tail",
+                "gap",
+                "prediction",
+                "pattern",
+                "special",
+                "summary"
+              ],
+              "default": "all"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Statistics data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "region": {
+                          "type": "string"
+                        },
+                        "province_code": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "days": {
+                          "type": "integer"
+                        },
+                        "frequency": {
+                          "type": "object",
+                          "description": "top_pairs[], cold_pairs[]"
+                        },
+                        "streaks": {
+                          "type": "object",
+                          "description": "current[], longest[]"
+                        },
+                        "head_tail": {
+                          "type": "object",
+                          "description": "heads{0-9}, tails{0-9}"
+                        },
+                        "gap": {
+                          "type": "object",
+                          "description": "longest_absent[], just_returned[]"
+                        },
+                        "prediction": {
+                          "type": "object",
+                          "description": "hot_candidates[], due_candidates[], disclaimer"
+                        },
+                        "pattern": {
+                          "type": "object",
+                          "description": "frequent_pairs[], even_odd_trend[], sum_distribution[]"
+                        },
+                        "special": {
+                          "type": "object",
+                          "description": "recent_special[], special_frequency[], never_appeared[]"
+                        },
+                        "summary": {
+                          "type": "object",
+                          "description": "total_days, coverage_percent, top_5_hot[], top_5_cold[]"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/lottery/check": {
+      "post": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "Dò số xổ số",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "numbers"
+                ],
+                "properties": {
+                  "numbers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "123456",
+                      "789012"
+                    ]
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "province": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Check results (matched prizes)"
+          }
+        }
+      }
+    },
+    "/v1/user/tickets": {
+      "get": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "Danh sách vé đã lưu",
+        "security": [
+          {
+            "FirebaseAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User tickets"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "Lưu vé xổ số",
+        "security": [
+          {
+            "FirebaseAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "numbers",
+                  "type"
+                ],
+                "properties": {
+                  "numbers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "draw_date": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ticket saved"
+          }
+        }
+      }
+    },
+    "/v1/user/tickets/{ticketId}": {
+      "get": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "Chi tiết vé",
+        "security": [
+          {
+            "FirebaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "ticketId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ticket detail"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Lottery"
+        ],
+        "summary": "Xóa vé",
+        "security": [
+          {
+            "FirebaseAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "ticketId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ticket deleted"
+          }
+        }
+      }
+    },
+    "/v1/notifications/fcm-token": {
+      "post": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Đăng ký FCM token (web push)",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "token"
+                ],
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token registered"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Xóa FCM token",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token deleted"
+          }
+        }
+      }
+    },
+    "/banner/all": {
+      "get": {
+        "tags": [
+          "Banner"
+        ],
+        "summary": "Tất cả banner content (jobs + topics + blogs + sources)",
+        "responses": {
+          "200": {
+            "description": "All banner data"
+          }
+        }
+      }
+    },
+    "/banner/jobs": {
+      "get": {
+        "tags": [
+          "Banner"
+        ],
+        "summary": "Banner — latest jobs",
+        "responses": {
+          "200": {
+            "description": "Job banners"
+          }
+        }
+      }
+    },
+    "/banner/topics": {
+      "get": {
+        "tags": [
+          "Banner"
+        ],
+        "summary": "Banner — trending topics",
+        "responses": {
+          "200": {
+            "description": "Topic banners"
+          }
+        }
+      }
+    },
+    "/banner/blogs": {
+      "get": {
+        "tags": [
+          "Banner"
+        ],
+        "summary": "Banner — latest blogs",
+        "responses": {
+          "200": {
+            "description": "Blog banners"
+          }
+        }
+      }
+    },
+    "/banner/sources": {
+      "get": {
+        "tags": [
+          "Banner"
+        ],
+        "summary": "Banner — featured source games",
+        "responses": {
+          "200": {
+            "description": "Source banners"
+          }
+        }
+      }
+    },
+    "/blog/publish": {
+      "post": {
+        "tags": [
+          "Blog (Publish)"
+        ],
+        "summary": "Publish bài blog mới",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "content"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "slug": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "meta_title": {
+                    "type": "string"
+                  },
+                  "meta_description": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "draft",
+                      "published"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Blog published"
+          }
+        }
+      }
+    },
+    "/blog/update/{slug}": {
+      "post": {
+        "tags": [
+          "Blog (Publish)"
+        ],
+        "summary": "Update bài blog",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Blog updated"
+          }
+        }
+      }
+    },
+    "/blog/delete/{slug}": {
+      "delete": {
+        "tags": [
+          "Blog (Publish)"
+        ],
+        "summary": "Xóa bài blog",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog deleted"
+          }
+        }
+      }
+    },
+    "/blog/list": {
+      "get": {
+        "tags": [
+          "Blog (Publish)"
+        ],
+        "summary": "Danh sách blogs",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog list"
+          }
+        }
+      }
+    },
+    "/blog/detail/{slug}": {
+      "get": {
+        "tags": [
+          "Blog (Publish)"
+        ],
+        "summary": "Chi tiết blog by slug",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog detail"
+          }
+        }
+      }
+    },
+    "/manage/blogs": {
+      "get": {
+        "tags": [
+          "Blog (Management)"
+        ],
+        "summary": "Danh sách blogs (admin)",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated blog list"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Blog (Management)"
+        ],
+        "summary": "Tạo blog (admin)",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "content"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "category_id": {
+                    "type": "integer"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "draft",
+                      "published"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Blog created"
+          }
+        }
+      }
+    },
+    "/manage/blogs/statistics": {
+      "get": {
+        "tags": [
+          "Blog (Management)"
+        ],
+        "summary": "Blog statistics",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Statistics"
+          }
+        }
+      }
+    },
+    "/manage/blogs/{id}": {
+      "get": {
+        "tags": [
+          "Blog (Management)"
+        ],
+        "summary": "Chi tiết blog",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog detail"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Blog (Management)"
+        ],
+        "summary": "Cập nhật blog",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Blog (Management)"
+        ],
+        "summary": "Xóa blog",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          }
+        }
+      }
+    },
+    "/manage/blogs/categories": {
+      "get": {
+        "tags": [
+          "Blog (Management)"
+        ],
+        "summary": "Danh sách categories",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Categories"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Blog (Management)"
+        ],
+        "summary": "Tạo category",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "slug"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "slug": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Category created"
+          }
+        }
+      }
+    },
+    "/manage/blogs/tags": {
+      "get": {
+        "tags": [
+          "Blog (Management)"
+        ],
+        "summary": "Danh sách tags",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tags"
+          }
+        }
+      }
+    },
+    "/manage/forum/dashboard": {
+      "get": {
+        "tags": [
+          "Forum (Management)"
+        ],
+        "summary": "Forum admin dashboard (stats)",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dashboard stats"
+          }
+        }
+      }
+    },
+    "/manage/forum/posts": {
+      "get": {
+        "tags": [
+          "Forum (Management)"
+        ],
+        "summary": "Danh sách posts (admin filter)",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "published",
+                "pending",
+                "hidden",
+                "spam"
+              ]
+            }
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Posts list"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Forum (Management)"
+        ],
+        "summary": "Tạo post (admin)",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Post created"
+          }
+        }
+      }
+    },
+    "/manage/forum/posts/{id}/status": {
+      "post": {
+        "tags": [
+          "Forum (Management)"
+        ],
+        "summary": "Thay đổi status post",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "status"
+                ],
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "published",
+                      "hidden",
+                      "spam"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status changed"
+          }
+        }
+      }
+    },
+    "/manage/forum/posts/bulk/status": {
+      "patch": {
+        "tags": [
+          "Forum (Management)"
+        ],
+        "summary": "Bulk thay đổi status posts",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "ids",
+                  "status"
+                ],
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bulk updated"
+          }
+        }
+      }
+    },
+    "/manage/forum/reports": {
+      "get": {
+        "tags": [
+          "Forum (Management)"
+        ],
+        "summary": "Danh sách reports",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reports list"
+          }
+        }
+      }
+    },
+    "/manage/forum/leaderboard": {
+      "get": {
+        "tags": [
+          "Forum (Management)"
+        ],
+        "summary": "Leaderboard (admin view)",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Leaderboard"
+          }
+        }
+      }
+    },
+    "/manage/dashboard": {
+      "get": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "E-commerce dashboard (revenue, orders, customers)",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dashboard stats"
+          }
+        }
+      }
+    },
+    "/manage/products": {
+      "get": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "Danh sách products",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products list"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "Tạo product mới",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "sku",
+                  "price"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "sku": {
+                    "type": "string"
+                  },
+                  "price": {
+                    "type": "number"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "category_id": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product created"
+          }
+        }
+      }
+    },
+    "/manage/products/{id}": {
+      "get": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "Chi tiết product",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product detail"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "Cập nhật product",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "Xóa product",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          }
+        }
+      }
+    },
+    "/manage/orders": {
+      "get": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "Danh sách orders",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orders list"
+          }
+        }
+      }
+    },
+    "/manage/orders/{id}": {
+      "get": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "Chi tiết order",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order detail"
+          }
+        }
+      }
+    },
+    "/manage/sellers": {
+      "get": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "Danh sách sellers",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sellers list"
+          }
+        }
+      }
+    },
+    "/manage/sellers/{id}/approve": {
+      "post": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "Approve seller",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Seller approved"
+          }
+        }
+      }
+    },
+    "/manage/customers": {
+      "get": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "Danh sách customers",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customers list"
+          }
+        }
+      }
+    },
+    "/manage/invoices": {
+      "get": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "Danh sách invoices",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoices list"
+          }
+        }
+      }
+    },
+    "/manage/refunds": {
+      "get": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "Danh sách refunds",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Refunds list"
+          }
+        }
+      }
+    },
+    "/manage/reporting/sales": {
+      "get": {
+        "tags": [
+          "E-Commerce (Management)"
+        ],
+        "summary": "Báo cáo doanh thu",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sales report"
+          }
+        }
+      }
+    },
+    "/manage/settings/locales": {
+      "get": {
+        "tags": [
+          "Settings & Config"
+        ],
+        "summary": "Danh sách locales",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Locales"
+          }
+        }
+      }
+    },
+    "/manage/settings/currencies": {
+      "get": {
+        "tags": [
+          "Settings & Config"
+        ],
+        "summary": "Danh sách currencies",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Currencies"
+          }
+        }
+      }
+    },
+    "/manage/settings/channels": {
+      "get": {
+        "tags": [
+          "Settings & Config"
+        ],
+        "summary": "Danh sách channels",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Channels"
+          }
+        }
+      }
+    },
+    "/manage/configuration": {
+      "get": {
+        "tags": [
+          "Settings & Config"
+        ],
+        "summary": "Lấy system configuration",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Configuration tree"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Settings & Config"
+        ],
+        "summary": "Cập nhật configuration",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Configuration saved"
+          }
+        }
+      }
+    },
+    "/manage/promotions/catalog-rules": {
+      "get": {
+        "tags": [
+          "Marketing"
+        ],
+        "summary": "Danh sách catalog price rules",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Catalog rules"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Marketing"
+        ],
+        "summary": "Tạo catalog rule",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/manage/promotions/cart-rules": {
+      "get": {
+        "tags": [
+          "Marketing"
+        ],
+        "summary": "Danh sách cart price rules",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart rules"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Marketing"
+        ],
+        "summary": "Tạo cart rule",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      }
+    },
+    "/manage/marketing/seo/url-rewrites": {
+      "get": {
+        "tags": [
+          "Marketing"
+        ],
+        "summary": "URL rewrites",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "URL rewrites list"
+          }
+        }
+      }
+    },
+    "/manage/marketing/seo/sitemaps": {
+      "get": {
+        "tags": [
+          "Marketing"
+        ],
+        "summary": "Sitemaps",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sitemaps list"
+          }
+        }
+      }
+    },
+    "/manage/marketing/communications/email-templates": {
+      "get": {
+        "tags": [
+          "Marketing"
+        ],
+        "summary": "Email templates",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Templates list"
+          }
+        }
+      }
+    },
+    "/manage/marketing/communications/campaigns": {
+      "get": {
+        "tags": [
+          "Marketing"
+        ],
+        "summary": "Marketing campaigns",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Campaigns list"
+          }
+        }
+      }
+    },
+    "/manage/notifications": {
+      "get": {
+        "tags": [
+          "Settings & Config"
+        ],
+        "summary": "Admin notifications",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notifications list"
+          }
+        }
+      }
+    },
+    "/manage/notifications/read-all": {
+      "post": {
+        "tags": [
+          "Settings & Config"
+        ],
+        "summary": "Mark all notifications read",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All marked read"
+          }
+        }
+      }
+    },
+    "/v1/homepage": {
+      "get": {
+        "tags": [
+          "Homepage"
+        ],
+        "summary": "Full homepage data (cached 5min)",
+        "description": "Trả về categories, trending, best_selling, staff_picks, products grid, stats, blogs, forum topics",
+        "responses": {
+          "200": {
+            "description": "Homepage data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "categories": {
+                          "type": "array"
+                        },
+                        "trending": {
+                          "type": "array"
+                        },
+                        "best_selling": {
+                          "type": "array"
+                        },
+                        "staff_picks": {
+                          "type": "array"
+                        },
+                        "products": {
+                          "type": "object",
+                          "properties": {
+                            "items": {
+                              "type": "array"
+                            },
+                            "total": {
+                              "type": "integer"
+                            },
+                            "has_more": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "stats": {
+                          "type": "object"
+                        },
+                        "latestBlogs": {
+                          "type": "array"
+                        },
+                        "hotForumTopics": {
+                          "type": "array"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/homepage/products": {
+      "get": {
+        "tags": [
+          "Homepage"
+        ],
+        "summary": "Filtered products (AJAX)",
+        "parameters": [
+          {
+            "name": "engine",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Unity",
+                "Unreal",
+                "Godot",
+                "Phaser"
+              ]
+            }
+          },
+          {
+            "name": "genre",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "FPS",
+                "RPG",
+                "Action",
+                "MOBA",
+                "Racing",
+                "Puzzle",
+                "Strategy",
+                "Survival",
+                "Platformer"
+              ]
+            }
+          },
+          {
+            "name": "difficulty",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "beginner",
+                "intermediate",
+                "advanced"
+              ]
+            }
+          },
+          {
+            "name": "price_min",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "price_max",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "trending",
+                "newest",
+                "best_selling",
+                "price_low",
+                "price_high",
+                "rating"
+              ],
+              "default": "trending"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filtered products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "items": {
+                          "type": "array"
+                        },
+                        "total": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "per_page": {
+                          "type": "integer"
+                        },
+                        "has_more": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/homepage/categories": {
+      "get": {
+        "tags": [
+          "Homepage"
+        ],
+        "summary": "Categories with product counts",
+        "responses": {
+          "200": {
+            "description": "List of categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "count": {
+                            "type": "integer"
+                          },
+                          "icon": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -34,6 +34,18 @@
     </section>
 
     <div class="bl-container lt-content">
+        {{-- Navigation --}}
+        <nav class="lt-nav">
+            <a href="{{ route('lottery.index') }}" class="lt-nav__item">← Tổng hợp</a>
+            <a href="{{ route('lottery.mien-bac') }}" class="lt-nav__item">🎯 Miền Bắc</a>
+            <a href="{{ route('lottery.mien-trung') }}" class="lt-nav__item">🎯 Miền Trung</a>
+            <a href="{{ route('lottery.mien-nam') }}" class="lt-nav__item">🎯 Miền Nam</a>
+            <a href="{{ route('lottery.vietlott') }}" class="lt-nav__item">⭐ Vietlott</a>
+            <a href="{{ route('lottery.statistics') }}" class="lt-nav__item">📊 Thống kê</a>
+            <a href="{{ route('lottery.check') }}" class="lt-nav__item lt-nav__item--highlight">🔍 Dò số</a>
+            <a href="{{ route('lottery.schedule') }}" class="lt-nav__item">📅 Lịch quay</a>
+        </nav>
+
         {{-- Check form --}}
         <section class="lt-section lt-check-form">
             <h2 class="lt-section__title">Nhập số cần dò</h2>
