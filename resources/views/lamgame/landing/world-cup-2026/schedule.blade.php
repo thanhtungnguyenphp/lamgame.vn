@@ -2,11 +2,11 @@
 <section class="wc26-schedule" id="schedule">
     <div class="container">
         <h2 class="wc26-section__title">📅 Lịch thi đấu & Kết quả</h2>
-        <p class="wc26-section__desc">Cập nhật kết quả World Cup 2026 — 🏆 CHUNG KẾT: TBN vs Argentina — 19/07 New York</p>
+        <p class="wc26-section__desc">🏆 TÂY BAN NHA VÔ ĐỊCH WORLD CUP 2026! Ferran Torres 106' — TBN 1-0 Argentina (AET) tại MetLife Stadium</p>
 
         {{-- Phase tabs --}}
         <div class="wc26-tabs" role="tablist">
-            <button class="wc26-tab wc26-tab--active" data-tab="recent" role="tab">Vòng 32</button>
+            <button class="wc26-tab wc26-tab--active" data-tab="recent" role="tab">Vòng loại trực tiếp</button>
             <button class="wc26-tab" data-tab="matchday3" role="tab">Lượt 3</button>
             <button class="wc26-tab" data-tab="matchday2" role="tab">Lượt 2</button>
             <button class="wc26-tab" data-tab="matchday1" role="tab">Lượt 1</button>
@@ -59,14 +59,15 @@
                 <div class="wc26-match wc26-match--done"><span class="wc26-match__group">QF</span><span class="wc26-match__teams">🇦🇷 Argentina <strong>3-1</strong> Thụy Sĩ (AET) 🇨🇭</span><span class="wc26-match__info">⚽ Mac Allister + Álvarez + Martínez — Argentina vào bán kết</span></div>
 
                 <h3 class="wc26-panel__date">📌 BÁN KẾT (14-15/07)</h3>
-                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">SF</span><span class="wc26-match__teams">🇫🇷 Pháp 0-<strong>2</strong> Tây Ban Nha 🇪🇸</span><span class="wc26-match__info">⚽ Oyarzabal (pen) + Porro — TBN VÀO CHUNG KẾT!
-                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">SF</span><span class="wc26-match__teams">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Anh 1-<strong>2</strong> Argentina 🇦🇷</span><span class="wc26-match__info">⚽ Fernández 85' + Martínez 90' — ARGENTINA VÀO CHUNG KẾT!
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">SF</span><span class="wc26-match__teams">🇫🇷 Pháp 0-<strong>2</strong> Tây Ban Nha 🇪🇸</span><span class="wc26-match__info">⚽ Oyarzabal (pen) + Porro — TBN VÀO CHUNG KẾT!</span></div>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">SF</span><span class="wc26-match__teams">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Anh 1-<strong>2</strong> Argentina 🇦🇷</span><span class="wc26-match__info">⚽ Fernández 85' + Martínez 90' — ARGENTINA VÀO CHUNG KẾT!</span></div>
 
-                <h3 class="wc26-panel__date">📌 TRANH HẠNG 3 & CHUNG KẾT</h3>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">3rd</span><span class="wc26-match__teams">🇫🇷 Pháp 🇫🇷 vs Anh 🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="wc26-match__info">18/07 — Miami</span></div>
-                <div class="wc26-match wc26-match--upcoming"><span class="wc26-match__group">FINAL</span><span class="wc26-match__teams">🏆 🇪🇸 TÂY BAN NHA 🇪🇸 vs ARGENTINA 🇦🇷</span><span class="wc26-match__info">19/07 15:00 ET — New York/New Jersey 🏆</span></div>
+                <h3 class="wc26-panel__date">📌 TRANH HẠNG 3 (18/07) — Miami</h3>
+                <div class="wc26-match wc26-match--done"><span class="wc26-match__group">3rd</span><span class="wc26-match__teams">🇫🇷 Pháp <strong>4-6</strong> Anh 🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="wc26-match__info">⚽ TRẬN KINH ĐIỂN 10 BÀN! Saka hat-trick 🎩, Bellingham solo — Anh hạng 3 🥉</span></div>
+
+                <h3 class="wc26-panel__date">🏆 CHUNG KẾT (19/07) — MetLife Stadium, New Jersey</h3>
+                <div class="wc26-match wc26-match--done wc26-match--final"><span class="wc26-match__group">🏆</span><span class="wc26-match__teams">🇪🇸 TÂY BAN NHA <strong>1-0</strong> Argentina 🇦🇷 (AET)</span><span class="wc26-match__info">🏆 FERRAN TORRES 106'! TBN VÔ ĐỊCH THẾ GIỚI LẦN 2! Enzo thẻ đỏ — Messi chia tay World Cup 🐐</span></div>
             </div>
-
             {{-- Matchday 3 --}}
             <div class="wc26-panel" id="panel-matchday3" style="display:none">
                 <h3 class="wc26-panel__date">Lượt 3 vòng bảng (24-27/06)</h3>
