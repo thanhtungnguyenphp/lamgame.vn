@@ -55,7 +55,7 @@
     <div class="sg-hero__bg"></div>
     <div class="sg-container sg-hero__inner">
         <span class="sg-hero__badge">🎮 Source Game Marketplace</span>
-        <h1 class="sg-hero__title">Build game nhanh hơn với<br><span class="sg-glow">source code production-ready</span></h1>
+        <h1 class="sg-hero__title">Build game nhanh hơn với <br><span class="sg-glow">source code production-ready</span></h1>
         <p class="sg-hero__sub">Tiết kiệm hàng trăm giờ phát triển. Source đã test, document đầy đủ, sẵn sàng deploy.</p>
         <form action="{{ route('lamgame.source-game') }}" method="GET" class="sg-search">
             <svg class="sg-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>

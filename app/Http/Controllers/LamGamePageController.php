@@ -795,11 +795,15 @@ class LamGamePageController extends Controller
             $language = 'C#';
             $fileSize = '25 MB';
 
-            // Detect engine from name/description
-            $nameLower = strtolower($name . ' ' . $shortDescription);
+            // Detect engine from name/description/short_description
+            $nameLower = strtolower($name . ' ' . $shortDescription . ' ' . $description);
             if (str_contains($nameLower, 'godot')) { $engine = 'Godot'; $language = 'GDScript'; }
-            elseif (str_contains($nameLower, 'phaser') || str_contains($nameLower, 'html5') || str_contains($nameLower, 'javascript')) { $engine = 'Phaser'; $language = 'JavaScript'; }
-            elseif (str_contains($nameLower, 'unreal')) { $engine = 'Unreal'; $language = 'Blueprint'; }
+            elseif (str_contains($nameLower, 'phaser') || str_contains($nameLower, 'html5') || str_contains($nameLower, 'javascript') || str_contains($nameLower, 'js game') || str_contains($nameLower, 'canvas')) { $engine = 'HTML5/Phaser'; $language = 'JavaScript'; }
+            elseif (str_contains($nameLower, 'unreal') || str_contains($nameLower, 'ue4') || str_contains($nameLower, 'ue5') || str_contains($nameLower, 'blueprint')) { $engine = 'Unreal'; $language = 'C++/Blueprint'; }
+            elseif (str_contains($nameLower, 'construct') || str_contains($nameLower, 'construct 3') || str_contains($nameLower, 'construct 2')) { $engine = 'Construct'; $language = 'Event Sheet'; }
+            elseif (str_contains($nameLower, 'cocos') || str_contains($nameLower, 'cocos2d')) { $engine = 'Cocos'; $language = 'TypeScript'; }
+            elseif (str_contains($nameLower, 'rpg maker') || str_contains($nameLower, 'rpgmaker')) { $engine = 'RPG Maker'; $language = 'JavaScript'; }
+            // Default: Unity (most common)
 
             // Stable downloads & rating based on product ID
             srand($seed);

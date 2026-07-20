@@ -41,6 +41,8 @@
                     <li><a href="{{ route('mini-game.index') }}">Chơi Game</a></li>
                     <li><a href="{{ route('lamgame.viec-lam-game') }}">Việc làm</a></li>
                     <li><a href="{{ route('forum.index') }}">Forum</a></li>
+                    <li><a href="{{ route('lamgame.thue-team-dev') }}">Thuê Team Dev</a></li>
+                    <li><a href="{{ route('seller.register') }}">Bán Source Game</a></li>
                 </ul>
             </div>
 
@@ -51,7 +53,8 @@
                     <li><a href="{{ route('lamgame.blog') }}">Blog</a></li>
                     <li><a href="{{ route('sport.index') }}">Thể thao</a></li>
                     <li><a href="{{ route('lottery.index') }}">Xổ số</a></li>
-                    <li><a href="{{ route('world-cup-2026') }}">World Cup 2026 🔴</a></li>
+                    <li><a href="{{ route('world-cup-2026') }}">World Cup 2026</a></li>
+                    <li><a href="{{ route('lamgame.gioi-thieu') }}">Giới thiệu</a></li>
                     <li><a href="{{ route('lamgame.lien-he') }}">Liên hệ</a></li>
                 </ul>
             </div>

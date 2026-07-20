@@ -12,7 +12,7 @@
         <div class="lg-v2-hero__grid">
             <div class="lg-v2-hero__content">
                 <span class="lg-v2-hero__badge">MARKETPLACE SOURCE GAME HÀNG ĐẦU VIỆT NAM</span>
-                <h1>Source Game chất lượng<br>cho <span class="lg-v2-hero__accent">Unity & Unreal</span> Developer</h1>
+                <h1>Source Game chất lượng <br>cho <span class="lg-v2-hero__accent">Unity & Unreal</span> Developer</h1>
                 <p class="lg-v2-hero__sub">Tiết kiệm hàng trăm giờ phát triển với source code, hệ thống gameplay và template production-ready.</p>
                 <div class="lg-v2-hero__cta">
                     <a href="{{ route('lamgame.source-game') }}" class="lg-v2-btn lg-v2-btn--primary">✨ Khám phá Source Hot</a>

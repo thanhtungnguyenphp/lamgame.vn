@@ -12,7 +12,7 @@
     <div class="ai-hero__bg"></div>
     <div class="ai-hero__content">
         <span class="ai-badge">✨ Powered by GPT-4 & Claude</span>
-        <h1>Tiết kiệm 80% thời gian<br>phát triển game</h1>
+        <h1>Tiết kiệm 80% thời gian <br>phát triển game</h1>
         <p>Code, Debug, Test, Review — AI xử lý trong vài giây. Bạn tập trung vào sáng tạo.</p>
         <div class="ai-hero__cta">
             <a href="{{ route('lamgame.ai-tools-dashboard') }}" class="ai-btn ai-btn--primary">Dùng thử miễn phí</a>

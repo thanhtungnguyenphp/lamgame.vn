@@ -12,7 +12,7 @@
     <div class="lg-hero__bg"></div>
     <div class="lg-hero__content">
         <span class="lg-hero__badge"><span class="lg-hero__badge-dot"></span> Cộng đồng Game Dev #1 Việt Nam</span>
-        <h1 class="lg-hero__title">Biến ý tưởng thành<br><span class="lg-hero__gradient-text">Game thực tế.</span></h1>
+        <h1 class="lg-hero__title">Biến ý tưởng thành <br><span class="lg-hero__gradient-text">Game thực tế.</span></h1>
         <p class="lg-hero__sub">Source code production-ready, AI tools, cộng đồng 12.000+ developers.</p>
         <div class="lg-hero__cta">
             <a href="{{ route('lamgame.source-game') }}" class="lg-btn lg-btn--primary">🎮 Mua Source Game</a>
@@ -174,6 +174,28 @@
             <a href="{{ route('lamgame.source-game') }}" class="lg-btn lg-btn--primary">🎮 Xem Source Game</a>
             <a href="{{ route('forum.index') }}" class="lg-btn lg-btn--outline">💬 Tham gia cộng đồng</a>
         </div>
+    </div>
+</section>
+
+{{-- INTERNAL LINKS — SEO: boost crawl for discovered-not-indexed pages --}}
+<section class="lg-section" style="padding:32px 0">
+    <div class="lg-container">
+        <nav class="lg-internal-links" aria-label="Khám phá thêm">
+            <h3 style="font-size:.9rem;color:#7A8599;margin-bottom:12px;font-weight:500">Khám phá thêm trên LamGame</h3>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <a href="/viec-lam-game" class="lg-tag">Việc làm Game</a>
+                <a href="/the-thao" class="lg-tag">Thể thao</a>
+                <a href="/xo-so" class="lg-tag">Xổ số</a>
+                <a href="/choi-game" class="lg-tag">Chơi Game Online</a>
+                <a href="/thue-team-dev" class="lg-tag">Thuê Team Dev</a>
+                <a href="/gioi-thieu" class="lg-tag">Giới thiệu</a>
+                <a href="/lien-he" class="lg-tag">Liên hệ</a>
+                <a href="/forum/trending" class="lg-tag">Forum Hot</a>
+                <a href="/forum/leaderboard" class="lg-tag">Bảng xếp hạng</a>
+                <a href="/world-cup-2026" class="lg-tag">World Cup 2026</a>
+                <a href="/seller/register" class="lg-tag">Đăng ký bán hàng</a>
+            </div>
+        </nav>
     </div>
 </section>
 

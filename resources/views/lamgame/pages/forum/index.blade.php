@@ -23,7 +23,7 @@
 <section class="fm-hero">
     <div class="fm-hero__bg"></div>
     <div class="fm-container fm-hero__inner">
-        <h1 class="fm-hero__title">Cộng đồng Game Developer<br><span class="fm-glow">lớn nhất Việt Nam</span></h1>
+        <h1 class="fm-hero__title">Cộng đồng Game Developer <br><span class="fm-glow">lớn nhất Việt Nam</span></h1>
         <p class="fm-hero__sub">Chia sẻ project, source game, AI workflow và kết nối với indie developers.</p>
         <div class="fm-hero__cta">
             <a href="{{ route('forum.posts.create') }}" class="fm-btn fm-btn--primary">Đăng project</a>
