@@ -96,7 +96,7 @@
                 @if($blog->category)
                 <a href="{{ route('lamgame.blog', ['category' => $blog->category->slug]) }}" class="bd-badge">{{ $blog->category->name }}</a>
                 @endif
-                <span class="bd-meta">{{ $blog->formatted_date }}</span>
+                <time datetime="{{ $blog->published_at ? $blog->published_at->toIso8601String() : $blog->created_at->toIso8601String() }}" class="bd-meta">{{ $blog->formatted_date }}</time>
                 <span class="bd-meta">{{ $blog->reading_time }} phút đọc</span>
             </div>
             <h1 class="bd-hero__title">{{ $blog->name }}</h1>

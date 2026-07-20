@@ -53,6 +53,57 @@
     @endif
     
     @stack('meta')
+
+    <!-- Global Schema: Organization + WebSite + SearchAction -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "Organization",
+                "@id": "https://lamgame.vn/#organization",
+                "name": "LamGame",
+                "alternateName": "Làm Game",
+                "url": "https://lamgame.vn",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "{{ asset('assets/logos/png/logo-square-512.png') }}",
+                    "width": 512,
+                    "height": 512
+                },
+                "description": "Cộng đồng Game Developer Việt Nam. Mua bán source game, việc làm game, forum lập trình game.",
+                "sameAs": [
+                    "https://www.facebook.com/groups/lamgame",
+                    "https://www.youtube.com/@lamgamevn"
+                ],
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "customer service",
+                    "url": "https://lamgame.vn/lien-he",
+                    "availableLanguage": "Vietnamese"
+                }
+            },
+            {
+                "@type": "WebSite",
+                "@id": "https://lamgame.vn/#website",
+                "name": "LamGame.vn",
+                "alternateName": "Làm Game",
+                "url": "https://lamgame.vn",
+                "publisher": {"@id": "https://lamgame.vn/#organization"},
+                "inLanguage": "vi",
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": {
+                        "@type": "EntryPoint",
+                        "urlTemplate": "https://lamgame.vn/blog?search={search_term_string}"
+                    },
+                    "query-input": "required name=search_term_string"
+                }
+            }
+        ]
+    }
+    </script>
+
     @stack('schema_markup')
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/logos/favicon/favicon.ico') }}">
@@ -425,11 +476,7 @@
     <!-- Footer -->
     @include('partials.footer-redesign')
 
-    <!-- Vue.js 3 and Axios for dynamic content -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js" onload="initializeVueApp()" onerror="handleVueLoadError()"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-    <!-- Initialize Vue App -->
+    <!-- Vue.js initialization functions (must be defined BEFORE Vue CDN loads) -->
     <script>
         function handleVueLoadError() {
             console.warn("Failed to load Vue.js. Some features may not work.");
@@ -466,11 +513,19 @@
                 console.error("Vue initialization error:", error);
             }
         }
+    </script>
 
-        // Fallback: try to initialize if Vue is already loaded
+    <!-- Vue.js 3 and Axios for dynamic content -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js" onload="initializeVueApp()" onerror="handleVueLoadError()"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!-- Fallback Vue initialization -->
+    <script>
+        // Fallback: try to initialize if Vue is already loaded (from cache)
         document.addEventListener("DOMContentLoaded", () => {
-            if (typeof Vue !== "undefined") {
+            if (typeof Vue !== "undefined" && !window.__vueInitialized) {
                 initializeVueApp();
+                window.__vueInitialized = true;
             }
         });
     </script>

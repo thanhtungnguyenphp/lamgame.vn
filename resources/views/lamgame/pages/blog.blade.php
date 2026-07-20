@@ -14,6 +14,36 @@
 @endif
 @endpush
 
+{{-- SEO: CollectionPage schema for /blog --}}
+@push('schema_markup')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "{{ $page_title ?? 'Blog - LamGame.vn' }}",
+    "description": "{{ $page_description ?? 'Kiến thức Game Dev, tips lập trình game, và xu hướng công nghệ mới nhất.' }}",
+    "url": "{{ route('lamgame.blog') }}",
+    "isPartOf": {"@id": "https://lamgame.vn/#website"}
+    @if(isset($blogs) && $blogs->count() > 0)
+    ,"mainEntity": {
+        "@type": "ItemList",
+        "numberOfItems": {{ $blogs->total() ?? $blogs->count() }},
+        "itemListElement": [
+            @foreach($blogs->take(10) as $i => $blog)
+            {
+                "@type": "ListItem",
+                "position": {{ $i + 1 }},
+                "url": "{{ route('blog.show', $blog->slug) }}",
+                "name": "{{ addslashes($blog->name) }}"
+            }@if(!$loop->last),@endif
+            @endforeach
+        ]
+    }
+    @endif
+}
+</script>
+@endpush
+
 @section('content')
 <div class="bl-page">
 
