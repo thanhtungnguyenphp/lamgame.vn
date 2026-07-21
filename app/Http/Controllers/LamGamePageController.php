@@ -580,6 +580,71 @@ class LamGamePageController extends Controller
     }
 
     /**
+     * My Applications page — show logged-in developer's job applications
+     */
+    public function myApplications(Request $request)
+    {
+        $customer = auth('customer')->user();
+        if (!$customer) {
+            return redirect()->route('auth.login')->with('info', 'Vui lòng đăng nhập để xem đơn ứng tuyển.');
+        }
+
+        $statusFilter = $request->get('status');
+        $query = \App\Models\JobApplication::with('jobPosting')
+            ->where('applicant_user_id', $customer->id)
+            ->orderByDesc('applied_at');
+
+        if ($statusFilter && in_array($statusFilter, ['pending', 'reviewed', 'shortlisted', 'rejected', 'accepted'])) {
+            $query->where('status', $statusFilter);
+        }
+
+        $applications = $query->paginate(10);
+
+        return view('lamgame.pages.my-applications', [
+            'applications'  => $applications,
+            'currentStatus' => $statusFilter,
+            'page_title'    => 'Đơn ứng tuyển của tôi - Làm Game',
+            'page_description' => 'Theo dõi trạng thái đơn ứng tuyển việc làm game của bạn.',
+        ]);
+    }
+
+    /**
+     * Company Profile page — public view of a company + their active jobs
+     */
+    public function companyProfile($id)
+    {
+        $company = \App\Models\Company::findOrFail($id);
+
+        $jobs = \App\Models\JobPosting::where('company_id', $company->id)
+            ->where('status', 'active')
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        // Also try matching by company_name for jobs without company_id
+        $jobsByName = \App\Models\JobPosting::where('company_name', $company->name)
+            ->where('status', 'active')
+            ->whereNull('company_id')
+            ->orderByDesc('created_at')
+            ->get();
+
+        // Merge (avoid duplicates)
+        $allJobs = $jobs->getCollection()->merge($jobsByName)->unique('id');
+
+        $totalApplications = \App\Models\JobPosting::where('company_id', $company->id)
+            ->orWhere('company_name', $company->name)
+            ->sum('application_count');
+
+        return view('lamgame.pages.company-profile', [
+            'company'           => $company,
+            'jobs'              => $jobs,
+            'totalJobs'         => $allJobs->count(),
+            'totalApplications' => $totalApplications,
+            'page_title'        => $company->name . ' — Tuyển dụng Game | Làm Game',
+            'page_description'  => \Str::limit($company->description, 160),
+        ]);
+    }
+
+    /**
      * Show Course detail page
      */
     public function courseDetail($slug)

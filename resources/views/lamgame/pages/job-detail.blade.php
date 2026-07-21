@@ -85,7 +85,13 @@
                         <div class="job-header-content">
                             <div class="job-info">
                                 <h1 class="job-title">{{ $jobTitle }}</h1>
-                                <div class="company-name">{{ $companyName }}</div>
+                                <div class="company-name">
+                                    @if($job->company_id)
+                                    <a href="{{ route('lamgame.company.profile', $job->company_id) }}" style="color:inherit;text-decoration:none;border-bottom:1px dashed rgba(255,255,255,.3)">{{ $companyName }}</a>
+                                    @else
+                                    {{ $companyName }}
+                                    @endif
+                                </div>
                                 <div class="job-meta">
                                     <div class="meta-item">
                                         <i class="fa fa-map-marker"></i>

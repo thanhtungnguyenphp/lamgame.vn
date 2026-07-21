@@ -169,9 +169,21 @@
             @guest('customer')
                 <a href="{{ route('auth.login') }}" class="nav-redesign__cta">Đăng nhập</a>
             @else
-                <a href="{{ route('shop.customers.account.profile.index') }}" class="ds-avatar ds-avatar--sm">
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth('customer')->user()->first_name) }}&size=32" alt="{{ auth('customer')->user()->first_name }}">
-                </a>
+                <div class="nav-redesign__user-menu">
+                    <button class="ds-avatar ds-avatar--sm" onclick="this.parentElement.classList.toggle('open')">
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(auth('customer')->user()->first_name) }}&size=32" alt="{{ auth('customer')->user()->first_name }}">
+                    </button>
+                    <div class="nav-redesign__user-dropdown">
+                        <a href="{{ route('shop.customers.account.profile.index') }}">👤 Tài khoản</a>
+                        <a href="{{ route('lamgame.my-applications') }}">📋 Đơn ứng tuyển</a>
+                        <a href="{{ route('forum.bookmarks') }}">🔖 Bài viết đã lưu</a>
+                        <a href="{{ route('collections.index') }}">📦 Bộ sưu tập</a>
+                        <form method="POST" action="{{ route('auth.logout') }}" style="margin:0">
+                            @csrf
+                            <button type="submit" style="width:100%;text-align:left;background:none;border:none;padding:8px 16px;color:#F87171;cursor:pointer;font-size:.88rem">🚪 Đăng xuất</button>
+                        </form>
+                    </div>
+                </div>
             @endguest
 
             {{-- Mobile toggle --}}
@@ -279,5 +291,20 @@ document.addEventListener('click', function(e) {
         document.getElementById('notif-dropdown').classList.remove('active');
     }
 });
+// Close user dropdown on click outside
+document.addEventListener('click', function(e) {
+    var menu = document.querySelector('.nav-redesign__user-menu');
+    if (menu && !menu.contains(e.target)) menu.classList.remove('open');
+});
 </script>
+@endpush
+
+@push('styles')
+<style>
+.nav-redesign__user-menu{position:relative}
+.nav-redesign__user-dropdown{display:none;position:absolute;top:calc(100% + 8px);right:0;background:#1A1A2E;border:1px solid rgba(124,92,255,.2);border-radius:10px;min-width:200px;padding:6px 0;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:1000}
+.nav-redesign__user-menu.open .nav-redesign__user-dropdown{display:block}
+.nav-redesign__user-dropdown a{display:block;padding:8px 16px;color:#B7C0D1;text-decoration:none;font-size:.88rem;transition:background .15s}
+.nav-redesign__user-dropdown a:hover{background:rgba(124,92,255,.1);color:#fff}
+</style>
 @endpush

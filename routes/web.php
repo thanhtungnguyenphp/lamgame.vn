@@ -164,6 +164,8 @@ Route::get('storage/company-logos/{filename}', [App\Http\Controllers\LogoControl
 // Job routes
 Route::get('viec-lam-game', [LamGamePageController::class, 'jobs'])->name('lamgame.viec-lam-game');
 Route::get('viec-lam/{slug}', [LamGamePageController::class, 'jobDetail'])->name('lamgame.job.detail');
+Route::get('my-applications', [LamGamePageController::class, 'myApplications'])->name('lamgame.my-applications')->middleware('customer');
+Route::get('company/{id}', [LamGamePageController::class, 'companyProfile'])->name('lamgame.company.profile')->where('id', '[0-9]+');
 
 // Forum routes
 Route::prefix('forum')->name('forum.')->group(function () {
