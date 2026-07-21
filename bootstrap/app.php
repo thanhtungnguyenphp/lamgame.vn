@@ -71,6 +71,7 @@ return Application::configure(basePath: dirname(__DIR__))
          */
         $middleware->alias([
             'seller'          => \App\Http\Middleware\CheckSeller::class,
+            'employer'        => \App\Http\Middleware\CheckEmployer::class,
             'quota'           => \App\Http\Middleware\CheckSubscriptionQuota::class,
             'firebase.auth'   => \App\Http\Middleware\FirebaseAuth::class,
             'api.key'         => \App\Http\Middleware\ApiKeyAuth::class,

@@ -175,6 +175,25 @@ Route::middleware('customer')->prefix('job')->group(function () {
     Route::delete('alerts/{id}', [LamGamePageController::class, 'deleteJobAlert'])->name('lamgame.job.alert.delete')->where('id', '[0-9]+');
 });
 
+// Employer Dashboard routes
+Route::prefix('employer')->name('employer.')->middleware('customer')->group(function () {
+    Route::get('register', [\App\Http\Controllers\EmployerController::class, 'showRegister'])->name('register');
+    Route::post('register', [\App\Http\Controllers\EmployerController::class, 'register'])->name('register.submit');
+
+    // Employer-only routes (must have is_employer=true)
+    Route::middleware('employer')->group(function () {
+        Route::get('dashboard', [\App\Http\Controllers\EmployerController::class, 'dashboard'])->name('dashboard');
+        Route::get('jobs', [\App\Http\Controllers\EmployerController::class, 'jobs'])->name('jobs');
+        Route::get('jobs/create', [\App\Http\Controllers\EmployerController::class, 'createJob'])->name('jobs.create');
+        Route::post('jobs', [\App\Http\Controllers\EmployerController::class, 'storeJob'])->name('jobs.store');
+        Route::get('jobs/{id}/edit', [\App\Http\Controllers\EmployerController::class, 'editJob'])->name('jobs.edit')->where('id', '[0-9]+');
+        Route::put('jobs/{id}', [\App\Http\Controllers\EmployerController::class, 'updateJob'])->name('jobs.update')->where('id', '[0-9]+');
+        Route::post('jobs/{id}/toggle-publish', [\App\Http\Controllers\EmployerController::class, 'togglePublish'])->name('jobs.toggle-publish')->where('id', '[0-9]+');
+        Route::get('jobs/{id}/applications', [\App\Http\Controllers\EmployerController::class, 'applications'])->name('jobs.applications')->where('id', '[0-9]+');
+        Route::patch('applications/{id}/status', [\App\Http\Controllers\EmployerController::class, 'updateApplicationStatus'])->name('applications.status')->where('id', '[0-9]+');
+    });
+});
+
 // Forum routes
 Route::prefix('forum')->name('forum.')->group(function () {
     // Main forum pages (public)
