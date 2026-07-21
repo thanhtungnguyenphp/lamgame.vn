@@ -645,6 +645,91 @@ class LamGamePageController extends Controller
     }
 
     /**
+     * Saved Jobs page — show user's bookmarked jobs
+     */
+    public function savedJobs()
+    {
+        $customer = auth('customer')->user();
+
+        $savedJobs = \App\Models\SavedJob::with('jobPosting.skills')
+            ->where('user_id', $customer->id)
+            ->orderByDesc('saved_at')
+            ->paginate(12);
+
+        return view('lamgame.pages.saved-jobs', [
+            'savedJobs'        => $savedJobs,
+            'page_title'       => 'Việc làm đã lưu - Làm Game',
+            'page_description' => 'Danh sách việc làm game bạn đã lưu để xem lại.',
+        ]);
+    }
+
+    /**
+     * Toggle save/unsave a job (AJAX)
+     */
+    public function toggleSaveJob(int $id)
+    {
+        $customer = auth('customer')->user();
+        $existing = \App\Models\SavedJob::where('user_id', $customer->id)
+            ->where('job_posting_id', $id)
+            ->first();
+
+        if ($existing) {
+            $existing->delete();
+            return response()->json(['saved' => false, 'message' => 'Đã bỏ lưu việc làm']);
+        }
+
+        \App\Models\SavedJob::create([
+            'user_id'        => $customer->id,
+            'job_posting_id' => $id,
+        ]);
+
+        return response()->json(['saved' => true, 'message' => 'Đã lưu việc làm']);
+    }
+
+    /**
+     * Store a new job alert
+     */
+    public function storeJobAlert(Request $request)
+    {
+        $customer = auth('customer')->user();
+
+        $request->validate([
+            'keywords'  => 'nullable|string|max:255',
+            'skills'    => 'nullable|array|max:10',
+            'location'  => 'nullable|string|max:100',
+            'frequency' => 'required|in:daily,weekly',
+        ]);
+
+        // Max 5 alerts per user
+        $alertCount = \App\Models\JobAlert::where('user_id', $customer->id)->count();
+        if ($alertCount >= 5) {
+            return response()->json(['message' => 'Tối đa 5 thông báo việc làm'], 422);
+        }
+
+        $alert = \App\Models\JobAlert::create([
+            'user_id'   => $customer->id,
+            'keywords'  => $request->keywords,
+            'skills'    => $request->skills,
+            'location'  => $request->location,
+            'frequency' => $request->frequency,
+        ]);
+
+        return response()->json(['message' => 'Đã tạo thông báo việc làm', 'alert' => $alert], 201);
+    }
+
+    /**
+     * Delete a job alert
+     */
+    public function deleteJobAlert(int $id)
+    {
+        $customer = auth('customer')->user();
+        $alert = \App\Models\JobAlert::where('user_id', $customer->id)->findOrFail($id);
+        $alert->delete();
+
+        return response()->json(['message' => 'Đã xóa thông báo']);
+    }
+
+    /**
      * Show Course detail page
      */
     public function courseDetail($slug)

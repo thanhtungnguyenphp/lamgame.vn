@@ -176,6 +176,7 @@
                     <div class="nav-redesign__user-dropdown">
                         <a href="{{ route('shop.customers.account.profile.index') }}">👤 Tài khoản</a>
                         <a href="{{ route('lamgame.my-applications') }}">📋 Đơn ứng tuyển</a>
+                        <a href="{{ route('lamgame.saved-jobs') }}">💼 Việc làm đã lưu</a>
                         <a href="{{ route('forum.bookmarks') }}">🔖 Bài viết đã lưu</a>
                         <a href="{{ route('collections.index') }}">📦 Bộ sưu tập</a>
                         <form method="POST" action="{{ route('auth.logout') }}" style="margin:0">

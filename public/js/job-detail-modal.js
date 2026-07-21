@@ -49,21 +49,34 @@ window.showToastMessage = showMessage;
 window.showErrorMessage = function(msg) { showMessage(msg, 'error'); };
 
 window.toggleSaveJob = function(button) {
-    var icon = button.querySelector('i');
-    var text = button.querySelector('span');
-    if (icon.classList.contains('fa-heart-o')) {
-        icon.classList.remove('fa-heart-o');
-        icon.classList.add('fa-heart');
-        button.classList.add('saved');
-        if (text) text.textContent = 'Đã lưu';
-        showMessage('Đã lưu việc làm vào danh sách yêu thích!', 'success');
-    } else {
-        icon.classList.remove('fa-heart');
-        icon.classList.add('fa-heart-o');
-        button.classList.remove('saved');
-        if (text) text.textContent = 'Lưu việc làm';
-        showMessage('Đã xóa khỏi danh sách yêu thích!', 'info');
-    }
+    var jobId = getJobIdFromPage();
+    if (!jobId) { showMessage('Không tìm thấy Job ID', 'error'); return; }
+
+    var csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    fetch('/job/' + jobId + '/save', {
+        method: 'POST',
+        headers: {'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest'}
+    }).then(function(r) {
+        if (r.status === 401) { window.location.href = '/auth/login'; return null; }
+        return r.json();
+    }).then(function(d) {
+        if (!d) return;
+        var icon = button.querySelector('i');
+        var text = button.querySelector('span');
+        if (d.saved) {
+            icon.classList.remove('fa-heart-o');
+            icon.classList.add('fa-heart');
+            button.classList.add('saved');
+            if (text) text.textContent = 'Đã lưu';
+            showMessage('Đã lưu việc làm!', 'success');
+        } else {
+            icon.classList.remove('fa-heart');
+            icon.classList.add('fa-heart-o');
+            button.classList.remove('saved');
+            if (text) text.textContent = 'Lưu việc làm';
+            showMessage('Đã bỏ lưu', 'info');
+        }
+    }).catch(function() { showMessage('Vui lòng đăng nhập để lưu việc làm.', 'error'); });
 };
 
 window.autoFillFormData = function() {

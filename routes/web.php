@@ -165,7 +165,15 @@ Route::get('storage/company-logos/{filename}', [App\Http\Controllers\LogoControl
 Route::get('viec-lam-game', [LamGamePageController::class, 'jobs'])->name('lamgame.viec-lam-game');
 Route::get('viec-lam/{slug}', [LamGamePageController::class, 'jobDetail'])->name('lamgame.job.detail');
 Route::get('my-applications', [LamGamePageController::class, 'myApplications'])->name('lamgame.my-applications')->middleware('customer');
+Route::get('saved-jobs', [LamGamePageController::class, 'savedJobs'])->name('lamgame.saved-jobs')->middleware('customer');
 Route::get('company/{id}', [LamGamePageController::class, 'companyProfile'])->name('lamgame.company.profile')->where('id', '[0-9]+');
+
+// Job API (web, AJAX)
+Route::middleware('customer')->prefix('job')->group(function () {
+    Route::post('{id}/save', [LamGamePageController::class, 'toggleSaveJob'])->name('lamgame.job.save')->where('id', '[0-9]+');
+    Route::post('alerts', [LamGamePageController::class, 'storeJobAlert'])->name('lamgame.job.alert.store');
+    Route::delete('alerts/{id}', [LamGamePageController::class, 'deleteJobAlert'])->name('lamgame.job.alert.delete')->where('id', '[0-9]+');
+});
 
 // Forum routes
 Route::prefix('forum')->name('forum.')->group(function () {
