@@ -592,6 +592,7 @@ class HomeController extends Controller
             'blog_posts' => $this->getBlogPostsCount(),
             'blog_views_today' => rand(200, 800),
             'source_downloads' => rand(500, 2000),
+            'source_games' => \DB::table('products')->where('type', 'downloadable')->count(),
             'community_members' => $this->getCommunityMembersCount(),
         ];
     }

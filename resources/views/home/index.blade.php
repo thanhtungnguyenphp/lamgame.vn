@@ -7,17 +7,34 @@
 @section('content')
 <div class="lg-home">
 
-{{-- HERO — Compact, 3 CTA only --}}
+{{-- HERO — Video background + marketplace positioning --}}
 <section class="lg-hero">
-    <div class="lg-hero__bg"></div>
+    <div class="lg-hero__bg">
+        <video class="lg-hero__video" autoplay muted loop playsinline poster="{{ asset('assets/images/hero-poster.jpg') }}">
+            <source src="{{ asset('assets/video/hero-bg.mp4') }}" type="video/mp4">
+        </video>
+        <div class="lg-hero__overlay"></div>
+    </div>
     <div class="lg-hero__content">
-        <span class="lg-hero__badge"><span class="lg-hero__badge-dot"></span> Cộng đồng Game Dev #1 Việt Nam</span>
-        <h1 class="lg-hero__title">Biến ý tưởng thành <br><span class="lg-hero__gradient-text">Game thực tế.</span></h1>
-        <p class="lg-hero__sub">Source code production-ready, AI tools, cộng đồng 12.000+ developers.</p>
+        <span class="lg-hero__badge"><span class="lg-hero__badge-dot"></span> Marketplace Source Game hàng đầu Việt Nam</span>
+        <h1 class="lg-hero__title">Source Game chất lượng cho <br><span class="lg-hero__gradient-text">Unity & Unreal Developer</span></h1>
+        <p class="lg-hero__sub">Tiết kiệm hàng trăm giờ phát triển với source code production-ready, AI tools, và cộng đồng 12.000+ developers.</p>
         <div class="lg-hero__cta">
-            <a href="{{ route('lamgame.source-game') }}" class="lg-btn lg-btn--primary">🎮 Mua Source Game</a>
-            <a href="{{ route('lamgame.ai-tools') }}" class="lg-btn lg-btn--glow">🤖 Dùng AI Tools</a>
-            <a href="{{ route('forum.index') }}" class="lg-btn lg-btn--outline">💬 Vào Forum</a>
+            <a href="{{ route('lamgame.source-game') }}" class="lg-btn lg-btn--primary">🎮 Khám phá Source Hot</a>
+            <a href="{{ route('lamgame.source-game') }}?sort=best-selling" class="lg-btn lg-btn--glow">🏆 Source Bán Chạy</a>
+            <a href="{{ route('forum.index') }}" class="lg-btn lg-btn--outline">💬 Cộng đồng Dev</a>
+        </div>
+        <div class="lg-hero__stats">
+            <div class="lg-hero__stat"><strong>{{ $stats['source_games'] ?? '1,200' }}+</strong><span>Source Game</span></div>
+            <div class="lg-hero__stat"><strong>12,000+</strong><span>Developers</span></div>
+            <div class="lg-hero__stat"><strong>34</strong><span>Live Demo</span></div>
+            <div class="lg-hero__stat"><strong>4.8/5</strong><span>Rating</span></div>
+        </div>
+        <div class="lg-hero__usp">
+            <span>✅ Production-Ready</span>
+            <span>🔄 Cập nhật thường xuyên</span>
+            <span>🛡️ Hỗ trợ sau mua</span>
+            <span>💰 Hoàn tiền 7 ngày</span>
         </div>
     </div>
 </section>
@@ -211,15 +228,23 @@
 .lg-container{max-width:1200px;margin:0 auto;padding:0 24px}
 
 /* HERO — compact */
-.lg-hero{position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 24px 60px;overflow:hidden}
-.lg-hero__bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 40%,rgba(124,92,255,.12) 0%,transparent 60%),radial-gradient(ellipse at 70% 60%,rgba(0,209,255,.08) 0%,transparent 50%)}
-.lg-hero__content{position:relative;z-index:1;max-width:700px}
+.lg-hero{position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding:100px 24px 70px;overflow:hidden;min-height:520px}
+.lg-hero__bg{position:absolute;inset:0}
+.lg-hero__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.3}
+.lg-hero__overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,26,.85) 0%,rgba(13,13,26,.95) 100%)}
+.lg-hero__content{position:relative;z-index:1;max-width:760px}
 .lg-hero__badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,92,255,.1);border:1px solid rgba(124,92,255,.3);border-radius:20px;padding:6px 16px;font-size:.85rem;color:#B7C0D1;margin-bottom:20px}
 .lg-hero__badge-dot{width:8px;height:8px;background:#7C5CFF;border-radius:50%;animation:pulse 2s infinite}
 .lg-hero__title{font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;line-height:1.15;margin-bottom:16px;background:linear-gradient(135deg,#F5F7FA,#B7C0D1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .lg-hero__gradient-text{background:linear-gradient(135deg,#7C5CFF,#00D1FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .lg-hero__sub{font-size:1.05rem;color:#7A8599;margin-bottom:28px;line-height:1.6}
 .lg-hero__cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.lg-hero__stats{display:flex;gap:24px;justify-content:center;margin-top:28px;padding-top:20px;border-top:1px solid rgba(139,92,246,.15)}
+.lg-hero__stat{text-align:center}
+.lg-hero__stat strong{display:block;font-size:1.2rem;font-weight:700;color:#A78BFA}
+.lg-hero__stat span{font-size:.72rem;color:#71717A}
+.lg-hero__usp{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.lg-hero__usp span{font-size:.78rem;color:#A1A1AA;background:rgba(139,92,246,.06);padding:4px 10px;border-radius:12px;border:1px solid rgba(139,92,246,.1)}
 
 /* BUTTONS */
 .lg-btn{display:inline-flex;align-items:center;padding:12px 24px;border-radius:8px;font-weight:600;font-size:.9rem;text-decoration:none!important;transition:all .3s}
@@ -298,7 +323,7 @@
 
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @media(max-width:1024px){.lg-grid--4{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:768px){.lg-hero{padding:60px 20px 40px}.lg-hero__title{font-size:1.8rem}.lg-hero__cta{flex-direction:column;align-items:center}.lg-grid--2,.lg-grid--3{grid-template-columns:1fr}.lg-stats__grid{grid-template-columns:repeat(2,1fr)}.lg-section__head{flex-direction:column;gap:8px;align-items:flex-start}.lg-forum-item{flex-direction:column;align-items:flex-start;gap:8px}}
+@media(max-width:768px){.lg-hero{padding:60px 20px 40px;min-height:auto}.lg-hero__title{font-size:1.8rem}.lg-hero__cta{flex-direction:column;align-items:center}.lg-hero__stats{gap:12px;flex-wrap:wrap}.lg-hero__usp{gap:8px}.lg-grid--2,.lg-grid--3{grid-template-columns:1fr}.lg-stats__grid{grid-template-columns:repeat(2,1fr)}.lg-section__head{flex-direction:column;gap:8px;align-items:flex-start}.lg-forum-item{flex-direction:column;align-items:flex-start;gap:8px}}
 @media(max-width:480px){.lg-grid--4{grid-template-columns:1fr}.lg-stats__grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 @endpush
