@@ -999,6 +999,8 @@ class LamGamePageController extends Controller
                 'downloadable_links' => $product->downloadable_links,
                 'url_key' => $urlKey,
                 'href' => $urlKey ? route('lamgame.source-game.detail', $urlKey) : null,
+                'has_demo' => (bool) $product->has_demo,
+                'demo_href' => $product->has_demo && $urlKey ? route('source-game.demo', $urlKey) : null,
             ];
         }
 
@@ -1164,7 +1166,7 @@ class LamGamePageController extends Controller
             'images' => [],
             'downloadable_links' => [],
             'video_demo_url' => $attributeValues['video_demo_url'] ?? null,
-            'demo_url' => $attributeValues['demo_url'] ?? null,
+            'demo_url' => $product->has_demo ? route('source-game.demo', $flat->url_key) : ($attributeValues['demo_url'] ?? null),
             'author_name' => $seller->shop_name ?? ($attributeValues['author_name'] ?? 'Làm Game Team'),
             'author_slug' => $seller->shop_slug ?? null,
             'author_logo' => $seller ? $seller->logo_url : null,

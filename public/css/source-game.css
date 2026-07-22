@@ -146,3 +146,7 @@
     .sg-search__input{padding:14px 16px}
     .sg-search__btn{margin:0 4px 4px;border-radius:8px}
 }
+
+/* Demo badge on cards */
+.sg-card__demo-badge{position:absolute;bottom:10px;right:10px;padding:4px 10px;background:rgba(0,209,255,.9);color:#fff;border-radius:4px;font-size:.7rem;font-weight:700;z-index:2;cursor:pointer;transition:transform .2s}
+.sg-card__demo-badge:hover{transform:scale(1.1);background:#00D1FF}

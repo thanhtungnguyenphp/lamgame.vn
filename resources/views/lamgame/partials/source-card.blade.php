@@ -8,6 +8,9 @@
         @elseif(!empty($source['is_hot']) || ($source['downloads'] ?? 0) > 50)
             <span class="sg-card__badge sg-card__badge--hot">🔥 Hot</span>
         @endif
+        @if(!empty($source['has_demo']))
+            <span class="sg-card__demo-badge" onclick="event.preventDefault(); window.location='{{ $source['demo_href'] ?? '#' }}'">▶ Demo</span>
+        @endif
     </div>
     <div class="sg-card__body">
         <h3 class="sg-card__title">{{ $source['title'] }}</h3>
