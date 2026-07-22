@@ -15,6 +15,7 @@ class Company extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'description',
         'logo',
         'website',
@@ -25,6 +26,10 @@ class Company extends Model
         'founded_year',
         'industry',
         'status',
+        'is_verified',
+        'verified_at',
+        'verification_document',
+        'verification_notes',
         'created_by_admin_id'
     ];
 

@@ -308,4 +308,12 @@ class Customer extends Authenticatable implements CustomerContract
     {
         return CustomerFactory::new();
     }
+
+    /**
+     * Company relationship (for employer feature)
+     */
+    public function company()
+    {
+        return $this->belongsTo(\App\Models\Company::class, 'company_id');
+    }
 }

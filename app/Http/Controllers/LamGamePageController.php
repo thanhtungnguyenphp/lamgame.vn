@@ -611,9 +611,12 @@ class LamGamePageController extends Controller
     /**
      * Company Profile page — public view of a company + their active jobs
      */
-    public function companyProfile($id)
+    public function companyProfile($slug)
     {
-        $company = \App\Models\Company::findOrFail($id);
+        // Support both slug and numeric ID
+        $company = is_numeric($slug)
+            ? \App\Models\Company::findOrFail($slug)
+            : \App\Models\Company::where('slug', $slug)->firstOrFail();
 
         $jobs = \App\Models\JobPosting::where('company_id', $company->id)
             ->where('status', 'active')

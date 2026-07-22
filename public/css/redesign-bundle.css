@@ -812,10 +812,10 @@
   .nav-redesign__search { display: none; }
   .nav-redesign__cta { display: none; }
   .nav-redesign__mobile-btn { display: flex; }
-  .nav-redesign__mobile-menu { display: block; pointer-events: none; }
-  .nav-redesign__mobile-menu.active { pointer-events: auto; }
-  .nav-redesign__mobile-backdrop { display: block; pointer-events: none; }
-  .nav-redesign__mobile-backdrop.active { pointer-events: auto; }
+  .nav-redesign__mobile-menu { display: block; pointer-events: none; visibility: hidden; }
+  .nav-redesign__mobile-menu.active { pointer-events: auto; visibility: visible; }
+  .nav-redesign__mobile-backdrop { display: block; pointer-events: none; visibility: hidden; }
+  .nav-redesign__mobile-backdrop.active { pointer-events: auto; visibility: visible; }
 }
 
 @media (max-width: 768px) {

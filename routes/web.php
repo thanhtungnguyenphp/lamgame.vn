@@ -166,7 +166,7 @@ Route::get('viec-lam-game', [LamGamePageController::class, 'jobs'])->name('lamga
 Route::get('viec-lam/{slug}', [LamGamePageController::class, 'jobDetail'])->name('lamgame.job.detail');
 Route::get('my-applications', [LamGamePageController::class, 'myApplications'])->name('lamgame.my-applications')->middleware('customer');
 Route::get('saved-jobs', [LamGamePageController::class, 'savedJobs'])->name('lamgame.saved-jobs')->middleware('customer');
-Route::get('company/{id}', [LamGamePageController::class, 'companyProfile'])->name('lamgame.company.profile')->where('id', '[0-9]+');
+Route::get('company/{slug}', [LamGamePageController::class, 'companyProfile'])->name('lamgame.company.profile');
 
 // Job API (web, AJAX)
 Route::middleware('customer')->prefix('job')->group(function () {

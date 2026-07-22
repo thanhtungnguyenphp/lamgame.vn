@@ -574,18 +574,18 @@
                 btn.classList.remove('active');
             });
             
-            // Check active states
+            // Check active states (safe null check)
             if (keyword === 'Unity') {
-                document.querySelector('[onclick*="Unity"]').classList.add('active');
+                document.querySelector('[onclick*="Unity"]')?.classList.add('active');
             }
             if (location === 'remote') {
-                document.querySelector('[onclick*="remote"]').classList.add('active');
+                document.querySelector('[onclick*="remote"]')?.classList.add('active');
             }
             if (level === 'senior') {
-                document.querySelector('[onclick*="senior"]').classList.add('active');
+                document.querySelector('[onclick*="senior"]')?.classList.add('active');
             }
             if (keyword === 'Game Designer') {
-                document.querySelector('[onclick*="Game Designer"]').classList.add('active');
+                document.querySelector('[onclick*="Game Designer"]')?.classList.add('active');
             }
         }
         

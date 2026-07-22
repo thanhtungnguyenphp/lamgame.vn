@@ -273,6 +273,7 @@ class EmployerController extends Controller
 
         $company = Company::create([
             'name'              => $validated['company_name'],
+            'slug'              => Str::slug($validated['company_name']) ?: Str::random(8),
             'description'       => $validated['description'] ?? null,
             'website'           => $validated['website'] ?? null,
             'industry'          => $validated['industry'] ?? 'Game Development',
