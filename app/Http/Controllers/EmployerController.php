@@ -289,4 +289,109 @@ class EmployerController extends Controller
 
         return redirect()->route('employer.dashboard')->with('success', 'Đăng ký employer thành công! Đang chờ duyệt.');
     }
+
+    /**
+     * Send message to candidate (creates or reuses conversation)
+     */
+    public function sendMessage(Request $request, int $applicationId)
+    {
+        $customer = auth('customer')->user();
+        $application = JobApplication::whereHas('jobPosting', function ($q) use ($customer) {
+            $q->where('company_id', $customer->company_id);
+        })->findOrFail($applicationId);
+
+        $request->validate(['message' => 'required|string|max:2000']);
+
+        $candidateId = $application->applicant_user_id;
+        if (!$candidateId) {
+            return back()->with('error', 'Ứng viên chưa có tài khoản trên hệ thống.');
+        }
+
+        // Find or create conversation
+        $conversation = \App\Models\ForumConversation::where('context_type', 'job')
+            ->where('job_application_id', $applicationId)
+            ->first();
+
+        if (!$conversation) {
+            $conversation = \App\Models\ForumConversation::create([
+                'participant_1'      => $customer->id,
+                'participant_2'      => $candidateId,
+                'job_application_id' => $applicationId,
+                'context_type'       => 'job',
+                'last_message_at'    => now(),
+            ]);
+        }
+
+        \App\Models\ForumMessage::create([
+            'conversation_id' => $conversation->id,
+            'sender_id'       => $customer->id,
+            'content'         => $request->message,
+        ]);
+
+        $conversation->update(['last_message_at' => now()]);
+
+        // Update application status to reviewed if still pending
+        if ($application->status === 'pending') {
+            $application->update(['status' => 'reviewed']);
+        }
+
+        return back()->with('success', 'Đã gửi tin nhắn cho ứng viên.');
+    }
+
+    /**
+     * Schedule interview for a candidate
+     */
+    public function scheduleInterview(Request $request, int $applicationId)
+    {
+        $customer = auth('customer')->user();
+        $application = JobApplication::whereHas('jobPosting', function ($q) use ($customer) {
+            $q->where('company_id', $customer->company_id);
+        })->findOrFail($applicationId);
+
+        $request->validate([
+            'scheduled_at'     => 'required|date|after:now',
+            'duration_minutes' => 'nullable|integer|min:15|max:180',
+            'type'             => 'required|in:online,onsite',
+            'meeting_url'      => 'nullable|url',
+            'location'         => 'nullable|string|max:255',
+            'notes'            => 'nullable|string|max:1000',
+        ]);
+
+        $interview = \App\Models\JobInterview::create([
+            'application_id'   => $applicationId,
+            'employer_id'      => $customer->id,
+            'candidate_id'     => $application->applicant_user_id,
+            'scheduled_at'     => $request->scheduled_at,
+            'duration_minutes' => $request->duration_minutes ?? 60,
+            'type'             => $request->type,
+            'meeting_url'      => $request->meeting_url,
+            'location'         => $request->location,
+            'notes'            => $request->notes,
+            'status'           => 'proposed',
+        ]);
+
+        // Auto-update application status to shortlisted
+        if (in_array($application->status, ['pending', 'reviewed'])) {
+            $application->update(['status' => 'shortlisted']);
+        }
+
+        return back()->with('success', 'Đã lên lịch phỏng vấn.');
+    }
+
+    /**
+     * Download interview .ics calendar file
+     */
+    public function downloadIcs(int $interviewId)
+    {
+        $customer = auth('customer')->user();
+        $interview = \App\Models\JobInterview::forUser($customer->id)->findOrFail($interviewId);
+
+        $filename = 'interview-' . $interview->scheduled_at->format('Y-m-d') . '.ics';
+
+        return response($interview->toIcs(), 200, [
+            'Content-Type'        => 'text/calendar; charset=utf-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
+    }
 }
+

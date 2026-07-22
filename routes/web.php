@@ -191,6 +191,13 @@ Route::prefix('employer')->name('employer.')->middleware('customer')->group(func
         Route::post('jobs/{id}/toggle-publish', [\App\Http\Controllers\EmployerController::class, 'togglePublish'])->name('jobs.toggle-publish')->where('id', '[0-9]+');
         Route::get('jobs/{id}/applications', [\App\Http\Controllers\EmployerController::class, 'applications'])->name('jobs.applications')->where('id', '[0-9]+');
         Route::patch('applications/{id}/status', [\App\Http\Controllers\EmployerController::class, 'updateApplicationStatus'])->name('applications.status')->where('id', '[0-9]+');
+
+        // Messaging
+        Route::post('applications/{id}/message', [\App\Http\Controllers\EmployerController::class, 'sendMessage'])->name('applications.message')->where('id', '[0-9]+');
+
+        // Interview scheduling
+        Route::post('applications/{id}/interview', [\App\Http\Controllers\EmployerController::class, 'scheduleInterview'])->name('applications.interview')->where('id', '[0-9]+');
+        Route::get('interviews/{id}/ics', [\App\Http\Controllers\EmployerController::class, 'downloadIcs'])->name('interviews.ics')->where('id', '[0-9]+');
     });
 });
 
