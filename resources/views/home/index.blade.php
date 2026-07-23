@@ -200,17 +200,20 @@
         <nav class="lg-internal-links" aria-label="Khám phá thêm">
             <h3 style="font-size:.9rem;color:#7A8599;margin-bottom:12px;font-weight:500">Khám phá thêm trên LamGame</h3>
             <div style="display:flex;flex-wrap:wrap;gap:8px">
-                <a href="/viec-lam-game" class="lg-tag">Việc làm Game</a>
-                <a href="/the-thao" class="lg-tag">Thể thao</a>
-                <a href="/xo-so" class="lg-tag">Xổ số</a>
-                <a href="/choi-game" class="lg-tag">Chơi Game Online</a>
-                <a href="/thue-team-dev" class="lg-tag">Thuê Team Dev</a>
+                <a href="/viec-lam-game" class="lg-tag">💼 Việc làm Game</a>
+                <a href="/khoa-hoc/unity" class="lg-tag">🎓 Khóa học Unity</a>
+                <a href="/khoa-hoc/unreal" class="lg-tag">🎓 Khóa học Unreal</a>
+                <a href="/the-thao" class="lg-tag">⚽ Thể thao</a>
+                <a href="/xo-so" class="lg-tag">🎰 Xổ số</a>
+                <a href="/choi-game" class="lg-tag">🕹️ Chơi Game</a>
+                <a href="/thue-team-dev" class="lg-tag">👨‍💻 Thuê Team Dev</a>
+                <a href="/forum/trending" class="lg-tag">🔥 Forum Hot</a>
+                <a href="/forum/leaderboard" class="lg-tag">🏆 Bảng xếp hạng</a>
+                <a href="/world-cup-2026" class="lg-tag">⚽ World Cup 2026</a>
+                <a href="/seller/register" class="lg-tag">🏪 Đăng ký bán hàng</a>
+                <a href="/employer/register" class="lg-tag">🏢 Đăng tuyển dụng</a>
                 <a href="/gioi-thieu" class="lg-tag">Giới thiệu</a>
                 <a href="/lien-he" class="lg-tag">Liên hệ</a>
-                <a href="/forum/trending" class="lg-tag">Forum Hot</a>
-                <a href="/forum/leaderboard" class="lg-tag">Bảng xếp hạng</a>
-                <a href="/world-cup-2026" class="lg-tag">World Cup 2026</a>
-                <a href="/seller/register" class="lg-tag">Đăng ký bán hàng</a>
             </div>
         </nav>
     </div>

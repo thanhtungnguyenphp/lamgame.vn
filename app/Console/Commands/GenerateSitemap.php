@@ -72,20 +72,25 @@ class GenerateSitemap extends Command
     {
         $sitemap = Sitemap::create();
 
-        $jobs = \DB::table('products as p')
-            ->join('product_flat as pf', function ($join) {
-                $join->on('p.id', '=', 'pf.product_id')->where('pf.locale', '=', 'vi');
-            })
-            ->where('p.type', 'job')
-            ->where('pf.status', 1)
-            ->where('pf.visible_individually', 1)
-            ->select('pf.url_key', 'p.updated_at')
+        // Main listing page
+        $sitemap->add(
+            Url::create('/viec-lam-game')
+                ->setLastModificationDate(Carbon::now())
+                ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
+                ->setPriority(0.9)
+        );
+
+        // Individual job postings from job_postings table (V2)
+        $jobs = \DB::table('job_postings')
+            ->where('status', 'active')
+            ->whereNull('deleted_at')
+            ->select('slug', 'updated_at')
             ->get();
 
         foreach ($jobs as $job) {
-            if (!empty($job->url_key)) {
+            if (!empty($job->slug)) {
                 $sitemap->add(
-                    Url::create('/viec-lam/' . rawurlencode($job->url_key))
+                    Url::create('/viec-lam/' . rawurlencode($job->slug))
                         ->setLastModificationDate(Carbon::parse($job->updated_at))
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
                         ->setPriority(0.8)
@@ -94,7 +99,7 @@ class GenerateSitemap extends Command
         }
 
         $sitemap->writeToFile(public_path('sitemap-jobs.xml'));
-        $this->info("✅ Jobs sitemap: {$jobs->count()} URLs");
+        $this->info("✅ Jobs sitemap: " . ($jobs->count() + 1) . " URLs");
     }
 
     private function generateBlogsSitemap()

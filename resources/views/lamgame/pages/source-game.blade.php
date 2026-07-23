@@ -242,6 +242,27 @@
     </div>
 </section>
 
+{{-- INTERNAL LINKS — SEO: boost crawl for related pages --}}
+<section class="sg-sec" style="padding:24px 0 40px">
+    <div class="sg-container">
+        <nav aria-label="Khám phá thêm">
+            <h3 style="font-size:.85rem;color:#7A8599;margin-bottom:10px;font-weight:500">Khám phá thêm trên LamGame</h3>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <a href="{{ route('lamgame.blog') }}" class="sg-tag">📝 Blog Game Dev</a>
+                <a href="{{ route('lamgame.viec-lam-game') }}" class="sg-tag">💼 Việc làm Game</a>
+                <a href="{{ route('forum.index') }}" class="sg-tag">💬 Forum</a>
+                <a href="{{ route('lamgame.ai-tools') }}" class="sg-tag">🤖 AI Tools</a>
+                <a href="{{ route('mini-game.index') }}" class="sg-tag">🕹️ Chơi Game Online</a>
+                <a href="{{ route('lamgame.thue-team-dev') }}" class="sg-tag">👨‍💻 Thuê Team Dev</a>
+                <a href="/khoa-hoc/unity" class="sg-tag">🎓 Khóa học Unity</a>
+                <a href="/khoa-hoc/unreal" class="sg-tag">🎓 Khóa học Unreal</a>
+                <a href="{{ route('seller.register') }}" class="sg-tag">🏪 Đăng ký Seller</a>
+                <a href="{{ route('employer.register') }}" class="sg-tag">🏢 Đăng tuyển dụng</a>
+            </div>
+        </nav>
+    </div>
+</section>
+
 </div>
 @endsection
 
