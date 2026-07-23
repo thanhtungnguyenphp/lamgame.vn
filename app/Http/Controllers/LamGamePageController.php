@@ -181,8 +181,8 @@ class LamGamePageController extends Controller
             ->get();
 
         return view('lamgame.pages.blog', [
-            'page_title' => 'Blog - Làm Game',
-            'page_description' => 'Khám phá các bài viết hay về lập trình game, tips & tricks, và xu hướng công nghệ game mới nhất.',
+            'page_title' => 'Blog Lập Trình Game | Hướng Dẫn Unity, Unreal, Godot — LamGame.vn',
+            'page_description' => 'Blog chia sẻ kiến thức lập trình game từ cộng đồng developer Việt Nam. Hướng dẫn Unity, Unreal Engine, Godot, tips tối ưu hiệu năng, và xu hướng game dev mới nhất.',
             'blogs' => $blogs,
             'featuredBlog' => $featuredBlog,
             'categories' => $categories,
@@ -739,50 +739,50 @@ class LamGamePageController extends Controller
     {
         $courses = [
             'unity' => [
-                'title' => 'Unity Game Development',
-                'description' => 'Học lập trình game với Unity từ cơ bản đến nâng cao',
+                'title' => 'Khóa Học Lập Trình Game Unity',
+                'description' => 'Học lập trình game với Unity từ cơ bản đến nâng cao. Thực hành tạo game 2D/3D, C# scripting, physics, animation. Phù hợp cho người mới bắt đầu.',
                 'duration' => '3 tháng',
                 'level' => 'Từ cơ bản đến nâng cao',
                 'price' => '5.000.000đ'
             ],
             'unreal' => [
-                'title' => 'Unreal Engine',
-                'description' => 'Phát triển game 3D chất lượng cao với Unreal Engine',
+                'title' => 'Khóa Học Unreal Engine',
+                'description' => 'Phát triển game 3D chất lượng AAA với Unreal Engine 5. Blueprint visual scripting, C++, materials, lighting. Cho mid-senior developer.',
                 'duration' => '4 tháng',
                 'level' => 'Trung cấp - Nâng cao',
                 'price' => '7.000.000đ'
             ],
             'game-design' => [
-                'title' => 'Game Design',
-                'description' => 'Thiết kế game từ ý tưởng đến sản phẩm hoàn chỉnh',
+                'title' => 'Khóa Học Game Design',
+                'description' => 'Thiết kế game chuyên nghiệp từ ý tưởng đến GDD hoàn chỉnh. Game mechanics, level design, UX, monetization, balance.',
                 'duration' => '2 tháng',
                 'level' => 'Cơ bản',
                 'price' => '3.500.000đ'
             ],
             'csharp' => [
-                'title' => 'C# Programming',
-                'description' => 'Nền tảng lập trình C# cho game development',
+                'title' => 'Khóa Học Lập Trình C# Cho Game',
+                'description' => 'Nền tảng lập trình C# dành cho game developer. OOP, data structures, design patterns áp dụng vào Unity game development.',
                 'duration' => '2 tháng',
                 'level' => 'Cơ bản - Trung cấp',
                 'price' => '4.000.000đ'
             ],
             'mobile' => [
-                'title' => 'Mobile Game Development',
-                'description' => 'Phát triển game mobile cho Android và iOS',
+                'title' => 'Khóa Học Lập Trình Game Mobile',
+                'description' => 'Phát triển game mobile cho Android và iOS. Unity mobile optimization, touch controls, AdMob, publish lên Google Play/App Store.',
                 'duration' => '3 tháng',
                 'level' => 'Trung cấp',
                 'price' => '6.000.000đ'
             ],
             '2d-game' => [
-                'title' => '2D Game Development',
-                'description' => 'Tạo game 2D với các công cụ hiện đại',
+                'title' => 'Khóa Học Làm Game 2D',
+                'description' => 'Tạo game 2D hoàn chỉnh với Unity và Phaser. Sprite animation, tilemap, physics 2D, platformer, top-down RPG.',
                 'duration' => '2.5 tháng',
                 'level' => 'Cơ bản - Trung cấp',
                 'price' => '4.500.000đ'
             ],
             '3d-game' => [
-                'title' => '3D Game Development',
-                'description' => 'Phát triển game 3D chuyên nghiệp',
+                'title' => 'Khóa Học Làm Game 3D',
+                'description' => 'Phát triển game 3D chuyên nghiệp với Unity/Unreal. 3D modeling integration, shaders, AI navigation, multiplayer basics.',
                 'duration' => '4 tháng',
                 'level' => 'Nâng cao',
                 'price' => '8.000.000đ'
@@ -796,8 +796,8 @@ class LamGamePageController extends Controller
         }
 
         return view('lamgame.pages.course-detail', compact('course'), [
-            'page_title' => $course['title'] . ' - Làm Game',
-            'page_description' => $course['description']
+            'page_title' => $course['title'] . ' | Học Online — LamGame.vn',
+            'page_description' => $course['description'],
         ]);
     }
 
