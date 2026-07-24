@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
     <script>try{var t=localStorage.getItem('lamgame-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+    <style>html,body{background:#070B14;color:#F5F7FA}</style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="format-detection" content="telephone=no">
@@ -126,11 +127,11 @@
     <style>
         /* Reset and base styles */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Roboto', sans-serif; line-height: 1.6; color: #333; background: #fff; }
+        body { font-family: 'Roboto', sans-serif; line-height: 1.6; color: #F5F7FA; background: #070B14; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
         /* Header */
-        .header { background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .header { background: #0D0D1A; box-shadow: 0 2px 10px rgba(0,0,0,0.3); position: sticky; top: 0; z-index: 100; }
         .header-content { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
         .brand { display: flex; align-items: center; gap: 12px; }
         .logo { width: 50px; height: 50px; border-radius: 50%; }
@@ -159,7 +160,7 @@
             }
         }
         .nav { display: flex; gap: 2rem; align-items: center; }
-        .nav a { text-decoration: none; color: #333; font-weight: 500; transition: all 0.3s ease; position: relative; }
+        .nav a { text-decoration: none; color: #B7C0D1; font-weight: 500; transition: all 0.3s ease; position: relative; }
         .nav a:hover, .nav a.cta { color: #6a4c93; }
         .nav a.active { color: #6a4c93; font-weight: 600; }
         .nav a.active::after { content: ''; position: absolute; bottom: -8px; left: 0; right: 0; height: 3px; background: #6a4c93; border-radius: 2px; }
@@ -171,7 +172,7 @@
         .cart-badge { position: absolute; top: -5px; right: -5px; background: #ff6b35; color: white; font-size: 0.7rem; font-weight: 600; min-width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         
         .mobile-toggle { display: none; flex-direction: column; gap: 3px; cursor: pointer; }
-        .mobile-toggle span { width: 25px; height: 3px; background: #333; transition: 0.3s; }
+        .mobile-toggle span { width: 25px; height: 3px; background: #B7C0D1; transition: 0.3s; }
 
         /* Sections */
         section { padding: 4rem 0; }
