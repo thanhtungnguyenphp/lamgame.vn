@@ -656,6 +656,7 @@
 
     {{-- OHHA AI Chat Widget --}}
     <script src="/ai-widget.js"
+            defer
             data-host="/ohha-ai"
             data-persona="game"
             data-api-key="{{ config('ai-tools.ohha_api_key') }}"
