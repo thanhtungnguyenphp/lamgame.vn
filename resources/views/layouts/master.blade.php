@@ -371,8 +371,24 @@
         }
     </style>
 
-    <!-- Design System (critical — keep render-blocking) -->
-    <link rel="stylesheet" href="{{ asset('css/redesign-bundle.min.css') }}?v={{ filemtime(public_path('css/redesign-bundle.min.css')) }}">
+    <!-- Critical CSS (above-the-fold: nav + basic layout) — inline to prevent FOUC -->
+    <style>
+    :root{--z-fixed:300;--z-dropdown:100;--bg-surface:#111827;--text-primary:#F5F7FA;--border-default:rgba(255,255,255,0.08);--duration-normal:300ms;--ease-out:cubic-bezier(0,0,0.2,1);--space-6:24px;--space-20:80px;--shadow-xl:0 20px 25px -5px rgba(0,0,0,0.3)}
+    .nav-redesign{position:sticky;top:0;z-index:var(--z-fixed);background:rgba(13,13,26,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(124,92,255,.08);transition:transform var(--duration-normal) var(--ease-out)}
+    .nav-redesign__inner{display:flex;align-items:center;justify-content:space-between;height:70px;max-width:1200px;margin:0 auto;padding:0 20px;gap:16px}
+    .nav-redesign__logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .nav-redesign__logo img{height:42px}
+    .nav-redesign__menu{display:flex;align-items:center;gap:4px;list-style:none}
+    .nav-redesign__mobile-btn{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px}
+    .nav-redesign__mobile-btn span{width:22px;height:2px;background:#B7C0D1;border-radius:2px;transition:.3s}
+    .nav-redesign__mobile-menu{display:none;position:fixed;top:0;right:-100%;width:300px;height:100vh;background:var(--bg-surface);z-index:var(--z-fixed);pointer-events:none;visibility:hidden}
+    .nav-redesign__mobile-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:calc(var(--z-fixed) - 1);pointer-events:none;visibility:hidden}
+    @media(max-width:1024px){.nav-redesign__menu{display:none}.nav-redesign__mobile-btn{display:flex}.nav-redesign__mobile-menu{display:block}.nav-redesign__mobile-backdrop{display:block}.nav-redesign__mobile-menu.active{right:0;pointer-events:auto;visibility:visible}.nav-redesign__mobile-backdrop.active{opacity:1;pointer-events:auto;visibility:visible}}
+    </style>
+
+    <!-- Full Design System — async preload (non-blocking) -->
+    <link rel="preload" href="{{ asset('css/redesign-bundle.min.css') }}?v={{ filemtime(public_path('css/redesign-bundle.min.css')) }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ asset('css/redesign-bundle.min.css') }}?v={{ filemtime(public_path('css/redesign-bundle.min.css')) }}"></noscript>
 
     <!-- Non-critical CSS — async preload -->
     <link rel="preload" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-homepage.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
