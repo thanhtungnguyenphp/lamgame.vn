@@ -111,14 +111,15 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logos/favicon/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/logos/favicon/favicon-16x16.png') }}">
 
-    <!-- Fonts -->
+    <!-- Fonts: Only Inter (main font) — async load, non-blocking -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
 
-    <!-- Font Awesome 5 Icons (supports both fa fa-* and fab fa-* syntax) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/v4-shims.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <!-- Font Awesome 5 — async load (non-blocking) -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" crossorigin="anonymous">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous"></noscript>
 
     <!-- Vite Assets -->
     {{-- @bagistoVite(['resources/themes/emsaigon/assets/css/app.scss'], 'shop-emsaigon') --}}
@@ -368,18 +369,21 @@
         }
     </style>
 
-    <!-- Homepage specific CSS -->
-    <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-homepage.css') }}">
-
-    <!-- Design System (bundled) -->
+    <!-- Design System (critical — keep render-blocking) -->
     <link rel="stylesheet" href="{{ asset('css/redesign-bundle.min.css') }}?v={{ filemtime(public_path('css/redesign-bundle.min.css')) }}">
-    <script src="{{ asset('themes/shop/emsaigon/assets/js/dark-mode.js') }}"></script>
+
+    <!-- Non-critical CSS — async preload -->
+    <link rel="preload" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-homepage.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="{{ asset('css/pagination.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-homepage.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
+    </noscript>
+
+    <script src="{{ asset('themes/shop/emsaigon/assets/js/dark-mode.js') }}" defer></script>
 
     <!-- Dynamic styles from pages -->
     @stack('styles')
-
-    <!-- Pagination CSS -->
-    <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
 
     <!-- Google Analytics -->
     @if(config('google_analytics.enabled') && (app()->environment('production') || config('google_analytics.enabled')))
@@ -517,8 +521,8 @@
     </script>
 
     <!-- Vue.js 3 and Axios for dynamic content -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js" onload="initializeVueApp()" onerror="handleVueLoadError()"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js" defer></script>
 
     <!-- Fallback Vue initialization -->
     <script>
