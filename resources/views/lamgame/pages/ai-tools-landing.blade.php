@@ -206,7 +206,8 @@
 @endsection
 
 @push('styles')
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet"></noscript>
 <style>
 :root{--ai-bg:#070B14;--ai-bg2:#0B1020;--ai-card:#111827;--ai-purple:#7C5CFF;--ai-cyan:#00D1FF;--ai-text:#F5F7FA;--ai-muted:#7A8599;--ai-border:rgba(124,92,255,.12)}
 .ai-page{background:var(--ai-bg);color:var(--ai-text);font-family:'Inter',sans-serif}

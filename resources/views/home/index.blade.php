@@ -224,8 +224,8 @@
 
 @push('styles')
 <style>.lg-home{background:#070B14;min-height:100vh}</style>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"></noscript>
 <style>
 .lg-home{background:#070B14;color:#F5F7FA;font-family:'Inter',sans-serif}
 .lg-container{max-width:1200px;margin:0 auto;padding:0 24px}
