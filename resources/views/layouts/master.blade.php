@@ -106,6 +106,8 @@
     </script>
 
     @stack('schema_markup')
+    @stack('json_ld')
+    @stack('breadcrumb_ld')
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/logos/favicon/favicon.ico') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logos/favicon/favicon-32x32.png') }}">
