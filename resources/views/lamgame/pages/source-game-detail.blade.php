@@ -3,8 +3,17 @@
 @section('page_title', $page_title)
 @section('page_description', $page_description)
 @section('og_image', $sourceGame['image'] ?? asset('assets/logos/png/logo-square-512.png'))
+@section('twitter_card', 'summary_large_image')
+@section('canonical_url', url()->current())
+
+@push('og_extra')
+<meta property="og:type" content="product">
+<meta property="product:price:amount" content="{{ $sourceGame['price'] ?? 0 }}">
+<meta property="product:price:currency" content="VND">
+@endpush
 
 @push('meta')
+{{-- SoftwareSourceCode Schema --}}
 <script type="application/ld+json">
 {
     "@context": "https://schema.org",
@@ -13,17 +22,57 @@
     "description": "{{ Str::limit(strip_tags($sourceGame['description'] ?? ''), 200) }}",
     "url": "{{ url()->current() }}",
     @if($sourceGame['image'] ?? null)"image": "{{ $sourceGame['image'] }}",@endif
-    "programmingLanguage": "{{ $sourceGame['programming_language'] ?? '' }}",
+    "codeRepository": "{{ $sourceGame['github_url'] ?? '' }}",
+    "programmingLanguage": "{{ $sourceGame['language'] ?? 'C#' }}",
+    "runtimePlatform": "{{ $sourceGame['engine'] ?? 'Unity' }}",
+    "applicationCategory": "GameApplication",
     "offers": {"@type": "Offer","price": "{{ $sourceGame['price'] ?? 0 }}","priceCurrency": "VND","availability": "https://schema.org/InStock"}
     @if(($sourceGame['rating'] ?? 0) > 0)
-    ,"aggregateRating": {"@type": "AggregateRating","ratingValue": "{{ $sourceGame['rating'] }}","reviewCount": "{{ $sourceGame['review_count'] ?? 1 }}"}
+    ,"aggregateRating": {"@type": "AggregateRating","ratingValue": "{{ $sourceGame['rating'] }}","reviewCount": "{{ $sourceGame['review_count'] ?? 1 }}","bestRating": "5"}
     @endif
 }
 </script>
+
+{{-- BreadcrumbList Schema --}}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Trang chủ", "item": "{{ url('/') }}"},
+        {"@type": "ListItem", "position": 2, "name": "Source Game", "item": "{{ route('lamgame.source-game') }}"},
+        {"@type": "ListItem", "position": 3, "name": "{{ Str::limit($sourceGame['title'], 50) }}", "item": "{{ url()->current() }}"}
+    ]
+}
+</script>
+
+{{-- FAQPage Schema (if has FAQ) --}}
+@if(!empty($sourceGame['faq']))
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        @foreach($sourceGame['faq'] as $i => $qa)
+        {"@type": "Question", "name": "{{ addslashes($qa['q']) }}", "acceptedAnswer": {"@type": "Answer", "text": "{{ addslashes($qa['a']) }}"}}@if(!$loop->last),@endif
+        @endforeach
+    ]
+}
+</script>
+@endif
 @endpush
 
 @section('content')
 <div class="sd-page">
+
+{{-- BREADCRUMB --}}
+<nav class="sd-breadcrumb" aria-label="Breadcrumb">
+    <div class="sd-container">
+        <a href="/">Trang chủ</a> <span>›</span>
+        <a href="{{ route('lamgame.source-game') }}">Source Game</a> <span>›</span>
+        <span class="sd-breadcrumb__current">{{ Str::limit($sourceGame['title'], 50) }}</span>
+    </div>
+</nav>
 
 {{-- HERO PRODUCT --}}
 <section class="sd-hero">
@@ -248,6 +297,23 @@
 </section>
 @endif
 
+{{-- FAQ SECTION --}}
+@if(!empty($sourceGame['faq']))
+<section class="sd-sec">
+    <div class="sd-container">
+        <h2 class="sd-sec__title">❓ Câu hỏi thường gặp</h2>
+        <div class="sd-faq">
+            @foreach($sourceGame['faq'] as $qa)
+            <details class="sd-faq__item">
+                <summary class="sd-faq__q">{{ $qa['q'] }}</summary>
+                <p class="sd-faq__a">{{ $qa['a'] }}</p>
+            </details>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 {{-- FINAL CTA --}}
 <section class="sd-cta">
     <div class="sd-container" style="text-align:center">
@@ -277,6 +343,21 @@
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="{{ asset('css/source-detail.css') }}">
+<style>
+.sd-breadcrumb{padding:12px 0;font-size:.82rem;color:#5A6577}
+.sd-breadcrumb a{color:#7A8599;text-decoration:none}
+.sd-breadcrumb a:hover{color:#7C5CFF}
+.sd-breadcrumb span{margin:0 4px}
+.sd-breadcrumb__current{color:#B7C0D1}
+.sd-faq{display:flex;flex-direction:column;gap:8px}
+.sd-faq__item{background:rgba(17,24,39,.6);border:1px solid rgba(124,92,255,.08);border-radius:10px;overflow:hidden}
+.sd-faq__item[open]{border-color:rgba(124,92,255,.2)}
+.sd-faq__q{padding:14px 18px;cursor:pointer;font-weight:500;color:#F5F7FA;font-size:.92rem;list-style:none}
+.sd-faq__q::-webkit-details-marker{display:none}
+.sd-faq__q::before{content:'▸ ';color:#7C5CFF}
+.sd-faq__item[open] .sd-faq__q::before{content:'▾ '}
+.sd-faq__a{padding:0 18px 14px;color:#9CA3AF;font-size:.88rem;line-height:1.6}
+</style>
 @endpush
 
 @push('scripts')

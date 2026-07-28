@@ -1245,6 +1245,22 @@ class LamGamePageController extends Controller
             $sourceGameDetail['features'] = array_slice($sourceGameDetail['features'], 0, 12);
         }
 
+        // Generate FAQ based on product data
+        $sourceGameDetail['faq'] = [
+            ['q' => "Source code này dùng engine gì?", 'a' => "Source code được xây dựng bằng {$sourceGameDetail['engine']} với ngôn ngữ {$sourceGameDetail['language']}."],
+            ['q' => "Tôi có thể dùng cho dự án thương mại không?", 'a' => $sourceGameDetail['is_free'] ? "Có! Source code miễn phí với MIT License — bạn có thể sử dụng, chỉnh sửa và phân phối cho cả dự án cá nhân lẫn thương mại." : "Có! Sau khi mua, bạn được sử dụng cho dự án thương mại theo điều khoản License đi kèm."],
+            ['q' => "Cần kiến thức gì để sử dụng source này?", 'a' => "Bạn cần biết cơ bản về {$sourceGameDetail['engine']} và {$sourceGameDetail['language']}. Source có documentation hướng dẫn setup và customize."],
+            ['q' => "Source có hỗ trợ mobile không?", 'a' => "Có! Source được tối ưu cho cả Web (HTML5) và Mobile (Android/iOS). Xem demo online để trải nghiệm."],
+            ['q' => "Tôi có được hỗ trợ sau khi tải/mua không?", 'a' => "Có! Tham gia Forum LamGame để đặt câu hỏi và nhận hỗ trợ từ cộng đồng developer."],
+        ];
+
+        // Add github_url if available
+        $sourceGameDetail['github_url'] = '';
+        if (str_contains($sourceGameDetail['full_description'] ?? '', 'github.com')) {
+            preg_match('/https?:\/\/github\.com\/[^\s<"]+/', $sourceGameDetail['full_description'] ?? '', $ghMatch);
+            $sourceGameDetail['github_url'] = $ghMatch[0] ?? '';
+        }
+
         // Get category name
         if ($product->categories && $product->categories->isNotEmpty()) {
             $category = $product->categories->first();
