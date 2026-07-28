@@ -1194,7 +1194,7 @@ class LamGamePageController extends Controller
             'author_verified' => $seller->verified ?? false,
             'author_email' => $seller->contact_email ?? ($attributeValues['author_email'] ?? null),
             'author_bio' => $seller->shop_description ?? ($attributeValues['author_bio'] ?? ''),
-            'requirements' => $attributeValues['requirements'] ?? 'Unity 2022.3 LTS trở lên',
+            'requirements' => $attributeValues['requirements'] ?? null,
             'features' => [],
             'tags' => [],
             'category_name' => 'Source Game'
@@ -1218,6 +1218,8 @@ class LamGamePageController extends Controller
                 ['url' => asset('images/placeholder-game.svg'), 'alt' => $sourceGameDetail['title']]
             ];
         }
+        // Set primary image for OG/schema
+        $sourceGameDetail['image'] = $sourceGameDetail['images'][0]['url'] ?? asset('assets/logos/png/logo-square-512.png');
 
         // Process downloadable links
         if ($product->downloadable_links && $product->downloadable_links->isNotEmpty()) {
@@ -1232,21 +1234,19 @@ class LamGamePageController extends Controller
             }
         }
 
-        // Parse features from description or attributes
-        $featuresText = $attributeValues['features'] ?? $sourceGameDetail['full_description'];
-        if ($featuresText) {
-            $lines = explode("\n", strip_tags($featuresText));
+        // Parse features — prefer dedicated attribute, fallback to short_description bullets only
+        $featuresSource = $attributeValues['features'] ?? $sourceGameDetail['short_description'] ?? '';
+        if ($featuresSource) {
+            $lines = explode("\n", strip_tags($featuresSource));
             $lines = array_filter(array_map('trim', $lines));
-            // Only keep lines that look like feature items (start with ✅, ✓, -, •, or are short enough)
+            // ONLY keep lines with explicit bullet markers (✅, ✓, -, •)
             $sourceGameDetail['features'] = array_values(array_filter($lines, function ($line) {
-                return preg_match('/^[✅✓•\-\*]/', $line) || (mb_strlen($line) < 80 && mb_strlen($line) > 5 && !preg_match('/^[🐦🎯🧠📁🔗📋📖]/', $line));
+                return preg_match('/^[✅✓•\-\*]/', $line);
             }));
-            // Clean prefixes
             $sourceGameDetail['features'] = array_map(function ($f) {
                 return preg_replace('/^[✅✓•\-\*]\s*/', '', $f);
             }, $sourceGameDetail['features']);
-            // Limit to 12 features
-            $sourceGameDetail['features'] = array_slice($sourceGameDetail['features'], 0, 12);
+            $sourceGameDetail['features'] = array_slice($sourceGameDetail['features'], 0, 8);
         }
 
         // Generate FAQ based on product data

@@ -19,7 +19,7 @@
     "@context": "https://schema.org",
     "@type": "SoftwareSourceCode",
     "name": "{{ $sourceGame['title'] }}",
-    "description": "{{ Str::limit(strip_tags($sourceGame['description'] ?? ''), 200) }}",
+    "description": "{{ addslashes(Str::limit(strip_tags($sourceGame['short_description'] ?? $sourceGame['description'] ?? ''), 300, '')) }}",
     "url": "{{ url()->current() }}",
     @if($sourceGame['image'] ?? null)"image": "{{ $sourceGame['image'] }}",@endif
     "codeRepository": "{{ $sourceGame['github_url'] ?? '' }}",
@@ -406,8 +406,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (buyNowBtn) buyNowBtn.addEventListener('click', () => addToCart(true, buyNowBtn));
 
     // Load reviews
-    fetch('/api/v1/source-game/{{ $sourceGame["id"] }}/review-stats').then(r=>r.json()).then(d=>{if(d.data)renderStats(d.data)});
-    fetch('/api/v1/source-game/{{ $sourceGame["id"] }}/reviews?per_page=10').then(r=>r.json()).then(d=>{if(d.data?.data)renderReviews(d.data.data)});
+    fetch('/api/v1/source-game/{{ $sourceGame["id"] }}/review-stats').then(r=>r.json()).then(d=>{
+        if(d.data && d.data.total > 0) renderStats(d.data);
+        else document.getElementById('review-stats').innerHTML='<p style="color:#7A8599;font-size:.9rem">⭐ Chưa có đánh giá. Hãy là người đầu tiên!</p>';
+    }).catch(()=>{document.getElementById('review-stats').innerHTML='<p style="color:#7A8599;font-size:.9rem">⭐ Chưa có đánh giá.</p>';});
+    fetch('/api/v1/source-game/{{ $sourceGame["id"] }}/reviews?per_page=10').then(r=>r.json()).then(d=>{if(d.data?.data)renderReviews(d.data.data)}).catch(()=>{});
 });
 
 function renderStats(s){const el=document.getElementById('review-stats');if(!el)return;let bars='';for(let i=5;i>=1;i--){const p=s.total>0?Math.round((s.distribution[i]||0)/s.total*100):0;bars+='<div class="sd-rbar"><span>'+i+'★</span><div class="sd-rbar__track"><div class="sd-rbar__fill" style="width:'+p+'%"></div></div><span>'+(s.distribution[i]||0)+'</span></div>';}el.innerHTML='<div class="sd-rating-summary"><div class="sd-rating-big">'+s.avg_rating+'<small>/5</small></div><div class="sd-rating-count">'+s.total+' đánh giá</div></div><div class="sd-rating-bars">'+bars+'</div>';}
