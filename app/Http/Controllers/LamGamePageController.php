@@ -283,6 +283,7 @@ class LamGamePageController extends Controller
         $keyword = $request->get('keyword');
         $location = $request->get('location');
         $level = $request->get('level');
+        $companyType = $request->get('company_type');
         $sort = $request->get('sort', 'newest');
 
         $query = \App\Models\JobPosting::with('skills', 'benefits')
@@ -295,7 +296,10 @@ class LamGamePageController extends Controller
             $query->byLocation($location);
         }
         if ($level) {
-            $query->where('experience_level', 'like', "%{$level}%");
+            $query->where('experience_level', $level);
+        }
+        if ($companyType) {
+            $query->where('company_type', $companyType);
         }
 
         switch ($sort) {
