@@ -26,12 +26,10 @@
     .review-form button:hover { background: #1d4ed8; }
 </style>
 
-<div class="review-stats-section" id="review-stats">
-    <p style="color:#9ca3af">Đang tải thống kê...</p>
+<div class="review-stats-section" id="review-stats-partial" style="display:none">
 </div>
 
-<div id="review-list">
-    <p style="color:#9ca3af">Đang tải đánh giá...</p>
+<div id="review-list-partial" style="display:none">
 </div>
 
 @auth('customer')
