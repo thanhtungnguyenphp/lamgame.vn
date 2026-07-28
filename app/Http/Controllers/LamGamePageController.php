@@ -1125,11 +1125,25 @@ class LamGamePageController extends Controller
             ->where('locale', 'vi')
             ->first();
 
-        // Get attribute values
+        // Get attribute values (resolve select/multiselect labels)
         $attributeValues = [];
         if ($product->attribute_values) {
             foreach ($product->attribute_values as $attrValue) {
-                $attributeValues[$attrValue->attribute->code] = $attrValue->text_value ?: $attrValue->value;
+                $attr = $attrValue->attribute;
+                $rawValue = $attrValue->text_value ?: $attrValue->integer_value ?: $attrValue->value;
+
+                if ($attr && in_array($attr->type, ['select', 'multiselect']) && $rawValue) {
+                    // Resolve option IDs to labels
+                    $optionIds = array_filter(explode(',', (string) $rawValue));
+                    $labels = \DB::table('attribute_option_translations')
+                        ->whereIn('attribute_option_id', $optionIds)
+                        ->where('locale', 'vi')
+                        ->pluck('label')
+                        ->implode(', ');
+                    $attributeValues[$attr->code] = $labels ?: $rawValue;
+                } else {
+                    $attributeValues[$attr->code ?? ''] = $rawValue;
+                }
             }
         }
 
@@ -1217,8 +1231,18 @@ class LamGamePageController extends Controller
         // Parse features from description or attributes
         $featuresText = $attributeValues['features'] ?? $sourceGameDetail['full_description'];
         if ($featuresText) {
-            $sourceGameDetail['features'] = explode('\n', strip_tags($featuresText));
-            $sourceGameDetail['features'] = array_filter(array_map('trim', $sourceGameDetail['features']));
+            $lines = explode("\n", strip_tags($featuresText));
+            $lines = array_filter(array_map('trim', $lines));
+            // Only keep lines that look like feature items (start with ✅, ✓, -, •, or are short enough)
+            $sourceGameDetail['features'] = array_values(array_filter($lines, function ($line) {
+                return preg_match('/^[✅✓•\-\*]/', $line) || (mb_strlen($line) < 80 && mb_strlen($line) > 5 && !preg_match('/^[🐦🎯🧠📁🔗📋📖]/', $line));
+            }));
+            // Clean prefixes
+            $sourceGameDetail['features'] = array_map(function ($f) {
+                return preg_replace('/^[✅✓•\-\*]\s*/', '', $f);
+            }, $sourceGameDetail['features']);
+            // Limit to 12 features
+            $sourceGameDetail['features'] = array_slice($sourceGameDetail['features'], 0, 12);
         }
 
         // Get category name

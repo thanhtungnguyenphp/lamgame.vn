@@ -109,15 +109,23 @@
                         <button type="button" id="btn-buy-now" class="sd-btn sd-btn--secondary">Mua ngay</button>
                     </form>
                     @elseif($sourceGame['is_free'])
-                    @php $freeLinks = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->pluck('id')->toArray(); @endphp
+                    @php
+                        $freeLink = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->first();
+                        $directUrl = $freeLink && $freeLink->type === 'url' ? $freeLink->url : null;
+                    @endphp
+                    @if($directUrl)
+                    <a href="{{ $directUrl }}" target="_blank" rel="noopener" id="btn-add-cart" class="sd-btn sd-btn--primary">📥 Tải Source Code (Free)</a>
+                    @else
                     <form id="add-to-cart-form">
                         <input type="hidden" name="product_id" value="{{ $sourceGame['id'] }}">
                         <input type="hidden" name="quantity" value="1">
+                        @php $freeLinks = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->pluck('id')->toArray(); @endphp
                         @foreach($freeLinks as $linkId)
                         <input type="hidden" name="links[]" value="{{ $linkId }}">
                         @endforeach
                         <button type="button" id="btn-add-cart" class="sd-btn sd-btn--primary">📦 Tải về miễn phí</button>
                     </form>
+                    @endif
                     @endif
                     <button class="sd-btn sd-btn--save" onclick="addToFavorites()">❤ Lưu Source</button>
                     <div id="cart-message" class="sd-message"></div>
