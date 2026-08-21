@@ -64,8 +64,8 @@
             <p class="lead">Kết nối developers & studios. Tìm cơ hội việc làm tốt nhất trong ngành game Việt Nam.</p>
             <div class="jb-hero-stats">
                 <div><strong>{{ $totalJobs }}</strong><span>Việc làm</span></div>
-                <div><strong>{{ isset($companies) ? $companies->count() : '50+' }}</strong><span>Studios</span></div>
-                <div><strong>500+</strong><span>Developers</span></div>
+                <div><strong>{{ isset($topCompanies) ? $topCompanies->count() : 0 }}+</strong><span>Studios</span></div>
+                <div><strong>{{ number_format($siteMetrics['registered_users'] ?? 0) }}+</strong><span>Developers</span></div>
             </div>
         </div>
     </section>

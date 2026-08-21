@@ -69,21 +69,21 @@
                 <div class="lg-v2-nav__dropdown">
                     <a href="#" class="lg-v2-nav__link">Giải trí <svg width="10" height="10" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg></a>
                     <div class="lg-v2-nav__mega">
-                        <a href="/world-cup-2026" class="lg-v2-nav__mega-item lg-v2-nav__mega-item--hot">
-                            <span class="lg-v2-nav__mega-icon">🏆</span>
-                            <div><strong>World Cup 2026 <span class="lg-v2-nav__hot-tag">HOT</span></strong><span>Lịch thi đấu, kết quả, tin tức</span></div>
+                        <a href="{{ route('lamgame.blog') }}?category=game-industry" class="lg-v2-nav__mega-item lg-v2-nav__mega-item--hot">
+                            <span class="lg-v2-nav__mega-icon">🎮</span>
+                            <div><strong>Game Industry <span class="lg-v2-nav__hot-tag">HOT</span></strong><span>Tin tức, xu hướng ngành game</span></div>
                         </a>
                         <a href="/choi-game" class="lg-v2-nav__mega-item">
                             <span class="lg-v2-nav__mega-icon">🕹️</span>
                             <div><strong>Chơi Game</strong><span>50+ mini games HTML5</span></div>
                         </a>
-                        <a href="/the-thao" class="lg-v2-nav__mega-item">
-                            <span class="lg-v2-nav__mega-icon">⚽</span>
-                            <div><strong>Thể thao</strong><span>Lịch thi đấu, BXH, live score</span></div>
+                        <a href="{{ route('lamgame.ai-tools') }}" class="lg-v2-nav__mega-item">
+                            <span class="lg-v2-nav__mega-icon">📰</span>
+                            <div><strong>Game Industry</strong><span>Tin tức ngành game</span></div>
                         </a>
-                        <a href="/xo-so" class="lg-v2-nav__mega-item">
-                            <span class="lg-v2-nav__mega-icon">🎰</span>
-                            <div><strong>Xổ số</strong><span>KQXS 3 miền, Vietlott</span></div>
+                        <a href="{{ route('lamgame.blog') }}?category=ai-game-dev" class="lg-v2-nav__mega-item">
+                            <span class="lg-v2-nav__mega-icon">🤖</span>
+                            <div><strong>AI Game Dev</strong><span>AI tools & tutorials</span></div>
                         </a>
                     </div>
                 </div>
@@ -130,10 +130,9 @@
         <a href="{{ route('forum.index') }}" class="lg-v2-nav__mobile-link">💬 Forum</a>
         <a href="/viec-lam-game" class="lg-v2-nav__mobile-link">💼 Việc làm</a>
         <div class="lg-v2-nav__mobile-divider"></div>
-        <a href="/world-cup-2026" class="lg-v2-nav__mobile-link"><span class="lg-v2-nav__hot-tag">HOT</span> 🏆 World Cup 2026</a>
         <a href="/choi-game" class="lg-v2-nav__mobile-link">🕹️ Chơi Game</a>
-        <a href="/the-thao" class="lg-v2-nav__mobile-link">⚽ Thể thao</a>
-        <a href="/xo-so" class="lg-v2-nav__mobile-link">🎰 Xổ số</a>
+        <a href="{{ route('lamgame.blog') }}?category=game-industry" class="lg-v2-nav__mobile-link">📰 Game Industry</a>
+        <a href="{{ route('lamgame.blog') }}?category=ai-game-dev" class="lg-v2-nav__mobile-link">🤖 AI Game Dev</a>
         <div class="lg-v2-nav__mobile-divider"></div>
         @guest
         <a href="{{ route('shop.customer.session.index') }}" class="lg-v2-btn lg-v2-btn--primary" style="width:100%;justify-content:center;">Đăng nhập</a>

@@ -71,6 +71,14 @@ class Blog extends Model
     }
 
     /**
+     * Get the author that owns the blog (E-E-A-T)
+     */
+    public function authorModel()
+    {
+        return $this->belongsTo(Author::class, 'author_id');
+    }
+
+    /**
      * Get the category that owns the blog
      */
     public function category()

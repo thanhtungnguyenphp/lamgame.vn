@@ -16,7 +16,11 @@
     "url": "{{ url()->current() }}",
     @if($blog->src)"image": "{{ asset('storage/' . $blog->src) }}",@endif
     "datePublished": "{{ $blog->published_at ?? $blog->created_at }}",
+    @if($blog->authorModel)
+    "author": {!! json_encode($blog->authorModel->getSchemaOrgData()) !!},
+    @else
     "author": {"@type": "Person", "name": "{{ $blog->author ?? 'LAMGAME' }}"},
+    @endif
     "publisher": {"@type": "Organization", "name": "LAMGAME", "url": "https://lamgame.vn"}
 }
 </script>
@@ -120,11 +124,23 @@
             <article class="bd-article">
                 {{-- Author Box Top --}}
                 <div class="bd-author-top">
-                    <div class="bd-avatar">{{ strtoupper(substr($blog->author ?? 'L', 0, 1)) }}</div>
-                    <div>
-                        <span class="bd-author__name">{{ $blog->author ?? 'LamGame' }}</span>
-                        <span class="bd-author__role">Game Developer & Writer</span>
-                    </div>
+                    @if($blog->authorModel)
+                        @if($blog->authorModel->avatar)
+                            <img src="{{ asset('storage/' . $blog->authorModel->avatar) }}" alt="{{ $blog->authorModel->name }}" class="bd-avatar" width="40" height="40">
+                        @else
+                            <div class="bd-avatar">{{ strtoupper(substr($blog->authorModel->name, 0, 1)) }}</div>
+                        @endif
+                        <div>
+                            <a href="{{ route('authors.show', $blog->authorModel->slug) }}" class="bd-author__name">{{ $blog->authorModel->name }}</a>
+                            <span class="bd-author__role">{{ $blog->authorModel->title ?? 'Game Developer' }}</span>
+                        </div>
+                    @else
+                        <div class="bd-avatar">{{ strtoupper(substr($blog->author ?? 'L', 0, 1)) }}</div>
+                        <div>
+                            <span class="bd-author__name">{{ $blog->author ?? 'LamGame' }}</span>
+                            <span class="bd-author__role">Game Developer & Writer</span>
+                        </div>
+                    @endif
                 </div>
 
                 {{-- Content Body --}}
@@ -164,6 +180,9 @@
                 </div>
 
                 {{-- Author Box Bottom --}}
+                @if($blog->authorModel)
+                    <x-author-box :author="$blog->authorModel" :showBio="true" />
+                @else
                 <div class="bd-author-box">
                     <div class="bd-avatar bd-avatar--lg">{{ strtoupper(substr($blog->author ?? 'L', 0, 1)) }}</div>
                     <div class="bd-author-box__info">
@@ -171,6 +190,7 @@
                         <p>Game Developer & Technical Writer tại LamGame.vn. Chia sẻ kiến thức về game development, Unity, AI tools cho cộng đồng developer Việt Nam.</p>
                     </div>
                 </div>
+                @endif
             </article>
 
             {{-- SIDEBAR (Sticky TOC + Widgets) --}}

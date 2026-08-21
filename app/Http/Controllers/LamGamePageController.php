@@ -16,13 +16,17 @@ use App\Models\SourceGameReview;
 class LamGamePageController extends Controller
 {
     /**
-     * Show Gioi thieu page
+     * Show Gioi thieu page với dynamic metrics
      */
     public function gioiThieu()
     {
+        $metricsService = new \App\Services\SiteMetricsService();
+        $metrics = $metricsService->getMetrics();
+        
         return view('lamgame.pages.gioi-thieu', [
-            'page_title' => 'Giới thiệu - Làm Game',
-            'page_description' => 'Tìm hiểu về Làm Game - nền tảng học lập trình game hàng đầu Việt Nam với các khóa học chất lượng cao.'
+            'page_title' => 'Giới thiệu LamGame.vn — Hệ sinh thái Game Developer Việt Nam',
+            'page_description' => 'LamGame.vn là hệ sinh thái dành cho cộng đồng Game Developer Việt Nam với source code, tutorial, việc làm và cộng đồng.',
+            'metrics' => $metrics,
         ]);
     }
 
@@ -110,25 +114,37 @@ class LamGamePageController extends Controller
 
         // Filter by category if specified
         if ($categorySlug) {
-            $category = BlogCategory::where('slug', $categorySlug)->active()->first();
+            $category = BlogCategory::where('slug', $categorySlug)->first();
             if (!$category) {
                 // Category doesn't exist → 404
                 abort(404);
             }
+            if (!$category->status) {
+                // Category was deactivated (legacy/cleanup) → 410 Gone
+                abort(410, 'This category has been removed.');
+            }
+            // Use exact matching for category IDs
+            // default_category is the primary category (integer)
+            // categorys is comma-separated IDs like "1,5,10" - use FIND_IN_SET for exact match
             $blogsQuery->where(function($query) use ($category) {
                 $query->where('default_category', $category->id)
-                      ->orWhere('categorys', 'LIKE', '%' . $category->id . '%');
+                      ->orWhereRaw('FIND_IN_SET(?, categorys) > 0', [$category->id]);
             });
         }
 
         // Filter by tag if specified
         if ($tagSlug) {
-            $tag = BlogTag::where('slug', $tagSlug)->active()->first();
+            $tag = BlogTag::where('slug', $tagSlug)->first();
             if (!$tag) {
                 // Tag doesn't exist → 404
                 abort(404);
             }
-            $blogsQuery->where('tags', 'LIKE', '%' . $tag->id . '%');
+            if (!$tag->status) {
+                // Tag was deactivated (legacy/cleanup) → 410 Gone
+                abort(410, 'This tag has been removed.');
+            }
+            // Use FIND_IN_SET for exact tag ID matching (tags is comma-separated like "1,5,10")
+            $blogsQuery->whereRaw('FIND_IN_SET(?, tags) > 0', [$tag->id]);
         }
 
         // Search functionality
@@ -287,7 +303,8 @@ class LamGamePageController extends Controller
         $sort = $request->get('sort', 'newest');
 
         $query = \App\Models\JobPosting::with('skills', 'benefits')
-            ->where('status', 'active');
+            ->where('status', 'active')
+            ->where('is_game_related', true); // Only show game-related jobs
 
         if ($keyword) {
             $query->search($keyword);
@@ -343,8 +360,8 @@ class LamGamePageController extends Controller
             ->get();
 
         return view('lamgame.pages.viec-lam-game', [
-            'page_title' => 'Tuyển dụng Game Developer — 51+ việc làm mới | LamGame.vn',
-            'page_description' => 'Tìm kiếm cơ hội việc làm trong ngành game development tại Việt Nam và quốc tế.',
+            'page_title' => 'Việc Làm Game Developer Mới Nhất ' . date('Y') . ' | Unity, Unreal, Game Design — LamGame.vn',
+            'page_description' => 'Khám phá ' . $totalJobs . '+ cơ hội việc làm game development tại Việt Nam. Tuyển dụng Unity Developer, Game Designer, 3D Artist và nhiều vị trí khác.',
             'jobs' => $jobs,
             'totalJobs' => $totalJobs,
             'topCompanies' => $topCompanies,
@@ -1187,7 +1204,7 @@ class LamGamePageController extends Controller
             'images' => [],
             'downloadable_links' => [],
             'video_demo_url' => $attributeValues['video_demo_url'] ?? null,
-            'demo_url' => $product->has_demo ? route('source-game.demo', $flat->url_key) : ($attributeValues['demo_url'] ?? null),
+            'demo_url' => ($product->has_demo && $flat->url_key) ? route('source-game.demo', $flat->url_key) : ($attributeValues['demo_url'] ?? null),
             'author_name' => $seller->shop_name ?? ($attributeValues['author_name'] ?? 'Làm Game Team'),
             'author_slug' => $seller->shop_slug ?? null,
             'author_logo' => $seller ? $seller->logo_url : null,

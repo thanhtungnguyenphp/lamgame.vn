@@ -7,11 +7,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
-// Homepage route (shop.home.index alias needed by Bagisto)
-Route::get('/', [HomeController::class, 'index'])->name('shop.home.index');
-
-// Homepage V2 preview (remove after go-live)
-Route::get('/home-v2', [HomeController::class, 'indexV2'])->name('shop.home.v2');
+// Homepage route - using V2 design (shop.home.index alias needed by Bagisto)
+Route::get('/', [HomeController::class, 'indexV2'])->name('shop.home.index');
 
 // Checkout routes (override Bagisto)
 Route::get('checkout/cart', fn() => view('checkout.cart'))->name('shop.checkout.cart.index');
@@ -47,32 +44,74 @@ Route::get('lien-he', [LamGamePageController::class, 'lienHe'])->name('lamgame.l
 Route::post('lien-he', [LamGamePageController::class, 'submitContact'])->name('lamgame.lien-he.submit');
 Route::get('thue-team-dev', [LamGamePageController::class, 'hireTeam'])->name('lamgame.thue-team-dev');
 
-// Sport Web Views
-Route::prefix('the-thao')->group(function () {
-    Route::get('/', [App\Http\Controllers\SportWebController::class, 'index'])->name('sport.index');
-    Route::get('lich-thi-dau', [App\Http\Controllers\SportWebController::class, 'fixtures'])->name('sport.fixtures');
-    Route::get('bang-xep-hang/{league}', [App\Http\Controllers\SportWebController::class, 'standings'])->name('sport.standings');
-    Route::get('tran-dau/{id}', [App\Http\Controllers\SportWebController::class, 'match'])->name('sport.match');
-    Route::get('doi-bong/{slug}', [App\Http\Controllers\SportWebController::class, 'team'])->name('sport.team');
-    Route::get('tin-tuc', [App\Http\Controllers\SportWebController::class, 'articles'])->name('sport.articles');
-    Route::get('tin-tuc/{id}', [App\Http\Controllers\SportWebController::class, 'article'])->name('sport.article');
+// ============================================================================
+// SPRINT 2 E-E-A-T Routes
+// ============================================================================
+
+// Author pages (E-E-A-T)
+Route::get('tac-gia', [App\Http\Controllers\AuthorController::class, 'index'])->name('authors.index');
+Route::get('tac-gia/{slug}', [App\Http\Controllers\AuthorController::class, 'show'])->name('authors.show');
+
+// Policy pages (E-E-A-T)
+Route::get('chinh-sach-bien-tap', fn() => view('lamgame.pages.chinh-sach-bien-tap'))->name('lamgame.chinh-sach-bien-tap');
+Route::get('chinh-sach-chinh-sua', fn() => view('lamgame.pages.chinh-sach-chinh-sua'))->name('lamgame.chinh-sach-chinh-sua');
+
+// ============================================================================
+// PILLAR PAGES — Topic Clusters
+// ============================================================================
+Route::prefix('learn')->name('learn.')->group(function () {
+    Route::get('/', fn() => view('lamgame.pages.learn.index'))->name('index');
+    Route::get('unity', [App\Http\Controllers\PillarController::class, 'unity'])->name('unity');
+    Route::get('godot', [App\Http\Controllers\PillarController::class, 'godot'])->name('godot');
+    Route::get('ai-game-dev', [App\Http\Controllers\PillarController::class, 'aiGameDev'])->name('ai-game-dev');
+    Route::get('career', [App\Http\Controllers\PillarController::class, 'career'])->name('career');
 });
 
-// Lottery / Xổ số Web Views
+// ============================================================================
+// PHASE 1 SEO CLEANUP — Sport/Lottery Web Routes DISABLED
+// API routes vẫn hoạt động bình thường cho app khác
+// Data trong database vẫn được giữ nguyên
+// ============================================================================
+
+// Sport Web Views — DISABLED (SEO cleanup, serve 410 Gone)
+// Route::prefix('the-thao')->group(function () {
+//     Route::get('/', [App\Http\Controllers\SportWebController::class, 'index'])->name('sport.index');
+//     Route::get('lich-thi-dau', [App\Http\Controllers\SportWebController::class, 'fixtures'])->name('sport.fixtures');
+//     Route::get('bang-xep-hang/{league}', [App\Http\Controllers\SportWebController::class, 'standings'])->name('sport.standings');
+//     Route::get('tran-dau/{id}', [App\Http\Controllers\SportWebController::class, 'match'])->name('sport.match');
+//     Route::get('doi-bong/{slug}', [App\Http\Controllers\SportWebController::class, 'team'])->name('sport.team');
+//     Route::get('tin-tuc', [App\Http\Controllers\SportWebController::class, 'articles'])->name('sport.articles');
+//     Route::get('tin-tuc/{id}', [App\Http\Controllers\SportWebController::class, 'article'])->name('sport.article');
+// });
+
+// 410 Gone for Sport URLs
+Route::prefix('the-thao')->group(function () {
+    Route::any('{any?}', fn() => abort(410, 'Nội dung đã được gỡ bỏ'))
+        ->where('any', '.*')
+        ->name('sport.gone');
+});
+
+// Lottery / Xổ số Web Views — DISABLED (SEO cleanup, serve 410 Gone)
+// Route::prefix('xo-so')->group(function () {
+//     Route::get('/', [App\Http\Controllers\LotteryWebController::class, 'index'])->name('lottery.index');
+//     Route::get('mien-bac', [App\Http\Controllers\LotteryWebController::class, 'mienBac'])->name('lottery.mien-bac');
+//     Route::get('mien-trung', [App\Http\Controllers\LotteryWebController::class, 'mienTrung'])->name('lottery.mien-trung');
+//     Route::get('mien-nam', [App\Http\Controllers\LotteryWebController::class, 'mienNam'])->name('lottery.mien-nam');
+//     Route::get('vietlott', [App\Http\Controllers\LotteryWebController::class, 'vietlott'])->name('lottery.vietlott');
+//     Route::get('vietlott/keno', [App\Http\Controllers\LotteryWebController::class, 'kenoResult'])->name('lottery.keno');
+//     Route::get('vietlott/power-655', [App\Http\Controllers\LotteryWebController::class, 'power655'])->name('lottery.power655');
+//     Route::get('vietlott/mega-645', [App\Http\Controllers\LotteryWebController::class, 'mega645'])->name('lottery.mega645');
+//     Route::get('thong-ke', [App\Http\Controllers\LotteryWebController::class, 'statistics'])->name('lottery.statistics');
+//     Route::get('do-so', [App\Http\Controllers\LotteryWebController::class, 'check'])->name('lottery.check');
+//     Route::get('lich-quay', [App\Http\Controllers\LotteryWebController::class, 'schedule'])->name('lottery.schedule');
+//     Route::get('dai/{code}', [App\Http\Controllers\LotteryWebController::class, 'province'])->name('lottery.province');
+// });
+
+// 410 Gone for Lottery URLs  
 Route::prefix('xo-so')->group(function () {
-    Route::get('/', [App\Http\Controllers\LotteryWebController::class, 'index'])->name('lottery.index');
-    Route::get('mien-bac', [App\Http\Controllers\LotteryWebController::class, 'mienBac'])->name('lottery.mien-bac');
-    Route::get('mien-trung', [App\Http\Controllers\LotteryWebController::class, 'mienTrung'])->name('lottery.mien-trung');
-    Route::get('mien-nam', [App\Http\Controllers\LotteryWebController::class, 'mienNam'])->name('lottery.mien-nam');
-    Route::get('vietlott', [App\Http\Controllers\LotteryWebController::class, 'vietlott'])->name('lottery.vietlott');
-    Route::get('vietlott/keno', [App\Http\Controllers\LotteryWebController::class, 'kenoResult'])->name('lottery.keno');
-    Route::get('vietlott/power-655', [App\Http\Controllers\LotteryWebController::class, 'power655'])->name('lottery.power655');
-    Route::get('vietlott/mega-645', [App\Http\Controllers\LotteryWebController::class, 'mega645'])->name('lottery.mega645');
-    // SEO Landing Pages
-    Route::get('thong-ke', [App\Http\Controllers\LotteryWebController::class, 'statistics'])->name('lottery.statistics');
-    Route::get('do-so', [App\Http\Controllers\LotteryWebController::class, 'check'])->name('lottery.check');
-    Route::get('lich-quay', [App\Http\Controllers\LotteryWebController::class, 'schedule'])->name('lottery.schedule');
-    Route::get('dai/{code}', [App\Http\Controllers\LotteryWebController::class, 'province'])->name('lottery.province');
+    Route::any('{any?}', fn() => abort(410, 'Nội dung đã được gỡ bỏ'))
+        ->where('any', '.*')
+        ->name('lottery.gone');
 });
 
 // Blog routes
@@ -81,8 +120,14 @@ Route::get('blog/{slug}', [LamGamePageController::class, 'blogShow'])->name('blo
 
 // Landing Page routes
 Route::get('p/{slug}', [\App\Http\Controllers\LandingPageController::class, 'show'])->name('landing-page.show');
-Route::get('lottolive', [\App\Http\Controllers\LandingPageController::class, 'show'])->defaults('slug', 'lottolive')->name('landing-page.lottolive');
-Route::get('world-cup-2026', [\App\Http\Controllers\WorldCup2026Controller::class, 'show'])->name('world-cup-2026');
+
+// LottoLive — DISABLED (SEO cleanup)
+// Route::get('lottolive', [\App\Http\Controllers\LandingPageController::class, 'show'])->defaults('slug', 'lottolive')->name('landing-page.lottolive');
+Route::get('lottolive', fn() => abort(410, 'Nội dung đã được gỡ bỏ'))->name('landing-page.lottolive');
+
+// World Cup 2026 — DISABLED (SEO cleanup - cần rewrite về game angle trước khi bật lại)
+// Route::get('world-cup-2026', [\App\Http\Controllers\WorldCup2026Controller::class, 'show'])->name('world-cup-2026');
+Route::get('world-cup-2026', fn() => abort(410, 'Nội dung đã được gỡ bỏ'))->name('world-cup-2026');
 
 // Mini Games
 Route::get('choi-game', [\App\Http\Controllers\MiniGameController::class, 'index'])->name('mini-game.index');

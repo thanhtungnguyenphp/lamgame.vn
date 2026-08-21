@@ -164,7 +164,10 @@ abstract class AbstractType
             return $product;
         }
 
-        $this->attributeValueRepository->saveValues($data, $product, $product->attribute_family->custom_attributes);
+        // Guard against null attribute_family to prevent "Attempt to read property on null" error
+        if ($product->attribute_family) {
+            $this->attributeValueRepository->saveValues($data, $product, $product->attribute_family->custom_attributes);
+        }
 
         if (empty($data['channels'])) {
             $data['channels'][] = core()->getDefaultChannel()->id;

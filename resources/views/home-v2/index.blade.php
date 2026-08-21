@@ -16,7 +16,7 @@
                 <p class="lg-v2-hero__sub">Tiết kiệm hàng trăm giờ phát triển với source code, hệ thống gameplay và template production-ready.</p>
                 <div class="lg-v2-hero__cta">
                     <a href="{{ route('lamgame.source-game') }}" class="lg-v2-btn lg-v2-btn--primary">✨ Khám phá Source Hot</a>
-                    <a href="{{ route('lamgame.source-game') }}?sort=best_selling" class="lg-v2-btn lg-v2-btn--secondary">🏆 Source Bán Chạy</a>
+                    <a href="{{ route('lamgame.source-game') }}?sort=featured" class="lg-v2-btn lg-v2-btn--secondary">⭐ Source Nổi Bật</a>
                 </div>
             </div>
             <div class="lg-v2-hero__media">
@@ -46,18 +46,18 @@
             </div>
             <div class="lg-v2-hero__stat">
                 <span class="lg-v2-hero__stat-icon">👥</span>
-                <span class="lg-v2-hero__stat-number">12,000+</span>
+                <span class="lg-v2-hero__stat-number">{{ number_format($siteMetrics['registered_users'] ?? 0) }}+</span>
                 <span class="lg-v2-hero__stat-label">Developers</span>
             </div>
             <div class="lg-v2-hero__stat">
-                <span class="lg-v2-hero__stat-icon">🛒</span>
-                <span class="lg-v2-hero__stat-number">850+</span>
-                <span class="lg-v2-hero__stat-label">Buyers</span>
+                <span class="lg-v2-hero__stat-icon">💼</span>
+                <span class="lg-v2-hero__stat-number">{{ $siteMetrics['job_listings'] ?? 0 }}+</span>
+                <span class="lg-v2-hero__stat-label">Việc làm</span>
             </div>
             <div class="lg-v2-hero__stat">
-                <span class="lg-v2-hero__stat-icon">⭐</span>
-                <span class="lg-v2-hero__stat-number">4.9/5</span>
-                <span class="lg-v2-hero__stat-label">Đánh giá trung bình</span>
+                <span class="lg-v2-hero__stat-icon">📝</span>
+                <span class="lg-v2-hero__stat-number">{{ $siteMetrics['forum_posts'] ?? 0 }}+</span>
+                <span class="lg-v2-hero__stat-label">Bài viết Forum</span>
             </div>
         </div>
     </div>
@@ -106,13 +106,13 @@
                 </div>
             </div>
 
-            {{-- Best Selling --}}
+            {{-- Featured Sources (was Best Selling) --}}
             <div class="lg-v2-curated__col">
                 <div class="lg-v2-curated__header">
-                    <h3>⭐ Best Selling</h3>
-                    <a href="{{ route('lamgame.source-game') }}?sort=best_selling" class="lg-v2-section__link">Xem tất cả →</a>
+                    <h3>⭐ Source Nổi Bật</h3>
+                    <a href="{{ route('lamgame.source-game') }}?sort=featured" class="lg-v2-section__link">Xem tất cả →</a>
                 </div>
-                <p class="lg-v2-curated__desc">Những source bán chạy nhất</p>
+                <p class="lg-v2-curated__desc">Được chọn lọc bởi LamGame</p>
                 <div class="lg-v2-curated__thumbs">
                     @forelse(($best_selling ?? []) as $item)
                     <a href="{{ $item['url'] }}" class="lg-v2-curated__thumb" title="{{ $item['name'] }}">
@@ -168,7 +168,7 @@
             </div>
             <div class="lg-v2-filters__right">
                 <span style="color:var(--lg-text-muted);font-size:0.8125rem;">Sắp xếp:</span>
-                <select class="lg-v2-filter-select" id="filter-sort"><option value="trending">Trending</option><option value="newest">Mới nhất</option><option value="best_selling">Bán chạy</option><option value="price_low">Giá thấp→cao</option><option value="price_high">Giá cao→thấp</option><option value="rating">Rating</option></select>
+                <select class="lg-v2-filter-select" id="filter-sort"><option value="trending">Trending</option><option value="newest">Mới nhất</option><option value="featured">Nổi bật</option><option value="price_low">Giá thấp→cao</option><option value="price_high">Giá cao→thấp</option><option value="rating">Rating</option></select>
             </div>
         </div>
 
@@ -290,28 +290,6 @@
      SECONDARY CONTENT — Below the fold
      ============================================================ --}}
 
-{{-- WORLD CUP 2026 BANNER --}}
-<section class="lg-v2-section lg-v2-worldcup-banner">
-    <div class="lg-v2-container">
-        <a href="/world-cup-2026" class="lg-v2-worldcup">
-            <img src="/storage/banners/yK47J9ZNJS64U1DTPBOpHuxnPy0Ewhu0HKOQw84P.webp" alt="World Cup 2026" class="lg-v2-worldcup__bg-img">
-            <div class="lg-v2-worldcup__overlay">
-                <div class="lg-v2-worldcup__left">
-                    <div class="lg-v2-worldcup__top-row">
-                        <span class="lg-v2-worldcup__badge">🔴 LIVE</span>
-                        <h3 class="lg-v2-worldcup__title">🏆 FIFA World Cup 2026</h3>
-                    </div>
-                    <p class="lg-v2-worldcup__desc">Kết quả trực tiếp • BXH 12 bảng đấu • Lịch thi đấu • Tin tức</p>
-                </div>
-                <div class="lg-v2-worldcup__right">
-                    <span class="lg-v2-worldcup__status">Đang diễn ra — Vòng bảng</span>
-                    <span class="lg-v2-btn lg-v2-btn--sm" style="background:#F59E0B;color:#000;font-weight:600;">Xem ngay →</span>
-                </div>
-            </div>
-        </a>
-    </div>
-</section>
-
 {{-- BLOG & TUTORIAL --}}
 <section class="lg-v2-section">
     <div class="lg-v2-container">
@@ -380,18 +358,18 @@
     </div>
 </section>
 
-{{-- XỔ SỐ WIDGET --}}
+{{-- AI GAME DEV WIDGET — replaced lottery widget --}}
 <section class="lg-v2-section">
     <div class="lg-v2-container">
-        <a href="/xo-so" class="lg-v2-lottery-widget">
+        <a href="/ai-tools" class="lg-v2-lottery-widget">
             <div class="lg-v2-lottery-widget__left">
-                <span class="lg-v2-lottery-widget__icon">🎰</span>
+                <span class="lg-v2-lottery-widget__icon">🤖</span>
                 <div>
-                    <strong>Kết quả Xổ số hôm nay</strong>
-                    <span>KQXS 3 miền, Vietlott, dò vé, thống kê</span>
+                    <strong>AI Tools cho Game Developer</strong>
+                    <span>Generate ideas, code snippets, assets và nhiều hơn nữa</span>
                 </div>
             </div>
-            <span class="lg-v2-btn lg-v2-btn--outline lg-v2-btn--sm">Xem KQXS →</span>
+            <span class="lg-v2-btn lg-v2-btn--outline lg-v2-btn--sm">Thử AI Tools →</span>
         </a>
     </div>
 </section>
@@ -872,7 +850,7 @@
 @endpush
 
 @push('scripts')
-<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+{{-- Alpine.js is loaded in master-v2 layout --}}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const grid = document.getElementById('product-grid');

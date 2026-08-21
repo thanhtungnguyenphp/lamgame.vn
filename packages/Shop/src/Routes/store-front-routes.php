@@ -110,6 +110,10 @@ Route::controller(LamGamePageController::class)->group(function () {
     Route::get('lien-he', 'lienHe')->name('lamgame.lien-he');
     Route::post('lien-he/gui', 'submitContact')->name('lamgame.lien-he.submit');
     
+    // E-E-A-T Policy pages
+    Route::get('chinh-sach-bien-tap', fn() => view('lamgame.pages.chinh-sach-bien-tap'))->name('lamgame.chinh-sach-bien-tap');
+    Route::get('chinh-sach-chinh-sua', fn() => view('lamgame.pages.chinh-sach-chinh-sua'))->name('lamgame.chinh-sach-chinh-sua');
+    
     // Blog
     Route::get('blog', 'blog')->name('lamgame.blog');
     Route::get('blog/{slug}', 'blogShow')->name('blog.show');
@@ -132,4 +136,12 @@ Route::controller(LamGamePageController::class)->group(function () {
     // Community posts
     Route::get('bai-viet/{id}', 'xemBaiViet')->name('lamgame.bai-viet');
     Route::post('binh-luan', 'binhLuan')->name('lamgame.binh-luan.store');
+});
+
+/**
+ * Author Routes (E-E-A-T)
+ */
+Route::controller(\App\Http\Controllers\AuthorController::class)->prefix('tac-gia')->group(function () {
+    Route::get('/', 'index')->name('authors.index');
+    Route::get('{slug}', 'show')->name('authors.show');
 });

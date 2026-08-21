@@ -1021,13 +1021,49 @@ class ProductManageController extends Controller
             ->join('attributes', 'product_attribute_values.attribute_id', '=', 'attributes.id')
             ->where('product_attribute_values.product_id', $productId)
             ->whereIn('attributes.code', $codes)
-            ->select('attributes.code', 'product_attribute_values.text_value')
-            ->get()
-            ->pluck('text_value', 'code');
+            ->select(
+                'attributes.code',
+                'attributes.type',
+                'product_attribute_values.text_value',
+                'product_attribute_values.integer_value'
+            )
+            ->get();
+
+        // Get option labels for select/multiselect
+        $optionIds = [];
+        foreach ($values as $v) {
+            if ($v->type === 'select' && $v->integer_value) {
+                $optionIds[] = $v->integer_value;
+            } elseif ($v->type === 'multiselect' && $v->text_value) {
+                $optionIds = array_merge($optionIds, array_map('intval', explode(',', $v->text_value)));
+            }
+        }
+
+        $optionLabels = [];
+        if (!empty($optionIds)) {
+            $optionLabels = DB::table('attribute_options')
+                ->join('attribute_option_translations', 'attribute_options.id', '=', 'attribute_option_translations.attribute_option_id')
+                ->whereIn('attribute_options.id', $optionIds)
+                ->where('attribute_option_translations.locale', app()->getLocale())
+                ->pluck('attribute_option_translations.label', 'attribute_options.id')
+                ->toArray();
+        }
 
         $result = [];
         foreach ($codes as $code) {
-            $result[$code] = $values[$code] ?? null;
+            $result[$code] = null;
+        }
+
+        foreach ($values as $v) {
+            if ($v->type === 'select' && $v->integer_value) {
+                $result[$v->code] = $optionLabels[$v->integer_value] ?? null;
+            } elseif ($v->type === 'multiselect' && $v->text_value) {
+                $ids = array_map('intval', explode(',', $v->text_value));
+                $labels = array_filter(array_map(fn($id) => $optionLabels[$id] ?? null, $ids));
+                $result[$v->code] = implode(', ', $labels) ?: null;
+            } else {
+                $result[$v->code] = $v->text_value;
+            }
         }
 
         return $result;

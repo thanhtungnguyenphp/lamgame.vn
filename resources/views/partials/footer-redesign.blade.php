@@ -51,9 +51,9 @@
                 <h4>Khám phá</h4>
                 <ul class="footer-redesign__links">
                     <li><a href="{{ route('lamgame.blog') }}">Blog</a></li>
-                    <li><a href="{{ route('sport.index') }}">Thể thao</a></li>
-                    <li><a href="{{ route('lottery.index') }}">Xổ số</a></li>
-                    <li><a href="{{ route('world-cup-2026') }}">World Cup 2026</a></li>
+                    <li><a href="{{ route('lamgame.blog') }}?category=unity-development">Unity</a></li>
+                    <li><a href="{{ route('lamgame.blog') }}?category=game-design">Game Design</a></li>
+                    <li><a href="{{ route('mini-game.index') }}">Chơi Game</a></li>
                     <li><a href="{{ route('lamgame.gioi-thieu') }}">Giới thiệu</a></li>
                     <li><a href="{{ route('lamgame.lien-he') }}">Liên hệ</a></li>
                 </ul>
@@ -63,9 +63,10 @@
             <div class="footer-redesign__col">
                 <h4>Chính sách</h4>
                 <ul class="footer-redesign__links">
+                    <li><a href="{{ route('lamgame.chinh-sach-bien-tap') }}">Chính sách biên tập</a></li>
+                    <li><a href="{{ route('lamgame.chinh-sach-chinh-sua') }}">Chính sách chỉnh sửa</a></li>
                     <li><a href="/page/chinh-sach-bao-mat">Bảo mật</a></li>
                     <li><a href="/page/dieu-khoan-dich-vu">Điều khoản</a></li>
-                    <li><a href="/page/chinh-sach-thanh-toan-rut-tien">Thanh toán</a></li>
                     <li><a href="/page/chinh-sach-hoan-tien-tranh-chap">Hoàn tiền</a></li>
                 </ul>
             </div>

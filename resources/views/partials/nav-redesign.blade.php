@@ -111,18 +111,18 @@
                                 <p>50+ mini games HTML5</p>
                             </div>
                         </a>
-                        <a href="{{ route('sport.index') }}" class="nav-redesign__mega-item">
-                            <div class="nav-redesign__mega-icon">⚽</div>
+                        <a href="{{ route('lamgame.blog') }}?category=game-industry" class="nav-redesign__mega-item">
+                            <div class="nav-redesign__mega-icon">📰</div>
                             <div class="nav-redesign__mega-text">
-                                <h4>Thể thao</h4>
-                                <p>Lịch thi đấu, BXH, live score</p>
+                                <h4>Game Industry</h4>
+                                <p>Tin tức ngành game</p>
                             </div>
                         </a>
-                        <a href="{{ route('lottery.index') }}" class="nav-redesign__mega-item">
-                            <div class="nav-redesign__mega-icon">🎰</div>
+                        <a href="{{ route('lamgame.blog') }}?category=ai-game-dev" class="nav-redesign__mega-item">
+                            <div class="nav-redesign__mega-icon">🤖</div>
                             <div class="nav-redesign__mega-text">
-                                <h4>Xổ số</h4>
-                                <p>KQXS 3 miền, Vietlott</p>
+                                <h4>AI Game Dev</h4>
+                                <p>AI tools & tutorials</p>
                             </div>
                         </a>
                     </div>
@@ -201,15 +201,14 @@
 <div class="nav-redesign__mobile-backdrop" id="mobile-backdrop"></div>
 <nav class="nav-redesign__mobile-menu" id="mobile-menu" aria-label="Menu di động">
     <ul class="nav-redesign__mobile-nav">
-        <li><a href="{{ route('world-cup-2026') }}">🏆 World Cup 2026 <span class="nav-redesign__hot-badge">HOT</span></a></li>
         <li><a href="{{ route('lamgame.blog') }}">📝 Blog</a></li>
         <li><a href="{{ route('lamgame.source-game') }}">🎮 Source Game</a></li>
         <li><a href="{{ route('forum.index') }}">💬 Forum</a></li>
         <li><a href="{{ route('lamgame.viec-lam-game') }}">💼 Việc làm</a></li>
         <li><a href="{{ route('lamgame.ai-tools') }}">🤖 AI Tools</a></li>
         <li><a href="{{ route('mini-game.index') }}">🕹️ Chơi Game</a></li>
-        <li><a href="{{ route('sport.index') }}">⚽ Thể thao</a></li>
-        <li><a href="{{ route('lottery.index') }}">🎰 Xổ số</a></li>
+        <li><a href="{{ route('lamgame.blog') }}?category=game-industry">📰 Game Industry</a></li>
+        <li><a href="{{ route('lamgame.blog') }}?category=unity-development">🎯 Unity</a></li>
     </ul>
 </nav>
 

@@ -2,523 +2,67 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
     <url>
     <loc>https://lamgame.vn/viec-lam-game</loc>
-    <lastmod>2026-07-28T11:23:11+07:00</lastmod>
+    <lastmod>2026-08-21T02:00:03+07:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
             </url>
     <url>
     <loc>https://lamgame.vn/viec-lam/s-38</loc>
-    <lastmod>2026-07-25T22:43:08+07:00</lastmod>
+    <lastmod>2026-08-19T07:53:26+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
     <loc>https://lamgame.vn/viec-lam/th%E1%BB%B1c-t%E1%BA%ADp-sinh-game-designer-39</loc>
-    <lastmod>2026-07-25T22:43:11+07:00</lastmod>
+    <lastmod>2026-08-16T22:57:45+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
     <loc>https://lamgame.vn/viec-lam/game-designer-40</loc>
-    <lastmod>2026-07-25T22:23:05+07:00</lastmod>
+    <lastmod>2026-08-20T18:52:43+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
     <loc>https://lamgame.vn/viec-lam/fresher-ua-marketing-%28game%2Fapp%29-41</loc>
-    <lastmod>2025-12-13T18:36:35+07:00</lastmod>
+    <lastmod>2026-07-28T13:50:05+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
     <loc>https://lamgame.vn/viec-lam/game-designer-intern-42</loc>
-    <lastmod>2026-07-24T01:20:49+07:00</lastmod>
+    <lastmod>2026-08-20T04:30:40+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
     <loc>https://lamgame.vn/viec-lam/c%E1%BB%99ng-t%C3%A1c-vi%C3%AAn-ch%C4%83m-s%C3%B3c-kh%C3%A1ch-h%C3%A0ng-43</loc>
-    <lastmod>2026-07-24T01:20:42+07:00</lastmod>
+    <lastmod>2026-08-17T15:26:32+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
     <loc>https://lamgame.vn/viec-lam/senior-2d-game-artist-44</loc>
-    <lastmod>2026-07-25T10:28:30+07:00</lastmod>
+    <lastmod>2026-08-19T04:17:36+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
     <loc>https://lamgame.vn/viec-lam/job-overview-and-responsibility-45</loc>
-    <lastmod>2026-07-24T04:36:07+07:00</lastmod>
+    <lastmod>2026-08-19T00:10:22+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
     <loc>https://lamgame.vn/viec-lam/senior-ho%E1%BA%B7c-lead-backend-engineer-%28golang%29-46</loc>
-    <lastmod>2026-07-24T09:44:46+07:00</lastmod>
+    <lastmod>2026-08-16T06:00:37+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
     <url>
     <loc>https://lamgame.vn/viec-lam/senior-backend-java%2Cgolang-47</loc>
-    <lastmod>2026-07-25T22:43:17+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/java-backend-developer-seniorleader-NQWcRX</loc>
-    <lastmod>2026-07-25T07:20:00+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/python-developer-middle-PESrRE</loc>
-    <lastmod>2026-07-25T15:59:59+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/senior-automation-tester-e0kc7E</loc>
-    <lastmod>2026-07-25T20:22:49+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/quan-tri-co-so-du-lieu-dba-iou7h5</loc>
-    <lastmod>2026-07-25T20:22:43+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/server-developer-c-language-kArcDE</loc>
-    <lastmod>2026-07-25T22:22:49+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/web-developer-front-end-MKkmzX</loc>
-    <lastmod>2026-07-25T22:23:02+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/ky-su-phat-trien-phan-mem-c-tieng-nhat-n3-ipDrPB</loc>
-    <lastmod>2026-07-25T15:59:47+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/da-nang-senior-power-platform-developer-microsoft-365-CKcwjY</loc>
-    <lastmod>2026-07-28T08:43:53+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/french-speaking-technical-consultant-p4T6iI</loc>
-    <lastmod>2026-07-25T03:07:50+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/senior-sales-executive-mrEOuH</loc>
-    <lastmod>2026-07-25T22:22:46+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/ky-su-bao-mat-thong-tin-IGHLoO</loc>
-    <lastmod>2026-07-27T18:50:26+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/business-analyst-hjEvrj</loc>
-    <lastmod>2026-07-27T19:51:58+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/customer-support-specialist-zCPqb8</loc>
-    <lastmod>2026-07-27T19:15:33+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/data-analyst-6relAL</loc>
-    <lastmod>2026-07-27T20:04:31+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/data-engineer-1ImgU9</loc>
-    <lastmod>2026-07-25T03:07:47+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/ai-engineer-MPHQPF</loc>
-    <lastmod>2026-07-24T20:49:39+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/lap-trinh-vien-phat-trien-ung-dung-web-integration-data-microservices-Vy29uQ</loc>
-    <lastmod>2026-07-26T04:59:45+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/it-chuyen-vien-quan-tri-co-so-du-lieu-ZxDmBN</loc>
-    <lastmod>2026-07-25T03:07:56+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/backend-developer-9VnLlt</loc>
-    <lastmod>2026-07-25T09:23:38+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/ke-toan-truong-HvZB7O</loc>
-    <lastmod>2026-07-28T03:53:17+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/ky-su-he-thong-system-engineer-wpbDyA</loc>
-    <lastmod>2026-07-25T15:59:44+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/tro-ly-giam-doc-thanh-thao-tieng-han-Ljrbzy</loc>
-    <lastmod>2026-07-27T18:54:33+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/junior-fullstack-developer-QpAVPa</loc>
-    <lastmod>2026-07-25T07:20:03+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/ky-su-ket-cau-luong-tu-22-30-trieu-PRR4EE</loc>
-    <lastmod>2026-07-26T04:59:42+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/tester-middle-HDL6Nq</loc>
-    <lastmod>2026-07-25T22:22:55+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/lead-3d-artist-team-leader-3dsmax-unreal-engine-PptTGX</loc>
-    <lastmod>2026-07-25T15:59:50+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/korean-coordinator-6JLkCA</loc>
-    <lastmod>2026-07-25T13:48:15+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/project-coordinator-it-comtor-biet-tieng-han-qqvMOS</loc>
-    <lastmod>2026-07-25T15:59:53+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/android-developer-OkhN9i</loc>
-    <lastmod>2026-07-24T20:49:46+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/it-project-leader-l9IpiV</loc>
-    <lastmod>2026-07-25T03:07:59+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/ky-su-cau-noi-brse-ZsolK6</loc>
-    <lastmod>2026-07-25T15:59:41+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/hot-kien-truc-su-giai-phap-cntt-S5GTKI</loc>
-    <lastmod>2026-07-25T03:07:53+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/quan-li-crm-marketing-xLBZpm</loc>
-    <lastmod>2026-07-25T16:00:02+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/java-developer-Ybk04W</loc>
-    <lastmod>2026-07-27T09:35:13+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/ba-cum-qaqc-HVeou6</loc>
-    <lastmod>2026-07-27T19:32:13+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/chuyen-gia-phong-chinh-sach-che-do-tai-chinh-ke-toan-khoi-tai-chinh-ke-toan-2026td453071-Iglfvy</loc>
-    <lastmod>2026-07-26T17:42:20+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/chuyen-vien-cao-cap-phong-tai-chinh-khoi-tai-chinh-ke-toan-2026td453072-yCmNpI</loc>
-    <lastmod>2026-07-26T17:42:23+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/chuyen-vien-ifrs-phong-ke-toan-tong-hop-khoi-tai-chinh-ke-toan-2026td453113-dyyQUx</loc>
-    <lastmod>2026-07-26T17:42:26+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/cvc-data-governance-mPImPa</loc>
-    <lastmod>2026-07-27T18:41:11+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/business-process-consultants-mid-to-manager-levels-ywRAKi</loc>
-    <lastmod>2026-07-25T13:48:09+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/business-analyst-ba-zkPQyf</loc>
-    <lastmod>2026-07-25T09:23:41+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/golang-backend-engineer-Uedmy6</loc>
-    <lastmod>2026-07-27T15:33:06+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/devops-engineer-aws-cloud-linuxunix-M9qLBy</loc>
-    <lastmod>2026-07-27T15:33:06+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/project-leader-brse-japanese-n2-lMMC4Z</loc>
-    <lastmod>2026-07-25T15:59:56+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/chuyen-vienchuyen-vien-cao-cap-phat-trien-ung-dung-backend-wcKMZe</loc>
-    <lastmod>2026-07-24T17:06:54+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/senior-tester-1kXAYb</loc>
-    <lastmod>2026-07-27T15:33:07+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/rd-system-engineer-xny6f9</loc>
-    <lastmod>2026-07-24T20:49:28+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/2026-csantt-chuyen-vien-chinh-sach-an-ninh-thong-tin-chuyen-ve-chinh-sach-tuan-thu-WnMlyr</loc>
-    <lastmod>2026-06-20T16:02:14+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/it-business-analyst-B8UH8A</loc>
-    <lastmod>2026-07-24T20:49:12+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/ke-toan-quan-tri-cong-trinh-038ihb</loc>
-    <lastmod>2026-07-26T17:42:17+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/ky-su-thiet-ke-san-pham-industrial-designer-wearable-kgvrUq</loc>
-    <lastmod>2026-07-24T14:58:49+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/ky-su-thiet-ke-pcb-pcb-hardware-engineer-full-time-WUpZ6r</loc>
-    <lastmod>2026-07-24T14:58:45+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/chuyen-vien-quan-tri-thanh-khoan-phong-can-doi-nguon-von-va-thanh-khoan-h3FCGO</loc>
-    <lastmod>2026-07-24T14:58:33+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/senior-application-architect-BOasWt</loc>
-    <lastmod>2026-07-27T15:33:07+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/sales-admin-WyKFmJ</loc>
-    <lastmod>2026-07-27T19:23:53+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/japanese-sales-project-coordinator-webtoon-9NJkOU</loc>
-    <lastmod>2026-07-25T03:08:02+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/khoi-cntt-cvcvccvcc-van-hanh-ha-tang-QtBz6T</loc>
-    <lastmod>2026-07-25T13:48:12+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/nhan-vien-trien-khai-namnu-iGkl9Y</loc>
-    <lastmod>2026-07-26T14:42:48+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/khoi-cntt-cvcvccvcc-quan-ly-du-an-8TQu8C</loc>
-    <lastmod>2026-07-27T19:07:13+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/system-support-ZZcptG</loc>
-    <lastmod>2026-07-27T15:33:06+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/telesales-team-leader-Ajgr8b</loc>
-    <lastmod>2026-07-25T22:22:52+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/nhan-vien-hanh-chinh-gan-nhan-du-lieu-hinh-anh-ai-khong-yeu-cau-kinh-nghiem-X2E9th</loc>
-    <lastmod>2026-07-27T15:33:07+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/data-analytics-consultant-data-science-gk5j0B</loc>
-    <lastmod>2026-07-26T05:24:55+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/cvcccvc-van-hanh-core-247-v0hymX</loc>
-    <lastmod>2026-07-26T12:10:56+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/guidewire-developer-japanese-speaking-onTNWk</loc>
-    <lastmod>2026-07-24T21:27:17+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/2026-svxs-qlrr-sinh-vien-tai-nang-khoi-quan-ly-rui-ro-VHTmbs</loc>
-    <lastmod>2026-06-20T16:02:14+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/security-architect-dqQEvE</loc>
-    <lastmod>2026-07-24T17:06:48+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/it-helpdesk-8hSYxh</loc>
-    <lastmod>2026-07-24T14:58:39+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/cvcc-cvc-cv-van-hanh-the-TOnrN5</loc>
-    <lastmod>2026-07-27T19:47:48+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/ke-toan-tong-hop-BbRKyT</loc>
-    <lastmod>2026-07-27T15:33:07+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/chuyen-vien-tu-van-khach-hang-ca-nhan-chuyen-vien-ub-1-3-nam-kinh-nghiem-thanh-tich-tot-va-rat-tot-cn-tuyen-quang-phuong-minh-xuan-tuyen-quang-2026td451302-YXvNvh</loc>
-    <lastmod>2026-07-26T12:10:53+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/chuyen-vien-kinh-doanh-tin-dung-so-digital-credit-business-specialist-khoi-ngan-hang-so-2026td454874-HDnf0M</loc>
-    <lastmod>2026-07-26T07:50:00+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/business-analyst-ba-H1Qv5D</loc>
-    <lastmod>2026-07-27T22:39:22+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/senior-business-analyst-fmCqko</loc>
-    <lastmod>2026-07-28T08:34:26+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/technical-lead-net-or-nodejs-c5Kyb4</loc>
-    <lastmod>2026-07-24T17:06:51+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
-    <url>
-    <loc>https://lamgame.vn/viec-lam/chuyen-vien-quan-tri-bao-mat-mang-network-security-administrator-AhMCXE</loc>
-    <lastmod>2026-07-27T15:33:06+07:00</lastmod>
+    <lastmod>2026-08-19T00:10:31+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>

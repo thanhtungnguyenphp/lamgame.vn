@@ -69,10 +69,10 @@
 <section class="sg-trust">
     <div class="sg-container">
         <div class="sg-trust__grid">
-            <div class="sg-trust__item"><strong>1.200+</strong><span>Source Code</span></div>
-            <div class="sg-trust__item"><strong>12.000+</strong><span>Developers</span></div>
-            <div class="sg-trust__item"><strong>850+</strong><span>Buyers</span></div>
-            <div class="sg-trust__item"><strong>98%</strong><span>Hài lòng</span></div>
+            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['published_sources'] ?? 0) }}+</strong><span>Source Code</span></div>
+            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['registered_users'] ?? 0) }}+</strong><span>Developers</span></div>
+            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['total_orders'] ?? 0) }}+</strong><span>Đơn hàng</span></div>
+            <div class="sg-trust__item"><strong>{{ $siteMetrics['job_listings'] ?? 0 }}+</strong><span>Việc làm</span></div>
         </div>
     </div>
 </section>
@@ -94,13 +94,13 @@
 </section>
 @endif
 
-{{-- BEST SELLING --}}
+{{-- FEATURED SOURCES (was Best Selling - changed because orders < 10) --}}
 @if(!empty($bestSellingSources ?? []))
 <section class="sg-sec">
     <div class="sg-container">
         <div class="sg-sec__head">
-            <h2 class="sg-sec__title">⭐ Best Selling</h2>
-            <a href="{{ route('lamgame.source-game', ['sort' => 'best-selling']) }}" class="sg-sec__link">Xem tất cả →</a>
+            <h2 class="sg-sec__title">⭐ Source Nổi Bật</h2>
+            <a href="{{ route('lamgame.source-game', ['sort' => 'featured']) }}" class="sg-sec__link">Xem tất cả →</a>
         </div>
         <div class="sg-scroll">
             @foreach(($bestSellingSources ?? array_slice($featuredSources, 0, 4)) as $source)
@@ -200,26 +200,17 @@
     </div>
 </section>
 
-{{-- TESTIMONIALS --}}
+{{-- TESTIMONIALS - Only show if there are real orders/reviews --}}
+@if(($siteMetrics['total_orders'] ?? 0) > 0)
 <section class="sg-sec">
     <div class="sg-container">
         <h2 class="sg-sec__title" style="text-align:center;margin-bottom:32px">Developer nói gì?</h2>
         <div class="sg-testimonials">
-            <div class="sg-testi">
-                <p>"Mua source multiplayer trên LamGame, tiết kiệm 4 tháng dev. Ship game lên store trong 6 tuần."</p>
-                <div class="sg-testi__author"><strong>Quang Huy</strong><span>Unity Developer</span></div>
-            </div>
-            <div class="sg-testi">
-                <p>"Source code clean, architecture tốt. Customize dễ dàng cho project của mình."</p>
-                <div class="sg-testi__author"><strong>Thanh Tùng</strong><span>Indie Game Studio</span></div>
-            </div>
-            <div class="sg-testi">
-                <p>"Support nhanh, documentation rõ ràng. Đáng tiền hơn nhiều so với Asset Store."</p>
-                <div class="sg-testi__author"><strong>Minh Anh</strong><span>Freelance Developer</span></div>
-            </div>
+            {{-- TODO: Load real testimonials from database when available --}}
         </div>
     </div>
 </section>
+@endif
 
 {{-- SERVICES --}}
 <section class="sg-sec sg-sec--alt">

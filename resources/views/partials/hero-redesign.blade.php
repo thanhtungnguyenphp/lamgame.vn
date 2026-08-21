@@ -41,16 +41,16 @@
 
             <div class="hero-redesign__stats">
                 <div class="hero-redesign__stat">
-                    <div class="hero-redesign__stat-value" data-count="{{ $stats['members'] ?? 2500 }}">0</div>
+                    <div class="hero-redesign__stat-value" data-count="{{ $siteMetrics['registered_users'] ?? 0 }}">0</div>
                     <div class="hero-redesign__stat-label">Thành viên</div>
                 </div>
                 <div class="hero-redesign__stat">
-                    <div class="hero-redesign__stat-value" data-count="{{ $stats['games'] ?? 120 }}">0</div>
+                    <div class="hero-redesign__stat-value" data-count="{{ $siteMetrics['published_sources'] ?? 0 }}">0</div>
                     <div class="hero-redesign__stat-label">Game & Source</div>
                 </div>
                 <div class="hero-redesign__stat">
-                    <div class="hero-redesign__stat-value" data-count="{{ $stats['jobs'] ?? 50 }}">0</div>
-                    <div class="hero-redesign__stat-label">Việc làm mới/tuần</div>
+                    <div class="hero-redesign__stat-value" data-count="{{ $siteMetrics['job_listings'] ?? 0 }}">0</div>
+                    <div class="hero-redesign__stat-label">Việc làm game</div>
                 </div>
             </div>
         </div>

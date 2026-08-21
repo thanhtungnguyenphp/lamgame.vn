@@ -189,7 +189,7 @@
             {{-- Community CTA --}}
             <div class="fp-widget fp-widget--cta">
                 <h3 class="fp-widget__title">🚀 Tham gia thảo luận</h3>
-                <p>Chia sẻ kiến thức, hỏi đáp và kết nối với 12.000+ developers</p>
+                <p>Chia sẻ kiến thức, hỏi đáp và kết nối với cộng đồng Game Dev</p>
                 <a href="{{ route('forum.posts.create') }}" class="fp-btn fp-btn--primary fp-btn--sm">Đăng bài mới →</a>
             </div>
 

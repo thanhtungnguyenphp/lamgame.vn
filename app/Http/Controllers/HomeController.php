@@ -451,6 +451,7 @@ class HomeController extends Controller
                     'pf.name', 'pf.short_description', 'pf.description',
                     'pf.price', 'pf.special_price', 'pf.special_price_from', 'pf.special_price_to',
                     'pf.featured', 'pf.url_key',
+                    'pf.engine', 'pf.platform', // Add engine and platform
                 ])
                 ->orderByDesc('pf.featured')
                 ->orderByDesc('p.created_at')
@@ -502,8 +503,8 @@ class HomeController extends Controller
                     'description'       => $row->description ?? '',
                     'short_description' => $row->short_description ?: \Str::limit(strip_tags($row->description ?? ''), 80),
                     'category'          => $catName,
-                    'engine'            => 'Unity',
-                    'language'          => 'C#',
+                    'engine'            => $row->engine ?: null, // Use actual engine, no default
+                    'language'          => $this->getLanguageFromEngine($row->engine),
                     'downloads'         => 0,
                     'rating'            => 0,
                     'price'             => $effectivePrice,
@@ -514,7 +515,7 @@ class HomeController extends Controller
                     'updated'           => $updatedAt->format('Y-m-d'),
                     'updated_ago'       => $updatedAt->diffForHumans(),
                     'url'               => $row->url_key ? route('lamgame.source-game.detail', $row->url_key) : route('lamgame.source-game'),
-                    'tags'              => array_filter([$catName, 'Unity', 'Source Code']),
+                    'tags'              => array_filter([$catName, $row->engine, 'Source Code']),
                 ];
             })->values()->toArray();
 
@@ -577,6 +578,28 @@ class HomeController extends Controller
         }
 
         return $allIds->unique()->values()->all();
+    }
+
+    /**
+     * Get programming language based on engine
+     */
+    private function getLanguageFromEngine(?string $engine): ?string
+    {
+        if (!$engine) return null;
+        
+        $map = [
+            'Unity' => 'C#',
+            'Unreal' => 'C++',
+            'Godot' => 'GDScript',
+            'Phaser' => 'JavaScript',
+            'Phaser 3' => 'JavaScript',
+            'Construct' => 'Visual',
+            'GameMaker' => 'GML',
+            'Cocos2d' => 'JavaScript',
+            'HTML5' => 'JavaScript',
+        ];
+        
+        return $map[$engine] ?? null;
     }
 
     /**

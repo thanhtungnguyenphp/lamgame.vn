@@ -354,10 +354,4 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
             </url>
-    <url>
-    <loc>https://lamgame.vn/source-game/flappy-bird-godot-4</loc>
-    <lastmod>2026-07-28T11:22:39+07:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-            </url>
 </urlset>

@@ -55,6 +55,9 @@
 
     <!-- Google AdSense -->
     <meta name="google-adsense-account" content="ca-pub-5812352607411986">
+
+    <!-- Alpine.js for header/footer interactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="lg-v2">
 

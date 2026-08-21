@@ -148,7 +148,14 @@ class GenerateSitemap extends Command
     {
         $sitemap = Sitemap::create();
 
-        $pages = LandingPage::active()->select('slug', 'updated_at')->get();
+        // Exclude lottery-related landing pages (SEO Phase 1 cleanup)
+        // Keep game-related pages like M7/MLBB
+        $excludeSlugs = ['lottolive', 'ung-dung-lotto-live'];
+
+        $pages = LandingPage::where('status', 1)
+            ->whereNotIn('slug', $excludeSlugs)
+            ->select('slug', 'updated_at')
+            ->get();
 
         foreach ($pages as $page) {
             $sitemap->add(
@@ -160,7 +167,7 @@ class GenerateSitemap extends Command
         }
 
         $sitemap->writeToFile(public_path('sitemap-landing.xml'));
-        $this->info("✅ Landing pages sitemap: {$pages->count()} URLs");
+        $this->info("✅ Landing pages sitemap: {$pages->count()} URLs (excluded lottery: " . implode(', ', $excludeSlugs) . ")");
     }
 
     private function generateSourceGameSitemap()

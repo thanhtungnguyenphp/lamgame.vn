@@ -30,9 +30,9 @@
             <a href="#feed" class="fm-btn fm-btn--ghost">Tham gia thảo luận ↓</a>
         </div>
         <div class="fm-hero__trust">
-            <div><strong>12.000+</strong><span>Developers</span></div>
-            <div><strong>3.500+</strong><span>Topics</span></div>
-            <div><strong>500+</strong><span>Projects</span></div>
+            <div><strong>{{ number_format($siteMetrics['registered_users'] ?? 0) }}+</strong><span>Developers</span></div>
+            <div><strong>{{ $siteMetrics['forum_posts'] ?? 0 }}+</strong><span>Topics</span></div>
+            <div><strong>{{ $siteMetrics['blog_posts'] ?? 0 }}+</strong><span>Tutorials</span></div>
         </div>
     </div>
 </section>
@@ -133,7 +133,7 @@
             {{-- CTA --}}
             <div class="fm-widget fm-widget--cta">
                 <h3 class="fm-widget__title">🚀 Bạn có project?</h3>
-                <p>Showcase project của bạn cho 12.000+ developers</p>
+                <p>Showcase project của bạn cho cộng đồng Game Dev Việt Nam</p>
                 <a href="{{ route('forum.posts.create') }}" class="fm-btn fm-btn--primary fm-btn--sm">Đăng project →</a>
             </div>
         </aside>

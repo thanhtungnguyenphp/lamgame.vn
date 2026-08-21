@@ -15,7 +15,9 @@
     <div class="sg-card__body">
         <h3 class="sg-card__title">{{ $source['title'] }}</h3>
         <div class="sg-card__tags">
-            <span class="sg-tag">{{ $source['engine'] ?? 'Unity 6' }}</span>
+            @if(!empty($source['engine']))
+            <span class="sg-tag">{{ $source['engine'] }}</span>
+            @endif
             @if(!empty($source['platform']))<span class="sg-tag">{{ $source['platform'] }}</span>@endif
             @if(!empty($source['multiplayer']))<span class="sg-tag sg-tag--accent">Multiplayer</span>@endif
         </div>

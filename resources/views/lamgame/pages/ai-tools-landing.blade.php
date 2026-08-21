@@ -2,7 +2,7 @@
 @extends('layouts.master')
 
 @section('page_title', 'AI Tools cho Game Developer — LamGame.vn')
-@section('page_description', 'Công cụ AI giúp game developer tiết kiệm 80% thời gian. Code, Debug, Test, Review — tất cả bằng AI.')
+@section('page_description', 'Công cụ AI hỗ trợ game developer code, debug và review nhanh hơn. Tích hợp GPT-4 & Claude.')
 
 @section('content')
 <div class="ai-page">
@@ -12,8 +12,8 @@
     <div class="ai-hero__bg"></div>
     <div class="ai-hero__content">
         <span class="ai-badge">✨ Powered by GPT-4 & Claude</span>
-        <h1>Tiết kiệm 80% thời gian <br>phát triển game</h1>
-        <p>Code, Debug, Test, Review — AI xử lý trong vài giây. Bạn tập trung vào sáng tạo.</p>
+        <h1>Tăng tốc workflow <br>phát triển game</h1>
+        <p>Code, Debug, Test, Review — AI hỗ trợ các tác vụ lặp lại. Bạn tập trung vào sáng tạo.</p>
         <div class="ai-hero__cta">
             <a href="{{ route('lamgame.ai-tools-dashboard') }}" class="ai-btn ai-btn--primary">Dùng thử miễn phí</a>
             <a href="#pricing" class="ai-btn ai-btn--ghost">Xem bảng giá ↓</a>
@@ -25,10 +25,10 @@
 <section class="ai-trust">
     <div class="ai-container">
         <div class="ai-trust__grid">
-            <div class="ai-trust__item"><strong>5.200+</strong><span>Developer đang dùng</span></div>
-            <div class="ai-trust__item"><strong>120.000+</strong><span>Requests đã xử lý</span></div>
-            <div class="ai-trust__item"><strong>98%</strong><span>Hài lòng</span></div>
-            <div class="ai-trust__item"><strong>6</strong><span>Công cụ AI chuyên biệt</span></div>
+            <div class="ai-trust__item"><strong>{{ number_format($siteMetrics['registered_users'] ?? 0) }}+</strong><span>Developers</span></div>
+            <div class="ai-trust__item"><strong>{{ $siteMetrics['published_sources'] ?? 0 }}+</strong><span>Source Code</span></div>
+            <div class="ai-trust__item"><strong>{{ $siteMetrics['blog_posts'] ?? 0 }}+</strong><span>Bài viết</span></div>
+            <div class="ai-trust__item"><strong>6</strong><span>Công cụ AI</span></div>
         </div>
     </div>
 </section>
@@ -36,38 +36,38 @@
 {{-- USE CASES — Outcome driven --}}
 <section class="ai-sec">
     <div class="ai-container">
-        <h2 class="ai-sec__title">AI giải quyết gì cho bạn?</h2>
-        <p class="ai-sec__sub">Không chỉ là tools — mà là kết quả thực tế</p>
+        <h2 class="ai-sec__title">AI hỗ trợ gì cho bạn?</h2>
+        <p class="ai-sec__sub">Tăng tốc các tác vụ coding thường ngày</p>
         <div class="ai-outcomes">
             <div class="ai-outcome">
                 <span class="ai-outcome__icon">⚡</span>
-                <h3>Giảm 80% thời gian code</h3>
-                <p>AI sinh code Unity/Unreal/Godot chính xác. Bạn chỉ cần mô tả logic.</p>
+                <h3>Sinh code nhanh hơn</h3>
+                <p>AI sinh code Unity/Unreal/Godot từ mô tả. Bạn review và tùy chỉnh.</p>
             </div>
             <div class="ai-outcome">
                 <span class="ai-outcome__icon">🐛</span>
-                <h3>Fix bug trong 10 giây</h3>
-                <p>Paste error → AI phân tích nguyên nhân → đề xuất fix ngay lập tức.</p>
+                <h3>Hỗ trợ debug</h3>
+                <p>Paste error → AI phân tích nguyên nhân → đề xuất hướng xử lý.</p>
             </div>
             <div class="ai-outcome">
                 <span class="ai-outcome__icon">🧪</span>
-                <h3>Test coverage tăng 5x</h3>
-                <p>AI tạo unit test tự động cho game logic, không cần viết tay.</p>
+                <h3>Tạo unit test</h3>
+                <p>AI gợi ý test cases cho game logic, giảm thời gian viết test.</p>
             </div>
             <div class="ai-outcome">
-                <span class="ai-outcome__icon">💰</span>
-                <h3>Tiết kiệm $2.000+/tháng</h3>
-                <p>Thay thế 1 junior developer. ROI dương từ tuần đầu tiên.</p>
+                <span class="ai-outcome__icon">📝</span>
+                <h3>Giảm tác vụ lặp lại</h3>
+                <p>Boilerplate code, documentation, refactoring — AI xử lý nhanh.</p>
             </div>
             <div class="ai-outcome">
                 <span class="ai-outcome__icon">🎨</span>
-                <h3>Asset trong 30 giây</h3>
-                <p>Tạo sprite, UI, tilemap bằng AI — không cần designer.</p>
+                <h3>Hỗ trợ tạo asset</h3>
+                <p>Tạo sprite, UI mockup, tilemap concept với AI image generation.</p>
             </div>
             <div class="ai-outcome">
                 <span class="ai-outcome__icon">🔍</span>
-                <h3>Code review chuyên nghiệp</h3>
-                <p>AI review code như senior dev — phát hiện bug, gợi ý tối ưu.</p>
+                <h3>Code review</h3>
+                <p>AI review code — phát hiện issues, gợi ý tối ưu và best practices.</p>
             </div>
         </div>
     </div>
@@ -159,26 +159,8 @@
     </div>
 </section>
 
-{{-- TESTIMONIALS --}}
-<section class="ai-sec">
-    <div class="ai-container">
-        <h2 class="ai-sec__title">Developer nói gì?</h2>
-        <div class="ai-testimonials">
-            <div class="ai-testimonial">
-                <p>"AI Code Generate giúp tôi ship game đầu tiên trong 2 tuần thay vì 2 tháng."</p>
-                <div class="ai-testimonial__author"><strong>Minh Tuấn</strong><span>Indie Developer</span></div>
-            </div>
-            <div class="ai-testimonial">
-                <p>"Debug tool tìm ra bug mà team tôi mất 3 ngày không fix được. Chỉ trong 10 giây."</p>
-                <div class="ai-testimonial__author"><strong>Hoàng Nam</strong><span>Unity Developer</span></div>
-            </div>
-            <div class="ai-testimonial">
-                <p>"Tiết kiệm ít nhất 15 giờ/tuần cho team 5 người. ROI cực kỳ tốt."</p>
-                <div class="ai-testimonial__author"><strong>Thu Hà</strong><span>Studio Lead</span></div>
-            </div>
-        </div>
-    </div>
-</section>
+{{-- TESTIMONIALS - REMOVED: No verified user testimonials yet --}}
+{{-- When we have real verified testimonials, we can add them back --}}
 
 {{-- FAQ --}}
 <section class="ai-sec ai-sec--alt">
@@ -196,8 +178,8 @@
 {{-- FINAL CTA --}}
 <section class="ai-final-cta">
     <div class="ai-container">
-        <h2>Sẵn sàng tiết kiệm hàng trăm giờ?</h2>
-        <p>Tham gia 5.200+ developer đang dùng AI Tools mỗi ngày</p>
+        <h2>Sẵn sàng tăng tốc workflow?</h2>
+        <p>Dùng thử miễn phí — không cần thẻ tín dụng</p>
         <a href="{{ route('lamgame.ai-tools-dashboard') }}" class="ai-btn ai-btn--primary ai-btn--lg">Dùng thử miễn phí →</a>
     </div>
 </section>

@@ -16,16 +16,16 @@
                 </p>
                 <div class="community-stats">
                     <div class="stat-item">
-                        <div class="stat-number">2,500+</div>
+                        <div class="stat-number">{{ number_format($siteMetrics['registered_users'] ?? 0) }}+</div>
                         <div class="stat-label">Thành viên</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">850+</div>
+                        <div class="stat-number">{{ $siteMetrics['forum_posts'] ?? 0 }}+</div>
                         <div class="stat-label">Bài viết</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">120+</div>
-                        <div class="stat-label">Ý tưởng game</div>
+                        <div class="stat-number">{{ $siteMetrics['blog_posts'] ?? 0 }}+</div>
+                        <div class="stat-label">Tutorial</div>
                     </div>
                 </div>
             </div>
@@ -205,8 +205,8 @@
     <section class="join-community">
         <div class="container">
             <div class="join-content">
-                <h2>Tham gia cộng đồng game developer lớn nhất Việt Nam!</h2>
-                <p>Kết nối với hơn 2,500 game developer, chia sẻ kinh nghiệm và cùng nhau phát triển</p>
+                <h2>Tham gia cộng đồng Game Developer Việt Nam!</h2>
+                <p>Chia sẻ kinh nghiệm, học hỏi kỹ năng mới và cùng nhau phát triển sự nghiệp game dev</p>
                 <div class="join-actions">
                     <button class="btn btn-primary btn-large" onclick="showRegistrationForm()">
                         🚀 Tham gia ngay

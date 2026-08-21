@@ -79,6 +79,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'forum.honeypot'  => \App\Http\Middleware\ForumHoneypot::class,
             'throttle:ai'     => \App\Http\Middleware\AiRateLimit::class,
         ]);
+        
+        // Add site metrics injection to web group
+        $middleware->appendToGroup('web', \App\Http\Middleware\InjectSiteMetrics::class);
     })
     ->withSchedule(function (Schedule $schedule) {
         $schedule->command('blog:publish-scheduled')->everyFiveMinutes();

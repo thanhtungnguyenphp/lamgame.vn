@@ -24,7 +24,7 @@
     @if($sourceGame['image'] ?? null)"image": "{{ $sourceGame['image'] }}",@endif
     "codeRepository": "{{ $sourceGame['github_url'] ?? '' }}",
     "programmingLanguage": "{{ $sourceGame['language'] ?? 'C#' }}",
-    "runtimePlatform": "{{ $sourceGame['engine'] ?? 'Unity' }}",
+    "runtimePlatform": "{{ $sourceGame['engine'] ?? 'Multi-platform' }}",
     "applicationCategory": "GameApplication",
     "offers": {"@type": "Offer","price": "{{ $sourceGame['price'] ?? 0 }}","priceCurrency": "VND","availability": "https://schema.org/InStock"}
     @if(($sourceGame['rating'] ?? 0) > 0)
@@ -219,7 +219,7 @@
         <h2 class="sd-sec__title">🛡️ Cam kết chất lượng</h2>
         <div class="sd-trust-panel">
             <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Production Ready</span></div>
-            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>{{ $sourceGame['engine'] ?? 'Unity 6' }} Compatible</span></div>
+            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>{{ $sourceGame['engine'] ? $sourceGame['engine'] . ' Compatible' : 'Ready to Use' }}</span></div>
             <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Clean Architecture</span></div>
             <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Mobile Optimized</span></div>
             <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Documentation Included</span></div>

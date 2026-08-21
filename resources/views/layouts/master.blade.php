@@ -1,18 +1,17 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="dark">
 <head>
-    <script>try{var t=localStorage.getItem('lamgame-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
     <style>html,body{background:#070B14;color:#F5F7FA}</style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="format-detection" content="telephone=no">
-    <meta name="theme-color" content="#6a4c93">
-    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#0D0D1A">
+    <meta name="color-scheme" content="dark">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="LamGame">
-    <meta name="msapplication-TileColor" content="#6a4c93">
+    <meta name="msapplication-TileColor" content="#0D0D1A">
     <meta name="msapplication-config" content="/browserconfig.xml">
     <title>@yield('page_title', 'LAMGAME • Làm Game - Học Lập Trình Game và Phát Triển Ứng Dụng')</title>
     <meta name="description" content="@yield('page_description', 'Làm Game - Nền tảng học lập trình game, phát triển ứng dụng và các khóa học lập trình chuyên sâu. Bắt đầu hành trình của bạn ngay hôm nay!')">
@@ -390,6 +389,9 @@
     <link rel="preload" href="{{ asset('css/redesign-bundle.min.css') }}?v={{ filemtime(public_path('css/redesign-bundle.min.css')) }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="{{ asset('css/redesign-bundle.min.css') }}?v={{ filemtime(public_path('css/redesign-bundle.min.css')) }}"></noscript>
 
+    <!-- V2 Design System CSS -->
+    <link rel="stylesheet" href="{{ asset('css/homepage-v2.css') }}">
+
     <!-- Non-critical CSS — async preload -->
     <link rel="preload" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-homepage.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <link rel="preload" href="{{ asset('css/pagination.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -397,8 +399,6 @@
         <link rel="stylesheet" href="{{ asset('themes/shop/emsaigon/assets/css/lamgame-homepage.css') }}">
         <link rel="stylesheet" href="{{ asset('css/pagination.css') }}">
     </noscript>
-
-    <script src="{{ asset('themes/shop/emsaigon/assets/js/dark-mode.js') }}" defer></script>
 
     <!-- Dynamic styles from pages -->
     @stack('styles')
@@ -483,10 +483,13 @@
       };
     </script>
     @endif
+
+    <!-- Alpine.js for V2 header/footer interactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
-    <!-- Header -->
-    @include('partials.nav-redesign')
+    <!-- Header V2 -->
+    @include('components.v2.header')
 
     {{-- Dynamic Mobile Menu (legacy fallback) --}}
     {{-- @include('menu::frontend.partials.mobile-menu') --}}
@@ -496,8 +499,8 @@
         @yield('content')
     </main>
 
-    <!-- Footer -->
-    @include('partials.footer-redesign')
+    <!-- Footer V2 -->
+    @include('components.v2.footer')
 
     <!-- Vue.js initialization functions (must be defined BEFORE Vue CDN loads) -->
     <script>
