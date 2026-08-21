@@ -75,45 +75,99 @@ class HomepageV2Service
 
     /**
      * Get trending products (highest views/recent activity)
+     * Prioritizes products with images
      */
     public function getTrendingProducts(int $limit = 4): array
     {
-        return $this->getProductsByBadge('trending', $limit)
-            ?: $this->getProductsBySales($limit); // Fallback to sales
+        return $this->getProductsWithImages('trending', $limit)
+            ?: $this->getProductsByBadge('trending', $limit)
+            ?: $this->getProductsBySales($limit);
     }
 
     /**
      * Get best selling products
+     * Prioritizes products with images
      */
     public function getBestSellingProducts(int $limit = 4): array
     {
-        return DB::table('product_flat')
-            ->select($this->productColumns())
-            ->leftJoin('products', 'product_flat.product_id', '=', 'products.id')
-            ->where('product_flat.channel', 'default')
-            ->where('product_flat.locale', 'vi')
-            ->where('product_flat.status', 1)
-            ->orderByDesc('product_flat.sales_count')
-            ->limit($limit)
-            ->get()
-            ->map(fn($p) => $this->formatProduct($p))
-            ->toArray();
+        return $this->getProductsWithImages('best_selling', $limit);
     }
 
     /**
      * Get staff picks
+     * Prioritizes products with images
      */
     public function getStaffPicks(int $limit = 4): array
     {
-        return DB::table('product_flat')
+        // First try staff picks with images
+        $picks = DB::table('product_flat')
             ->select($this->productColumns())
+            ->addSelect(DB::raw('(SELECT COUNT(*) FROM product_images WHERE product_images.product_id = product_flat.product_id) as image_count'))
             ->leftJoin('products', 'product_flat.product_id', '=', 'products.id')
             ->where('product_flat.channel', 'default')
             ->where('product_flat.locale', 'vi')
             ->where('product_flat.status', 1)
             ->where('product_flat.is_staff_pick', true)
+            ->orderByDesc('image_count')
             ->orderByDesc('product_flat.sales_count')
             ->limit($limit)
+            ->get()
+            ->map(fn($p) => $this->formatProduct($p))
+            ->toArray();
+
+        // If not enough staff picks, fill with high-rated products with images
+        if (count($picks) < $limit) {
+            $existingIds = array_column($picks, 'id');
+            $more = DB::table('product_flat')
+                ->select($this->productColumns())
+                ->addSelect(DB::raw('(SELECT COUNT(*) FROM product_images WHERE product_images.product_id = product_flat.product_id) as image_count'))
+                ->leftJoin('products', 'product_flat.product_id', '=', 'products.id')
+                ->where('product_flat.channel', 'default')
+                ->where('product_flat.locale', 'vi')
+                ->where('product_flat.status', 1)
+                ->whereNotIn('product_flat.product_id', $existingIds)
+                ->having('image_count', '>', 0)
+                ->orderByDesc('products.avg_rating')
+                ->orderByDesc('product_flat.sales_count')
+                ->limit($limit - count($picks))
+                ->get()
+                ->map(fn($p) => $this->formatProduct($p))
+                ->toArray();
+            $picks = array_merge($picks, $more);
+        }
+
+        return $picks;
+    }
+
+    /**
+     * Helper: Get products with images first
+     */
+    private function getProductsWithImages(string $sortType, int $limit): array
+    {
+        $query = DB::table('product_flat')
+            ->select($this->productColumns())
+            ->addSelect(DB::raw('(SELECT COUNT(*) FROM product_images WHERE product_images.product_id = product_flat.product_id) as image_count'))
+            ->leftJoin('products', 'product_flat.product_id', '=', 'products.id')
+            ->where('product_flat.channel', 'default')
+            ->where('product_flat.locale', 'vi')
+            ->where('product_flat.status', 1)
+            ->having('image_count', '>', 0);
+
+        switch ($sortType) {
+            case 'trending':
+                $query->orderByDesc('product_flat.sales_count')->orderByDesc('product_flat.created_at');
+                break;
+            case 'best_selling':
+                $query->orderByDesc('product_flat.sales_count');
+                break;
+            case 'newest':
+                $query->orderByDesc('product_flat.created_at');
+                break;
+            default:
+                $query->orderByDesc('product_flat.sales_count');
+        }
+
+        return $query->limit($limit)
             ->get()
             ->map(fn($p) => $this->formatProduct($p))
             ->toArray();
@@ -121,11 +175,18 @@ class HomepageV2Service
 
     /**
      * Get filtered products for the grid
+     * Prioritizes products with images for better UX
      */
     public function getFilteredProducts(array $filters = [], string $sort = 'trending', int $page = 1): array
     {
+        // Subquery to check if product has images
+        $hasImageSubquery = DB::table('product_images')
+            ->select('product_id')
+            ->groupBy('product_id');
+
         $query = DB::table('product_flat')
             ->select($this->productColumns())
+            ->addSelect(DB::raw('(SELECT COUNT(*) FROM product_images WHERE product_images.product_id = product_flat.product_id) as image_count'))
             ->leftJoin('products', 'product_flat.product_id', '=', 'products.id')
             ->where('product_flat.channel', 'default')
             ->where('product_flat.locale', 'vi')
@@ -148,26 +209,27 @@ class HomepageV2Service
             $query->where('product_flat.display_price_usd', '<=', $filters['price_max']);
         }
 
-        // Sort
+        // Sort - always prioritize products with images first
         switch ($sort) {
             case 'newest':
-                $query->orderByDesc('product_flat.created_at');
+                $query->orderByDesc('image_count')->orderByDesc('product_flat.created_at');
                 break;
             case 'best_selling':
-                $query->orderByDesc('product_flat.sales_count');
+                $query->orderByDesc('image_count')->orderByDesc('product_flat.sales_count');
                 break;
             case 'price_low':
-                $query->orderBy('product_flat.display_price_usd');
+                $query->orderByDesc('image_count')->orderBy('product_flat.display_price_usd');
                 break;
             case 'price_high':
-                $query->orderByDesc('product_flat.display_price_usd');
+                $query->orderByDesc('image_count')->orderByDesc('product_flat.display_price_usd');
                 break;
             case 'rating':
-                $query->orderByDesc('products.avg_rating');
+                $query->orderByDesc('image_count')->orderByDesc('products.avg_rating');
                 break;
             case 'trending':
             default:
-                $query->orderByDesc('product_flat.sales_count')->orderByDesc('product_flat.created_at');
+                // Products with images first, then by sales
+                $query->orderByDesc('image_count')->orderByDesc('product_flat.sales_count')->orderByDesc('product_flat.created_at');
                 break;
         }
 
@@ -213,7 +275,7 @@ class HomepageV2Service
         try {
             $blogs = DB::table('blogs')
                 ->select('id', 'name', 'short_description', 'slug', 'src', 'author', 'published_at')
-                ->where('status', 1)
+                ->where('status', 'published')
                 ->whereNotNull('published_at')
                 ->orderByDesc('published_at')
                 ->limit($limit)

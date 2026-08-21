@@ -168,7 +168,7 @@
             <div class="stories-grid">
                 <div class="story-card">
                     <div class="story-image">
-                        <img src="https://images.unsplash.com/photo-1556438064-2d7646166914?w=400&h=250&fit=crop" alt="Game thành công" />
+                        <img src="{{ asset('images/placeholder-game.svg') }}" alt="Game thành công" />
                     </div>
                     <div class="story-content">
                         <h3>"Sky Adventure" - Từ ý tưởng đến top 10 App Store</h3>
@@ -181,7 +181,7 @@
                 
                 <div class="story-card">
                     <div class="story-image">
-                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=250&fit=crop" alt="Team success" />
+                        <img src="{{ asset('images/placeholder-game.svg') }}" alt="Team success" />
                     </div>
                     <div class="story-content">
                         <h3>"Legends of Vietnam" - Đoạt giải Game Jam 2024</h3>

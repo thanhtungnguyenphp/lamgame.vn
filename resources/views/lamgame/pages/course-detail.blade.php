@@ -38,7 +38,7 @@
                 <div class="col-lg-4">
                     <div class="course-card">
                         <div class="course-image">
-                            <img src="{{ $course['image'] ?? 'https://via.placeholder.com/400x300?text=Unity+Course' }}" alt="Unity Course">
+                            <img src="{{ $course['image'] ?? '{{ asset('images/placeholder-game.svg') }}' }}" alt="Unity Course">
                             <div class="play-button">
                                 <i class="fa fa-play"></i>
                             </div>
@@ -250,7 +250,7 @@
                             <div class="instructor-section">
                                 <div class="instructor-card">
                                     <div class="instructor-avatar">
-                                        <img src="https://via.placeholder.com/120x120?text=Instructor" alt="Instructor">
+                                        <img src="{{ asset('images/placeholder-game.svg') }}" alt="Instructor">
                                     </div>
                                     <div class="instructor-info">
                                         <h3>Nguyễn Văn A</h3>
@@ -355,7 +355,7 @@
                                 <div class="reviews-list">
                                     <div class="review-item">
                                         <div class="reviewer-info">
-                                            <img src="https://via.placeholder.com/50x50?text=User" alt="User">
+                                            <img src="{{ asset('images/placeholder-game.svg') }}" alt="User">
                                             <div class="reviewer-details">
                                                 <h5>Trần Văn B</h5>
                                                 <div class="review-stars">
@@ -375,7 +375,7 @@
                                     
                                     <div class="review-item">
                                         <div class="reviewer-info">
-                                            <img src="https://via.placeholder.com/50x50?text=User" alt="User">
+                                            <img src="{{ asset('images/placeholder-game.svg') }}" alt="User">
                                             <div class="reviewer-details">
                                                 <h5>Lê Thị C</h5>
                                                 <div class="review-stars">
@@ -406,7 +406,7 @@
                             <h3>Khóa học liên quan</h3>
                             <div class="related-courses">
                                 <div class="related-course">
-                                    <img src="https://via.placeholder.com/80x60?text=Unreal" alt="Unreal Course">
+                                    <img src="{{ asset('images/placeholder-game.svg') }}" alt="Unreal Course">
                                     <div class="course-info">
                                         <h4><a href="#">Unreal Engine 5 Complete Course</a></h4>
                                         <div class="course-meta">
@@ -420,7 +420,7 @@
                                 </div>
                                 
                                 <div class="related-course">
-                                    <img src="https://via.placeholder.com/80x60?text=C%23" alt="C# Course">
+                                    <img src="{{ asset('images/placeholder-game.svg') }}" alt="C# Course">
                                     <div class="course-info">
                                         <h4><a href="#">C# Programming for Beginners</a></h4>
                                         <div class="course-meta">
@@ -434,7 +434,7 @@
                                 </div>
                                 
                                 <div class="related-course">
-                                    <img src="https://via.placeholder.com/80x60?text=Mobile" alt="Mobile Course">
+                                    <img src="{{ asset('images/placeholder-game.svg') }}" alt="Mobile Course">
                                     <div class="course-info">
                                         <h4><a href="#">Mobile Game Development</a></h4>
                                         <div class="course-meta">

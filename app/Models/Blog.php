@@ -118,7 +118,8 @@ class Blog extends Model
     public function getFeaturedImageAttribute()
     {
         if (!$this->src) {
-            return 'https://via.placeholder.com/800x400?text=' . urlencode($this->name);
+            // Use local placeholder instead of external service
+            return asset('images/placeholder-game.svg');
         }
 
         // Handle old format paths that start with /storage/ or storage/

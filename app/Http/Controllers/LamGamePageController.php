@@ -989,7 +989,7 @@ class LamGamePageController extends Controller
             $isHot = $downloadsCount > 1500;
 
             // Image
-            $previewImage = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&h=200&fit=crop';
+            $previewImage = asset('images/placeholder-game.svg');
             if ($product->images && $product->images->isNotEmpty()) {
                 $previewImage = asset('storage/' . $product->images->first()->path);
             }
@@ -1040,7 +1040,7 @@ class LamGamePageController extends Controller
                     'language' => 'C#',
                     'downloads' => 1250,
                     'rating' => 4.8,
-                    'preview_image' => 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&h=200&fit=crop',
+                    'preview_image' => asset('images/placeholder-game.svg'),
                     'size' => '25 MB',
                     'price' => 0,
                     'updated' => '2024-01-15',
@@ -1056,7 +1056,7 @@ class LamGamePageController extends Controller
                     'language' => 'C#',
                     'downloads' => 890,
                     'rating' => 4.6,
-                    'preview_image' => 'https://images.unsplash.com/photo-1614294148960-9aa740632117?w=300&h=200&fit=crop',
+                    'preview_image' => asset('images/placeholder-game.svg'),
                     'size' => '18 MB',
                     'price' => 0,
                     'updated' => '2024-01-10',
@@ -1072,7 +1072,7 @@ class LamGamePageController extends Controller
                     'language' => 'Blueprint',
                     'downloads' => 567,
                     'rating' => 4.9,
-                    'preview_image' => 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300&h=200&fit=crop',
+                    'preview_image' => asset('images/placeholder-game.svg'),
                     'size' => '45 MB',
                     'price' => 0,
                     'updated' => '2024-01-08',
@@ -1373,9 +1373,9 @@ class LamGamePageController extends Controller
             'last_updated' => '2024-01-15',
             'created_at' => '2024-01-01',
             'images' => [
-                ['url' => 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=600&fit=crop', 'alt' => $gameData['title']],
-                ['url' => 'https://images.unsplash.com/photo-1614294148960-9aa740632117?w=800&h=600&fit=crop', 'alt' => $gameData['title']],
-                ['url' => 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&h=600&fit=crop', 'alt' => $gameData['title']]
+                ['url' => asset('images/placeholder-game.svg'), 'alt' => $gameData['title']],
+                ['url' => asset('images/placeholder-game.svg'), 'alt' => $gameData['title']],
+                ['url' => asset('images/placeholder-game.svg'), 'alt' => $gameData['title']]
             ],
             'downloadable_links' => [
                 ['title' => 'Source Code', 'file_name' => $slug . '-source.zip', 'downloads' => rand(100, 500), 'type' => 'file'],
@@ -1402,21 +1402,21 @@ class LamGamePageController extends Controller
             [
                 'title' => 'Flappy Bird Clone',
                 'url' => route('lamgame.source-game.detail', 'flappy-bird-clone'),
-                'image' => 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&h=200&fit=crop',
+                'image' => asset('images/placeholder-game.svg'),
                 'price' => 0,
                 'rating' => 4.3
             ],
             [
                 'title' => 'Puzzle Match 3',
                 'url' => route('lamgame.source-game.detail', 'puzzle-match-3'),
-                'image' => 'https://images.unsplash.com/photo-1614294148960-9aa740632117?w=300&h=200&fit=crop',
+                'image' => asset('images/placeholder-game.svg'),
                 'price' => 0,
                 'rating' => 4.7
             ],
             [
                 'title' => 'RPG Character System',
                 'url' => route('lamgame.source-game.detail', 'rpg-character-system'),
-                'image' => 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300&h=200&fit=crop',
+                'image' => asset('images/placeholder-game.svg'),
                 'price' => 150000,
                 'rating' => 4.9
             ]

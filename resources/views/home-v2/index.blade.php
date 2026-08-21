@@ -301,7 +301,7 @@
             @forelse(($latestBlogs ?? []) as $blog)
             <a href="{{ $blog['url'] ?? '/blog' }}" class="lg-v2-blog-card">
                 <div class="lg-v2-blog-card__img">
-                    <img src="{{ $blog['thumbnail'] ?? '/images/placeholder-game.svg' }}" alt="{{ $blog['title'] ?? '' }}" loading="lazy">
+                    <img src="{{ $blog['thumbnail'] ?? asset('images/placeholder-game.svg') }}" alt="{{ $blog['title'] ?? '' }}" loading="lazy">
                 </div>
                 <div class="lg-v2-blog-card__body">
                     <h3>{{ Str::limit($blog['title'] ?? '', 60) }}</h3>
