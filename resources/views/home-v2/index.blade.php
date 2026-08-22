@@ -1039,25 +1039,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }, { threshold: 0.5 });
     statNumbers.forEach(el => statsObserver.observe(el));
 
-    // Category click → update genre filter
-    document.querySelectorAll('.lg-v2-category-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            e.preventDefault();
-            const url = new URL(this.href);
-            const genre = url.searchParams.get('genre') || '';
-
-            // Update active state
-            document.querySelectorAll('.lg-v2-category-card').forEach(c => c.classList.remove('lg-v2-category-card--active'));
-            this.classList.add('lg-v2-category-card--active');
-
-            // Update filter and fetch
-            if (filterGenre) {
-                filterGenre.value = genre === 'all' ? '' : genre;
-            }
-            currentPage = 1;
-            fetchProducts(1, false);
-        });
-    });
+    // Category click → navigate to source-game page with filter
+    // Let the default <a href> behavior work - no preventDefault
+    // This allows users to navigate to the filtered source-game page
 });
 </script>
 @endpush

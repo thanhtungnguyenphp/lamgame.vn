@@ -866,9 +866,10 @@ class LamGamePageController extends Controller
      */
     public function sourceGame(Request $request)
     {
-        // Input params: search, sort, page, perPage
+        // Input params: search, sort, page, perPage, genre
         $search  = $request->get('search');
         $sort    = $request->get('sort', 'newest'); // newest|price-asc|price-desc|name
+        $genre   = $request->get('genre'); // genre filter from homepage categories
         $perPage = (int) $request->get('perPage', 12);
         if ($perPage <= 0 || $perPage > 60) {
             $perPage = 12;
@@ -911,6 +912,20 @@ class LamGamePageController extends Controller
         if (! empty($allCategoryIds)) {
             $productQuery->whereHas('categories', function ($query) use ($allCategoryIds) {
                 $query->whereIn('category_id', $allCategoryIds);
+            });
+        }
+
+        // Filter by genre if specified (from homepage category cards)
+        if ($genre && $genre !== 'all') {
+            $productQuery->whereIn('id', function ($sub) use ($genre) {
+                $sub->from('product_flat')
+                    ->select('product_id')
+                    ->where('locale', 'vi')
+                    ->where(function ($q) use ($genre) {
+                        // Match genre field or genre_tags JSON field
+                        $q->whereRaw('LOWER(genre) = ?', [strtolower($genre)])
+                          ->orWhereRaw('LOWER(genre_tags) LIKE ?', ['%' . strtolower($genre) . '%']);
+                    });
             });
         }
 
@@ -1100,6 +1115,9 @@ class LamGamePageController extends Controller
             'trendingSources'    => $trendingSources,
             'bestSellingSources' => $bestSellingSources,
             'pagination'         => $pagination,
+            'currentGenre'       => $genre ?? 'all',
+            'currentSearch'      => $search ?? '',
+            'currentSort'        => $sort ?? 'newest',
             'page_title'         => 'Mua Bán Source Game Unity, Unreal | Mã Nguồn Game Giá Rẻ — LamGame.vn',
             'page_description'   => 'Kho source game Unity, Unreal Engine đa dạng thể loại. Mua bán mã nguồn game 2D, 3D chất lượng cao, giá từ 99K. Code sạch, document đầy đủ, hỗ trợ cài đặt miễn phí.',
         ]);

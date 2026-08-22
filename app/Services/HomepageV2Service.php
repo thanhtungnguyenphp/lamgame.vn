@@ -308,9 +308,20 @@ class HomepageV2Service
     {
         try {
             $posts = DB::table('forum_posts')
-                ->select('id', 'title', 'slug', 'views_count', 'likes_count', 'comments_count', 'created_at', 'customer_id')
-                ->where('status', 'published')
-                ->orderByDesc('views_count')
+                ->select(
+                    'forum_posts.id', 
+                    'forum_posts.title', 
+                    'forum_posts.slug', 
+                    'forum_posts.views_count', 
+                    'forum_posts.likes_count', 
+                    'forum_posts.comments_count', 
+                    'forum_posts.created_at', 
+                    'forum_posts.customer_id',
+                    'forum_categories.name as category_name'
+                )
+                ->leftJoin('forum_categories', 'forum_posts.category_id', '=', 'forum_categories.id')
+                ->where('forum_posts.status', 'published')
+                ->orderByDesc('forum_posts.views_count')
                 ->limit($limit)
                 ->get();
 
@@ -320,7 +331,7 @@ class HomepageV2Service
                     'title' => $post->title,
                     'url' => '/forum/posts/' . $post->slug,
                     'author' => $author,
-                    'category' => '',
+                    'category' => $post->category_name ?? '',
                     'time_ago' => \Carbon\Carbon::parse($post->created_at)->diffForHumans(),
                     'replies' => $post->comments_count ?? 0,
                     'views' => $post->views_count ?? 0,
