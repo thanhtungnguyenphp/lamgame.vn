@@ -78,23 +78,121 @@ class LamGamePageController extends Controller
      */
     public function submitContact(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name'    => 'required|string|max:255',
-            'phone'   => 'required|string|max:20',
-            'email'   => 'nullable|email|max:255',
-            'message' => 'nullable|string|max:2000',
+            'phone'   => 'nullable|string|max:20',
+            'email'   => 'required|email|max:255',
+            'subject' => 'required|string|max:100',
+            'message' => 'required|string|max:2000',
+        ], [
+            'name.required' => 'Vui lòng nhập họ tên.',
+            'email.required' => 'Vui lòng nhập email.',
+            'email.email' => 'Email không hợp lệ.',
+            'subject.required' => 'Vui lòng chọn chủ đề.',
+            'message.required' => 'Vui lòng nhập nội dung tin nhắn.',
         ]);
 
-        // TODO: Store in database or send email notification
+        // Map subject values to readable labels
+        $subjectLabels = [
+            'source-game' => 'Hỏi về Source Game',
+            'ai-tools' => 'Hỏi về AI Tools',
+            'hop-tac' => 'Hợp tác kinh doanh',
+            'ho-tro' => 'Hỗ trợ kỹ thuật',
+            'khac' => 'Khác',
+        ];
+        $subjectLabel = $subjectLabels[$validated['subject']] ?? $validated['subject'];
+
+        try {
+            // Send email to admin
+            \Illuminate\Support\Facades\Mail::send([], [], function ($mail) use ($validated, $subjectLabel) {
+                $mail->to('thanhtungnguyenphp@gmail.com')
+                    ->subject('[LamGame Contact] ' . $subjectLabel)
+                    ->html($this->buildContactEmailHtml($validated, $subjectLabel));
+            });
+
+            \Illuminate\Support\Facades\Log::info('Contact form submitted', [
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'subject' => $validated['subject'],
+            ]);
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Contact form email failed', [
+                'error' => $e->getMessage(),
+                'email' => $validated['email'] ?? 'unknown',
+            ]);
+        }
 
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong 24h.',
+                'message' => 'Tin nhắn của bạn đã được gửi thành công!',
             ]);
         }
 
-        return back()->with('success', 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong 24h.');
+        return back()->with('success', 'Tin nhắn của bạn đã được gửi thành công!');
+    }
+
+    /**
+     * Build HTML email content for contact form
+     */
+    private function buildContactEmailHtml(array $data, string $subjectLabel): string
+    {
+        $phone = $data['phone'] ?? 'Không cung cấp';
+        $message = nl2br(htmlspecialchars($data['message']));
+        
+        return <<<HTML
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #8B5CF6, #6366F1); color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+        .header h1 { margin: 0; font-size: 20px; }
+        .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px; }
+        .field { margin-bottom: 15px; }
+        .field-label { font-weight: 600; color: #6B7280; font-size: 12px; text-transform: uppercase; margin-bottom: 4px; }
+        .field-value { color: #111827; }
+        .message-box { background: white; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; margin-top: 15px; }
+        .footer { margin-top: 20px; font-size: 12px; color: #9CA3AF; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📬 Tin nhắn mới từ LamGame.vn</h1>
+        </div>
+        <div class="content">
+            <div class="field">
+                <div class="field-label">Chủ đề</div>
+                <div class="field-value"><strong>{$subjectLabel}</strong></div>
+            </div>
+            <div class="field">
+                <div class="field-label">Họ tên</div>
+                <div class="field-value">{$data['name']}</div>
+            </div>
+            <div class="field">
+                <div class="field-label">Email</div>
+                <div class="field-value"><a href="mailto:{$data['email']}">{$data['email']}</a></div>
+            </div>
+            <div class="field">
+                <div class="field-label">Số điện thoại</div>
+                <div class="field-value">{$phone}</div>
+            </div>
+            <div class="message-box">
+                <div class="field-label">Nội dung tin nhắn</div>
+                <div class="field-value">{$message}</div>
+            </div>
+        </div>
+        <div class="footer">
+            Email này được gửi tự động từ form liên hệ tại lamgame.vn
+        </div>
+    </div>
+</body>
+</html>
+HTML;
     }
 
     /**

@@ -157,3 +157,6 @@ Route::prefix('games/{gameKey}/leaderboard')
         Route::post('/', [\App\Http\Controllers\Api\GameLeaderboardController::class, 'store']);
         Route::get('/player/{player}', [\App\Http\Controllers\Api\GameLeaderboardController::class, 'player']);
     });
+
+// Contact form
+Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'submit'])->middleware('throttle:10,1');

@@ -131,15 +131,17 @@ return Application::configure(basePath: dirname(__DIR__))
             ->withoutOverlapping()
             ->appendOutputTo(storage_path('logs/lottery-scrape.log'));
 
+        // DISABLED: 2026-08-26 — Vietlott.vn returns 403 Cloudflare challenge
         // Vietlot (Mega, Power, Max3D, Max3D Pro): quay 18:00 → scrape 18:05 ~ 18:45
-        $schedule->job(new \App\Jobs\ScrapeVietlotLottery())
-            ->everyFiveMinutes()
-            ->between('18:05', '18:45');
+        // $schedule->job(new \App\Jobs\ScrapeVietlotLottery())
+        //     ->everyFiveMinutes()
+        //     ->between('18:05', '18:45');
 
+        // DISABLED: 2026-08-26 — Vietlott.vn returns 403 Cloudflare challenge
         // Keno — mỗi 10 phút trong khung giờ quay
-        $schedule->job(new \App\Jobs\ScrapeVietlotLottery('keno'))
-            ->everyTenMinutes()
-            ->between('6:00', '22:00');
+        // $schedule->job(new \App\Jobs\ScrapeVietlotLottery('keno'))
+        //     ->everyTenMinutes()
+        //     ->between('6:00', '22:00');
 
         // RETRY — chạy lại tất cả miền lúc 20:00 để bắt data thiếu đài
         $schedule->command('lottery:scrape --region=all --force')
