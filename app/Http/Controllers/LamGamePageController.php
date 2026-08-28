@@ -105,7 +105,7 @@ class LamGamePageController extends Controller
         try {
             // Send email to admin
             \Illuminate\Support\Facades\Mail::send([], [], function ($mail) use ($validated, $subjectLabel) {
-                $mail->to('thanhtungnguyenphp@gmail.com')
+                $mail->to('salegamevui@gmail.com')
                     ->subject('[LamGame Contact] ' . $subjectLabel)
                     ->html($this->buildContactEmailHtml($validated, $subjectLabel));
             });

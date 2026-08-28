@@ -53,7 +53,7 @@ class ContactController extends Controller
         try {
             // Send email to admin
             Mail::send([], [], function ($mail) use ($validated, $subjectLabel) {
-                $mail->to('thanhtungnguyenphp@gmail.com')
+                $mail->to('salegamevui@gmail.com')
                     ->subject('[LamGame Contact] ' . $subjectLabel)
                     ->html($this->buildEmailHtml($validated, $subjectLabel));
             });
