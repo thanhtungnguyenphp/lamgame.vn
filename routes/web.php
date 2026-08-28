@@ -56,6 +56,13 @@ Route::get('tac-gia/{slug}', [App\Http\Controllers\AuthorController::class, 'sho
 Route::get('chinh-sach-bien-tap', fn() => view('lamgame.pages.chinh-sach-bien-tap'))->name('lamgame.chinh-sach-bien-tap');
 Route::get('chinh-sach-chinh-sua', fn() => view('lamgame.pages.chinh-sach-chinh-sua'))->name('lamgame.chinh-sach-chinh-sua');
 
+// Legal pages (Trust & Compliance)
+Route::get('chinh-sach-bao-mat', fn() => view('lamgame.pages.legal.privacy'))->name('legal.privacy');
+Route::get('dieu-khoan-su-dung', fn() => view('lamgame.pages.legal.terms'))->name('legal.terms');
+Route::get('chinh-sach-hoan-tien', fn() => view('lamgame.pages.legal.refund'))->name('legal.refund');
+Route::get('dieu-khoan-marketplace', fn() => view('lamgame.pages.legal.marketplace'))->name('legal.marketplace');
+Route::get('dieu-khoan-ai', fn() => view('lamgame.pages.legal.ai-terms'))->name('legal.ai-terms');
+
 // ============================================================================
 // PILLAR PAGES — Topic Clusters
 // ============================================================================

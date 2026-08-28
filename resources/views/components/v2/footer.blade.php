@@ -42,19 +42,19 @@
             {{-- Hỗ trợ --}}
             <div class="lg-v2-footer__col">
                 <h4 class="lg-v2-footer__col-title">Hỗ trợ</h4>
-                <a href="#" class="lg-v2-footer__link">Hướng dẫn mua</a>
-                <a href="/page/chinh-sach-hoan-tien-tranh-chap" class="lg-v2-footer__link">Chính sách hoàn tiền</a>
-                <a href="/page/dieu-khoan-dich-vu" class="lg-v2-footer__link">Điều khoản sử dụng</a>
+                <a href="/chinh-sach-hoan-tien" class="lg-v2-footer__link">Chính sách hoàn tiền</a>
+                <a href="/dieu-khoan-su-dung" class="lg-v2-footer__link">Điều khoản sử dụng</a>
+                <a href="/dieu-khoan-marketplace" class="lg-v2-footer__link">Điều khoản Marketplace</a>
                 <a href="/lien-he" class="lg-v2-footer__link">Liên hệ</a>
             </div>
 
-            {{-- Cộng đồng --}}
+            {{-- Pháp lý --}}
             <div class="lg-v2-footer__col">
-                <h4 class="lg-v2-footer__col-title">Cộng đồng</h4>
-                <a href="#" class="lg-v2-footer__link">Discord</a>
-                <a href="#" class="lg-v2-footer__link">Facebook Group</a>
-                <a href="#" class="lg-v2-footer__link">Thành viên</a>
-                <a href="#" class="lg-v2-footer__link">Sự kiện</a>
+                <h4 class="lg-v2-footer__col-title">Pháp lý</h4>
+                <a href="/chinh-sach-bao-mat" class="lg-v2-footer__link">Chính sách bảo mật</a>
+                <a href="/dieu-khoan-ai" class="lg-v2-footer__link">Điều khoản AI Tools</a>
+                <a href="/chinh-sach-bien-tap" class="lg-v2-footer__link">Chính sách biên tập</a>
+                <a href="/tac-gia" class="lg-v2-footer__link">Đội ngũ tác giả</a>
             </div>
 
             {{-- Newsletter --}}
