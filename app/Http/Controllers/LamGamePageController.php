@@ -457,7 +457,7 @@ HTML;
             ->take(5)
             ->get();
 
-        return view('lamgame.pages.viec-lam-game', [
+        return view('lamgame.pages.viec-lam-game-v2', [
             'page_title' => 'Việc Làm Game Developer Mới Nhất ' . date('Y') . ' | Unity, Unreal, Game Design — LamGame.vn',
             'page_description' => 'Khám phá ' . $totalJobs . '+ cơ hội việc làm game development tại Việt Nam. Tuyển dụng Unity Developer, Game Designer, 3D Artist và nhiều vị trí khác.',
             'jobs' => $jobs,
