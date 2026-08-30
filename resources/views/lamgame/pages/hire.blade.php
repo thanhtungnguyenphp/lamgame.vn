@@ -944,6 +944,15 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Calendly Integration -->
+                        <div class="calendly-cta" style="margin-top: 32px; padding: 24px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px;">
+                            <h4 style="margin-bottom: 8px; font-size: 16px;">📅 Prefer a Video Call?</h4>
+                            <p style="color: var(--hire-text-muted); font-size: 14px; margin-bottom: 16px;">Book a free 30-minute consultation to discuss your project.</p>
+                            <a href="https://calendly.com/lamgame/consultation" target="_blank" rel="noopener" class="btn-secondary" style="display: inline-block; padding: 12px 24px; font-size: 14px;">
+                                Schedule a Call →
+                            </a>
+                        </div>
                     </div>
                     
                     <div class="contact-form-wrap">
