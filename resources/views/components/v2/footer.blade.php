@@ -57,15 +57,12 @@
                 <a href="/tac-gia" class="lg-v2-footer__link">Đội ngũ tác giả</a>
             </div>
 
-            {{-- Newsletter --}}
-            <div class="lg-v2-footer__col lg-v2-footer__col--newsletter">
-                <h4 class="lg-v2-footer__col-title">Nhận thông tin mới nhất</h4>
-                <p class="lg-v2-footer__newsletter-desc">Đăng ký để nhận source mới, ưu đãi và tin tức dành cho game developer.</p>
-                <form class="lg-v2-footer__newsletter-form" action="#" method="POST">
-                    @csrf
-                    <input type="email" placeholder="Nhập email của bạn..." class="lg-v2-footer__newsletter-input" required>
-                    <button type="submit" class="lg-v2-btn lg-v2-btn--primary lg-v2-btn--sm">Đăng ký</button>
-                </form>
+            {{-- International (English) --}}
+            <div class="lg-v2-footer__col">
+                <h4 class="lg-v2-footer__col-title">🌍 For Clients</h4>
+                <a href="/hire" class="lg-v2-footer__link">Hire Us</a>
+                <a href="/portfolio" class="lg-v2-footer__link">Portfolio</a>
+                <a href="mailto:hello@lamgame.vn" class="lg-v2-footer__link">hello@lamgame.vn</a>
             </div>
         </div>
 

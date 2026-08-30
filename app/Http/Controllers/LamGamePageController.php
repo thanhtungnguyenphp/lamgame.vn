@@ -1717,4 +1717,20 @@ HTML;
             'page_description' => 'Thuê đội ngũ lập trình viên chuyên nghiệp để phát triển game, website, ứng dụng mobile và giải pháp AI.',
         ]);
     }
+
+    /**
+     * Show English Hire page for international clients
+     */
+    public function hire()
+    {
+        return view('lamgame.pages.hire');
+    }
+
+    /**
+     * Show Portfolio page
+     */
+    public function portfolio()
+    {
+        return view('lamgame.pages.portfolio');
+    }
 }

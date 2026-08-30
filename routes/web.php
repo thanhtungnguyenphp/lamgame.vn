@@ -44,6 +44,10 @@ Route::get('lien-he', [LamGamePageController::class, 'lienHe'])->name('lamgame.l
 Route::post('lien-he', [LamGamePageController::class, 'submitContact'])->name('lamgame.lien-he.submit');
 Route::get('thue-team-dev', [LamGamePageController::class, 'hireTeam'])->name('lamgame.thue-team-dev');
 
+// English pages for international clients
+Route::get('hire', [LamGamePageController::class, 'hire'])->name('lamgame.hire');
+Route::get('portfolio', [LamGamePageController::class, 'portfolio'])->name('lamgame.portfolio');
+
 // ============================================================================
 // SPRINT 2 E-E-A-T Routes
 // ============================================================================
