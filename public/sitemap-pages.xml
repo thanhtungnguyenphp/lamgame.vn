@@ -59,4 +59,11 @@
     <xhtml:link rel="alternate" hreflang="vi" href="https://lamgame.vn/thue-team-dev"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://lamgame.vn/hire"/>
             </url>
+
+    <url>
+    <loc>https://lamgame.vn/team</loc>
+    <lastmod>2026-08-30T21:00:00+07:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+            </url>
 </urlset>
