@@ -919,7 +919,7 @@
                                 <div class="contact-item-icon">📧</div>
                                 <div class="contact-item-text">
                                     <strong>Email</strong>
-                                    <span>hello@lamgame.vn</span>
+                                    <span><a href="mailto:salegamevui@gmail.com" style="color: var(--hire-text-muted); text-decoration: none;">salegamevui@gmail.com</a></span>
                                 </div>
                             </div>
                             <div class="contact-item">

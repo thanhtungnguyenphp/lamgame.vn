@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220">
+  <defs>
+    <linearGradient id="bg6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E1E30"/>
+      <stop offset="100%" style="stop-color:#1F3D3D"/>
+    </linearGradient>
+  </defs>
+  <rect fill="url(#bg6)" width="400" height="220"/>
+  <text x="200" y="90" fill="#22D3EE" font-size="50" text-anchor="middle">🌿</text>
+  <text x="200" y="140" fill="#F0F0F5" font-size="18" font-family="system-ui" text-anchor="middle" font-weight="600">Pixel Roguelike</text>
+  <text x="200" y="165" fill="#8B8BA3" font-size="12" font-family="system-ui" text-anchor="middle">Godot 4 • Procedural Dungeons • 10K+ Players</text>
+</svg>
