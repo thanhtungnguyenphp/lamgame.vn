@@ -1,13 +1,13 @@
 @extends('layouts.master')
 
-@section('page_title', 'Hire Game Developers | LamGame Studio')
-@section('page_description', 'Hire experienced game developers from Vietnam. Unity, Unreal Engine, Godot specialists. Competitive rates, EU timezone friendly.')
+@section('page_title', 'Hire Game Developers Vietnam | Unity & Unreal Studio')
+@section('page_description', 'Hire experienced game developers from Vietnam. Unity, Unreal Engine, Godot specialists. Competitive rates, EU timezone friendly, fluent English.')
 
 @push('meta')
-<meta name="description" content="Hire experienced game developers from Vietnam. Unity, Unreal Engine, Godot specialists. Competitive rates, EU timezone friendly, English communication.">
-<meta name="keywords" content="hire game developers, vietnam game studio, unity developers for hire, game development outsourcing, remote game developers">
-<meta property="og:title" content="Hire Game Developers | LamGame Studio">
-<meta property="og:description" content="Professional game development studio from Vietnam. 5+ years experience, 50+ projects delivered.">
+<meta name="description" content="Hire game developers from Vietnam. Professional Unity, Unreal Engine, Godot development. 40-60% lower cost, EU timezone overlap, fluent English communication. 50+ projects delivered.">
+<meta name="keywords" content="hire game developers vietnam, vietnam game studio, unity developers for hire, game development outsourcing vietnam, remote game developers asia, game outsourcing ho chi minh, indie game development vietnam, mobile game developers vietnam">
+<meta property="og:title" content="Hire Game Developers Vietnam | LamGame Studio">
+<meta property="og:description" content="Professional game development studio from Vietnam. 5+ years experience, 50+ projects delivered. Competitive rates for EU/US clients.">
 <meta property="og:image" content="{{ asset('images/lamgame-hire-og.png') }}">
 <meta property="og:url" content="{{ url('/hire') }}">
 <meta name="twitter:card" content="summary_large_image">
@@ -18,21 +18,34 @@
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     "name": "LamGame Studio",
-    "description": "Professional game development studio specializing in Unity, Unreal Engine, and mobile game development",
+    "description": "Professional game development studio in Vietnam specializing in Unity, Unreal Engine, and mobile game development for international clients",
     "url": "{{ url('/hire') }}",
     "logo": "{{ asset('images/lamgame-logo.png') }}",
     "areaServed": ["Worldwide", "Europe", "North America", "Asia"],
-    "serviceType": ["Game Development", "Unity Development", "Mobile Game Development", "Web Game Development"],
+    "serviceType": ["Game Development", "Unity Development", "Mobile Game Development", "Web Game Development", "Game Outsourcing"],
     "priceRange": "$$",
     "address": {
         "@type": "PostalAddress",
+        "addressLocality": "Ho Chi Minh City",
+        "addressRegion": "Ho Chi Minh",
         "addressCountry": "VN"
+    },
+    "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "10.8231",
+        "longitude": "106.6297"
     },
     "contactPoint": {
         "@type": "ContactPoint",
-        "email": "hello@lamgame.vn",
-        "contactType": "sales"
-    }
+        "email": "salegamevui@gmail.com",
+        "contactType": "sales",
+        "availableLanguage": ["English", "Vietnamese"]
+    },
+    "sameAs": [
+        "https://discord.gg/lamgame",
+        "https://facebook.com/lamgamevn",
+        "https://github.com/lamgame"
+    ]
 }
 </script>
 @endpush
@@ -1084,6 +1097,18 @@ function submitHireFormEN() {
             msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
             // Focus message for screen readers
             msg.focus();
+            
+            // Track conversion events
+            if (typeof trackEvent === 'function') {
+                trackEvent('generate_lead', {
+                    event_category: 'hire',
+                    event_label: data.project_type || 'general',
+                    value: 1
+                });
+            }
+            if (typeof trackFBLead === 'function') {
+                trackFBLead('Hire Form - ' + (data.project_type || 'General'));
+            }
         } else {
             const errors = d.errors ? Object.values(d.errors).flat().join('<br>') : (d.message || 'Something went wrong. Please try again.');
             msg.className = 'form-message error';
@@ -1102,5 +1127,37 @@ function submitHireFormEN() {
         msg.style.display = 'block';
     });
 }
+
+// Track Calendly clicks
+document.addEventListener('DOMContentLoaded', function() {
+    const calendlyLink = document.querySelector('a[href*="calendly"]');
+    if (calendlyLink) {
+        calendlyLink.addEventListener('click', function() {
+            if (typeof trackEvent === 'function') {
+                trackEvent('cta_click', {
+                    event_category: 'hire',
+                    event_label: 'calendly_schedule',
+                    value: 1
+                });
+            }
+            if (typeof trackFBEvent === 'function') {
+                trackFBEvent('Schedule');
+            }
+        });
+    }
+    
+    // Track CTA button clicks
+    document.querySelectorAll('.btn-primary[href="#contact"]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            if (typeof trackEvent === 'function') {
+                trackEvent('cta_click', {
+                    event_category: 'hire',
+                    event_label: 'get_quote_click',
+                    value: 1
+                });
+            }
+        });
+    });
+});
 </script>
 @endpush
