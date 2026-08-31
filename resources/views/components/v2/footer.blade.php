@@ -62,6 +62,7 @@
                 <h4 class="lg-v2-footer__col-title">🌍 For Clients</h4>
                 <a href="/hire" class="lg-v2-footer__link">Hire Us</a>
                 <a href="/portfolio" class="lg-v2-footer__link">Portfolio</a>
+                <a href="/team" class="lg-v2-footer__link">Our Team</a>
                 <a href="mailto:salegamevui@gmail.com" class="lg-v2-footer__link">salegamevui@gmail.com</a>
             </div>
         </div>

@@ -1733,4 +1733,12 @@ HTML;
     {
         return view('lamgame.pages.portfolio');
     }
+
+    /**
+     * Show Team page
+     */
+    public function team()
+    {
+        return view('lamgame.pages.team');
+    }
 }
