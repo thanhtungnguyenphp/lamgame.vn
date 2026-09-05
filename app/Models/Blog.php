@@ -117,23 +117,23 @@ class Blog extends Model
      */
     public function getFeaturedImageAttribute()
     {
+        $placeholder = asset('images/placeholder-game.svg');
+
         if (!$this->src) {
-            // Use local placeholder instead of external service
-            return asset('images/placeholder-game.svg');
+            return $placeholder;
         }
 
-        // Handle old format paths that start with /storage/ or storage/
-        if (str_starts_with($this->src, '/storage/') || str_starts_with($this->src, 'storage/')) {
-            // Remove leading slash and storage/ prefix to avoid double storage path
-            $cleanPath = ltrim($this->src, '/');
-            if (str_starts_with($cleanPath, 'storage/')) {
-                $cleanPath = substr($cleanPath, 8); // Remove 'storage/' prefix
-            }
-            return asset('storage/' . $cleanPath);
+        // Normalize legacy values before checking the public storage disk.
+        $cleanPath = ltrim($this->src, '/');
+        if (str_starts_with($cleanPath, 'storage/')) {
+            $cleanPath = substr($cleanPath, 8);
         }
 
-        // Handle new format paths that are just the relative path within storage
-        return asset('storage/' . $this->src);
+        if (!\Illuminate\Support\Facades\Storage::disk('public')->exists($cleanPath)) {
+            return $placeholder;
+        }
+
+        return asset('storage/' . $cleanPath);
     }
 
     /**
@@ -181,9 +181,10 @@ class Blog extends Model
      */
     public function getReadingTimeAttribute()
     {
-        $wordCount = str_word_count(strip_tags($this->description));
-        $minutes = ceil($wordCount / 200); // Average reading speed 200 words/minute
-        return $minutes;
+        preg_match_all('/[\p{L}\p{N}]+/u', strip_tags($this->description ?? ''), $matches);
+        $wordCount = count($matches[0] ?? []);
+
+        return max(1, (int) ceil($wordCount / 200));
     }
 
     /**

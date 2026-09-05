@@ -7,204 +7,200 @@ use App\Models\Blog;
 use App\Models\ForumPost;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class BannerController extends Controller
 {
     /**
-     * Get jobs data for banner
+     * Return current job counts from published job products.
      */
     public function jobs(): JsonResponse
     {
         try {
-            $data = Cache::remember('banner_jobs', 300, function () {
-                // Simulate job data - replace with real job queries
-                $jobCount = rand(40, 70);
-                
+            $data = Cache::remember('banner_jobs_truth_v2', 300, function (): array {
+                $jobs = DB::table('products as p')
+                    ->join('product_flat as pf', function ($join) {
+                        $join->on('p.id', '=', 'pf.product_id')
+                            ->where('pf.locale', '=', 'vi');
+                    })
+                    ->where('p.sku', 'like', 'JOB_%')
+                    ->where('pf.status', 1)
+                    ->where('pf.visible_individually', 1);
+
+                $companies = (clone $jobs)
+                    ->pluck('pf.name')
+                    ->map(function ($name) {
+                        $parts = explode(' - ', (string) $name, 2);
+
+                        return isset($parts[1]) ? trim($parts[1]) : null;
+                    })
+                    ->filter()
+                    ->unique()
+                    ->take(5)
+                    ->values()
+                    ->all();
+
                 return [
-                    'count' => $jobCount,
-                    'companies' => ['VNG', 'Gameloft', 'Nexon', 'Amanotes', 'VTC'],
-                    'latest_salary_range' => '20-45tr VNĐ',
-                    'new_this_week' => rand(15, 25),
-                    'updated_at' => now()->toISOString()
+                    'count' => (clone $jobs)->count(),
+                    'companies' => $companies,
+                    'latest_salary_range' => null,
+                    'new_this_week' => (clone $jobs)->where('p.created_at', '>=', now()->subWeek())->count(),
+                    'updated_at' => now()->toISOString(),
                 ];
             });
 
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unable to fetch jobs data',
-                'data' => $this->getFallbackJobsData()
-            ], 500);
+            return $this->success($data);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return $this->failure('Unable to fetch jobs data', $this->getFallbackJobsData());
         }
     }
 
     /**
-     * Get hot topics data for banner
+     * Return the most active published forum topic using stored counters only.
      */
-    public function topics(): JsonResponse 
+    public function topics(): JsonResponse
     {
         try {
-            $data = Cache::remember('banner_topics', 300, function () {
-                // Try to get real forum data if available
-                $hotTopic = ForumPost::with('comments')
-                    ->where('created_at', '>=', Carbon::now()->subDays(7))
-                    ->withCount(['comments', 'votes'])
+            $data = Cache::remember('banner_topics_truth_v2', 300, function (): array {
+                $topic = ForumPost::published()
+                    ->where('created_at', '>=', now()->subDays(7))
                     ->orderByDesc('comments_count')
-                    ->orderByDesc('votes_count')
+                    ->orderByDesc('likes_count')
                     ->first();
 
-                if ($hotTopic) {
-                    return [
-                        'title' => $hotTopic->title,
-                        'author' => $hotTopic->author->name ?? 'Anonymous',
-                        'stats' => [
-                            'comments' => $hotTopic->comments_count,
-                            'views' => $hotTopic->views ?? rand(200, 800),
-                            'likes' => $hotTopic->votes_count
-                        ],
-                        'url' => route('forum.post', $hotTopic->id),
-                        'updated_at' => now()->toISOString()
-                    ];
+                if (! $topic) {
+                    return $this->getFallbackTopicsData();
                 }
 
-                // Fallback to sample data
-                return $this->getFallbackTopicsData();
+                return [
+                    'title' => $topic->title,
+                    'author' => $topic->author_name,
+                    'stats' => [
+                        'comments' => (int) ($topic->comments_count ?? 0),
+                        'views' => (int) ($topic->views_count ?? 0),
+                        'likes' => (int) ($topic->likes_count ?? 0),
+                    ],
+                    'url' => route('forum.posts.show', $topic->slug),
+                    'updated_at' => now()->toISOString(),
+                ];
             });
 
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unable to fetch topics data',
-                'data' => $this->getFallbackTopicsData()
-            ], 500);
+            return $this->success($data);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return $this->failure('Unable to fetch topics data', $this->getFallbackTopicsData());
         }
     }
 
     /**
-     * Get latest blog data for banner
+     * Return the latest published blog and its stored metrics.
      */
     public function blogs(): JsonResponse
     {
         try {
-            $data = Cache::remember('banner_blogs', 300, function () {
-                // Try to get real blog data if available
-                $latestBlog = Blog::where('status', 'published')
-                    ->where('created_at', '>=', Carbon::now()->subDays(30))
-                    ->orderByDesc('created_at')
+            $data = Cache::remember('banner_blogs_truth_v2', 300, function (): array {
+                $blog = Blog::published()
+                    ->orderByDesc('published_at')
                     ->first();
 
-                if ($latestBlog) {
-                    return [
-                        'title' => $latestBlog->title,
-                        'author' => $latestBlog->author->name ?? 'LamGame Team',
-                        'excerpt' => substr(strip_tags($latestBlog->content), 0, 100) . '...',
-                        'stats' => [
-                            'views' => $latestBlog->views ?? rand(150, 400),
-                            'shares' => rand(20, 80),
-                            'reading_time' => $this->calculateReadingTime($latestBlog->content)
-                        ],
-                        'url' => route('blog.show', $latestBlog->slug),
-                        'published_at' => $latestBlog->created_at->toISOString(),
-                        'updated_at' => now()->toISOString()
-                    ];
+                if (! $blog) {
+                    return $this->getFallbackBlogsData();
                 }
 
-                // Fallback to sample data
-                return $this->getFallbackBlogsData();
+                return [
+                    'title' => $blog->name,
+                    'author' => $blog->author ?: 'LamGame Team',
+                    'excerpt' => $blog->short_description ?: '',
+                    'stats' => [
+                        'views' => (int) ($blog->views ?? 0),
+                        'shares' => (int) ($blog->shares ?? 0),
+                        'reading_time' => $blog->reading_time
+                            ? ((int) $blog->reading_time).' phút đọc'
+                            : $this->calculateReadingTime((string) ($blog->content ?? '')),
+                    ],
+                    'url' => route('blog.show', $blog->slug),
+                    'published_at' => optional($blog->published_at)->toISOString(),
+                    'updated_at' => now()->toISOString(),
+                ];
             });
 
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unable to fetch blog data',
-                'data' => $this->getFallbackBlogsData()
-            ], 500);
+            return $this->success($data);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return $this->failure('Unable to fetch blog data', $this->getFallbackBlogsData());
         }
     }
 
     /**
-     * Get sources/games data for banner
+     * Return a real downloadable product and confirmed purchase count.
+     * There is no download-event table, so downloads remains zero rather than estimated.
      */
     public function sources(): JsonResponse
     {
         try {
-            $data = Cache::remember('banner_sources', 300, function () {
-                // Simulate source/game data - replace with real queries
-                $projects = [
-                    'Roguelike Unity Kit',
-                    'RPG Inventory System',
-                    'Mobile Game Template',
-                    'VR Framework Unity',
-                    '2D Platformer Starter Kit',
-                    'Multiplayer Networking Solution'
-                ];
+            $data = Cache::remember('banner_sources_truth_v2', 300, function (): array {
+                $product = DB::table('products as p')
+                    ->join('product_flat as pf', function ($join) {
+                        $join->on('p.id', '=', 'pf.product_id')
+                            ->where('pf.locale', '=', 'vi');
+                    })
+                    ->where('p.type', 'downloadable')
+                    ->where('pf.status', 1)
+                    ->orderByDesc('p.updated_at')
+                    ->select('p.id', 'pf.name')
+                    ->first();
 
-                $ideas = [
-                    'VR adventure Việt Nam folklore',
-                    'Educational game về lịch sử VN',
-                    'Puzzle game với văn hóa dân gian',
-                    'Multiplayer game Việt Nam theme',
-                    'AR game tour du lịch Việt Nam',
-                    'Indie game về đề tài môi trường'
-                ];
+                if (! $product) {
+                    return $this->getFallbackSourcesData();
+                }
+
+                $purchases = DB::table('order_items')
+                    ->join('orders', 'orders.id', '=', 'order_items.order_id')
+                    ->where('order_items.product_id', $product->id)
+                    ->whereIn('orders.status', ['processing', 'completed'])
+                    ->count();
 
                 return [
-                    'project' => $projects[array_rand($projects)],
-                    'idea' => $ideas[array_rand($ideas)],
+                    'project' => $product->name,
+                    'idea' => null,
                     'stats' => [
-                        'downloads' => rand(500, 2000),
-                        'stars' => rand(50, 200),
-                        'contributors' => rand(3, 15)
+                        'downloads' => 0,
+                        'purchases' => $purchases,
+                        'stars' => 0,
+                        'contributors' => 0,
                     ],
-                    'updated_at' => now()->toISOString()
+                    'updated_at' => now()->toISOString(),
                 ];
             });
 
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unable to fetch sources data',
-                'data' => $this->getFallbackSourcesData()
-            ], 500);
+            return $this->success($data);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return $this->failure('Unable to fetch sources data', $this->getFallbackSourcesData());
         }
     }
 
     /**
-     * Get all banner data in one request
+     * Return all banner data in one request.
      */
     public function all(): JsonResponse
     {
         try {
-            $data = [
-                'jobs' => $this->jobs()->getData()->data,
-                'topics' => $this->topics()->getData()->data,
-                'blogs' => $this->blogs()->getData()->data,
-                'sources' => $this->sources()->getData()->data,
-                'updated_at' => now()->toISOString()
-            ];
-
-            return response()->json([
-                'success' => true,
-                'data' => $data
+            return $this->success([
+                'jobs' => $this->responseData($this->jobs()),
+                'topics' => $this->responseData($this->topics()),
+                'blogs' => $this->responseData($this->blogs()),
+                'sources' => $this->responseData($this->sources()),
+                'updated_at' => now()->toISOString(),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            report($e);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Unable to fetch banner data',
@@ -212,86 +208,86 @@ class BannerController extends Controller
                     'jobs' => $this->getFallbackJobsData(),
                     'topics' => $this->getFallbackTopicsData(),
                     'blogs' => $this->getFallbackBlogsData(),
-                    'sources' => $this->getFallbackSourcesData()
-                ]
+                    'sources' => $this->getFallbackSourcesData(),
+                ],
             ], 500);
         }
+    }
+
+    private function success(array $data): JsonResponse
+    {
+        return response()->json(['success' => true, 'data' => $data]);
+    }
+
+    private function failure(string $message, array $data): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $message,
+            'data' => $data,
+        ], 500);
+    }
+
+    private function responseData(JsonResponse $response): array
+    {
+        return (array) ($response->getData(true)['data'] ?? []);
     }
 
     private function getFallbackJobsData(): array
     {
         return [
-            'count' => rand(45, 65),
-            'companies' => ['VNG', 'Gameloft', 'Nexon'],
-            'latest_salary_range' => '20-40tr VNĐ',
-            'new_this_week' => rand(15, 25),
-            'updated_at' => now()->toISOString()
+            'count' => 0,
+            'companies' => [],
+            'latest_salary_range' => null,
+            'new_this_week' => 0,
+            'updated_at' => now()->toISOString(),
         ];
     }
 
     private function getFallbackTopicsData(): array
     {
-        $topics = [
-            'Unity vs Unreal cho game mobile?',
-            'Cách tối ưu memory trong Unity 2023?',
-            'Kinh nghiệm làm game indie Việt Nam',
-            'Best practices cho multiplayer game',
-            'Làm thế nào để publish game lên Steam?'
-        ];
-
         return [
-            'title' => $topics[array_rand($topics)],
-            'author' => 'GameDev' . rand(1, 99),
-            'stats' => [
-                'comments' => rand(50, 150),
-                'views' => rand(200, 600),
-                'likes' => rand(30, 80)
-            ],
-            'updated_at' => now()->toISOString()
+            'title' => null,
+            'author' => null,
+            'stats' => ['comments' => 0, 'views' => 0, 'likes' => 0],
+            'url' => route('forum.index'),
+            'updated_at' => now()->toISOString(),
         ];
     }
 
     private function getFallbackBlogsData(): array
     {
-        $blogs = [
-            'Tối ưu hóa performance Unity cho game 3D',
-            'Xử lý collision detection hiệu quả',
-            'Kinh nghiệm phát triển game mobile Việt Nam',
-            'Machine Learning trong game AI',
-            'Thiết kế UI/UX cho mobile game'
-        ];
-
         return [
-            'title' => $blogs[array_rand($blogs)],
-            'author' => 'LamGame Team',
-            'stats' => [
-                'views' => rand(100, 300),
-                'shares' => rand(20, 60),
-                'reading_time' => rand(5, 15) . ' phút'
-            ],
-            'updated_at' => now()->toISOString()
+            'title' => null,
+            'author' => null,
+            'excerpt' => '',
+            'stats' => ['views' => 0, 'shares' => 0, 'reading_time' => '0 phút đọc'],
+            'url' => null,
+            'published_at' => null,
+            'updated_at' => now()->toISOString(),
         ];
     }
 
     private function getFallbackSourcesData(): array
     {
         return [
-            'project' => 'Roguelike Unity Kit',
-            'idea' => 'VR adventure Việt Nam folklore',
+            'project' => null,
+            'idea' => null,
             'stats' => [
-                'downloads' => rand(500, 1500),
-                'stars' => rand(50, 150),
-                'contributors' => rand(3, 12)
+                'downloads' => 0,
+                'purchases' => 0,
+                'stars' => 0,
+                'contributors' => 0,
             ],
-            'updated_at' => now()->toISOString()
+            'updated_at' => now()->toISOString(),
         ];
     }
 
     private function calculateReadingTime(string $content): string
     {
         $wordCount = str_word_count(strip_tags($content));
-        $readingTimeMinutes = max(1, ceil($wordCount / 200)); // Average 200 words per minute
-        
-        return $readingTimeMinutes . ' phút đọc';
+        $readingTimeMinutes = $wordCount > 0 ? max(1, (int) ceil($wordCount / 200)) : 0;
+
+        return $readingTimeMinutes.' phút đọc';
     }
 }

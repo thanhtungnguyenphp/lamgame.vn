@@ -34,11 +34,13 @@ class HomepageV2Service
      */
     public function getCategories(): array
     {
+        $productIds = app(SourceGameCatalogService::class)->merchandisableProductIds();
         $genres = DB::table('product_flat')
-            ->select('genre', DB::raw('COUNT(*) as count'))
+            ->select('genre', DB::raw('COUNT(DISTINCT product_id) as count'))
             ->where('channel', 'default')
             ->where('locale', 'vi')
             ->where('status', 1)
+            ->whereIn('product_id', $productIds ?: [-1])
             ->whereNotNull('genre')
             ->groupBy('genre')
             ->orderByDesc('count')
@@ -79,9 +81,7 @@ class HomepageV2Service
      */
     public function getTrendingProducts(int $limit = 4): array
     {
-        return $this->getProductsWithImages('trending', $limit)
-            ?: $this->getProductsByBadge('trending', $limit)
-            ?: $this->getProductsBySales($limit);
+        return $this->getProductsWithImages('trending', $limit);
     }
 
     /**
@@ -99,8 +99,7 @@ class HomepageV2Service
      */
     public function getStaffPicks(int $limit = 4): array
     {
-        // First try staff picks with images
-        $picks = DB::table('product_flat')
+        $query = DB::table('product_flat')
             ->select($this->productColumns())
             ->addSelect(DB::raw('(SELECT COUNT(*) FROM product_images WHERE product_images.product_id = product_flat.product_id) as image_count'))
             ->leftJoin('products', 'product_flat.product_id', '=', 'products.id')
@@ -108,35 +107,14 @@ class HomepageV2Service
             ->where('product_flat.locale', 'vi')
             ->where('product_flat.status', 1)
             ->where('product_flat.is_staff_pick', true)
-            ->orderByDesc('image_count')
-            ->orderByDesc('product_flat.sales_count')
+            ->having('image_count', '>', 0);
+
+        return $this->applyMerchandisableScope($query)
+            ->orderByDesc('sales_count')
             ->limit($limit)
             ->get()
-            ->map(fn($p) => $this->formatProduct($p))
+            ->map(fn ($product) => $this->formatProduct($product))
             ->toArray();
-
-        // If not enough staff picks, fill with high-rated products with images
-        if (count($picks) < $limit) {
-            $existingIds = array_column($picks, 'id');
-            $more = DB::table('product_flat')
-                ->select($this->productColumns())
-                ->addSelect(DB::raw('(SELECT COUNT(*) FROM product_images WHERE product_images.product_id = product_flat.product_id) as image_count'))
-                ->leftJoin('products', 'product_flat.product_id', '=', 'products.id')
-                ->where('product_flat.channel', 'default')
-                ->where('product_flat.locale', 'vi')
-                ->where('product_flat.status', 1)
-                ->whereNotIn('product_flat.product_id', $existingIds)
-                ->having('image_count', '>', 0)
-                ->orderByDesc('products.avg_rating')
-                ->orderByDesc('product_flat.sales_count')
-                ->limit($limit - count($picks))
-                ->get()
-                ->map(fn($p) => $this->formatProduct($p))
-                ->toArray();
-            $picks = array_merge($picks, $more);
-        }
-
-        return $picks;
     }
 
     /**
@@ -153,18 +131,22 @@ class HomepageV2Service
             ->where('product_flat.status', 1)
             ->having('image_count', '>', 0);
 
+        $this->applyMerchandisableScope($query);
+
         switch ($sortType) {
             case 'trending':
-                $query->orderByDesc('product_flat.sales_count')->orderByDesc('product_flat.created_at');
+                $query->having('sales_count', '>', 0)
+                    ->orderByDesc('sales_count')
+                    ->orderByDesc('product_flat.created_at');
                 break;
             case 'best_selling':
-                $query->orderByDesc('product_flat.sales_count');
+                $query->orderByDesc('sales_count');
                 break;
             case 'newest':
                 $query->orderByDesc('product_flat.created_at');
                 break;
             default:
-                $query->orderByDesc('product_flat.sales_count');
+                $query->orderByDesc('sales_count');
         }
 
         return $query->limit($limit)
@@ -192,6 +174,8 @@ class HomepageV2Service
             ->where('product_flat.locale', 'vi')
             ->where('product_flat.status', 1);
 
+        $this->applyMerchandisableScope($query);
+
         // Apply filters
         if (!empty($filters['engine'])) {
             $query->where('product_flat.engine', $filters['engine']);
@@ -215,7 +199,7 @@ class HomepageV2Service
                 $query->orderByDesc('image_count')->orderByDesc('product_flat.created_at');
                 break;
             case 'best_selling':
-                $query->orderByDesc('image_count')->orderByDesc('product_flat.sales_count');
+                $query->orderByDesc('image_count')->orderByDesc('sales_count');
                 break;
             case 'price_low':
                 $query->orderByDesc('image_count')->orderBy('product_flat.display_price_usd');
@@ -229,7 +213,7 @@ class HomepageV2Service
             case 'trending':
             default:
                 // Products with images first, then by sales
-                $query->orderByDesc('image_count')->orderByDesc('product_flat.sales_count')->orderByDesc('product_flat.created_at');
+                $query->orderByDesc('image_count')->orderByDesc('sales_count')->orderByDesc('product_flat.created_at');
                 break;
         }
 
@@ -252,17 +236,22 @@ class HomepageV2Service
     public function getStats(): array
     {
         return Cache::remember('homepage_v2_stats', 3600, function () {
-            $productCount = DB::table('product_flat')
-                ->where('channel', 'default')
-                ->where('locale', 'vi')
-                ->where('status', 1)
-                ->count();
+            $productCount = app(SourceGameCatalogService::class)->publishedCount();
+            $developerCount = DB::table('customers')->where('status', 1)->count();
+            $buyerCount = DB::table('orders')
+                ->whereIn('status', ['processing', 'completed'])
+                ->whereNotNull('customer_id')
+                ->distinct('customer_id')
+                ->count('customer_id');
+            $rating = DB::table('source_game_reviews')
+                ->where('status', 'published')
+                ->avg('rating');
 
             return [
-                'source_count' => max($productCount, 74),
-                'developer_count' => 12000,
-                'buyer_count' => 850,
-                'avg_rating' => 4.9,
+                'source_count' => $productCount,
+                'developer_count' => $developerCount,
+                'buyer_count' => $buyerCount,
+                'avg_rating' => $rating ? round((float) $rating, 1) : 0.0,
             ];
         });
     }
@@ -351,6 +340,7 @@ class HomepageV2Service
         return [
             'product_flat.id',
             'product_flat.product_id',
+            'products.sku',
             'product_flat.name',
             'product_flat.short_description',
             'product_flat.url_key',
@@ -360,14 +350,14 @@ class HomepageV2Service
             'product_flat.platform',
             'product_flat.genre',
             'product_flat.genre_tags',
-            'product_flat.sales_count',
             'product_flat.is_staff_pick',
             'product_flat.badge_type',
             'product_flat.display_price_usd',
             'product_flat.difficulty_level',
             'product_flat.created_at',
-            DB::raw('COALESCE(products.avg_rating, 0) as avg_rating'),
-            DB::raw('COALESCE(products.review_count, 0) as review_count'),
+            DB::raw("(SELECT COUNT(*) FROM order_items oi JOIN orders o ON o.id = oi.order_id WHERE oi.product_id = product_flat.product_id AND o.status IN ('processing', 'completed')) as sales_count"),
+            DB::raw("COALESCE((SELECT AVG(sgr.rating) FROM source_game_reviews sgr WHERE sgr.product_id = product_flat.product_id AND sgr.status = 'published'), 0) as avg_rating"),
+            DB::raw("(SELECT COUNT(*) FROM source_game_reviews sgr WHERE sgr.product_id = product_flat.product_id AND sgr.status = 'published') as review_count"),
         ];
     }
 
@@ -376,27 +366,30 @@ class HomepageV2Service
      */
     private function formatProduct($product): array
     {
-        $price = $product->display_price_usd ?? ($product->price ? $product->price / 25000 : 0);
+        $price = (float) ($product->price ?? 0);
+        $salesCount = (int) ($product->sales_count ?? 0);
 
         return [
             'id' => $product->product_id ?? $product->id,
+            'sku' => $product->sku ?? null,
             'name' => $product->name,
             'description' => $product->short_description,
             'url' => '/source-game/' . ($product->url_key ?? ''),
             'thumbnail' => $this->getProductThumbnail($product->product_id ?? $product->id),
-            'price' => round($price, 2),
-            'original_price' => $product->special_price ? round($product->price / 25000, 2) : null,
+            'price' => $price,
+            'original_price' => null,
             'engine' => $product->engine,
             'platform' => json_decode($product->platform ?? '[]', true) ?: ['PC', 'Mobile'],
             'genre' => $product->genre,
             'genre_tags' => json_decode($product->genre_tags ?? '[]', true) ?: [],
-            'sales_count' => $product->sales_count ?? 0,
-            'rating' => round($product->avg_rating ?? 4.5, 1),
-            'review_count' => $product->review_count ?? 0,
-            'badge' => $product->badge_type,
-            'is_staff_pick' => (bool)($product->is_staff_pick ?? false),
+            'sales_count' => $salesCount,
+            'rating' => round((float) ($product->avg_rating ?? 0), 1),
+            'review_count' => (int) ($product->review_count ?? 0),
+            'badge' => $salesCount >= 10 ? 'bestseller' : 'verified',
+            'is_staff_pick' => (bool) ($product->is_staff_pick ?? false),
             'difficulty' => $product->difficulty_level,
             'is_free' => $price <= 0,
+            'is_available' => true,
         ];
     }
 
@@ -418,6 +411,13 @@ class HomepageV2Service
         return '/images/placeholder-game.svg';
     }
 
+    private function applyMerchandisableScope($query)
+    {
+        $productIds = app(SourceGameCatalogService::class)->merchandisableProductIds();
+
+        return $query->whereIn('product_flat.product_id', $productIds ?: [-1]);
+    }
+
     private function getProductsByBadge(string $badge, int $limit): array
     {
         return DB::table('product_flat')
@@ -426,8 +426,9 @@ class HomepageV2Service
             ->where('product_flat.channel', 'default')
             ->where('product_flat.locale', 'vi')
             ->where('product_flat.status', 1)
+            ->whereIn('product_flat.product_id', app(SourceGameCatalogService::class)->merchandisableProductIds() ?: [-1])
             ->where('product_flat.badge_type', $badge)
-            ->orderByDesc('product_flat.sales_count')
+            ->orderByDesc('sales_count')
             ->limit($limit)
             ->get()
             ->map(fn($p) => $this->formatProduct($p))
@@ -442,7 +443,8 @@ class HomepageV2Service
             ->where('product_flat.channel', 'default')
             ->where('product_flat.locale', 'vi')
             ->where('product_flat.status', 1)
-            ->orderByDesc('product_flat.sales_count')
+            ->whereIn('product_flat.product_id', app(SourceGameCatalogService::class)->merchandisableProductIds() ?: [-1])
+            ->orderByDesc('sales_count')
             ->limit($limit)
             ->get()
             ->map(fn($p) => $this->formatProduct($p))

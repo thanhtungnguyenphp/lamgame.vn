@@ -26,9 +26,9 @@
     "programmingLanguage": "{{ $sourceGame['language'] ?? 'C#' }}",
     "runtimePlatform": "{{ $sourceGame['engine'] ?? 'Multi-platform' }}",
     "applicationCategory": "GameApplication",
-    "offers": {"@type": "Offer","price": "{{ $sourceGame['price'] ?? 0 }}","priceCurrency": "VND","availability": "https://schema.org/InStock"}
-    @if(($sourceGame['rating'] ?? 0) > 0)
-    ,"aggregateRating": {"@type": "AggregateRating","ratingValue": "{{ $sourceGame['rating'] }}","reviewCount": "{{ $sourceGame['review_count'] ?? 1 }}","bestRating": "5"}
+    "offers": {"@type": "Offer","price": "{{ $sourceGame['price'] ?? 0 }}","priceCurrency": "VND","availability": "{{ !empty($sourceGame['is_available']) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}"}
+    @if(($sourceGame['rating'] ?? 0) > 0 && ($sourceGame['review_count'] ?? 0) > 0)
+    ,"aggregateRating": {"@type": "AggregateRating","ratingValue": "{{ $sourceGame['rating'] }}","reviewCount": "{{ $sourceGame['review_count'] }}","bestRating": "5","worstRating": "1"}
     @endif
 }
 </script>
@@ -98,14 +98,16 @@
                 @endif
                 @if(count($sourceGame['images']) > 0)
                 <div class="sd-gallery__main">
-                    <img id="main-image" src="{{ $sourceGame['images'][0]['url'] }}" alt="{{ $sourceGame['title'] }}">
+                    <button type="button" class="sd-gallery__zoom" onclick="openSourceLightbox(document.getElementById('main-image').src)" aria-label="Phóng to ảnh sản phẩm">
+                        <img id="main-image" src="{{ $sourceGame['images'][0]['url'] }}" alt="Ảnh gameplay {{ $sourceGame['title'] }}">
+                    </button>
                 </div>
                 @if(count($sourceGame['images']) > 1)
                 <div class="sd-gallery__thumbs">
                     @foreach($sourceGame['images'] as $i => $img)
-                    <div class="sd-thumb {{ $i == 0 ? 'active' : '' }}" onclick="changeMainImage('{{ $img['url'] }}', this)">
-                        <img src="{{ $img['url'] }}" alt="">
-                    </div>
+                    <button type="button" class="sd-thumb {{ $i == 0 ? 'active' : '' }}" onclick="changeMainImage('{{ $img['url'] }}', this)" aria-label="Xem ảnh {{ $i + 1 }} của {{ $sourceGame['title'] }}">
+                        <img src="{{ $img['url'] }}" alt="Ảnh {{ $i + 1 }} của {{ $sourceGame['title'] }}">
+                    </button>
                     @endforeach
                 </div>
                 @endif
@@ -116,7 +118,9 @@
             <div class="sd-info">
                 <div class="sd-info__badges">
                     @if(!empty($sourceGame['engine']))<span class="sd-badge">{{ $sourceGame['engine'] }}</span>@endif
-                    @if($sourceGame['is_free'])<span class="sd-badge sd-badge--free">Free</span>@endif
+                    @if(!empty($sourceGame['is_revenue_featured']))<span class="sd-badge sd-badge--prod">Sản phẩm chọn lọc</span>@endif
+                    @if(empty($sourceGame['is_available']))<span class="sd-badge">Đang hoàn thiện</span>
+                    @elseif($sourceGame['is_free'])<span class="sd-badge sd-badge--free">Miễn phí</span>@endif
                     @if(!empty($sourceGame['production_ready']))<span class="sd-badge sd-badge--prod">Production Ready</span>@endif
                 </div>
                 <h1 class="sd-info__title">{{ $sourceGame['title'] }}</h1>
@@ -124,43 +128,55 @@
 
                 {{-- Trust signals --}}
                 <div class="sd-trust">
-                    @if($sourceGame['rating'] > 0)
-                    <span class="sd-trust__item">⭐ {{ number_format($sourceGame['rating'], 1) }}/5</span>
+                    @if(($sourceGame['rating'] ?? 0) > 0 && ($sourceGame['review_count'] ?? 0) > 0)
+                    <span class="sd-trust__item">⭐ {{ number_format($sourceGame['rating'], 1) }}/5 · {{ $sourceGame['review_count'] }} đánh giá</span>
                     @endif
-                    <span class="sd-trust__item">↓ {{ number_format($sourceGame['downloads_count']) }} lượt tải</span>
-                    <span class="sd-trust__item">💬 {{ $sourceGame['review_count'] ?? 0 }} đánh giá</span>
+                    @if(($sourceGame['downloads_count'] ?? 0) > 0)
+                    <span class="sd-trust__item">↓ {{ number_format($sourceGame['downloads_count']) }} lượt mua</span>
+                    @endif
                     <span class="sd-trust__item">🔄 {{ $sourceGame['last_updated'] }}</span>
                 </div>
 
                 {{-- CTA Priority: #1 Demo > #2 Buy > #3 Save --}}
                 <div class="sd-price-box">
                     @if(!empty($sourceGame['demo_url']))
-                    <a href="{{ $sourceGame['demo_url'] }}" target="_blank" class="sd-btn sd-btn--demo sd-btn--pulse">🚀 Chơi thử Demo</a>
+                    <a href="{{ $sourceGame['demo_url'] }}" target="_blank" rel="noopener" class="sd-btn sd-btn--demo sd-btn--pulse" data-source-demo>🚀 Chơi thử Demo</a>
                     @endif
 
                     <div class="sd-price">
-                        @if($sourceGame['is_free'])
+                        @if(empty($sourceGame['is_available']))
+                            <span class="sd-price__value">Chưa mở bán</span>
+                            @if(($sourceGame['price'] ?? 0) > 0)
+                            <small>Giá dự kiến: {{ number_format($sourceGame['price'], 0, ',', '.') }}đ</small>
+                            @endif
+                        @elseif($sourceGame['is_free'])
                             <span class="sd-price__value sd-price__value--free">Miễn phí</span>
                         @else
-                            <span class="sd-price__value">{{ number_format($sourceGame['price']) }}đ</span>
+                            <span class="sd-price__value">{{ number_format($sourceGame['price'], 0, ',', '.') }}đ</span>
                         @endif
                     </div>
 
-                    @if(!$sourceGame['is_free'] && isset($sourceGame['id']) && !str_starts_with($sourceGame['id'], 'sample-'))
-                    @php $downloadableLinks = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->pluck('id')->toArray(); @endphp
+                    @php
+                        $availableLinks = collect($sourceGame['downloadable_links'] ?? []);
+                        $downloadableLinkIds = $availableLinks->pluck('id')->filter()->values()->all();
+                        $canDownload = !empty($sourceGame['is_available'])
+                            && !empty($sourceGame['has_downloadable_file'])
+                            && !empty($downloadableLinkIds);
+                    @endphp
+                    @if(!$sourceGame['is_free'] && isset($sourceGame['id']) && $canDownload)
                     <form id="add-to-cart-form">
                         <input type="hidden" name="product_id" value="{{ $sourceGame['id'] }}">
                         <input type="hidden" name="quantity" value="1">
-                        @foreach($downloadableLinks as $linkId)
+                        @foreach($downloadableLinkIds as $linkId)
                         <input type="hidden" name="links[]" value="{{ $linkId }}">
                         @endforeach
                         <button type="button" id="btn-add-cart" class="sd-btn sd-btn--primary">📦 Mua Source Code</button>
                         <button type="button" id="btn-buy-now" class="sd-btn sd-btn--secondary">Mua ngay</button>
                     </form>
-                    @elseif($sourceGame['is_free'])
+                    @elseif($sourceGame['is_free'] && $canDownload)
                     @php
-                        $freeLink = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->first();
-                        $directUrl = $freeLink && $freeLink->type === 'url' ? $freeLink->url : null;
+                        $directLink = $availableLinks->first(fn ($link) => ($link['type'] ?? null) === 'url');
+                        $directUrl = $directLink['url'] ?? null;
                     @endphp
                     @if($directUrl)
                     <a href="{{ $directUrl }}" target="_blank" rel="noopener" id="btn-add-cart" class="sd-btn sd-btn--primary">📥 Tải Source Code (Free)</a>
@@ -168,13 +184,16 @@
                     <form id="add-to-cart-form">
                         <input type="hidden" name="product_id" value="{{ $sourceGame['id'] }}">
                         <input type="hidden" name="quantity" value="1">
-                        @php $freeLinks = \DB::table('product_downloadable_links')->where('product_id', $sourceGame['id'])->pluck('id')->toArray(); @endphp
-                        @foreach($freeLinks as $linkId)
+                        @foreach($downloadableLinkIds as $linkId)
                         <input type="hidden" name="links[]" value="{{ $linkId }}">
                         @endforeach
                         <button type="button" id="btn-add-cart" class="sd-btn sd-btn--primary">📦 Tải về miễn phí</button>
                     </form>
                     @endif
+                    @else
+                    <div class="sd-message sd-message--error" style="display:block" role="status">
+                        Gói tải chưa đạt đủ điều kiện giao hàng. Sản phẩm chưa mở bán để tránh cung cấp file không đầy đủ.
+                    </div>
                     @endif
                     <button class="sd-btn sd-btn--save" onclick="addToFavorites()">❤ Lưu Source</button>
                     <div id="cart-message" class="sd-message"></div>
@@ -218,12 +237,9 @@
     <div class="sd-container">
         <h2 class="sd-sec__title">🛡️ Cam kết chất lượng</h2>
         <div class="sd-trust-panel">
-            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Production Ready</span></div>
-            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>{{ $sourceGame['engine'] ? $sourceGame['engine'] . ' Compatible' : 'Ready to Use' }}</span></div>
-            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Clean Architecture</span></div>
-            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Mobile Optimized</span></div>
-            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Documentation Included</span></div>
-            <div class="sd-trust-item"><span class="sd-trust-item__icon">✅</span><span>Fast Support</span></div>
+            @foreach($sourceGame['buyer_benefits'] ?? [] as $benefit)
+            <div class="sd-trust-item"><span class="sd-trust-item__icon">✓</span><span>{{ $benefit }}</span></div>
+            @endforeach
         </div>
     </div>
 </section>
@@ -288,7 +304,7 @@
                 <div class="sd-related__img"><img src="{{ $source['image'] }}" alt="{{ $source['title'] }}" loading="lazy"></div>
                 <div class="sd-related__body">
                     <h3>{{ Str::limit($source['title'], 40) }}</h3>
-                    <span class="sd-related__price">{{ ($source['price'] ?? 0) > 0 ? number_format($source['price']) . 'đ' : 'Miễn phí' }}</span>
+                    <span class="sd-related__price">{{ ($source['price'] ?? 0) > 0 ? number_format($source['price'], 0, ',', '.') . 'đ' : 'Miễn phí' }}</span>
                 </div>
             </a>
             @endforeach
@@ -318,12 +334,14 @@
 <section class="sd-cta">
     <div class="sd-container" style="text-align:center">
         <h2>Sẵn sàng tiết kiệm thời gian phát triển?</h2>
-        <p>Source code production-ready, document đầy đủ, support sau mua</p>
+        <p>Kiểm tra demo, thông số, nội dung gói tải và điều khoản trước khi mua</p>
         <div class="sd-cta__btns">
-            @if($sourceGame['is_free'])
-            <button onclick="document.getElementById('btn-add-cart').click()" class="sd-btn sd-btn--primary sd-btn--lg">Tải về miễn phí →</button>
+            @if($canDownload && $sourceGame['is_free'])
+            <button onclick="document.getElementById('btn-add-cart')?.click()" class="sd-btn sd-btn--primary sd-btn--lg">Tải về miễn phí →</button>
+            @elseif($canDownload)
+            <button onclick="document.getElementById('btn-buy-now')?.click()" class="sd-btn sd-btn--primary sd-btn--lg">Mua ngay — {{ number_format($sourceGame['price'], 0, ',', '.') }}đ</button>
             @else
-            <button onclick="document.getElementById('btn-buy-now').click()" class="sd-btn sd-btn--primary sd-btn--lg">Mua ngay — {{ number_format($sourceGame['price']) }}đ</button>
+            <button type="button" class="sd-btn sd-btn--primary sd-btn--lg" disabled>Tạm ngừng bán</button>
             @endif
             <a href="{{ route('lamgame.source-game') }}" class="sd-btn sd-btn--ghost">← Xem thêm source khác</a>
         </div>
@@ -332,10 +350,19 @@
 
 </div>
 
+<div class="sd-lightbox" id="source-lightbox" hidden role="dialog" aria-modal="true" aria-label="Ảnh sản phẩm">
+    <button type="button" class="sd-lightbox__close" onclick="closeSourceLightbox()" aria-label="Đóng ảnh">×</button>
+    <img id="source-lightbox-image" src="" alt="Ảnh sản phẩm phóng to">
+</div>
+
 {{-- STICKY MOBILE CTA --}}
 <div class="sd-sticky-cta">
-    <span class="sd-sticky-cta__price">{{ $sourceGame['is_free'] ? 'Miễn phí' : number_format($sourceGame['price']) . 'đ' }}</span>
-    <button onclick="document.getElementById('btn-add-cart').click()" class="sd-btn sd-btn--primary sd-btn--sm">{{ $sourceGame['is_free'] ? 'Tải về' : 'Mua ngay' }}</button>
+    <span class="sd-sticky-cta__price">{{ empty($sourceGame['is_available']) ? 'Chưa mở bán' : ($sourceGame['is_free'] ? 'Miễn phí' : number_format($sourceGame['price'], 0, ',', '.') . 'đ') }}</span>
+    @if($canDownload)
+    <button onclick="document.getElementById('{{ $sourceGame['is_free'] ? 'btn-add-cart' : 'btn-buy-now' }}')?.click()" class="sd-btn sd-btn--primary sd-btn--sm">{{ $sourceGame['is_free'] ? 'Tải về' : 'Mua ngay' }}</button>
+    @else
+    <button type="button" class="sd-btn sd-btn--primary sd-btn--sm" disabled>Chưa sẵn sàng</button>
+    @endif
 </div>
 @endsection
 
@@ -357,6 +384,9 @@
 .sd-faq__q::before{content:'▸ ';color:#7C5CFF}
 .sd-faq__item[open] .sd-faq__q::before{content:'▾ '}
 .sd-faq__a{padding:0 18px 14px;color:#9CA3AF;font-size:.88rem;line-height:1.6}
+.sd-gallery__zoom{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}
+.sd-gallery__zoom img{display:block;width:100%}
+.sd-lightbox[hidden]{display:none}.sd-lightbox{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:32px}.sd-lightbox img{max-width:95vw;max-height:90vh;object-fit:contain}.sd-lightbox__close{position:absolute;right:20px;top:12px;border:0;background:transparent;color:#fff;font-size:42px;cursor:pointer}
 </style>
 @endpush
 
@@ -366,9 +396,33 @@ function changeMainImage(url, el) {
     document.getElementById('main-image').src = url;
     document.querySelectorAll('.sd-thumb').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
+    window.trackRevenueEvent?.('view_item_image', {item_id: '{{ $sourceGame['id'] }}'});
+}
+
+function openSourceLightbox(url) {
+    const lightbox = document.getElementById('source-lightbox');
+    document.getElementById('source-lightbox-image').src = url;
+    lightbox.hidden = false;
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSourceLightbox() {
+    document.getElementById('source-lightbox').hidden = true;
+    document.body.style.overflow = '';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    const item = {
+        currency: 'VND',
+        value: {{ (float) ($sourceGame['price'] ?? 0) }},
+        items: [{item_id: '{{ $sourceGame['id'] }}', item_name: @json($sourceGame['title']), price: {{ (float) ($sourceGame['price'] ?? 0) }}, quantity: 1}]
+    };
+    window.trackRevenueEvent?.('view_item', item, 'source-view-{{ $sourceGame['id'] }}');
+
+    document.querySelector('[data-source-demo]')?.addEventListener('click', function () {
+        window.trackRevenueEvent?.('select_content', {content_type: 'source_demo', item_id: '{{ $sourceGame['id'] }}'});
+    });
+
     const addCartBtn = document.getElementById('btn-add-cart');
     const buyNowBtn = document.getElementById('btn-buy-now');
     const messageDiv = document.getElementById('cart-message');
@@ -387,6 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const quantity = form.querySelector('[name="quantity"]').value;
         const links = Array.from(form.querySelectorAll('[name="links[]"]')).map(i => i.value);
         const orig = btn.innerHTML;
+        window.trackRevenueEvent?.(buyNow ? 'begin_checkout' : 'add_to_cart', item);
         btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang xử lý...';
         btn.disabled = true;
 
@@ -423,6 +478,9 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 document.querySelectorAll('.sd-fadein').forEach(el => observer.observe(el));
 
-function addToFavorites() { alert('Đã lưu vào danh sách yêu thích!'); }
+function addToFavorites() {
+    window.trackRevenueEvent?.('add_to_wishlist', {item_id: '{{ $sourceGame['id'] }}', item_name: @json($sourceGame['title'])});
+    alert('Đã lưu vào danh sách yêu thích!');
+}
 </script>
 @endpush

@@ -176,7 +176,7 @@
                             <img src="{{ $source['thumbnail'] }}" alt="{{ $source['title'] }}" loading="lazy">
                             <div>
                                 <h4>{{ $source['title'] }}</h4>
-                                <span>{{ $source['is_free'] ? 'Miễn phí' : number_format($source['price']) . 'đ' }}</span>
+                                <span>{{ $source['is_free'] ? 'Miễn phí' : number_format($source['price'], 0, ',', '.') . 'đ' }}</span>
                             </div>
                         </a>
                         @empty

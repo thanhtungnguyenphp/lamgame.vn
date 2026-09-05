@@ -1,8 +1,8 @@
 {{-- LAMGAME.VN HOMEPAGE V2 — Dark Theme Marketplace --}}
 @extends('layouts.master-v2')
 
-@section('page_title', 'LamGame.vn — Source Game chất lượng cho Unity & Unreal Developer')
-@section('page_description', 'Marketplace source game hàng đầu Việt Nam. Tiết kiệm hàng trăm giờ phát triển với source code, hệ thống gameplay và template production-ready.')
+@section('page_title', 'LamGame.vn — Source Game đã kiểm chứng cho Game Developer')
+@section('page_description', 'Catalog source game có demo, ảnh gameplay, giá và trạng thái gói tải được công khai, kiểm tra trước khi mở bán.')
 
 @section('content')
 
@@ -11,11 +11,11 @@
     <div class="lg-v2-container">
         <div class="lg-v2-hero__grid">
             <div class="lg-v2-hero__content">
-                <span class="lg-v2-hero__badge">MARKETPLACE SOURCE GAME HÀNG ĐẦU VIỆT NAM</span>
-                <h1>Source Game chất lượng <br>cho <span class="lg-v2-hero__accent">Unity & Unreal</span> Developer</h1>
-                <p class="lg-v2-hero__sub">Tiết kiệm hàng trăm giờ phát triển với source code, hệ thống gameplay và template production-ready.</p>
+                <span class="lg-v2-hero__badge">SOURCE GAME THỰC HÀNH CHO GAME DEVELOPER VIỆT</span>
+                <h1>Source Game đã kiểm chứng <br>cho <span class="lg-v2-hero__accent">Game Developer</span></h1>
+                <p class="lg-v2-hero__sub">Khám phá source có demo, ảnh gameplay, license và gói tải được kiểm tra trước khi mở bán.</p>
                 <div class="lg-v2-hero__cta">
-                    <a href="{{ route('lamgame.source-game') }}" class="lg-v2-btn lg-v2-btn--primary">✨ Khám phá Source Hot</a>
+                    <a href="{{ route('lamgame.source-game') }}" class="lg-v2-btn lg-v2-btn--primary">✨ Khám phá Source</a>
                     <a href="{{ route('lamgame.source-game') }}?sort=featured" class="lg-v2-btn lg-v2-btn--secondary">⭐ Source Nổi Bật</a>
                 </div>
             </div>
@@ -29,10 +29,10 @@
                 </div>
                 {{-- USP Cards --}}
                 <div class="lg-v2-hero__usps">
-                    <div class="lg-v2-hero__usp">✅ Production Ready</div>
-                    <div class="lg-v2-hero__usp">🔄 Cập nhật thường xuyên</div>
-                    <div class="lg-v2-hero__usp">💬 Hỗ trợ tận tâm</div>
-                    <div class="lg-v2-hero__usp">💰 Hoàn tiền 7 ngày</div>
+                    <div class="lg-v2-hero__usp">✅ Demo kiểm tra trước</div>
+                    <div class="lg-v2-hero__usp">📦 Gói tải được xác minh</div>
+                    <div class="lg-v2-hero__usp">📄 License rõ ràng</div>
+                    <div class="lg-v2-hero__usp">💬 Kênh hỗ trợ công khai</div>
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
         <div class="lg-v2-hero__stats">
             <div class="lg-v2-hero__stat">
                 <span class="lg-v2-hero__stat-icon">🎮</span>
-                <span class="lg-v2-hero__stat-number">1,200+</span>
+                <span class="lg-v2-hero__stat-number">{{ number_format($stats['source_count'] ?? 0) }}</span>
                 <span class="lg-v2-hero__stat-label">Source Game</span>
             </div>
             <div class="lg-v2-hero__stat">
@@ -75,79 +75,72 @@
             <a href="{{ route('lamgame.source-game') }}?genre={{ $cat['slug'] }}" class="lg-v2-category-card {{ ($cat['active'] ?? false) ? 'lg-v2-category-card--active' : '' }}">
                 <span class="lg-v2-category-card__icon">{{ $cat['icon'] }}</span>
                 <span class="lg-v2-category-card__name">{{ $cat['name'] }}</span>
-                <span class="lg-v2-category-card__count">{{ $cat['count'] }}+</span>
+                <span class="lg-v2-category-card__count">{{ $cat['count'] }}</span>
             </a>
             @endforeach
         </div>
     </div>
 </section>
 
-{{-- CURATED: Trending / Best Selling / Staff Picks --}}
+{{-- CURATED: only show products backed by real sales or audited catalog status --}}
+@if(!empty($trending ?? []) || !empty($best_selling ?? []) || !empty($staff_picks ?? []))
 <section class="lg-v2-section" style="padding-top: 0;">
     <div class="lg-v2-container">
         <div class="lg-v2-curated">
-            {{-- Trending --}}
+            @if(!empty($trending ?? []))
             <div class="lg-v2-curated__col">
                 <div class="lg-v2-curated__header">
-                    <h3>🔥 Trending Now</h3>
-                    <a href="{{ route('lamgame.source-game') }}?sort=trending" class="lg-v2-section__link">Xem tất cả →</a>
+                    <h3>🔥 Đang được mua</h3>
+                    <a href="{{ route('lamgame.source-game') }}?sort=popular" class="lg-v2-section__link">Xem tất cả →</a>
                 </div>
-                <p class="lg-v2-curated__desc">Những source đang được quan tâm</p>
+                <p class="lg-v2-curated__desc">Xếp theo giao dịch đã hoàn tất</p>
                 <div class="lg-v2-curated__thumbs">
-                    @forelse(($trending ?? []) as $item)
+                    @foreach($trending as $item)
                     <a href="{{ $item['url'] }}" class="lg-v2-curated__thumb" title="{{ $item['name'] }}">
                         <img src="{{ $item['thumbnail'] }}" alt="{{ $item['name'] }}" loading="lazy">
                     </a>
-                    @empty
-                    @for($i = 0; $i < 4; $i++)
-                    <div class="lg-v2-skeleton" style="width:80px;height:80px;"></div>
-                    @endfor
-                    @endforelse
+                    @endforeach
                 </div>
             </div>
+            @endif
 
-            {{-- Featured Sources (was Best Selling) --}}
+            @if(!empty($best_selling ?? []))
             <div class="lg-v2-curated__col">
                 <div class="lg-v2-curated__header">
-                    <h3>⭐ Source Nổi Bật</h3>
-                    <a href="{{ route('lamgame.source-game') }}?sort=featured" class="lg-v2-section__link">Xem tất cả →</a>
+                    <h3>✅ Source đã kiểm chứng</h3>
+                    <a href="{{ route('lamgame.source-game') }}" class="lg-v2-section__link">Xem tất cả →</a>
                 </div>
-                <p class="lg-v2-curated__desc">Được chọn lọc bởi LamGame</p>
+                <p class="lg-v2-curated__desc">Có demo, ảnh, license và gói tải đã xác minh</p>
                 <div class="lg-v2-curated__thumbs">
-                    @forelse(($best_selling ?? []) as $item)
+                    @foreach($best_selling as $item)
                     <a href="{{ $item['url'] }}" class="lg-v2-curated__thumb" title="{{ $item['name'] }}">
                         <img src="{{ $item['thumbnail'] }}" alt="{{ $item['name'] }}" loading="lazy">
                     </a>
-                    @empty
-                    @for($i = 0; $i < 4; $i++)
-                    <div class="lg-v2-skeleton" style="width:80px;height:80px;"></div>
-                    @endfor
-                    @endforelse
+                    @endforeach
                 </div>
             </div>
+            @endif
 
-            {{-- Staff Picks --}}
+            @if(!empty($staff_picks ?? []))
             <div class="lg-v2-curated__col">
                 <div class="lg-v2-curated__header">
                     <h3>👑 Staff Picks</h3>
-                    <a href="{{ route('lamgame.source-game') }}?sort=staff_picks" class="lg-v2-section__link">Xem tất cả →</a>
+                    <a href="{{ route('lamgame.source-game') }}?sort=featured" class="lg-v2-section__link">Xem tất cả →</a>
                 </div>
-                <p class="lg-v2-curated__desc">Lựa chọn từ đội ngũ LamGame</p>
+                <p class="lg-v2-curated__desc">SKU đã kiểm chứng và được đội ngũ lựa chọn</p>
                 <div class="lg-v2-curated__thumbs">
-                    @forelse(($staff_picks ?? []) as $item)
+                    @foreach($staff_picks as $item)
                     <a href="{{ $item['url'] }}" class="lg-v2-curated__thumb" title="{{ $item['name'] }}">
                         <img src="{{ $item['thumbnail'] }}" alt="{{ $item['name'] }}" loading="lazy">
                     </a>
-                    @empty
-                    @for($i = 0; $i < 4; $i++)
-                    <div class="lg-v2-skeleton" style="width:80px;height:80px;"></div>
-                    @endfor
-                    @endforelse
+                    @endforeach
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </section>
+@endif
 
 {{-- PRODUCT GRID --}}
 <section class="lg-v2-section">
@@ -163,7 +156,7 @@
                 <select class="lg-v2-filter-select" id="filter-engine"><option value="">Engine</option><option>Unity</option><option>Unreal</option><option>Godot</option><option>Phaser</option></select>
                 <select class="lg-v2-filter-select" id="filter-genre"><option value="">Genre</option>@foreach($categories ?? [] as $cat)@if(!($cat['active'] ?? false))<option value="{{ $cat['slug'] }}">{{ $cat['name'] }}</option>@endif @endforeach</select>
                 <select class="lg-v2-filter-select" id="filter-platform"><option value="">Platform</option><option>PC</option><option>Mobile</option><option>Web</option><option>Console</option></select>
-                <select class="lg-v2-filter-select" id="filter-price"><option value="">Giá</option><option value="0-0">Free</option><option value="1-20">$1 - $20</option><option value="20-50">$20 - $50</option><option value="50-100">$50 - $100</option></select>
+                <select class="lg-v2-filter-select" id="filter-price"><option value="">Giá</option><option value="0-0">Miễn phí</option><option value="1-10">Đến 250.000đ</option><option value="10-20">250.000đ - 500.000đ</option><option value="20-100">Trên 500.000đ</option></select>
                 <select class="lg-v2-filter-select" id="filter-difficulty"><option value="">Độ khó</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select>
             </div>
             <div class="lg-v2-filters__right">
@@ -179,7 +172,7 @@
                 <div class="lg-v2-product-card__img">
                     <img src="{{ $product['thumbnail'] }}" alt="{{ $product['name'] }}" loading="lazy">
                     @if($product['badge'])
-                    <span class="lg-v2-badge lg-v2-badge--{{ $product['badge'] }}">{{ strtoupper($product['badge'] === 'bestseller' ? 'BEST SELLER' : $product['badge']) }}</span>
+                    <span class="lg-v2-badge lg-v2-badge--{{ $product['badge'] }}">{{ $product['badge'] === 'bestseller' ? 'BÁN CHẠY' : ($product['badge'] === 'verified' ? 'ĐÃ KIỂM CHỨNG' : strtoupper($product['badge'])) }}</span>
                     @endif
                     <button class="lg-v2-product-card__wishlist" title="Thêm vào wishlist">♡</button>
                 </div>
@@ -198,15 +191,17 @@
                         @endforeach
                     </div>
                     <div class="lg-v2-product-card__footer">
+                        @if(($product['review_count'] ?? 0) > 0 || ($product['sales_count'] ?? 0) > 0)
                         <div class="lg-v2-product-card__rating">
-                            <span>⭐ {{ $product['rating'] }} ({{ $product['review_count'] }})</span>
-                            <span>• {{ number_format($product['sales_count']) }} sales</span>
+                            @if(($product['review_count'] ?? 0) > 0)<span>⭐ {{ $product['rating'] }} ({{ $product['review_count'] }})</span>@endif
+                            @if(($product['sales_count'] ?? 0) > 0)<span>• {{ number_format($product['sales_count']) }} lượt mua</span>@endif
                         </div>
+                        @endif
                         <div class="lg-v2-product-card__price-row">
                             @if($product['is_free'])
                             <span class="lg-v2-product-card__price lg-v2-product-card__price--free">Free</span>
                             @else
-                            <span class="lg-v2-product-card__price">${{ $product['price'] }}</span>
+                            <span class="lg-v2-product-card__price">{{ number_format($product['price'], 0, ',', '.') }}đ</span>
                             @endif
                             <span class="lg-v2-btn lg-v2-btn--outline lg-v2-btn--sm">Xem chi tiết</span>
                         </div>
@@ -886,18 +881,19 @@ document.addEventListener('DOMContentLoaded', function() {
             if (min) params.set('price_min', min);
             if (max) params.set('price_max', max);
         }
-        params.set('page', page);
+        if (page > 1) params.set('page', page);
         return params.toString();
     }
 
     // Render product card HTML
     function renderProductCard(product) {
-        const badgeHtml = product.badge ? `<span class="lg-v2-badge lg-v2-badge--${product.badge}">${(product.badge === 'bestseller' ? 'BEST SELLER' : product.badge).toUpperCase()}</span>` : '';
+        const badgeLabel = product.badge === 'bestseller' ? 'BÁN CHẠY' : (product.badge === 'verified' ? 'ĐÃ KIỂM CHỨNG' : String(product.badge || '').toUpperCase());
+        const badgeHtml = product.badge ? `<span class="lg-v2-badge lg-v2-badge--${product.badge}">${badgeLabel}</span>` : '';
         const tagsHtml = (product.genre_tags || []).slice(0, 3).map(t => `<span class="lg-v2-tag">${t}</span>`).join('');
         const platformHtml = (product.platform || []).slice(0, 3).map(p => `<span class="lg-v2-tag">${p}</span>`).join('');
         const priceHtml = product.is_free
             ? '<span class="lg-v2-product-card__price lg-v2-product-card__price--free">Free</span>'
-            : `<span class="lg-v2-product-card__price">$${product.price}</span>`;
+            : `<span class="lg-v2-product-card__price">${new Intl.NumberFormat('vi-VN').format(product.price)}đ</span>`;
 
         return `
         <a href="${product.url}" class="lg-v2-card lg-v2-product-card lg-v2-fade-in visible">
@@ -915,10 +911,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     ${platformHtml}
                 </div>
                 <div class="lg-v2-product-card__footer">
-                    <div class="lg-v2-product-card__rating">
-                        <span>⭐ ${product.rating} (${product.review_count})</span>
-                        <span>• ${product.sales_count.toLocaleString()} sales</span>
-                    </div>
+                    ${(product.review_count > 0 || product.sales_count > 0) ? `<div class="lg-v2-product-card__rating">
+                        ${product.review_count > 0 ? `<span>⭐ ${product.rating} (${product.review_count})</span>` : ''}
+                        ${product.sales_count > 0 ? `<span>• ${product.sales_count.toLocaleString()} lượt mua</span>` : ''}
+                    </div>` : ''}
                     <div class="lg-v2-product-card__price-row">
                         ${priceHtml}
                         <span class="lg-v2-btn lg-v2-btn--outline lg-v2-btn--sm">Xem chi tiết</span>

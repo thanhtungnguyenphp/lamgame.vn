@@ -1,123 +1,48 @@
-# Google AdSense Setup Documentation
+# AdSense Integration — Active, Consent-Gated
 
-## Meta Tag Implementation
+Publisher hiện tại do chủ tài khoản cung cấp:
 
-Google AdSense verification meta tag đã được thêm vào toàn bộ site.
+- Client: `ca-pub-5812352607411986`
+- Seller: `pub-5812352607411986`
+- Trạng thái production: `ADSENSE_ENABLED=true`
 
-### Meta Tag
-```html
-<meta name="google-adsense-account" content="ca-pub-5812352607411986">
+## Kiến trúc
+
+Không hardcode snippet trong layout. Hai layout gọi `partials.adsense`; partial này:
+
+1. Render verification meta khi publisher hợp lệ.
+2. Chỉ chuẩn bị loader trên route editorial được allowlist.
+3. Chỉ thêm `adsbygoogle.js` sau khi `LamGameConsent.allows('advertising')` trả `true`.
+4. Reload trang khi người dùng thu hồi advertising consent để loại bỏ runtime đã tải.
+
+Cấu hình nằm tại `config/adsense.php` và `.env`:
+
+```env
+ADSENSE_ENABLED=true
+ADSENSE_CLIENT=ca-pub-5812352607411986
+ADSENSE_SELLER_ID=pub-5812352607411986
 ```
 
-### Location
-- **File**: `resources/views/layouts/master.blade.php`
-- **Line**: ~26 (sau Open Graph tags, trước @stack('meta'))
+## Phạm vi hiện tại
 
-### Cấu trúc HTML Head
-```html
-<!-- Open Graph Meta Tags -->
-<meta property="og:title" content="...">
-<meta property="og:description" content="...">
-<meta property="og:image" content="...">
-<meta property="og:url" content="...">
-<meta property="og:type" content="website">
+Được phép:
 
-<!-- Google AdSense -->
-<meta name="google-adsense-account" content="ca-pub-5812352607411986">
+- `lamgame.blog` (`/blog`)
+- `blog.show` (`/blog/{slug}`)
 
-<!-- Canonical URL -->
-<link rel="canonical" href="{{ url()->current() }}">
+Bị loại trừ: checkout, account/customer, admin/API, game, Source Game, AI Tools, Hire và Portfolio.
 
-@stack('meta')
-```
+## Consent
 
-## Changes Made
+- Consent Mode v2 mặc định `denied`.
+- Script quảng cáo không được request trước advertising consent.
+- Verification meta không tạo cookie và được render để AdSense xác minh site.
+- Privacy Policy và footer cho phép người dùng thay đổi consent.
 
-### 1. Master Layout (`resources/views/layouts/master.blade.php`)
-- ✅ Thêm Google AdSense meta tag
-- ✅ Thêm Canonical URL tag (áp dụng cho tất cả pages)
+## Validation bắt buộc sau mỗi thay đổi
 
-### 2. Homepage View (`resources/views/home/index.blade.php`)
-- ✅ Xóa duplicate canonical URL tag (đã có trong master layout)
-
-### 3. Backups Created
-- `resources/views/layouts/master.blade.php.backup.adsense`
-- `resources/views/home/index.blade.php.backup.adsense`
-
-## Verification
-
-### Check Meta Tag on Live Site
-```bash
-# Homepage
-curl -s https://lamgame.vn | grep "google-adsense-account"
-
-# Job pages
-curl -s https://lamgame.vn/viec-lam/s-38 | grep "google-adsense-account"
-
-# Blog pages
-curl -s https://lamgame.vn/blog/huong-dan-unity-2023-tinh-nang-moi | grep "google-adsense-account"
-```
-
-### Check for Duplicate Canonical Tags
-```bash
-# Should return 1 (not 2)
-curl -s https://lamgame.vn | grep -c 'rel="canonical"'
-```
-
-## Applied To
-
-✅ **All pages** (via master layout):
-- Homepage
-- Job listing page
-- Job detail pages
-- Blog listing page
-- Blog detail pages
-- Forum pages
-- All static pages
-
-## SEO Benefits
-
-1. **Google AdSense**: Verified ownership for ad placement
-2. **Canonical URL**: Prevents duplicate content issues
-3. **Consistent**: Applied across all pages automatically
-
-## Next Steps for AdSense
-
-1. Verify ownership trong Google AdSense dashboard
-2. Setup ad units sau khi được approve
-3. Add ad code vào appropriate locations:
-   - Header/footer
-   - Sidebar
-   - Between content sections
-   - Job/blog detail pages
-
-## Notes
-
-- Meta tag nằm trong `<head>` section
-- Được load trên mọi page qua master layout
-- Không cần config thêm trong .env
-- Canonical URL tự động match với current URL
-- Không ảnh hưởng đến performance
-
-## Cache Management
-
-Sau khi thay đổi view:
-```bash
-docker exec lg-php php artisan view:clear
-docker exec lg-php php artisan config:clear
-```
-
-## Rollback (nếu cần)
-
-```bash
-# Restore master layout
-cp resources/views/layouts/master.blade.php.backup.adsense \
-   resources/views/layouts/master.blade.php
-
-# Restore homepage
-cp resources/views/home/index.blade.php.backup.adsense \
-   resources/views/home/index.blade.php
-
-# Clear cache
-docker exec lg-php php artisan view:clear
-```
+1. First visit: không có request `pagead2.googlesyndication.com`.
+2. Reject: lựa chọn được lưu, script vẫn không tải.
+3. Advertising opt-in trên blog: `#lg-adsense` được thêm với đúng client.
+4. Advertising opt-in trên route bị loại trừ: không có `#lg-adsense`.
+5. `ads.txt` và `app-ads.txt` trả HTTP 200, đúng seller record.

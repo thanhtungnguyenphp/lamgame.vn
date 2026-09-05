@@ -29,6 +29,8 @@ class SubscriptionController extends Controller
             'currency' => $p->currency,
             'interval' => $p->billing_interval,
             'features' => $p->features,
+            'purchasable' => $p->slug !== 'enterprise' && ($p->price > 0 || $p->slug === 'free'),
+            'contact_url' => $p->slug === 'enterprise' ? '/hire' : null,
         ]);
 
         return response()->json(['status' => 'ok', 'data' => $plans]);
@@ -39,10 +41,25 @@ class SubscriptionController extends Controller
      */
     public function subscribe(Request $request): JsonResponse
     {
-        $request->validate(['plan' => 'required|in:free,basic,pro,studio,enterprise']);
+        $request->validate(['plan' => 'required|string|max:50']);
 
         $userId = $request->user()->id;
         $planSlug = $request->input('plan');
+        $plan = SubscriptionPlan::where('slug', $planSlug)->active()->first();
+
+        if (!$plan) {
+            return response()->json([
+                'status' => 'error',
+                'error' => ['code' => 'INVALID_PLAN', 'message' => 'Gói đăng ký không tồn tại.'],
+            ], 422);
+        }
+
+        if ($planSlug === 'enterprise') {
+            return response()->json([
+                'status' => 'error',
+                'error' => ['code' => 'CONTACT_SALES', 'message' => 'Gói Enterprise cần báo giá riêng.', 'contact_url' => '/hire'],
+            ], 422);
+        }
 
         if ($planSlug === 'free') {
             $sub = $this->service->subscribeFree($userId);

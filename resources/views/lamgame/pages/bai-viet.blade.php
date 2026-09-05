@@ -143,7 +143,7 @@
                                 </div>
                                 <div class="comment-actions">
                                     <button class="comment-action" onclick="likeComment({{ $loop->index }})">
-                                        👍 Thích ({{ rand(1, 8) }})
+                                        👍 Thích@if (($comment['likes_count'] ?? 0) > 0) ({{ (int) $comment['likes_count'] }})@endif
                                     </button>
                                     <button class="comment-action" onclick="replyComment({{ $loop->index }})">
                                         💬 Trả lời
@@ -172,10 +172,16 @@
                             <div class="author-info">
                                 <div class="author-name">{{ $post['author'] }}</div>
                                 <div class="author-title">Unity Developer</div>
+                                @if (($post['author_posts_count'] ?? 0) > 0 || ($post['author_points'] ?? 0) > 0)
                                 <div class="author-stats">
-                                    <span>📝 {{ rand(15, 50) }} bài viết</span>
-                                    <span>⭐ {{ rand(100, 500) }} điểm</span>
+                                    @if (($post['author_posts_count'] ?? 0) > 0)
+                                    <span>📝 {{ (int) $post['author_posts_count'] }} bài viết</span>
+                                    @endif
+                                    @if (($post['author_points'] ?? 0) > 0)
+                                    <span>⭐ {{ (int) $post['author_points'] }} điểm</span>
+                                    @endif
                                 </div>
+                                @endif
                             </div>
                         </div>
                         <div class="author-actions">

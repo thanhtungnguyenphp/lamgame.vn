@@ -80,8 +80,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
 <script>
-const CHAT_API = '{{ url("/ohha-ai/api/chat") }}';
-const API_KEY = '{{ config("ai-tools.ohha_api_key") }}';
+const CHAT_API = '{{ url("/api/v1/ai-chat/message") }}';
+const DASHBOARD_API = '{{ url("/api/v1/ai-tools/dashboard") }}';
+const AUTH_TOKEN = @json($token);
 let sessionId = null;
 let isLoading = false;
 
@@ -124,10 +125,17 @@ async function sendMessage() {
     typingEl.style.display = '';
     scrollBottom();
 
+    const startedAt = performance.now();
+    window.trackRevenueEvent?.('ai_tool_run', {tool_type: 'chat'});
+
     try {
         const r = await fetch(CHAT_API, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json', 'X-API-Key': API_KEY},
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + AUTH_TOKEN
+            },
             body: JSON.stringify({message: msg, session_id: sessionId, persona: 'game'})
         });
 
@@ -144,10 +152,20 @@ async function sendMessage() {
                 }
             });
             addMessage(d.response + imageHtml, 'bot');
+            window.trackRevenueEvent?.('ai_tool_success', {
+                tool_type: 'chat',
+                duration_ms: Math.round(performance.now() - startedAt)
+            });
+            loadQuota();
         } else {
+            window.trackRevenueEvent?.(r.status === 403 ? 'ai_quota_blocked' : 'ai_tool_error', {
+                tool_type: 'chat',
+                error_code: d.error || ('http_' + r.status)
+            });
             addMessage('⚠️ ' + (d.detail || d.message || 'Lỗi. Vui lòng thử lại.'), 'bot');
         }
     } catch(e) {
+        window.trackRevenueEvent?.('ai_tool_error', {tool_type: 'chat', error_code: 'network'});
         addMessage('⚠️ Không kết nối được. Vui lòng thử lại.', 'bot');
     }
 
@@ -191,15 +209,20 @@ function scrollBottom() {
 // Load quota
 async function loadQuota() {
     try {
-        const r = await fetch(CHAT_API.replace('/api/chat', '/api/credits'), {
-            headers: {'X-API-Key': API_KEY}
+        const r = await fetch(DASHBOARD_API, {
+            headers: {'Accept': 'application/json', 'Authorization': 'Bearer ' + AUTH_TOKEN}
         });
         if (r.ok) {
             const d = await r.json();
-            document.getElementById('ai-quota').textContent = `Chat: ${d.chat_used}/${d.chat_limit} hôm nay`;
+            const quota = d.quota?.ai_concept;
+            if (quota) {
+                const limit = quota.limit === -1 ? '∞' : quota.limit;
+                document.getElementById('ai-quota').textContent = `Chat: ${quota.used}/${limit} tháng này`;
+            }
         }
     } catch(e) {}
 }
+window.trackRevenueEvent?.('view_ai_dashboard', {}, 'ai-dashboard-view');
 loadQuota();
 inputEl.focus();
 </script>

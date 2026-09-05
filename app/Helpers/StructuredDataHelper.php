@@ -96,41 +96,50 @@ class StructuredDataHelper
      */
     public static function article($blog)
     {
+        preg_match_all('/[\p{L}\p{N}]+/u', strip_tags($blog->description ?? ''), $wordMatches);
+        $author = $blog->authorModel
+            ? $blog->authorModel->getSchemaOrgData()
+            : [
+                '@type' => 'Organization',
+                'name' => 'LamGame Editorial Team',
+                'url' => config('app.url').'/gioi-thieu',
+            ];
+
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'Article',
+            '@id' => route('blog.show', $blog->slug).'#article',
             'headline' => $blog->name,
-            'description' => $blog->meta_description ?? strip_tags(substr($blog->short_description, 0, 160)),
+            'description' => Str::limit(
+                preg_replace('/\s+/u', ' ', strip_tags($blog->meta_description ?: $blog->short_description ?: $blog->description)),
+                160,
+                ''
+            ),
             'image' => $blog->featured_image,
-            'datePublished' => date('c', strtotime($blog->published_at ?? $blog->created_at)),
-            'dateModified' => date('c', strtotime($blog->updated_at)),
-            'author' => [
-                '@type' => 'Person',
-                'name' => $blog->author ?? 'Làm Game',
-                'url' => config('app.url')
-            ],
+            'datePublished' => optional($blog->published_at ?? $blog->created_at)->toIso8601String(),
+            'dateModified' => optional($blog->updated_at)->toIso8601String(),
+            'author' => $author,
             'publisher' => [
                 '@type' => 'Organization',
-                'name' => 'Làm Game',
+                'name' => 'LamGame.vn',
+                'url' => config('app.url'),
                 'logo' => [
                     '@type' => 'ImageObject',
-                    'url' => config('app.url') . '/logo/lamgame-logo.png'
-                ]
+                    'url' => asset('assets/logos/png/logo-square-512.png'),
+                ],
             ],
             'mainEntityOfPage' => [
                 '@type' => 'WebPage',
-                '@id' => config('app.url') . '/blog/' . $blog->slug
+                '@id' => route('blog.show', $blog->slug),
             ],
-            'wordCount' => str_word_count(strip_tags($blog->description ?? '')),
-            'inLanguage' => 'vi',
+            'wordCount' => count($wordMatches[0] ?? []),
+            'inLanguage' => $blog->locale ?: 'vi',
         ];
 
-        // Add article section if category exists
         if ($blog->category) {
             $schema['articleSection'] = $blog->category->name;
         }
 
-        // Add keywords if available
         if ($blog->meta_keywords) {
             $schema['keywords'] = $blog->meta_keywords;
         }
@@ -223,6 +232,11 @@ class StructuredDataHelper
      */
     public static function autoInternalLinks(string $html): string
     {
+        // The page template owns the only H1. Legacy body H1 elements are
+        // demoted at render time without mutating stored editorial content.
+        $html = preg_replace('/<h1\b([^>]*)>/iu', '<h2$1>', $html);
+        $html = preg_replace('/<\/h1>/iu', '</h2>', $html);
+
         $links = [
             'Phaser 3' => '/source-game',
             'source game' => '/source-game',
@@ -237,7 +251,6 @@ class StructuredDataHelper
             'game developer' => '/viec-lam-game',
             'forum' => '/forum',
             'cộng đồng' => '/forum',
-            'World Cup' => '/world-cup-2026',
             'leaderboard' => '/choi-game',
         ];
 

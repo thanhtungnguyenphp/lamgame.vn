@@ -171,7 +171,7 @@ class SourceGameProductsSeeder extends Seeder
                 ProductAttributeValue::create([
                     'product_id'   => $product->id,
                     'attribute_id' => $downloadCountAttr->id,
-                    'text_value'   => (string) rand(100, 2000),
+                    'text_value'   => '0',
                 ]);
             }
 
@@ -179,7 +179,7 @@ class SourceGameProductsSeeder extends Seeder
                 ProductAttributeValue::create([
                     'product_id'   => $product->id,
                     'attribute_id' => $sourceRatingAttr->id,
-                    'text_value'   => number_format(rand(35, 50) / 10, 1),
+                    'text_value'   => '0',
                 ]);
             }
 

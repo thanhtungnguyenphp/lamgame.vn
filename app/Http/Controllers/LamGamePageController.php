@@ -35,8 +35,11 @@ class LamGamePageController extends Controller
      */
     public function aiTools()
     {
+        $plans = \App\Models\SubscriptionPlan::active()->get();
+
         return view('lamgame.pages.ai-tools-landing', [
             'customer' => auth()->guard('customer')->user(),
+            'plans'    => $plans,
         ]);
     }
 
@@ -317,7 +320,7 @@ HTML;
         // Find the blog post by slug
         $blog = Blog::where('slug', $slug)
                     ->published()
-                    ->with('category')
+                    ->with(['category', 'authorModel'])
                     ->firstOrFail();
 
         // Get related posts from the same category
@@ -325,7 +328,7 @@ HTML;
                            ->where('id', '!=', $blog->id)
                            ->where(function($query) use ($blog) {
                                $query->where('default_category', $blog->default_category)
-                                     ->orWhere('categorys', 'LIKE', '%' . $blog->default_category . '%');
+                                     ->orWhereRaw('FIND_IN_SET(?, categorys) > 0', [$blog->default_category]);
                            })
                            ->orderBy('published_at', 'desc')
                            ->take(3)
@@ -367,9 +370,16 @@ HTML;
             return ($tagCounts[$tag->id] ?? 0) > 0;
         })->take(15);
 
+        $descriptionSource = $blog->meta_description ?: $blog->short_description ?: $blog->description;
+        $pageDescription = \Str::limit(
+            preg_replace('/\s+/u', ' ', strip_tags((string) $descriptionSource)),
+            160,
+            ''
+        );
+
         return view('lamgame.pages.blog-detail', [
             'page_title' => $blog->meta_title ?: $blog->name . ' - Làm Game',
-            'page_description' => $blog->meta_description ?: $blog->short_description,
+            'page_description' => $pageDescription,
             'page_keywords' => $blog->meta_keywords,
             'blog' => $blog,
             'postCategories' => $postCategories,
@@ -973,6 +983,8 @@ HTML;
             $perPage = 12;
         }
 
+        $catalogService = app(\App\Services\SourceGameCatalogService::class);
+
         // Resolve base category by slug aliases
         $slugAliases = ['source-game', 'source-code-game'];
         $baseCategoryIds = \DB::table('category_translations')
@@ -1005,7 +1017,8 @@ HTML;
 
         // Build product query
         $productQuery = \Webkul\Product\Models\Product::with(['categories', 'images', 'downloadable_links'])
-            ->where('type', 'downloadable');
+            ->where('type', 'downloadable')
+            ->whereIn('id', $catalogService->publishedProductIds());
 
         if (! empty($allCategoryIds)) {
             $productQuery->whereHas('categories', function ($query) use ($allCategoryIds) {
@@ -1061,6 +1074,22 @@ HTML;
         // Paginate products
         $products = $productQuery->simplePaginate($perPage);
 
+        // Revenue/trust metrics must come from completed orders and published reviews.
+        $productIds = collect($products->items())->pluck('id')->all();
+        $purchaseCounts = \DB::table('order_items')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->whereIn('order_items.product_id', $productIds)
+            ->whereIn('orders.status', ['processing', 'completed'])
+            ->selectRaw('order_items.product_id, COUNT(*) as total')
+            ->groupBy('order_items.product_id')
+            ->pluck('total', 'product_id');
+        $reviewStats = SourceGameReview::published()
+            ->whereIn('product_id', $productIds)
+            ->selectRaw('product_id, COUNT(*) as review_count, AVG(rating) as rating')
+            ->groupBy('product_id')
+            ->get()
+            ->keyBy('product_id');
+
         // Transform products for view
         $featuredSources = [];
         foreach ($products as $product) {
@@ -1076,8 +1105,7 @@ HTML;
             $price = (float) ($flat->price ?? 0);
             $urlKey = $flat->url_key ?? null;
 
-            // Derived fields — stable per product (seeded by product ID)
-            $seed = crc32($product->sku ?? (string) $product->id);
+            // Technical fields are derived from the real product content only.
             $engine = 'Unity';
             $language = 'C#';
             $fileSize = '25 MB';
@@ -1092,14 +1120,20 @@ HTML;
             elseif (str_contains($nameLower, 'rpg maker') || str_contains($nameLower, 'rpgmaker')) { $engine = 'RPG Maker'; $language = 'JavaScript'; }
             // Default: Unity (most common)
 
-            // Stable downloads & rating based on product ID
-            srand($seed);
-            $downloadsCount = rand(200, 2500);
-            $rating = number_format(rand(38, 49) / 10, 1);
-            srand(); // reset
+            $downloadsCount = (int) ($purchaseCounts[$product->id] ?? 0);
+            $productReviewStats = $reviewStats->get($product->id);
+            $reviewCount = (int) ($productReviewStats->review_count ?? 0);
+            $rating = $reviewCount > 0 ? round((float) $productReviewStats->rating, 1) : 0.0;
 
-            // Mark as hot if high downloads
-            $isHot = $downloadsCount > 1500;
+            $verifiedAssets = config('source-game-revenue.verified_assets.'.$product->sku, []);
+            $verifiedDemoPath = $verifiedAssets['demo_path'] ?? null;
+            $hasVerifiedDemo = $verifiedDemoPath
+                && file_exists(public_path(trim($verifiedDemoPath, '/').'/index.html'));
+            $isVerifiedCatalog = $catalogService->isVerifiedSku($product->sku);
+            $isAvailable = $catalogService->isAvailable($product->sku, $price, $product->downloadable_links);
+
+            // Hot badges are earned only by products that can be delivered now.
+            $isHot = $isAvailable && $downloadsCount >= 10;
 
             // Image
             $previewImage = asset('images/placeholder-game.svg');
@@ -1127,7 +1161,10 @@ HTML;
                 'language' => $language,
                 'downloads' => $downloadsCount,
                 'rating' => $rating,
+                'review_count' => $reviewCount,
                 'is_hot' => $isHot,
+                'is_available' => $isAvailable,
+                'is_verified_catalog' => $isVerifiedCatalog,
                 'preview_image' => $previewImage,
                 'size' => $fileSize,
                 'price' => $price,
@@ -1136,62 +1173,10 @@ HTML;
                 'downloadable_links' => $product->downloadable_links,
                 'url_key' => $urlKey,
                 'href' => $urlKey ? route('lamgame.source-game.detail', $urlKey) : null,
-                'has_demo' => (bool) $product->has_demo,
-                'demo_href' => $product->has_demo && $urlKey ? route('source-game.demo', $urlKey) : null,
-            ];
-        }
-
-        // Fallback sample data if empty
-        if (empty($featuredSources)) {
-            $featuredSources = [
-                [
-                    'id' => 'sample-1',
-                    'title' => 'Super Mario Clone',
-                    'description' => 'Source code hoàn chỉnh của game Mario kinh điển',
-                    'category' => 'classic',
-                    'engine' => 'Unity',
-                    'language' => 'C#',
-                    'downloads' => 1250,
-                    'rating' => 4.8,
-                    'preview_image' => asset('images/placeholder-game.svg'),
-                    'size' => '25 MB',
-                    'price' => 0,
-                    'updated' => '2024-01-15',
-                    'url_key' => 'super-mario-clone-sample',
-                    'href' => route('lamgame.source-game.detail', 'super-mario-clone-sample')
-                ],
-                [
-                    'id' => 'sample-2',
-                    'title' => 'Space Shooter 2D',
-                    'description' => 'Game bắn phi thuyền 2D với AI và power-ups',
-                    'category' => '2d',
-                    'engine' => 'Unity',
-                    'language' => 'C#',
-                    'downloads' => 890,
-                    'rating' => 4.6,
-                    'preview_image' => asset('images/placeholder-game.svg'),
-                    'size' => '18 MB',
-                    'price' => 0,
-                    'updated' => '2024-01-10',
-                    'url_key' => 'space-shooter-2d-sample',
-                    'href' => route('lamgame.source-game.detail', 'space-shooter-2d-sample')
-                ],
-                [
-                    'id' => 'sample-3',
-                    'title' => 'RPG Inventory System',
-                    'description' => 'Hệ thống inventory hoàn chỉnh cho game RPG',
-                    'category' => 'modern',
-                    'engine' => 'Unreal Engine',
-                    'language' => 'Blueprint',
-                    'downloads' => 567,
-                    'rating' => 4.9,
-                    'preview_image' => asset('images/placeholder-game.svg'),
-                    'size' => '45 MB',
-                    'price' => 0,
-                    'updated' => '2024-01-08',
-                    'url_key' => 'rpg-inventory-system-sample',
-                    'href' => route('lamgame.source-game.detail', 'rpg-inventory-system-sample')
-                ]
+                'has_demo' => (bool) $product->has_demo || $hasVerifiedDemo,
+                'demo_href' => $hasVerifiedDemo
+                    ? url($verifiedDemoPath)
+                    : ($product->has_demo && $urlKey ? route('source-game.demo', $urlKey) : null),
             ];
         }
 
@@ -1203,10 +1188,23 @@ HTML;
             'has_more'     => method_exists($products, 'hasMorePages') ? $products->hasMorePages() : false,
         ];
 
-        // Derive trending & best-selling from all sources (sorted copies)
+        // Never merchandise unavailable products. Trending requires real purchases;
+        // curated sources require the audited catalog baseline.
         $allSorted = collect($featuredSources);
-        $trendingSources = $allSorted->sortByDesc('downloads')->take(4)->values()->all();
-        $bestSellingSources = $allSorted->sortByDesc('rating')->take(4)->values()->all();
+        $trendingSources = $allSorted
+            ->where('is_available', true)
+            ->filter(fn ($source) => ($source['downloads'] ?? 0) > 0)
+            ->sortByDesc('downloads')
+            ->take(4)
+            ->values()
+            ->all();
+        $bestSellingSources = $allSorted
+            ->where('is_available', true)
+            ->where('is_verified_catalog', true)
+            ->sortByDesc('updated')
+            ->take(4)
+            ->values()
+            ->all();
 
         return view('lamgame.pages.source-game', [
             'featuredSources'    => $featuredSources,
@@ -1217,7 +1215,7 @@ HTML;
             'currentSearch'      => $search ?? '',
             'currentSort'        => $sort ?? 'newest',
             'page_title'         => 'Mua Bán Source Game Unity, Unreal | Mã Nguồn Game Giá Rẻ — LamGame.vn',
-            'page_description'   => 'Kho source game Unity, Unreal Engine đa dạng thể loại. Mua bán mã nguồn game 2D, 3D chất lượng cao, giá từ 99K. Code sạch, document đầy đủ, hỗ trợ cài đặt miễn phí.',
+            'page_description'   => 'Kho source game Unity, Unreal Engine, Godot và HTML5 với giá, demo, thông số kỹ thuật và điều khoản sử dụng minh bạch.',
         ]);
     }
 
@@ -1226,6 +1224,8 @@ HTML;
      */
     public function sourceGameDetail($slug)
     {
+        $catalogService = app(\App\Services\SourceGameCatalogService::class);
+
         // Try to find product by URL key first
         $product = null;
         $productFlat = \DB::table('product_flat')
@@ -1251,10 +1251,8 @@ HTML;
                 ->first();
         }
 
-        // If still not found, create sample data
-        if (!$product) {
-            return $this->getSampleSourceGameDetail($slug);
-        }
+        // Unknown products must return a real 404 instead of fabricated sample content.
+        abort_unless($product, 404);
 
         // Get product flat data
         $flat = \DB::table('product_flat')
@@ -1287,16 +1285,24 @@ HTML;
         // Get seller info
         $seller = \App\Models\SourceGameSeller::find($product->seller_id);
 
-        // Get real purchase count from order_items
+        // Only completed/processing orders count as purchases.
         $purchaseCount = \DB::table('order_items')
-            ->where('product_id', $product->id)
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->where('order_items.product_id', $product->id)
+            ->whereIn('orders.status', ['processing', 'completed'])
             ->count();
 
-        // Get real review/comment count
-        $reviewCount = \DB::table('product_reviews')
-            ->where('product_id', $product->id)
-            ->where('status', 'approved')
-            ->count();
+        $reviewStats = SourceGameReview::byProduct($product->id)
+            ->published()
+            ->selectRaw('COUNT(*) as review_count, AVG(rating) as rating')
+            ->first();
+        $reviewCount = (int) ($reviewStats->review_count ?? 0);
+        $rating = $reviewCount > 0 ? round((float) $reviewStats->rating, 1) : 0.0;
+
+        $verifiedAssets = config('source-game-revenue.verified_assets.'.$product->sku, []);
+        $verifiedDemoPath = $verifiedAssets['demo_path'] ?? null;
+        $hasVerifiedDemo = $verifiedDemoPath
+            && file_exists(public_path(ltrim($verifiedDemoPath, '/')));
 
         // Build source game detail data
         $sourceGameDetail = [
@@ -1313,14 +1319,16 @@ HTML;
             'file_size' => $attributeValues['file_size'] ?? '25 MB',
             'downloads_count' => $purchaseCount,
             'review_count' => $reviewCount,
-            'rating' => (float) ($attributeValues['rating'] ?? 0),
+            'rating' => $rating,
             'version' => $attributeValues['version'] ?? '1.0',
             'last_updated' => optional($product->updated_at)->format('Y-m-d'),
             'created_at' => optional($product->created_at)->format('Y-m-d'),
             'images' => [],
             'downloadable_links' => [],
             'video_demo_url' => $attributeValues['video_demo_url'] ?? null,
-            'demo_url' => ($product->has_demo && $flat->url_key) ? route('source-game.demo', $flat->url_key) : ($attributeValues['demo_url'] ?? null),
+            'demo_url' => $hasVerifiedDemo
+                ? url($verifiedDemoPath)
+                : (($product->has_demo && $flat->url_key) ? route('source-game.demo', $flat->url_key) : ($attributeValues['demo_url'] ?? null)),
             'author_name' => $seller->shop_name ?? ($attributeValues['author_name'] ?? 'Làm Game Team'),
             'author_slug' => $seller->shop_slug ?? null,
             'author_logo' => $seller ? $seller->logo_url : null,
@@ -1345,6 +1353,16 @@ HTML;
                 }
             }
         }
+
+        foreach ($verifiedAssets['screenshots'] ?? [] as $index => $screenshotPath) {
+            if (file_exists(public_path(ltrim($screenshotPath, '/')))) {
+                $sourceGameDetail['images'][] = [
+                    'url' => asset(ltrim($screenshotPath, '/')),
+                    'alt' => $sourceGameDetail['title'].' — gameplay '.($index + 1),
+                ];
+            }
+        }
+
         // Fallback: 1 placeholder if no valid images
         if (empty($sourceGameDetail['images'])) {
             $sourceGameDetail['images'] = [
@@ -1354,21 +1372,69 @@ HTML;
         // Set primary image for OG/schema
         $sourceGameDetail['image'] = $sourceGameDetail['images'][0]['url'] ?? asset('assets/logos/png/logo-square-512.png');
 
-        // Process downloadable links
+        // Expose only links that can actually be delivered to the buyer.
+        $privateDisk = \Storage::disk('private');
+        $hasDocumentation = false;
+        $hasLicenseFile = false;
+
         if ($product->downloadable_links && $product->downloadable_links->isNotEmpty()) {
             foreach ($product->downloadable_links as $link) {
+                $isAvailable = $link->type === 'url'
+                    ? filter_var($link->url, FILTER_VALIDATE_URL) !== false
+                    : (! empty($link->file) && $privateDisk->exists($link->file));
+
+                if (! $isAvailable) {
+                    continue;
+                }
+
                 $sourceGameDetail['downloadable_links'][] = [
+                    'id' => $link->id,
                     'title' => $link->title,
                     'file_name' => $link->file_name,
                     'downloads' => $link->downloads ?? 0,
                     'type' => $link->type,
-                    'url' => $link->url
+                    'url' => $link->url,
                 ];
+
+                $linkName = strtolower(($link->title ?? '').' '.($link->file_name ?? ''));
+                $hasDocumentation = $hasDocumentation || preg_match('/doc|guide|hướng dẫn|readme/i', $linkName) === 1;
+                $hasLicenseFile = $hasLicenseFile || str_contains($linkName, 'license');
+
+                if ($link->type === 'file' && strtolower(pathinfo($link->file, PATHINFO_EXTENSION)) === 'zip') {
+                    $zip = new \ZipArchive();
+                    if ($zip->open($privateDisk->path($link->file)) === true) {
+                        for ($index = 0; $index < $zip->numFiles; $index++) {
+                            $entry = strtolower(basename((string) $zip->getNameIndex($index)));
+                            $hasDocumentation = $hasDocumentation || preg_match('/^readme(?:\.[a-z0-9]+)?$|guide|hướng dẫn/', $entry) === 1;
+                            $hasLicenseFile = $hasLicenseFile || preg_match('/^licen[cs]e(?:\.[a-z0-9]+)?$/', $entry) === 1;
+                        }
+                        $zip->close();
+                    }
+                }
             }
         }
 
-        // Parse features — prefer dedicated attribute, fallback to short_description bullets only
-        $featuresSource = $attributeValues['features'] ?? $sourceGameDetail['short_description'] ?? '';
+        $sourceGameDetail['has_downloadable_file'] = ! empty($sourceGameDetail['downloadable_links']);
+        $sourceGameDetail['has_license_file'] = $hasLicenseFile;
+        $sourceGameDetail['is_revenue_featured'] = $sourceGameDetail['has_downloadable_file']
+            && $catalogService->isVerifiedSku($product->sku);
+        $sourceGameDetail['is_available'] = $catalogService->isAvailable(
+            $product->sku,
+            (float) $sourceGameDetail['price'],
+            $product->downloadable_links
+        );
+        $sourceGameDetail['buyer_benefits'] = array_values(array_filter([
+            !empty($sourceGameDetail['downloadable_links']) ? 'File tải được bảo vệ trong tài khoản người mua' : null,
+            !empty($sourceGameDetail['demo_url']) ? 'Có demo để kiểm tra trước khi mua' : null,
+            $hasDocumentation ? 'Có tài liệu hoặc hướng dẫn đi kèm trong gói tải' : null,
+            $sourceGameDetail['last_updated'] ? 'Ngày cập nhật được công khai' : null,
+            'Hỗ trợ qua diễn đàn và email của LamGame',
+            'Chính sách hoàn tiền và điều khoản Marketplace được công khai',
+        ]));
+        $sourceGameDetail['has_documentation'] = $hasDocumentation;
+
+        // Parse features — prefer dedicated attribute, fallback to description bullets only.
+        $featuresSource = $attributeValues['features'] ?? $sourceGameDetail['description'] ?? '';
         if ($featuresSource) {
             $lines = explode("\n", strip_tags($featuresSource));
             $lines = array_filter(array_map('trim', $lines));
@@ -1382,13 +1448,17 @@ HTML;
             $sourceGameDetail['features'] = array_slice($sourceGameDetail['features'], 0, 8);
         }
 
-        // Generate FAQ based on product data
+        // FAQ answers only make claims supported by the current product data.
         $sourceGameDetail['faq'] = [
-            ['q' => "Source code này dùng engine gì?", 'a' => "Source code được xây dựng bằng {$sourceGameDetail['engine']} với ngôn ngữ {$sourceGameDetail['language']}."],
-            ['q' => "Tôi có thể dùng cho dự án thương mại không?", 'a' => $sourceGameDetail['is_free'] ? "Có! Source code miễn phí với MIT License — bạn có thể sử dụng, chỉnh sửa và phân phối cho cả dự án cá nhân lẫn thương mại." : "Có! Sau khi mua, bạn được sử dụng cho dự án thương mại theo điều khoản License đi kèm."],
-            ['q' => "Cần kiến thức gì để sử dụng source này?", 'a' => "Bạn cần biết cơ bản về {$sourceGameDetail['engine']} và {$sourceGameDetail['language']}. Source có documentation hướng dẫn setup và customize."],
-            ['q' => "Source có hỗ trợ mobile không?", 'a' => "Có! Source được tối ưu cho cả Web (HTML5) và Mobile (Android/iOS). Xem demo online để trải nghiệm."],
-            ['q' => "Tôi có được hỗ trợ sau khi tải/mua không?", 'a' => "Có! Tham gia Forum LamGame để đặt câu hỏi và nhận hỗ trợ từ cộng đồng developer."],
+            ['q' => 'Source code này dùng engine gì?', 'a' => "Thông tin hiện tại: {$sourceGameDetail['engine']} và ngôn ngữ {$sourceGameDetail['language']}."],
+            ['q' => 'Tôi có thể dùng cho dự án thương mại không?', 'a' => $sourceGameDetail['is_free']
+                ? 'Vui lòng kiểm tra license được cung cấp cùng sản phẩm trước khi phân phối hoặc sử dụng thương mại.'
+                : 'Quyền sử dụng phụ thuộc loại license hiển thị tại thời điểm mua và Điều khoản Marketplace.'],
+            ['q' => 'Sản phẩm có tài liệu hướng dẫn không?', 'a' => $hasDocumentation
+                ? 'Có tài liệu hoặc hướng dẫn được liệt kê trong gói tải.'
+                : 'Chưa có tài liệu riêng được liệt kê. Vui lòng liên hệ trước khi mua nếu bạn cần hướng dẫn cài đặt.'],
+            ['q' => 'Source có hỗ trợ nền tảng của tôi không?', 'a' => 'Hãy đối chiếu engine, phiên bản, yêu cầu kỹ thuật và demo trên trang. Liên hệ LamGame trước khi mua nếu nền tảng của bạn chưa được nêu rõ.'],
+            ['q' => 'Tôi nhận hỗ trợ bằng cách nào?', 'a' => 'Bạn có thể gửi câu hỏi qua Forum LamGame hoặc email hỗ trợ được công bố trên website.'],
         ];
 
         // Add github_url if available
@@ -1412,13 +1482,14 @@ HTML;
         $relatedSources = [];
         if ($product->categories && $product->categories->isNotEmpty()) {
             $categoryId = $product->categories->first()->id;
-            $relatedProducts = \Webkul\Product\Models\Product::with(['categories', 'images'])
+            $relatedProducts = \Webkul\Product\Models\Product::with(['categories', 'images', 'downloadable_links'])
                 ->where('type', 'downloadable')
                 ->where('id', '!=', $product->id)
+                ->whereIn('id', $catalogService->publishedProductIds())
                 ->whereHas('categories', function ($query) use ($categoryId) {
                     $query->where('category_id', $categoryId);
                 })
-                ->take(3)
+                ->take(12)
                 ->get();
 
             foreach ($relatedProducts as $relatedProduct) {
@@ -1427,14 +1498,27 @@ HTML;
                     ->where('locale', 'vi')
                     ->first();
 
+                $relatedPrice = (float) ($relatedFlat->price ?? 0);
+                if (! $relatedFlat || ! $catalogService->isAvailable(
+                    $relatedProduct->sku,
+                    $relatedPrice,
+                    $relatedProduct->downloadable_links
+                )) {
+                    continue;
+                }
+
                 $relatedSources[] = [
                     'title' => $relatedFlat->name ?? $relatedProduct->sku,
                     'url' => route('lamgame.source-game.detail', $relatedFlat->url_key ?? $relatedProduct->id),
                     'image' => $relatedProduct->images && $relatedProduct->images->isNotEmpty()
                              ? asset('storage/' . $relatedProduct->images->first()->path)
                              : asset('images/placeholder-game.svg'),
-                    'price' => (float) ($relatedFlat->price ?? 0),
+                    'price' => $relatedPrice,
                 ];
+
+                if (count($relatedSources) >= 3) {
+                    break;
+                }
             }
         }
 
@@ -1442,107 +1526,9 @@ HTML;
             'sourceGame' => $sourceGameDetail,
             'relatedSources' => $relatedSources,
             'page_title' => $sourceGameDetail['title'] . ' - Source Game - Làm Game',
-            'page_description' => $sourceGameDetail['description'] ?: ('Tải về source code ' . $sourceGameDetail['title'] . ' hoàn toàn miễn phí tại Làm Game.')
-        ]);
-    }
-
-    /**
-     * Get sample source game detail for demo
-     */
-    private function getSampleSourceGameDetail($slug)
-    {
-        $sampleGames = [
-            'space-shooter-2d' => [
-                'title' => 'Space Shooter 2D',
-                'description' => 'Game bắn phi thuyền không gian 2D hoàn chỉnh với AI thông minh và nhiều power-ups',
-                'full_description' => 'Space Shooter 2D là một game bắn phi thuyền không gian được phát triển bằng Unity. Game có đầy đủ tính năng từ cơ bản đến nâng cao, phù hợp cho việc học tập và phát triển thêm.',
-                'engine' => 'Unity 2022.3 LTS',
-                'language' => 'C#',
-                'file_size' => '45 MB',
-                'author_name' => 'Nguyễn Văn A',
-                'author_email' => 'developer@lamgame.localhost'
-            ],
-            'super-mario-clone' => [
-                'title' => 'Super Mario Clone',
-                'description' => 'Phiên bản clone hoàn chỉnh của game Mario kinh điển với đầy đủ mechanics',
-                'full_description' => 'Clone hoàn chỉnh của Super Mario Bros với physics, animations, và gameplay giống như bản gốc. Đầy đủ source code và assets.',
-                'engine' => 'Unity 2022.3 LTS',
-                'language' => 'C#',
-                'file_size' => '38 MB',
-                'author_name' => 'Trần Thị B',
-                'author_email' => 'mario@lamgame.localhost'
-            ]
-        ];
-
-        $gameData = $sampleGames[$slug] ?? $sampleGames['space-shooter-2d'];
-
-        $sourceGameDetail = array_merge($gameData, [
-            'id' => 'sample-' . $slug,
-            'slug' => $slug,
-            'price' => 0,
-            'is_free' => true,
-            'sku' => 'SAMPLE-' . strtoupper($slug),
-            'downloads_count' => rand(500, 2000),
-            'review_count' => 0,
-            'rating' => number_format(rand(40, 50) / 10, 1),
-            'version' => '1.0',
-            'last_updated' => '2024-01-15',
-            'created_at' => '2024-01-01',
-            'images' => [
-                ['url' => asset('images/placeholder-game.svg'), 'alt' => $gameData['title']],
-                ['url' => asset('images/placeholder-game.svg'), 'alt' => $gameData['title']],
-                ['url' => asset('images/placeholder-game.svg'), 'alt' => $gameData['title']]
-            ],
-            'downloadable_links' => [
-                ['title' => 'Source Code', 'file_name' => $slug . '-source.zip', 'downloads' => rand(100, 500), 'type' => 'file'],
-                ['title' => 'Documentation', 'file_name' => $slug . '-docs.pdf', 'downloads' => rand(50, 200), 'type' => 'file']
-            ],
-            'video_demo_url' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-            'demo_url' => null,
-            'author_bio' => 'Lập trình viên game với 5+ năm kinh nghiệm phát triển game Unity',
-            'requirements' => 'Unity 2022.3 LTS hoặc mới hơn, Visual Studio hoặc VS Code',
-            'features' => [
-                'Đầy đủ source code và comments chi tiết',
-                'Hệ thống AI cho enemies',
-                'Nhiều loại vũ khí và power-ups',
-                'Hệ thống điểm số và leaderboard',
-                'Sound effects và background music',
-                'Mobile-ready controls',
-                'Dễ dàng customize và mở rộng'
-            ],
-            'tags' => ['Unity', '2D', 'Shooter', 'Mobile', 'Beginner Friendly'],
-            'category_name' => 'Game 2D'
-        ]);
-
-        $relatedSources = [
-            [
-                'title' => 'Flappy Bird Clone',
-                'url' => route('lamgame.source-game.detail', 'flappy-bird-clone'),
-                'image' => asset('images/placeholder-game.svg'),
-                'price' => 0,
-                'rating' => 4.3
-            ],
-            [
-                'title' => 'Puzzle Match 3',
-                'url' => route('lamgame.source-game.detail', 'puzzle-match-3'),
-                'image' => asset('images/placeholder-game.svg'),
-                'price' => 0,
-                'rating' => 4.7
-            ],
-            [
-                'title' => 'RPG Character System',
-                'url' => route('lamgame.source-game.detail', 'rpg-character-system'),
-                'image' => asset('images/placeholder-game.svg'),
-                'price' => 150000,
-                'rating' => 4.9
-            ]
-        ];
-
-        return view('lamgame.pages.source-game-detail', [
-            'sourceGame' => $sourceGameDetail,
-            'relatedSources' => $relatedSources,
-            'page_title' => $sourceGameDetail['title'] . ' - Source Game - Làm Game',
-            'page_description' => $sourceGameDetail['description']
+            'page_description' => $sourceGameDetail['description'] ?: (
+                'Xem thông tin, demo, giá và trạng thái gói tải source code '.$sourceGameDetail['title'].' tại LamGame.vn.'
+            )
         ]);
     }
 
@@ -1731,7 +1717,34 @@ HTML;
      */
     public function portfolio()
     {
-        return view('lamgame.pages.portfolio');
+        $projects = \DB::table('products as p')
+            ->join('product_flat as pf', function ($join) {
+                $join->on('pf.product_id', '=', 'p.id')->where('pf.locale', 'vi');
+            })
+            ->join('product_images as pi', 'pi.product_id', '=', 'p.id')
+            ->where('p.type', 'downloadable')
+            ->where('pf.status', 1)
+            ->select(
+                'p.id', 'p.has_demo', 'pf.name', 'pf.url_key', 'pf.short_description',
+                'pf.engine', 'pf.platform', \DB::raw('MIN(pi.path) as image_path')
+            )
+            ->groupBy('p.id', 'p.has_demo', 'p.updated_at', 'pf.name', 'pf.url_key', 'pf.short_description', 'pf.engine', 'pf.platform')
+            ->orderByDesc('p.has_demo')
+            ->orderByDesc('p.updated_at')
+            ->limit(8)
+            ->get()
+            ->map(fn ($project) => [
+                'id' => $project->id,
+                'name' => $project->name,
+                'description' => strip_tags($project->short_description ?? ''),
+                'engine' => $project->engine ?: 'Game Development',
+                'platform' => $project->platform,
+                'image' => asset('storage/' . $project->image_path),
+                'url' => route('lamgame.source-game.detail', $project->url_key),
+                'demo_url' => $project->has_demo ? route('source-game.demo', $project->url_key) : null,
+            ]);
+
+        return view('lamgame.pages.portfolio', ['portfolioProjects' => $projects]);
     }
 
     /**

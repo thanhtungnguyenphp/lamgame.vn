@@ -55,6 +55,7 @@
                 <a href="/dieu-khoan-ai" class="lg-v2-footer__link">Điều khoản AI Tools</a>
                 <a href="/chinh-sach-bien-tap" class="lg-v2-footer__link">Chính sách biên tập</a>
                 <a href="/tac-gia" class="lg-v2-footer__link">Đội ngũ tác giả</a>
+                <button type="button" class="lg-v2-footer__link" onclick="window.openPrivacyPreferences?.()" style="border:0;background:none;padding:0;text-align:left;cursor:pointer">Tùy chọn cookie</button>
             </div>
 
             {{-- International (English) --}}

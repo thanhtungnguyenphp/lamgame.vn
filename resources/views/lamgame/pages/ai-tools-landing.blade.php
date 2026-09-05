@@ -2,7 +2,7 @@
 @extends('layouts.master')
 
 @section('page_title', 'AI Tools cho Game Developer — LamGame.vn')
-@section('page_description', 'Công cụ AI hỗ trợ game developer code, debug và review nhanh hơn. Tích hợp GPT-4 & Claude.')
+@section('page_description', 'Công cụ AI hỗ trợ game developer tạo concept, code, debug, test và review với quota minh bạch.')
 
 @section('content')
 <div class="ai-page">
@@ -11,7 +11,7 @@
 <section class="ai-hero">
     <div class="ai-hero__bg"></div>
     <div class="ai-hero__content">
-        <span class="ai-badge">✨ Powered by GPT-4 & Claude</span>
+        <span class="ai-badge">✨ Multi-model AI · Quota minh bạch</span>
         <h1>Tăng tốc workflow <br>phát triển game</h1>
         <p>Code, Debug, Test, Review — AI hỗ trợ các tác vụ lặp lại. Bạn tập trung vào sáng tạo.</p>
         <div class="ai-hero__cta">
@@ -28,7 +28,7 @@
             <div class="ai-trust__item"><strong>{{ number_format($siteMetrics['registered_users'] ?? 0) }}+</strong><span>Developers</span></div>
             <div class="ai-trust__item"><strong>{{ $siteMetrics['published_sources'] ?? 0 }}+</strong><span>Source Code</span></div>
             <div class="ai-trust__item"><strong>{{ $siteMetrics['blog_posts'] ?? 0 }}+</strong><span>Bài viết</span></div>
-            <div class="ai-trust__item"><strong>6</strong><span>Công cụ AI</span></div>
+            <div class="ai-trust__item"><strong>7</strong><span>Workflow AI</span></div>
         </div>
     </div>
 </section>
@@ -73,88 +73,58 @@
     </div>
 </section>
 
-{{-- PRICING — 5 Plans --}}
+{{-- PRICING — rendered from active database plans --}}
 <section class="ai-sec ai-sec--alt" id="pricing">
     <div class="ai-container">
         <h2 class="ai-sec__title">Chọn gói phù hợp</h2>
-        <p class="ai-sec__sub">Bắt đầu miễn phí, nâng cấp khi cần</p>
+        <p class="ai-sec__sub">Giá và quota dưới đây được lấy trực tiếp từ cấu hình đang hoạt động</p>
+        @php
+            $quotaLabel = fn ($value) => $value === -1 ? 'Không giới hạn' : number_format((int) $value) . ' lượt/tháng';
+        @endphp
         <div class="ai-pricing">
-            {{-- FREE --}}
-            <div class="ai-plan">
-                <h3>Free</h3>
-                <p class="ai-plan__for">Cho người mới bắt đầu</p>
-                <div class="ai-plan__price">$0</div>
-                <div class="ai-plan__period">mãi mãi</div>
+            @foreach($plans as $plan)
+            @php $features = $plan->features ?? []; @endphp
+            <div class="ai-plan {{ $plan->slug === 'pro' ? 'ai-plan--pop' : '' }}">
+                @if($plan->slug === 'pro')<span class="ai-plan__badge">Phổ biến nhất</span>@endif
+                <h3>{{ $plan->name }}</h3>
+                <p class="ai-plan__for">
+                    {{ match($plan->slug) {
+                        'free' => 'Trải nghiệm workflow cơ bản',
+                        'basic' => 'Cho indie developer',
+                        'pro' => 'Cho developer sử dụng thường xuyên',
+                        'studio', 'business' => 'Cho team phát triển game',
+                        'enterprise' => 'Giải pháp tùy chỉnh',
+                        default => 'Gói AI Tools'
+                    } }}
+                </p>
+                <div class="ai-plan__price">
+                    @if($plan->slug === 'enterprise')
+                        Liên hệ
+                    @elseif((float) $plan->price === 0.0)
+                        $0
+                    @else
+                        ${{ number_format((float) $plan->price, 0) }}<span>/tháng</span>
+                    @endif
+                </div>
+                <div class="ai-plan__period">{{ $plan->billing_interval === 'monthly' ? 'Thanh toán hàng tháng' : $plan->billing_interval }}</div>
                 <ul>
-                    <li>✅ 20 requests/ngày</li>
-                    <li>✅ 3 tools cơ bản</li>
-                    <li>✅ GPT-3.5</li>
-                    <li>❌ Priority queue</li>
-                    <li>❌ API access</li>
+                    <li>✅ Concept: {{ $quotaLabel($features['ai_concept'] ?? 0) }}</li>
+                    <li>{{ ($features['ai_generate'] ?? 0) !== 0 ? '✅' : '—' }} Sinh code: {{ $quotaLabel($features['ai_generate'] ?? 0) }}</li>
+                    <li>{{ ($features['ai_debug'] ?? 0) !== 0 ? '✅' : '—' }} Debug: {{ $quotaLabel($features['ai_debug'] ?? 0) }}</li>
+                    <li>{{ ($features['ai_code_review'] ?? 0) !== 0 ? '✅' : '—' }} Review: {{ $quotaLabel($features['ai_code_review'] ?? 0) }}</li>
+                    <li>{{ !empty($features['priority_queue']) ? '✅ Priority queue' : '— Standard queue' }}</li>
                 </ul>
-                <a href="{{ route('lamgame.ai-tools-dashboard') }}" class="ai-btn ai-btn--outline">Bắt đầu miễn phí</a>
+                @if($plan->slug === 'enterprise')
+                    <a href="/hire" class="ai-btn ai-btn--outline" data-ai-plan="enterprise">Liên hệ tư vấn</a>
+                @else
+                    <a href="{{ route('lamgame.ai-tools-dashboard') }}?subscribe={{ $plan->slug }}"
+                       class="ai-btn {{ $plan->slug === 'pro' ? 'ai-btn--primary' : 'ai-btn--outline' }}"
+                       data-ai-plan="{{ $plan->slug }}">
+                        {{ $plan->slug === 'free' ? 'Bắt đầu miễn phí' : 'Chọn ' . $plan->name }}
+                    </a>
+                @endif
             </div>
-            {{-- BASIC --}}
-            <div class="ai-plan">
-                <h3>Basic</h3>
-                <p class="ai-plan__for">Cho indie developer</p>
-                <div class="ai-plan__price">$5<span>/tháng</span></div>
-                <div class="ai-plan__period">~115.000₫</div>
-                <ul>
-                    <li>✅ 80 requests/ngày</li>
-                    <li>✅ 5 tools</li>
-                    <li>✅ GPT-4</li>
-                    <li>❌ Priority queue</li>
-                    <li>❌ API access</li>
-                </ul>
-                <a href="{{ route('lamgame.ai-tools-dashboard') }}?subscribe=basic" class="ai-btn ai-btn--outline">Chọn Basic</a>
-            </div>
-            {{-- PRO --}}
-            <div class="ai-plan ai-plan--pop">
-                <span class="ai-plan__badge">Phổ biến nhất</span>
-                <h3>Pro</h3>
-                <p class="ai-plan__for">Cho developer chuyên nghiệp</p>
-                <div class="ai-plan__price">$9<span>/tháng</span></div>
-                <div class="ai-plan__period">~210.000₫</div>
-                <ul>
-                    <li>✅ 200 requests/ngày</li>
-                    <li>✅ Tất cả 6 tools</li>
-                    <li>✅ GPT-4 + Claude</li>
-                    <li>✅ Priority queue</li>
-                    <li>❌ API access</li>
-                </ul>
-                <a href="{{ route('lamgame.ai-tools-dashboard') }}?subscribe=pro" class="ai-btn ai-btn--primary">Nâng cấp Pro</a>
-            </div>
-            {{-- STUDIO --}}
-            <div class="ai-plan">
-                <h3>Studio</h3>
-                <p class="ai-plan__for">Cho team 2-10 người</p>
-                <div class="ai-plan__price">$29<span>/tháng</span></div>
-                <div class="ai-plan__period">~680.000₫</div>
-                <ul>
-                    <li>✅ Unlimited requests</li>
-                    <li>✅ Tất cả 6 tools</li>
-                    <li>✅ GPT-4 + Claude</li>
-                    <li>✅ Priority queue</li>
-                    <li>✅ API access</li>
-                </ul>
-                <a href="{{ route('lamgame.ai-tools-dashboard') }}?subscribe=studio" class="ai-btn ai-btn--outline">Chọn Studio</a>
-            </div>
-            {{-- ENTERPRISE --}}
-            <div class="ai-plan">
-                <h3>Enterprise</h3>
-                <p class="ai-plan__for">Cho studio lớn</p>
-                <div class="ai-plan__price">Liên hệ</div>
-                <div class="ai-plan__period">tuỳ chỉnh</div>
-                <ul>
-                    <li>✅ Unlimited everything</li>
-                    <li>✅ Custom models</li>
-                    <li>✅ Dedicated support</li>
-                    <li>✅ On-premise option</li>
-                    <li>✅ SLA 99.9%</li>
-                </ul>
-                <a href="/contact" class="ai-btn ai-btn--outline">Liên hệ sales</a>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
@@ -168,7 +138,7 @@
         <h2 class="ai-sec__title">Câu hỏi thường gặp</h2>
         <div class="ai-faq">
             <details class="ai-faq__item"><summary>Có cần biết code để dùng AI Tools?</summary><p>Không bắt buộc. AI Tools hỗ trợ cả người mới bắt đầu. Bạn chỉ cần mô tả yêu cầu bằng tiếng Việt.</p></details>
-            <details class="ai-faq__item"><summary>Gói Free có giới hạn gì?</summary><p>Gói Free cho phép 20 requests/ngày với 3 tools cơ bản (Concept, Code, Debug). Đủ để trải nghiệm trước khi nâng cấp.</p></details>
+            <details class="ai-faq__item"><summary>Gói Free có giới hạn gì?</summary><p>Quota của từng gói được hiển thị trực tiếp trong bảng giá. Gói Free hiện cung cấp lượt Concept giới hạn theo tháng để bạn trải nghiệm trước khi nâng cấp.</p></details>
             <details class="ai-faq__item"><summary>Có thể hủy gói bất cứ lúc nào?</summary><p>Có. Bạn có thể hủy subscription bất cứ lúc nào. Gói sẽ còn hiệu lực đến hết chu kỳ thanh toán.</p></details>
             <details class="ai-faq__item"><summary>AI có hỗ trợ Unity, Unreal, Godot?</summary><p>Có. AI được train trên code của cả 3 engine phổ biến nhất. Bạn chỉ cần chọn engine khi sử dụng.</p></details>
         </div>
@@ -284,4 +254,18 @@
     .ai-plan--pop:hover{transform:translateY(-4px)}
 }
 </style>
+@endpush
+
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    window.trackRevenueEvent?.('view_ai_pricing', {plan_count: {{ $plans->count() }}}, 'ai-pricing-view');
+    document.querySelectorAll('[data-ai-plan]').forEach(function (link) {
+        link.addEventListener('click', function () {
+            window.trackRevenueEvent?.('select_ai_plan', {plan: link.dataset.aiPlan});
+        });
+    });
+});
+</script>
 @endpush

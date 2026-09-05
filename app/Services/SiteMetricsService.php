@@ -75,10 +75,7 @@ class SiteMetricsService
      */
     protected function getPublishedSourcesCount(): int
     {
-        return DB::table('product_flat')
-            ->where('type', 'downloadable')
-            ->where('status', 1)
-            ->count();
+        return app(SourceGameCatalogService::class)->publishedCount();
     }
 
     /**

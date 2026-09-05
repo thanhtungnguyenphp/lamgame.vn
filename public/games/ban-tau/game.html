@@ -2,7 +2,6 @@
 <html>
 <head>
 	<title>Arcade Shooter</title>
-<script src="/_shared/wrapper.js"></script>
 </head>
 <body>
 	<img src="images\ppp.png" height="100px" width="100px" id="ppp" style="display: none;">
@@ -29,8 +28,27 @@
 			w : 100,
 			direction : 0,
 			draw : function(){
-			 ctx.drawImage(img, this.x, this.y,this.w,this.h);
+				if (img.complete && img.naturalWidth > 0) {
+					ctx.drawImage(img, this.x, this.y, this.w, this.h);
+					return;
+				}
 
+				// The original ship image is absent; render the playable ship
+				// directly on canvas instead of aborting the animation loop.
+				ctx.save();
+				ctx.translate(this.x + this.w / 2, this.y + this.h / 2);
+				ctx.fillStyle = '#38bdf8';
+				ctx.strokeStyle = '#e0f2fe';
+				ctx.lineWidth = 3;
+				ctx.beginPath();
+				ctx.moveTo(0, -this.h / 2);
+				ctx.lineTo(this.w / 2, this.h / 2);
+				ctx.lineTo(0, this.h / 3);
+				ctx.lineTo(-this.w / 2, this.h / 2);
+				ctx.closePath();
+				ctx.fill();
+				ctx.stroke();
+				ctx.restore();
 			}
 		}
 

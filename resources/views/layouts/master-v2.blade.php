@@ -53,8 +53,9 @@
     <!-- CSRF -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Google AdSense -->
-    <meta name="google-adsense-account" content="ca-pub-5812352607411986">
+    @include('partials.privacy-consent-head')
+    @include('partials.analytics')
+    @include('partials.adsense')
 
     <!-- Alpine.js for header/footer interactivity -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -88,6 +89,7 @@
             document.querySelectorAll('.lg-v2-fade-in').forEach(el => observer.observe(el));
         });
     </script>
+    @include('partials.privacy-consent-banner')
     @stack('scripts')
 </body>
 </html>

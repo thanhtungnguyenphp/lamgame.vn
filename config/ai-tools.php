@@ -4,28 +4,45 @@ return [
     'ii_agent' => [
         'url'     => env('II_AGENT_URL', 'http://lg-ii-agent:8000'),
         'timeout' => (int) env('II_AGENT_TIMEOUT', 120),
+        'attempts' => (int) env('AI_PROVIDER_ATTEMPTS', 2),
+        'retry_delay_ms' => (int) env('AI_PROVIDER_RETRY_DELAY_MS', 300),
     ],
 
-    // OHHA Core API key (for proxy auth)
     'ohha_api_key' => env('OHHA_API_KEY', ''),
-
-    // OHHA public URL (accessible from browser)
     'ohha_public_url' => env('OHHA_PUBLIC_URL', 'http://45.77.241.79:8100'),
 
-    // LLM provider keys
     'openai_key'    => env('OPENAI_API_KEY'),
     'deepseek_key'  => env('DEEPSEEK_API_KEY'),
     'gemini_key'    => env('GEMINI_API_KEY'),
     'anthropic_key' => env('ANTHROPIC_API_KEY'),
 
-    // Model per plan
+    // Keep legacy "business" as an alias while production uses "studio".
+    'plan_aliases' => [
+        'business' => 'studio',
+    ],
+
     'models' => [
-        'free'     => 'gemini-2.5-flash',
-        'pro'      => 'gemini-2.5-flash',
+        'free'  => 'gemini-2.5-flash',
+        'basic' => 'gemini-2.5-flash',
+        'pro'   => 'gemini-2.5-flash',
+        'studio' => [
+            'default' => 'gemini-2.5-flash',
+            'code'    => 'gemini-2.5-flash',
+        ],
+        'enterprise' => [
+            'default' => 'gemini-2.5-flash',
+            'code'    => 'gemini-2.5-flash',
+        ],
         'business' => [
             'default' => 'gemini-2.5-flash',
             'code'    => 'gemini-2.5-flash',
         ],
+    ],
+
+    // Used only when the primary provider fails; duplicates are removed.
+    'fallback_models' => [
+        'gemini-2.5-flash',
+        'deepseek-chat',
     ],
 
     'max_tokens' => [
@@ -46,7 +63,7 @@ return [
         'asset'   => 'ai_asset',
         'generate_image' => 'ai_asset',
         'gdd_generator'  => 'ai_generate',
-        'chat'    => 'ai_concept',  // Chat uses same quota as concept
+        'chat'    => 'ai_concept',
     ],
 
     'rate_limit' => [

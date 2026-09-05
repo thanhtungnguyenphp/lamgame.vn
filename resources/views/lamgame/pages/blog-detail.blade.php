@@ -5,26 +5,9 @@
 @section('og_type', 'article')
 @section('og_image', $blog->featured_image ?? asset('assets/logos/png/logo-square-512.png'))
 @section('twitter_card', 'summary_large_image')
+@section('canonical_url', route('blog.show', $blog->slug))
 
-@push('meta')
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": "{{ $blog->name }}",
-    "description": "{{ Str::limit(strip_tags($blog->short_description ?? $blog->description ?? ''), 200) }}",
-    "url": "{{ url()->current() }}",
-    @if($blog->src)"image": "{{ asset('storage/' . $blog->src) }}",@endif
-    "datePublished": "{{ $blog->published_at ?? $blog->created_at }}",
-    @if($blog->authorModel)
-    "author": {!! json_encode($blog->authorModel->getSchemaOrgData()) !!},
-    @else
-    "author": {"@type": "Person", "name": "{{ $blog->author ?? 'LAMGAME' }}"},
-    @endif
-    "publisher": {"@type": "Organization", "name": "LAMGAME", "url": "https://lamgame.vn"}
-}
-</script>
-@endpush
+
 
 @if($page_keywords)
 @section('meta_keywords', $page_keywords)
@@ -97,8 +80,10 @@
                 <span>{{ Str::limit($blog->name, 40) }}</span>
             </div>
             <div class="bd-hero__meta">
-                @if($blog->category)
+                @if($blog->category?->status)
                 <a href="{{ route('lamgame.blog', ['category' => $blog->category->slug]) }}" class="bd-badge">{{ $blog->category->name }}</a>
+                @elseif($blog->category)
+                <span class="bd-badge">{{ $blog->category->name }}</span>
                 @endif
                 <time datetime="{{ $blog->published_at ? $blog->published_at->toIso8601String() : $blog->created_at->toIso8601String() }}" class="bd-meta">{{ $blog->formatted_date }}</time>
                 <span class="bd-meta">{{ $blog->reading_time }} phút đọc</span>
@@ -227,7 +212,7 @@
                 @foreach($relatedPosts as $relatedPost)
                 <a href="/blog/{{ $relatedPost->slug }}" class="bd-related__card">
                     <div class="bd-related__img">
-                        <img src="{{ $relatedPost->featured_image }}" alt="{{ $relatedPost->name }}" loading="lazy">
+                        <img src="{{ $relatedPost->featured_image }}" alt="{{ $relatedPost->name }}" loading="lazy" onerror="this.onerror=null;this.src='{{ asset('images/placeholder-game.svg') }}'">
                     </div>
                     <div class="bd-related__body">
                         <span class="bd-badge bd-badge--sm">{{ $relatedPost->category->name ?? '' }}</span>

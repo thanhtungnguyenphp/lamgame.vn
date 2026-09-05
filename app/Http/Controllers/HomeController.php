@@ -250,116 +250,45 @@ class HomeController extends Controller
     private function getLatestBlogs()
     {
         try {
-            // Lấy top 3 blogs dựa trên views và shares
             $blogs = Blog::published()
                 ->with(['category'])
-                ->where(function($query) {
-                    // Ưu tiên blogs có nhiều views hoặc shares
-                    $query->where('views', '>', 100)
-                          ->orWhere('shares', '>', 10);
-                })
                 ->orderByRaw('(COALESCE(views, 0) + COALESCE(shares, 0) * 5) DESC')
+                ->orderByDesc('published_at')
                 ->limit(3)
                 ->get();
 
-            // Nếu không đủ 3 blogs, lấy thêm blogs mới nhất
-            if ($blogs->count() < 3) {
-                $excludeIds = $blogs->pluck('id')->toArray();
-                $additionalBlogs = Blog::published()
-                    ->with(['category'])
-                    ->whereNotIn('id', $excludeIds)
-                    ->orderBy('published_at', 'desc')
-                    ->limit(3 - $blogs->count())
-                    ->get();
-                
-                $blogs = $blogs->merge($additionalBlogs);
-            }
-
-            $blogsData = [];
-            foreach ($blogs as $blog) {
-                $blogsData[] = [
+            $blogsData = $blogs->map(function ($blog) {
+                return [
                     'id' => $blog->id,
                     'title' => $blog->name,
                     'excerpt' => $blog->short_description,
-                    'author' => $blog->author ?? 'LamGame Team',
+                    'author' => $blog->author ?: 'LamGame Team',
                     'category' => $blog->category->name ?? 'Development',
                     'category_color' => $this->getCategoryColor($blog->category->name ?? 'Development'),
-                    'published_at' => $blog->published_at->format('Y-m-d'),
-                    'time_ago' => $blog->published_at->diffForHumans(),
-                    'reading_time' => $blog->reading_time ?? 5,
+                    'published_at' => optional($blog->published_at)->format('Y-m-d'),
+                    'time_ago' => optional($blog->published_at)->diffForHumans(),
+                    'reading_time' => (int) ($blog->reading_time ?? 0),
                     'featured_image' => $blog->featured_image ?? asset('images/placeholder-game.svg'),
                     'url' => route('blog.show', $blog->slug),
-                    'views' => $blog->views ?? rand(100, 1000),
-                    'shares' => $blog->shares ?? rand(10, 100),
-                    // Giả lập comment snippet từ excerpt
-                    'comment_snippet' => $this->generateCommentSnippet($blog->name),
-                    'latest_comment_author' => 'GameDev_VN',
+                    'views' => (int) ($blog->views ?? 0),
+                    'shares' => (int) ($blog->shares ?? 0),
+                    'comment_snippet' => '',
+                    'latest_comment_author' => '',
                 ];
-            }
+            })->values()->all();
 
             return [
                 'featured' => $blogsData,
                 'categories' => $this->getBlogCategories(),
                 'total_posts' => Blog::published()->count(),
             ];
-        } catch (\Exception $e) {
-            // Fallback data nếu có lỗi
+        } catch (\Throwable $e) {
+            report($e);
+
             return [
-                'featured' => [
-                    [
-                        'id' => 1,
-                        'title' => 'Hướng dẫn Unity 2024 - Tính năng mới',
-                        'excerpt' => 'Unity 2024 mang đến nhiều cải tiến quan trọng giúp game developer tăng hiệu suất và chất lượng game.',
-                        'author' => 'LamGame Team',
-                        'category' => 'Unity',
-                        'category_color' => '#ff6b35',
-                        'published_at' => now()->format('Y-m-d'),
-                        'time_ago' => '2 giờ trước',
-                        'reading_time' => 8,
-                        'featured_image' => asset('images/placeholder-game.svg'),
-                        'url' => '#',
-                        'views' => 1250,
-                        'shares' => 85,
-                        'comment_snippet' => 'Bài viết rất hữu ích! Netcode mới của Unity thực sự ấn tượng...',
-                        'latest_comment_author' => 'UnityDev',
-                    ],
-                    [
-                        'id' => 2,
-                        'title' => 'C# Cơ bản cho Game Developer',
-                        'excerpt' => 'Hướng dẫn C# từ cơ bản đến nâng cao dành cho Unity game development.',
-                        'author' => 'LamGame Team',
-                        'category' => 'Programming',
-                        'category_color' => '#667eea',
-                        'published_at' => now()->subDays(1)->format('Y-m-d'),
-                        'time_ago' => '1 ngày trước',
-                        'reading_time' => 12,
-                        'featured_image' => asset('images/placeholder-game.svg'),
-                        'url' => '#',
-                        'views' => 980,
-                        'shares' => 65,
-                        'comment_snippet' => 'Giải thích MonoBehaviour rất rõ ràng, cảm ơn tác giả!',
-                        'latest_comment_author' => 'BeginnerCoder',
-                    ],
-                    [
-                        'id' => 3,
-                        'title' => 'Tối ưu hóa Performance Game Mobile',
-                        'excerpt' => 'Các kỹ thuật tối ưu hóa performance cho mobile game để đạt hiệu suất tốt nhất.',
-                        'author' => 'LamGame Team',
-                        'category' => 'Mobile Development',
-                        'category_color' => '#10b981',
-                        'published_at' => now()->subDays(3)->format('Y-m-d'),
-                        'time_ago' => '3 ngày trước',
-                        'reading_time' => 15,
-                        'featured_image' => asset('images/placeholder-game.svg'),
-                        'url' => '#',
-                        'views' => 1580,
-                        'shares' => 120,
-                        'comment_snippet' => 'Object Pooling tip rất hay, đã áp dụng vào game của mình!',
-                        'latest_comment_author' => 'MobileDev',
-                    ],
-                ],
+                'featured' => [],
                 'categories' => collect(),
-                'total_posts' => 50,
+                'total_posts' => 0,
             ];
         }
     }
@@ -607,15 +536,22 @@ class HomeController extends Controller
      */
     private function getStatistics()
     {
+        $confirmedSourcePurchases = DB::table('order_items')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->join('products', 'products.id', '=', 'order_items.product_id')
+            ->where('products.type', 'downloadable')
+            ->whereIn('orders.status', ['processing', 'completed'])
+            ->count();
+
         return [
             'jobs_this_week' => $this->getWeeklyJobsCount(),
             'total_jobs' => $this->getJobsCount(),
             'forum_posts' => $this->getForumPostsCount(),
             'active_discussions' => 0,
             'blog_posts' => $this->getBlogPostsCount(),
-            'blog_views_today' => rand(200, 800),
-            'source_downloads' => rand(500, 2000),
-            'source_games' => \DB::table('products')->where('type', 'downloadable')->count(),
+            'blog_views_today' => 0,
+            'source_downloads' => $confirmedSourcePurchases,
+            'source_games' => DB::table('products')->where('type', 'downloadable')->count(),
             'community_members' => $this->getCommunityMembersCount(),
         ];
     }

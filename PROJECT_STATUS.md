@@ -34,7 +34,7 @@
 - [x] **Source Game Reviews API** (05/05) — Rating, review, helpful, verified purchase
 - [x] **Hire Request API** (05/05) — Yêu cầu báo giá, email notification
 - [x] Banner System (package LamGame/Banner)
-- [x] SEO (sitemap, Google Index push, Adsense)
+- [x] SEO (sitemap, Google Index push, AdSense consent-gated trên blog)
 - [x] Collections (bookmark sản phẩm)
 - [x] Docker (8 services)
 - [x] Cache Redis (24/04)

@@ -138,13 +138,15 @@
 
                     <section id="cookie">
                         <h2>6. Cookie và công nghệ theo dõi</h2>
-                        <p>Chúng tôi sử dụng cookies để:</p>
+                        <p>LamGame phân loại cookie và công nghệ tương tự theo mục đích:</p>
                         <ul>
-                            <li><strong>Cookies thiết yếu:</strong> Duy trì phiên đăng nhập, giỏ hàng</li>
-                            <li><strong>Cookies phân tích:</strong> Google Analytics để hiểu hành vi người dùng</li>
-                            <li><strong>Cookies chức năng:</strong> Ghi nhớ tùy chọn của bạn</li>
+                            <li><strong>Thiết yếu:</strong> Duy trì phiên đăng nhập, bảo mật và giỏ hàng; luôn được bật.</li>
+                            <li><strong>Analytics:</strong> Google Analytics chỉ được tải sau khi bạn đồng ý để chúng tôi đo hiệu suất và hành vi sử dụng.</li>
+                            <li><strong>Quảng cáo:</strong> Khi quảng cáo được kích hoạt, cookie lưu trữ quảng cáo, đo lường và cá nhân hóa chỉ được bật sau khi bạn đồng ý.</li>
+                            <li><strong>Chức năng:</strong> Ghi nhớ các tùy chọn cần thiết cho trải nghiệm bạn yêu cầu.</li>
                         </ul>
-                        <p>Bạn có thể tắt cookies trong trình duyệt, nhưng một số tính năng có thể không hoạt động.</p>
+                        <p>Bạn có thể chấp nhận, từ chối hoặc thay đổi riêng tùy chọn Analytics và Quảng cáo bất kỳ lúc nào. Việc từ chối cookie không thiết yếu không ảnh hưởng đăng nhập, giỏ hàng hoặc giao dịch.</p>
+                        <button type="button" class="lg-legal__button" onclick="window.openPrivacyPreferences?.()">Quản lý tùy chọn cookie</button>
                     </section>
 
                     <section id="quyen-loi">

@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
-@section('page_title', $page_title ?? 'Source Game Marketplace - Mã Nguồn Game Production-Ready - Làm Game')
-@section('page_description', $page_description ?? 'Marketplace source code game production-ready. Unity, Unreal, Godot. 1200+ source từ cộng đồng developer Việt Nam.')
+@section('page_title', $page_title ?? 'Source Game Marketplace - Unity, Unreal, Godot, HTML5 - Làm Game')
+@section('page_description', $page_description ?? 'Marketplace source game với giá, engine, ảnh, demo, ngày cập nhật và nội dung gói tải được công khai theo từng sản phẩm.')
 
 {{-- SEO: Canonical always points to /source-game (filter pages are variations, not unique) --}}
 @section('canonical_url'){{ route('lamgame.source-game') }}@endsection
@@ -19,7 +19,7 @@
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": "Source Game Marketplace",
-    "description": "Marketplace source code game production-ready cho developer Việt Nam",
+    "description": "Marketplace source game với thông tin sản phẩm và điều khoản công khai",
     "url": "{{ route('lamgame.source-game') }}",
     "isPartOf": {"@type": "WebSite","name": "Làm Game","url": "{{ url('/') }}"}
     @if(!empty($featuredSources) && count($featuredSources))
@@ -55,8 +55,8 @@
     <div class="sg-hero__bg"></div>
     <div class="sg-container sg-hero__inner">
         <span class="sg-hero__badge">🎮 Source Game Marketplace</span>
-        <h1 class="sg-hero__title">Build game nhanh hơn với <br><span class="sg-glow">source code production-ready</span></h1>
-        <p class="sg-hero__sub">Tiết kiệm hàng trăm giờ phát triển. Source đã test, document đầy đủ, sẵn sàng deploy.</p>
+        <h1 class="sg-hero__title">Build game nhanh hơn với <br><span class="sg-glow">source code có thông tin rõ ràng</span></h1>
+        <p class="sg-hero__sub">Giá, demo, thông số và trạng thái gói tải được công khai theo dữ liệu hiện có.</p>
         <form action="{{ route('lamgame.source-game') }}" method="GET" class="sg-search">
             <svg class="sg-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Tìm source game, engine, genre..." class="sg-search__input">
@@ -69,10 +69,10 @@
 <section class="sg-trust">
     <div class="sg-container">
         <div class="sg-trust__grid">
-            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['published_sources'] ?? 0) }}+</strong><span>Source Code</span></div>
-            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['registered_users'] ?? 0) }}+</strong><span>Developers</span></div>
-            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['total_orders'] ?? 0) }}+</strong><span>Đơn hàng</span></div>
-            <div class="sg-trust__item"><strong>{{ $siteMetrics['job_listings'] ?? 0 }}+</strong><span>Việc làm</span></div>
+            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['published_sources'] ?? 0) }}</strong><span>Source công khai</span></div>
+            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['registered_users'] ?? 0) }}</strong><span>Tài khoản hoạt động</span></div>
+            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['total_orders'] ?? 0) }}</strong><span>Đơn hoàn tất</span></div>
+            <div class="sg-trust__item"><strong>{{ $siteMetrics['job_listings'] ?? 0 }}</strong><span>Việc làm đang mở</span></div>
         </div>
     </div>
 </section>
@@ -82,7 +82,7 @@
 <section class="sg-sec">
     <div class="sg-container">
         <div class="sg-sec__head">
-            <h2 class="sg-sec__title">🔥 Trending</h2>
+            <h2 class="sg-sec__title">🔥 Đang được mua</h2>
             <a href="{{ route('lamgame.source-game', ['sort' => 'popular']) }}" class="sg-sec__link">Xem tất cả →</a>
         </div>
         <div class="sg-scroll">
@@ -99,7 +99,7 @@
 <section class="sg-sec">
     <div class="sg-container">
         <div class="sg-sec__head">
-            <h2 class="sg-sec__title">⭐ Source Nổi Bật</h2>
+            <h2 class="sg-sec__title">✅ Source đã kiểm chứng</h2>
             <a href="{{ route('lamgame.source-game', ['sort' => 'featured']) }}" class="sg-sec__link">Xem tất cả →</a>
         </div>
         <div class="sg-scroll">
@@ -192,10 +192,10 @@
     <div class="sg-container">
         <h2 class="sg-sec__title" style="text-align:center;margin-bottom:32px">Tại sao chọn LamGame Marketplace?</h2>
         <div class="sg-why">
-            <div class="sg-why__item"><span>✅</span><h3>Production-Ready</h3><p>Mọi source đều được review, test và document đầy đủ trước khi publish.</p></div>
-            <div class="sg-why__item"><span>⚡</span><h3>Tiết kiệm 3-6 tháng</h3><p>Không cần code từ đầu. Clone, customize và ship game nhanh hơn.</p></div>
-            <div class="sg-why__item"><span>🛡️</span><h3>Hỗ trợ sau mua</h3><p>Mỗi source đi kèm support từ developer. Fix bug, hướng dẫn setup.</p></div>
-            <div class="sg-why__item"><span>🔄</span><h3>Cập nhật thường xuyên</h3><p>Source được update theo engine version mới nhất. Không lo outdated.</p></div>
+            <div class="sg-why__item"><span>🔎</span><h3>Thông tin minh bạch</h3><p>Giá, engine, ngày cập nhật, demo và nội dung gói tải được hiển thị theo dữ liệu hiện có.</p></div>
+            <div class="sg-why__item"><span>🔐</span><h3>Tải qua tài khoản</h3><p>File trả phí được cấp theo đơn hàng và giới hạn tải của người mua.</p></div>
+            <div class="sg-why__item"><span>📄</span><h3>Điều khoản công khai</h3><p>Chính sách hoàn tiền, bảo mật và điều khoản Marketplace có thể xem trước khi mua.</p></div>
+            <div class="sg-why__item"><span>💬</span><h3>Kênh hỗ trợ rõ ràng</h3><p>Gửi câu hỏi qua Forum hoặc email; phạm vi hỗ trợ cụ thể tùy từng sản phẩm.</p></div>
         </div>
     </div>
 </section>
@@ -217,7 +217,7 @@
     <div class="sg-container">
         <h2 class="sg-sec__title" style="text-align:center;margin-bottom:32px">Dịch vụ Game Development</h2>
         <div class="sg-services">
-            <div class="sg-svc"><span class="sg-svc__icon">💻</span><h3>Thuê Game Developer</h3><p>Freelancer Unity, Unreal, Godot — nhận việc trong 24h</p><a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">Liên hệ →</a></div>
+            <div class="sg-svc"><span class="sg-svc__icon">💻</span><h3>Thuê Game Developer</h3><p>Trao đổi phạm vi Unity, Unreal, Godot và nhận estimate theo dự án</p><a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">Liên hệ →</a></div>
             <div class="sg-svc"><span class="sg-svc__icon">💡</span><h3>Chia sẻ ý tưởng Game</h3><p>Đăng ý tưởng game, tìm đội ngũ phát triển cùng bạn</p><a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">Gửi ý tưởng →</a></div>
             <div class="sg-svc"><span class="sg-svc__icon">📦</span><h3>Đăng bán Source Game</h3><p>Bán source code game của bạn cho cộng đồng developer</p><a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">Đăng bán →</a></div>
         </div>
@@ -228,7 +228,7 @@
 <section class="sg-cta">
     <div class="sg-container" style="text-align:center">
         <h2>Bạn có source game muốn bán?</h2>
-        <p>Tham gia marketplace và kiếm thu nhập passive từ code của bạn</p>
+        <p>Đăng ký seller, công khai thông tin sản phẩm và tiếp cận cộng đồng developer</p>
         <a href="{{ route('lamgame.lien-he') }}" class="sg-btn sg-btn--primary">Đăng bán source game →</a>
     </div>
 </section>
@@ -262,4 +262,29 @@
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet"></noscript>
 <link rel="stylesheet" href="{{ asset('css/source-game.css') }}">
+@endpush
+
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    window.trackRevenueEvent?.('view_item_list', {
+        item_list_id: 'source_game_marketplace',
+        visible_items: document.querySelectorAll('[data-source-card]').length
+    }, 'source-list-{{ request('page', 1) }}');
+
+    document.querySelectorAll('[data-source-card]').forEach(function (card) {
+        card.addEventListener('click', function () {
+            window.trackRevenueEvent?.('select_item', {
+                item_list_id: 'source_game_marketplace',
+                items: [{
+                    item_id: card.dataset.productId,
+                    item_name: card.dataset.productName,
+                    price: Number(card.dataset.price || 0)
+                }]
+            });
+        });
+    });
+});
+</script>
 @endpush

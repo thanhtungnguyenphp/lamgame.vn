@@ -45,6 +45,11 @@ class AiChatController extends Controller
 
         try {
             $response = Http::timeout($timeout)
+                ->retry(
+                    max(1, (int) config('ai-tools.ii_agent.attempts', 2)),
+                    max(0, (int) config('ai-tools.ii_agent.retry_delay_ms', 300)),
+                    throw: false,
+                )
                 ->withHeaders(['X-API-Key' => config('ai-tools.ohha_api_key', '')])
                 ->post("{$ohhaUrl}/api/chat", [
                     'message'    => $request->input('message'),
@@ -177,10 +182,10 @@ class AiChatController extends Controller
         $quota = $this->subscriptionService->checkQuota($customer->id, 'ai_concept');
 
         return response()->json([
-            'ws_url'  => config('ai-tools.ii_agent.url') . '/ws',
-            'api_key' => config('ai-tools.ohha_api_key', ''),
-            'persona' => 'game',
-            'quota'   => $quota,
+            'message_url' => route('api.ai-chat.message'),
+            'stream_url'  => route('api.ai-chat.stream'),
+            'persona'     => 'game',
+            'quota'       => $quota,
         ]);
     }
 }

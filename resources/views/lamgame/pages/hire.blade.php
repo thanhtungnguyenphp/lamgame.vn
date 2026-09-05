@@ -4,10 +4,10 @@
 @section('page_description', 'Hire experienced game developers from Vietnam. Unity, Unreal Engine, Godot specialists. Competitive rates, EU timezone friendly, fluent English.')
 
 @push('meta')
-<meta name="description" content="Hire game developers from Vietnam. Professional Unity, Unreal Engine, Godot development. 40-60% lower cost, EU timezone overlap, fluent English communication. 50+ projects delivered.">
+<meta name="description" content="Hire game developers from Vietnam. Professional Unity, Unreal Engine, Godot development. Transparent scope, milestone delivery, timezone overlap, and English communication.">
 <meta name="keywords" content="hire game developers vietnam, vietnam game studio, unity developers for hire, game development outsourcing vietnam, remote game developers asia, game outsourcing ho chi minh, indie game development vietnam, mobile game developers vietnam">
 <meta property="og:title" content="Hire Game Developers Vietnam | LamGame Studio">
-<meta property="og:description" content="Professional game development studio from Vietnam. 5+ years experience, 50+ projects delivered. Competitive rates for EU/US clients.">
+<meta property="og:description" content="Professional game development studio from Vietnam. Scope-based game development with milestone delivery for international clients.">
 <meta property="og:image" content="{{ asset('images/lamgame-hire-og.png') }}">
 <meta property="og:url" content="{{ url('/hire') }}">
 <meta name="twitter:card" content="summary_large_image">
@@ -605,25 +605,13 @@
         </div>
     </section>
 
-    <!-- Stats Bar -->
-    <section class="hire-container" aria-label="Company statistics">
+    <!-- Verifiable delivery commitments -->
+    <section class="hire-container" aria-label="Delivery commitments">
         <div class="hire-stats" role="list">
-            <div class="hire-stat" role="listitem">
-                <div class="hire-stat-value" aria-label="5 plus years">5+</div>
-                <div class="hire-stat-label">Years Experience</div>
-            </div>
-            <div class="hire-stat" role="listitem">
-                <div class="hire-stat-value" aria-label="50 plus projects">50+</div>
-                <div class="hire-stat-label">Projects Delivered</div>
-            </div>
-            <div class="hire-stat" role="listitem">
-                <div class="hire-stat-value" aria-label="20 plus clients">20+</div>
-                <div class="hire-stat-label">Happy Clients</div>
-            </div>
-            <div class="hire-stat" role="listitem">
-                <div class="hire-stat-value">98%</div>
-                <div class="hire-stat-label">Client Satisfaction</div>
-            </div>
+            <div class="hire-stat" role="listitem"><div class="hire-stat-value">Free</div><div class="hire-stat-label">Scoping Call</div></div>
+            <div class="hire-stat" role="listitem"><div class="hire-stat-value">Clear</div><div class="hire-stat-label">Milestones & Deliverables</div></div>
+            <div class="hire-stat" role="listitem"><div class="hire-stat-value">NDA</div><div class="hire-stat-label">Available Before Sharing</div></div>
+            <div class="hire-stat" role="listitem"><div class="hire-stat-value">UTC+7</div><div class="hire-stat-label">Flexible Overlap</div></div>
         </div>
     </section>
 
@@ -712,7 +700,7 @@
                     <div class="why-us-icon" aria-hidden="true">💰</div>
                     <div class="why-us-content">
                         <h3>Competitive Rates</h3>
-                        <p>High-quality development at 40-60% lower cost compared to Western agencies. No compromise on quality.</p>
+                        <p>Scope-based estimates with clear deliverables, milestones, and change-control before development starts.</p>
                     </div>
                 </article>
                 <article class="why-us-card" role="listitem">
@@ -829,14 +817,14 @@
     <section class="hire-section" id="pricing" aria-labelledby="pricing-title">
         <div class="hire-container">
             <div class="hire-section-header">
-                <h2 id="pricing-title">Engagement Models</h2>
-                <p>Flexible options to match your project needs</p>
+                <h2 id="pricing-title">Choose a Delivery Package</h2>
+                <p>Start with a defined outcome, timeline, and payment model</p>
             </div>
             <div class="pricing-grid" role="list">
                 <article class="pricing-card" role="listitem">
                     <h3>Fixed Price</h3>
                     <div class="price" aria-label="Starting from 5000 dollars">From $5,000</div>
-                    <div class="price-note">Per project</div>
+                    <div class="price-note">Typically 2–8 weeks · final quote after scoping</div>
                     <ul class="pricing-features" role="list">
                         <li role="listitem">Best for well-defined scope</li>
                         <li role="listitem">Fixed budget & timeline</li>
@@ -844,12 +832,12 @@
                         <li role="listitem">Full ownership on delivery</li>
                         <li role="listitem">30-day post-launch support</li>
                     </ul>
-                    <a href="#contact" class="btn-primary" role="button" style="display: block;">Get Quote</a>
+                    <a href="#contact" class="btn-primary" role="button" style="display: block;" data-hire-package="fixed-scope">Select Fixed Scope</a>
                 </article>
                 <article class="pricing-card featured" role="listitem" aria-label="Most popular option">
                     <h3>Dedicated Team</h3>
                     <div class="price" aria-label="2500 dollars per month">$2,500/mo</div>
-                    <div class="price-note">Per developer</div>
+                    <div class="price-note">Monthly delivery sprints</div>
                     <ul class="pricing-features" role="list">
                         <li role="listitem">Ideal for ongoing projects</li>
                         <li role="listitem">Dedicated resources</li>
@@ -857,12 +845,12 @@
                         <li role="listitem">Direct communication</li>
                         <li role="listitem">Monthly billing</li>
                     </ul>
-                    <a href="#contact" class="btn-primary" role="button" style="display: block;">Get Quote</a>
+                    <a href="#contact" class="btn-primary" role="button" style="display: block;" data-hire-package="dedicated-team">Select Dedicated Team</a>
                 </article>
                 <article class="pricing-card" role="listitem">
                     <h3>Hourly</h3>
                     <div class="price" aria-label="25 to 45 dollars per hour">$25-45/hr</div>
-                    <div class="price-note">Based on skill level</div>
+                    <div class="price-note">Bug fixes, audits, and short improvements</div>
                     <ul class="pricing-features" role="list">
                         <li role="listitem">Maximum flexibility</li>
                         <li role="listitem">Pay only for work done</li>
@@ -870,50 +858,18 @@
                         <li role="listitem">Weekly invoicing</li>
                         <li role="listitem">Scale up/down anytime</li>
                     </ul>
-                    <a href="#contact" class="btn-primary" role="button" style="display: block;">Get Quote</a>
+                    <a href="#contact" class="btn-primary" role="button" style="display: block;" data-hire-package="hourly-support">Select Hourly Support</a>
                 </article>
             </div>
         </div>
     </section>
 
-    <!-- Testimonials -->
-    <section class="hire-section" style="background: var(--hire-surface-alt);" aria-labelledby="testimonials-title">
+    <!-- Proof policy -->
+    <section class="hire-section" style="background: var(--hire-surface-alt);" aria-labelledby="proof-title">
         <div class="hire-container">
             <div class="hire-section-header">
-                <h2 id="testimonials-title">What Clients Say</h2>
-                <p>Trusted by game studios and indie developers worldwide</p>
-            </div>
-            <div class="testimonials-grid" role="list">
-                <blockquote class="testimonial-card" role="listitem">
-                    <p class="testimonial-quote">"The team delivered our mobile game prototype in just 6 weeks. Communication was excellent and they really understood our vision. Highly recommended!"</p>
-                    <footer class="testimonial-author">
-                        <div class="testimonial-avatar" aria-hidden="true">M</div>
-                        <div class="testimonial-info">
-                            <strong>Marcus T.</strong>
-                            <span>Indie Game Studio, Germany</span>
-                        </div>
-                    </footer>
-                </blockquote>
-                <blockquote class="testimonial-card" role="listitem">
-                    <p class="testimonial-quote">"Professional, responsive, and technically skilled. They helped us port our Unity game to WebGL with smooth performance. Great value for money."</p>
-                    <footer class="testimonial-author">
-                        <div class="testimonial-avatar" aria-hidden="true">S</div>
-                        <div class="testimonial-info">
-                            <strong>Sarah L.</strong>
-                            <span>Game Publisher, Netherlands</span>
-                        </div>
-                    </footer>
-                </blockquote>
-                <blockquote class="testimonial-card" role="listitem">
-                    <p class="testimonial-quote">"We've been working with LamGame for over a year now. They're like an extension of our team. Quality work and always on time."</p>
-                    <footer class="testimonial-author">
-                        <div class="testimonial-avatar" aria-hidden="true">J</div>
-                        <div class="testimonial-info">
-                            <strong>James K.</strong>
-                            <span>Mobile Games Company, UK</span>
-                        </div>
-                    </footer>
-                </blockquote>
+                <h2 id="proof-title">Proof Before Promises</h2>
+                <p>We share relevant demos, code samples, delivery scope, and references when they are available and approved for disclosure.</p>
             </div>
         </div>
     </section>
@@ -972,6 +928,8 @@
                         <div id="hire-form-message" class="form-message" role="alert" aria-live="polite"></div>
                         <form class="hire-form" id="hireFormEN" onsubmit="event.preventDefault(); submitHireFormEN();" aria-label="Project inquiry form">
                             @csrf
+                            <input type="hidden" name="service_package" id="hire-service-package" value="not-sure">
+                            <input type="hidden" name="source" value="hire-page-en">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="hire-name">Your Name <span aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
@@ -997,11 +955,10 @@
                                     <label for="hire-project-type">Project Type <span aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
                                     <select id="hire-project-type" name="project_type" required>
                                         <option value="">Select type...</option>
-                                        <option value="game-unity">🎮 Unity Game</option>
-                                        <option value="game-unreal">🔥 Unreal Engine Game</option>
-                                        <option value="game-mobile">📱 Mobile Game</option>
-                                        <option value="game-web">🌐 Web/HTML5 Game</option>
-                                        <option value="porting">🛠️ Game Porting</option>
+                                        <option value="game">🎮 Game Development (Unity/Unreal/Godot)</option>
+                                        <option value="web">🌐 HTML5 / Web Game</option>
+                                        <option value="app">📱 Mobile App or Game Port</option>
+                                        <option value="ai">🤖 AI Feature Integration</option>
                                         <option value="other">📦 Other</option>
                                     </select>
                                 </div>
@@ -1064,8 +1021,11 @@ function submitHireFormEN() {
     const msg = document.getElementById('hire-form-message');
     const data = Object.fromEntries(new FormData(form));
     
-    // Add source language
-    data.source = 'hire-page-en';
+    window.trackRevenueEvent?.('hire_form_submit', {
+        project_type: data.project_type || 'unknown',
+        service_package: data.service_package || 'not-sure',
+        budget_range: data.budget_range || 'not-set'
+    });
 
     btn.disabled = true;
     btn.setAttribute('aria-busy', 'true');
@@ -1099,17 +1059,18 @@ function submitHireFormEN() {
             msg.focus();
             
             // Track conversion events
-            if (typeof trackEvent === 'function') {
-                trackEvent('generate_lead', {
-                    event_category: 'hire',
-                    event_label: data.project_type || 'general',
-                    value: 1
-                });
-            }
+            window.trackRevenueEvent?.('generate_lead', {
+                lead_source: 'hire-page-en',
+                project_type: data.project_type || 'general',
+                service_package: data.service_package || 'not-sure',
+                value: 1,
+                currency: 'USD'
+            });
             if (typeof trackFBLead === 'function') {
                 trackFBLead('Hire Form - ' + (data.project_type || 'General'));
             }
         } else {
+            window.trackRevenueEvent?.('hire_form_error', {error_type: d.errors ? 'validation' : 'api'});
             const errors = d.errors ? Object.values(d.errors).flat().join('<br>') : (d.message || 'Something went wrong. Please try again.');
             msg.className = 'form-message error';
             msg.setAttribute('role', 'alert');
@@ -1118,6 +1079,7 @@ function submitHireFormEN() {
         }
     })
     .catch(() => {
+        window.trackRevenueEvent?.('hire_form_error', {error_type: 'network'});
         btn.disabled = false;
         btn.removeAttribute('aria-busy');
         btn.textContent = 'Send Project Brief';
@@ -1128,18 +1090,31 @@ function submitHireFormEN() {
     });
 }
 
-// Track Calendly clicks
+function selectHirePackage(packageSlug) {
+    const input = document.getElementById('hire-service-package');
+    if (input) input.value = packageSlug;
+    window.trackRevenueEvent?.('select_package', {service_package: packageSlug});
+}
+
+// Track the lead funnel without sending form PII to analytics.
 document.addEventListener('DOMContentLoaded', function() {
+    window.trackRevenueEvent?.('view_hire_page', {page_variant: 'en'}, 'hire-page-view');
+
+    document.querySelectorAll('[data-hire-package]').forEach(function(link) {
+        link.addEventListener('click', function() { selectHirePackage(link.dataset.hirePackage); });
+    });
+
+    const hireForm = document.getElementById('hireFormEN');
+    let formStarted = false;
+    hireForm?.addEventListener('input', function() {
+        if (formStarted) return;
+        formStarted = true;
+        window.trackRevenueEvent?.('hire_form_start', {page_variant: 'en'}, 'hire-form-start');
+    });
     const calendlyLink = document.querySelector('a[href*="calendly"]');
     if (calendlyLink) {
         calendlyLink.addEventListener('click', function() {
-            if (typeof trackEvent === 'function') {
-                trackEvent('cta_click', {
-                    event_category: 'hire',
-                    event_label: 'calendly_schedule',
-                    value: 1
-                });
-            }
+            window.trackRevenueEvent?.('schedule_consultation', {channel: 'calendly', value: 1});
             if (typeof trackFBEvent === 'function') {
                 trackFBEvent('Schedule');
             }
@@ -1149,13 +1124,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Track CTA button clicks
     document.querySelectorAll('.btn-primary[href="#contact"]').forEach(function(btn) {
         btn.addEventListener('click', function() {
-            if (typeof trackEvent === 'function') {
-                trackEvent('cta_click', {
-                    event_category: 'hire',
-                    event_label: 'get_quote_click',
-                    value: 1
-                });
-            }
+            window.trackRevenueEvent?.('hire_cta_click', {cta: 'get_quote', value: 1});
         });
     });
 });

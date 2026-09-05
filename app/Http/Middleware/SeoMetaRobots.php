@@ -92,6 +92,15 @@ class SeoMetaRobots
         // === SOFT 404 FIXES ===
         $path = trim($request->path(), '/');
 
+        // Consolidate the archived duplicate into the reviewed canonical article.
+        $blogRedirects = [
+            'blog/dirty-bomb-game-fps-mien-phi-hay-nhat-tu-splash-damage'
+                => '/blog/dirty-bomb-danh-gia-chi-tiet-game-fps-mien-phi',
+        ];
+        if (isset($blogRedirects[$path])) {
+            return redirect($blogRedirects[$path], 301);
+        }
+
         // Fix /index.html and /index → redirect to homepage (not 404)
         if ($path === 'index.html' || $path === 'index') {
             return redirect('/', 301);

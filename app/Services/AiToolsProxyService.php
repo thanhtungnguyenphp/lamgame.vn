@@ -56,14 +56,21 @@ class AiToolsProxyService
         // Call LLM — supports OpenAI, DeepSeek, Gemini, Anthropic
         $startTime = microtime(true);
         try {
-            [$text, $tokensIn, $tokensOut, $durationMs] = $this->callLLM($model, $systemPrompt, $prompt, $maxTokens, $startTime);
+            [$text, $tokensIn, $tokensOut, $durationMs, $usedModel] = $this->callLLMWithFallback(
+                $model,
+                $systemPrompt,
+                $prompt,
+                $maxTokens,
+                $startTime,
+            );
 
             $history->update([
                 'status'        => 'completed',
+                'model_used'    => $usedModel,
                 'response'      => $text,
                 'tokens_input'  => $tokensIn,
                 'tokens_output' => $tokensOut,
-                'cost_usd'      => $this->estimateCost($model, $tokensIn, $tokensOut),
+                'cost_usd'      => $this->estimateCost($usedModel, $tokensIn, $tokensOut),
                 'duration_ms'   => $durationMs,
             ]);
 
@@ -76,7 +83,7 @@ class AiToolsProxyService
                 'tool_type'       => $toolType,
                 'status'          => 'completed',
                 'response'        => $text,
-                'model_used'      => $model,
+                'model_used'      => $usedModel,
                 'tokens_input'    => $tokensIn,
                 'tokens_output'   => $tokensOut,
                 'duration_ms'     => $durationMs,
@@ -94,16 +101,23 @@ class AiToolsProxyService
     {
         $plan = $this->subscriptionService->getUserPlan($customerId);
         $slug = $plan?->slug ?? 'free';
-        $models = config('ai-tools.models');
+        $models = config('ai-tools.models', []);
+        $aliases = config('ai-tools.plan_aliases', []);
+        $modelConfig = $models[$slug] ?? $models[$aliases[$slug] ?? ''] ?? null;
 
-        if ($slug === 'business') {
-            $codeTasks = ['codegen', 'debug', 'review', 'test'];
-            return in_array($toolType, $codeTasks)
-                ? ($models['business']['code'] ?? 'gpt-4o')
-                : ($models['business']['default'] ?? 'gpt-4o');
+        if ($modelConfig === null) {
+            Log::warning('Unknown AI subscription plan; using free model', ['plan' => $slug]);
+            $modelConfig = $models['free'] ?? 'gemini-2.5-flash';
         }
 
-        return $models[$slug] ?? $models['free'];
+        if (is_array($modelConfig)) {
+            $codeTasks = ['codegen', 'debug', 'review', 'test'];
+            return in_array($toolType, $codeTasks, true)
+                ? ($modelConfig['code'] ?? $modelConfig['default'])
+                : $modelConfig['default'];
+        }
+
+        return $modelConfig;
     }
 
     public function buildSystemPrompt(string $toolType, array $options = []): string
@@ -127,11 +141,55 @@ class AiToolsProxyService
     private function getUpsell(?string $currentPlan, string $toolType): array
     {
         $target = match ($currentPlan) {
-            'free' => 'pro',
-            'pro'  => 'business',
-            default => 'pro',
+            null, 'free' => 'basic',
+            'basic'      => 'pro',
+            'pro'        => 'studio',
+            'business'   => 'studio',
+            'studio'     => 'enterprise',
+            default      => 'pro',
         };
         return ['plan' => $target, 'url' => '/ai-tools'];
+    }
+
+    /**
+     * Retry the primary model and then fail over to configured providers.
+     * Prompt content is never written to retry logs.
+     */
+    private function callLLMWithFallback(
+        string $primaryModel,
+        string $systemPrompt,
+        string $prompt,
+        int $maxTokens,
+        float $startTime,
+    ): array {
+        $models = array_values(array_unique(array_filter([
+            $primaryModel,
+            ...config('ai-tools.fallback_models', []),
+        ])));
+        $attempts = max(1, (int) config('ai-tools.ii_agent.attempts', 2));
+        $delayMs = max(0, (int) config('ai-tools.ii_agent.retry_delay_ms', 300));
+        $lastException = null;
+
+        foreach ($models as $model) {
+            for ($attempt = 1; $attempt <= $attempts; $attempt++) {
+                try {
+                    $result = $this->callLLM($model, $systemPrompt, $prompt, $maxTokens, $startTime);
+                    return [...$result, $model];
+                } catch (\Throwable $exception) {
+                    $lastException = $exception;
+                    Log::warning('AI provider attempt failed', [
+                        'model' => $model,
+                        'attempt' => $attempt,
+                        'status' => $exception->getCode(),
+                    ]);
+                    if ($attempt < $attempts && $delayMs > 0) {
+                        usleep($delayMs * 1000);
+                    }
+                }
+            }
+        }
+
+        throw new \RuntimeException('All configured AI providers failed', 0, $lastException);
     }
 
     /**
@@ -238,6 +296,7 @@ class AiToolsProxyService
             'gpt-4o-mini'       => ['in' => 0.15, 'out' => 0.60],
             'gpt-4o'            => ['in' => 2.50, 'out' => 10.00],
             'gemini-2.0-flash'  => ['in' => 0.10, 'out' => 0.40],
+            'gemini-2.5-flash'  => ['in' => 0.30, 'out' => 2.50],
             'claude-sonnet-4-6' => ['in' => 3.00, 'out' => 15.00],
         ];
         $rate = $rates[$model] ?? $rates['deepseek-chat'];

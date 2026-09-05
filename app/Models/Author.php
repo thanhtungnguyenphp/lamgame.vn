@@ -115,7 +115,7 @@ class Author extends Model
             return "https://www.gravatar.com/avatar/{$hash}?d=identicon&s=200";
         }
         
-        return asset('images/default-avatar.png');
+        return asset('assets/logos/png/logo-square-512.png');
     }
 
     /**

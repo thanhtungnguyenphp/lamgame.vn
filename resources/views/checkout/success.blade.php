@@ -111,3 +111,24 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const orderEvent = @json(in_array($order->status, ['processing', 'completed'], true) ? 'purchase' : 'order_submitted');
+    window.trackRevenueEvent?.(orderEvent, {
+        transaction_id: @json((string) $order->increment_id),
+        currency: @json($order->order_currency_code ?? 'VND'),
+        value: {{ (float) $order->grand_total }},
+        order_status: @json($order->status),
+        payment_method: @json(optional($order->payment)->method),
+        items: @json($order->items->map(fn ($item) => [
+            'item_id' => (string) $item->product_id,
+            'item_name' => $item->name,
+            'price' => (float) $item->price,
+            'quantity' => (int) $item->qty_ordered,
+        ])->values())
+    }, 'order-' + @json((string) $order->increment_id) + '-' + orderEvent);
+});
+</script>
+@endpush
