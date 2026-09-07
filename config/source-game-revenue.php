@@ -70,6 +70,42 @@ return [
                 '/images/source-games/quiz-trivia/screenshot-3.webp',
             ],
         ],
+        'tower-defense' => [
+            'demo_path' => '/games/tower-defense/',
+            'source_path' => 'games/tower-defense',
+            'screenshots' => [
+                '/images/source-games/tower-defense/screenshot-1.webp',
+                '/images/source-games/tower-defense/screenshot-2.webp',
+                '/images/source-games/tower-defense/screenshot-3.webp',
+            ],
+        ],
+        'bubble-shooter' => [
+            'demo_path' => '/games/bubble-shooter/',
+            'source_path' => 'games/bubble-shooter',
+            'screenshots' => [
+                '/images/source-games/bubble-shooter/screenshot-1.webp',
+                '/images/source-games/bubble-shooter/screenshot-2.webp',
+                '/images/source-games/bubble-shooter/screenshot-3.webp',
+            ],
+        ],
+        'chess-ai' => [
+            'demo_path' => '/games/chess-ai/',
+            'source_path' => 'games/chess-ai',
+            'screenshots' => [
+                '/images/source-games/chess-ai/screenshot-1.webp',
+                '/images/source-games/chess-ai/screenshot-2.webp',
+                '/images/source-games/chess-ai/screenshot-3.webp',
+            ],
+        ],
+        'match3-candy' => [
+            'demo_path' => '/games/match3-candy/',
+            'source_path' => 'games/match3-candy',
+            'screenshots' => [
+                '/images/source-games/match3-candy/screenshot-1.webp',
+                '/images/source-games/match3-candy/screenshot-2.webp',
+                '/images/source-games/match3-candy/screenshot-3.webp',
+            ],
+        ],
     ],
 
     'quality_requirements' => [

@@ -1,0 +1,88 @@
+<p>Game design không bắt đầu từ số lượng tính năng mà từ trải nghiệm người chơi có thể quan sát và kiểm thử. Một ý tưởng như “RPG thế giới mở có crafting” chưa phải thiết kế; nó chưa nói người chơi làm gì mỗi phút, quyết định nào tạo căng thẳng, thất bại dạy điều gì và hệ thống phản hồi ra sao. Hướng dẫn này trình bày quy trình từ mục tiêu trải nghiệm đến core loop, economy, difficulty và playtest.</p>
+
+<h2>1. Viết design goal dưới dạng hành vi</h2>
+<p>Thay vì “game phải vui”, hãy mô tả hành vi mong muốn: người chơi quan sát đội hình đối thủ, đổi vị trí trước giao tranh và chấp nhận mất tài nguyên hiện tại để tạo lợi thế dài hạn. Một design goal tốt giúp team quyết định tính năng nào phục vụ sản phẩm và tính năng nào chỉ làm scope lớn hơn.</p>
+<p>Giới hạn ba goal chính. Ví dụ game stealth: người chơi lập kế hoạch từ thông tin chưa đầy đủ; sai lầm tạo tình huống ứng biến chứ không lập tức game over; mỗi công cụ có ít nhất hai cách sử dụng. Khi review một mechanic, hỏi nó củng cố goal nào. Nếu không có câu trả lời, mechanic cần được bỏ hoặc thiết kế lại.</p>
+
+<h2>2. Core loop: động từ, phản hồi và phần thưởng</h2>
+<p>Core loop là chuỗi hành động lặp lại thường xuyên nhất. Với game phòng thủ: quan sát đường đi → đặt tháp → chống wave → nhận tài nguyên → điều chỉnh phòng tuyến. Mỗi bước cần đầu vào, phản hồi và kết quả rõ ràng.</p>
+<ul>
+<li><strong>Động từ:</strong> di chuyển, nhắm, chọn, xây, trao đổi.</li>
+<li><strong>Đối tượng:</strong> kẻ địch, địa hình, thẻ bài, tài nguyên.</li>
+<li><strong>Ràng buộc:</strong> thời gian, vị trí, cooldown, thông tin, giới hạn inventory.</li>
+<li><strong>Phản hồi:</strong> animation, âm thanh, UI, thay đổi trạng thái thế giới.</li>
+<li><strong>Hệ quả:</strong> cơ hội mới, rủi ro, tiến trình hoặc mất mát.</li>
+</ul>
+<p>Prototype core loop bằng placeholder trước content. Nếu loop chỉ hấp dẫn sau khi có hàng trăm item, cinematic và daily reward, nền tảng có thể chưa đủ mạnh.</p>
+
+<h2>3. Dùng MDA để nối luật với trải nghiệm</h2>
+<p>MDA phân biệt Mechanics, Dynamics và Aesthetics. Mechanics là luật và dữ liệu; Dynamics là hành vi xuất hiện khi luật tương tác; Aesthetics là trải nghiệm cảm xúc người chơi nhận được. Designer thường đi từ trải nghiệm mong muốn về luật, còn người chơi tiếp xúc luật rồi hình thành dynamics và cảm xúc.</p>
+<p>Ví dụ muốn tạo căng thẳng hợp tác: mechanic giới hạn đạn và cho phép chia sẻ; dynamics là người chơi thương lượng, giữ tài nguyên hoặc cứu đồng đội; trải nghiệm là phụ thuộc và tin tưởng. Chỉ giảm lượng đạn chưa chắc tạo hợp tác—nó có thể tạo ích kỷ nếu phần thưởng cá nhân khuyến khích giữ đồ. Vì vậy phải playtest dynamics, không chỉ kiểm tra mechanic hoạt động đúng code.</p>
+
+<h2>4. Quyết định có ý nghĩa cần trade-off</h2>
+<p>Một lựa chọn không có ý nghĩa nếu luôn có đáp án đúng rõ ràng. Trade-off có thể là sức mạnh so với tốc độ, lợi ích hiện tại so với đầu tư dài hạn, an toàn so với thông tin, hoặc chuyên môn hóa so với linh hoạt.</p>
+<p>Để kiểm tra, viết các lựa chọn vào bảng gồm lợi ích, chi phí, điều kiện mạnh/yếu và thông tin người chơi có lúc quyết định. Nếu một lựa chọn thắng trong mọi bối cảnh, hãy điều chỉnh chi phí hoặc tạo tình huống mà lựa chọn khác có giá trị. Không cân bằng bằng cách làm mọi lựa chọn giống nhau; mục tiêu là nhiều chiến lược hợp lệ với điểm mạnh khác nhau.</p>
+
+<h2>5. Economy: nguồn, nơi tiêu và tốc độ lưu thông</h2>
+<p>Mọi tài nguyên đều cần source và sink. Source tạo tiền, mana, item hoặc thời gian; sink tiêu chúng. Nếu source tăng nhanh hơn sink, giá trị tài nguyên giảm. Nếu sink bắt buộc quá cao, người chơi cảm thấy progression bị khóa.</p>
+<p>Lập bảng cho mỗi tài nguyên: người chơi kiếm từ đâu, tần suất, giới hạn, tiêu vào đâu và hành vi được khuyến khích. Với soft currency, theo dõi số dư theo cohort và thời gian. Đừng chỉ cân bằng giá shop riêng lẻ; hãy mô phỏng tổng thu nhập qua một phiên và một tuần.</p>
+<pre><code>net_flow_per_session = total_sources - total_sinks
+sessions_to_upgrade = upgrade_cost / expected_net_flow</code></pre>
+<p>Công thức không thay playtest nhưng buộc assumption trở nên rõ ràng. Nếu thời gian nâng cấp dự kiến là năm phiên, telemetry cho thấy người chơi cần mười hai phiên, cần tìm source bị bỏ qua, sink ẩn hoặc hành vi khác giả định.</p>
+
+<h2>6. Progression mở lựa chọn, không chỉ tăng số</h2>
+<p>Progression tốt thay đổi cách chơi: mở động từ, build, vùng mới hoặc challenge mới. Tăng 5% sát thương liên tục có thể tạo cảm giác phát triển ngắn hạn nhưng ít tạo quyết định. Kết hợp vertical progression (mạnh hơn) với horizontal progression (nhiều lựa chọn hơn).</p>
+<p>Cho người chơi preview mốc tiếp theo và hiểu cách đạt được. Tránh nhiều hệ nâng cấp có tài nguyên gần giống nhau. Nếu reset build đắt, người chơi ngại thử nghiệm; có thể cho respec miễn phí ở giai đoạn học hoặc chế độ thử trước khi đầu tư.</p>
+
+<h2>7. Difficulty là yêu cầu kỹ năng, không phải chỉ số máu</h2>
+<p>Tăng HP của kẻ địch chủ yếu kéo dài giao tranh. Difficulty có thể thay đổi tốc độ đọc tình huống, số mục tiêu cần theo dõi, độ chính xác, áp lực tài nguyên hoặc mức phạt khi sai. Chọn loại difficulty phù hợp fantasy của game.</p>
+<p>Thiết kế đường cong theo chu kỳ: giới thiệu một yêu cầu trong môi trường an toàn, luyện tập có áp lực nhẹ, kết hợp với mechanic cũ, rồi kiểm tra bằng challenge. Sau challenge nên có nhịp nghỉ. Nếu liên tục tăng áp lực, khoảnh khắc cao trào mất tác dụng.</p>
+<p>Dynamic difficulty cần minh bạch và cẩn thận. Nếu game âm thầm làm người chơi gây ít sát thương sau khi chơi tốt, họ có thể thấy bị gian lận. Ưu tiên assist tùy chọn như aim support, tốc độ game hoặc checkpoint thay vì thao túng kết quả không giải thích.</p>
+
+<h2>8. Feedback giúp người chơi xây mental model</h2>
+<p>Người chơi cần hiểu hành động nào dẫn tới kết quả. Khi đòn đánh không hiệu quả, game phải phân biệt miss, armor, invulnerability và out-of-range. Dùng màu, icon, âm thanh và animation nhất quán; không truyền thông tin quan trọng chỉ bằng màu.</p>
+<p>Feedback có ba lớp: tức thời (hit flash), ngắn hạn (combo hoặc objective progress) và dài hạn (build thay đổi chiến lược). Quá nhiều hiệu ứng cũng làm mất thông tin. Trong combat đông, ưu tiên telegraph nguy hiểm và trạng thái của người chơi hơn particle trang trí.</p>
+
+<h2>9. Level design: dẫn dắt bằng không gian</h2>
+<p>Mỗi khu vực nên có mục đích: dạy mechanic, tạo quyết định, thay đổi nhịp hoặc kể thông tin. Dùng ánh sáng, đường nét, chuyển động và landmark để dẫn mắt trước khi thêm mũi tên UI. Khi tester đi sai, quan sát họ đang theo tín hiệu nào; không mặc định lỗi thuộc về tester.</p>
+<p>Greybox với hình khối đơn giản, đo thời gian di chuyển và line of sight. Art pass chỉ bắt đầu khi scale và flow đủ ổn. Thay layout khi đã có art chi tiết rất đắt và tạo tâm lý giữ lại quyết định kém vì “đã làm nhiều”.</p>
+
+<h2>10. Accessibility là một phần của hệ thống</h2>
+<p>Accessibility không phải menu thêm cuối dự án. Input abstraction cho phép remap; UI layout quyết định khả năng tăng chữ; shader và palette ảnh hưởng color vision; camera architecture quyết định có tắt shake được không.</p>
+<ul>
+<li>Cho remap và tránh yêu cầu giữ nhiều nút nếu có thể.</li>
+<li>Caption mô tả người nói và âm thanh gameplay quan trọng.</li>
+<li>Không dùng màu là tín hiệu duy nhất.</li>
+<li>Cho điều chỉnh camera shake, motion blur, độ nhạy và âm lượng riêng.</li>
+<li>Pause được trong nội dung không cạnh tranh thời gian thực.</li>
+</ul>
+<p>Không phải mọi game đáp ứng mọi guideline, nhưng team cần ghi rõ barrier, ưu tiên và kiểm thử với người dùng phù hợp thay vì đoán.</p>
+
+<h2>11. Playtest: kiểm tra giả thuyết, không xin lời khen</h2>
+<p>Mỗi playtest cần câu hỏi: người chơi có nhận ra mục tiêu mà không được giải thích? Họ có dùng mechanic phòng thủ? Họ hiểu vì sao thất bại? Chọn người test phù hợp đối tượng, không chỉ thành viên team đã biết game.</p>
+<ol>
+<li>Ghi assumption trước khi test.</li>
+<li>Quan sát im lặng; không hướng dẫn trừ khi protocol yêu cầu.</li>
+<li>Ghi hành vi, thời điểm và context.</li>
+<li>Phỏng vấn sau phiên bằng câu hỏi mở.</li>
+<li>Phân loại vấn đề theo tần suất, mức ảnh hưởng và độ tin cậy.</li>
+</ol>
+<p>Lời nói và hành vi có thể khác nhau. Người chơi nói tutorial dễ nhưng dừng hai phút ở bước đầu; dữ liệu hành vi quan trọng hơn đánh giá chung. Không sửa theo một ý kiến đơn lẻ nếu nó mâu thuẫn goal; tìm nguyên nhân và test lại.</p>
+
+<h2>12. Telemetry tối thiểu và đạo đức dữ liệu</h2>
+<p>Event nên trả lời câu hỏi thiết kế. Với level: start, checkpoint, death reason, complete và quit. Với economy: source, sink, amount và balance sau giao dịch. Đặt schema version và tránh gửi dữ liệu cá nhân không cần thiết.</p>
+<p>Dashboard không thay phân tích. Tỷ lệ hoàn thành thấp có thể do difficulty, lỗi kỹ thuật, mục tiêu không rõ hoặc người chơi không phù hợp. Kết hợp telemetry, replay hợp pháp, bug report và playtest định tính.</p>
+
+<h2>13. One-page design brief</h2>
+<p>Trước GDD dài, dùng một trang gồm: đối tượng, fantasy, ba design goal, core loop, điều khiển, điều kiện thắng/thua, progression, rủi ro kỹ thuật, chỉ số cần đo và nội dung ngoài phạm vi. Mỗi milestone cập nhật brief khi assumption thay đổi.</p>
+<p>Prototype đầu tiên nên trả lời rủi ro lớn nhất. Nếu rủi ro là cảm giác điều khiển, đừng xây backend shop. Nếu rủi ro là 50 người đồng bộ, hãy kiểm tra networking trước art. Thứ tự phát triển là quyết định design vì nó quyết định team học được gì sớm.</p>
+
+<h2>Kết luận</h2>
+<p>Game design hiệu quả là chuỗi giả thuyết có thể kiểm tra: đặt mục tiêu trải nghiệm, xây core loop nhỏ, tạo trade-off, mô hình hóa economy, truyền đạt state rõ và playtest với câu hỏi cụ thể. Framework chỉ là công cụ giúp team nói cùng ngôn ngữ; chất lượng đến từ việc quan sát dynamics thật và sẵn sàng bỏ giải pháp không phục vụ người chơi.</p>
+
+<h2>Nguồn tham khảo</h2>
+<ul>
+<li><a href="http://se4n.org/papers/mda.pdf" target="_blank" rel="noopener noreferrer">MDA: A Formal Approach to Game Design and Game Research</a></li>
+<li><a href="https://gameaccessibilityguidelines.com/" target="_blank" rel="noopener noreferrer">Game Accessibility Guidelines</a></li>
+<li><a href="https://machinations.io/docs/" target="_blank" rel="noopener noreferrer">Machinations Documentation</a></li>
+</ul>

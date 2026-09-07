@@ -2,28 +2,29 @@
 
 Danh sách này được chọn từ sản phẩm trả phí có record downloadable link. Không ghi đè database; nguồn merchandising nằm tại `config/source-game-revenue.php`.
 
-> Audit filesystem ngày 02/09/2026: 5 SKU đã được đóng gói vào private disk đúng với Bagisto download controller; 5 SKU còn lại vẫn chỉ có record DB và chưa có file.
+> Audit production ngày 05/09/2026: 9 SKU đã có demo tương tác, screenshot gameplay và ZIP private kèm README/license/checksum. `fps-multiplayer` vẫn khóa bán vì chưa có project Unreal gốc; không thay bằng template HTML5 giả.
 
 | SKU | Sản phẩm | Giá hiện tại | Trạng thái asset đã xác minh |
 |---|---|---:|---|
-| tower-defense | Phòng Thủ | 249.750đ | 1 ảnh DB; demo chỉ dừng ở splash; thiếu file ZIP/docs |
+| tower-defense | Phòng Thủ | 249.750đ | Demo HTML5 mới chạy; 3 screenshot; ZIP private có README/license/checksum |
 | endless-runner | Chạy Bất Tận | 249.750đ | 4 ảnh; demo chạy; ZIP private có README/license/checksum |
 | top-down-shooter | Bắn Tàu | 249.750đ | 4 ảnh; demo đã sửa và chạy; ZIP private có README/license/checksum |
-| bubble-shooter | Bắn Bóng Bóng | 249.750đ | 1 ảnh DB; desktop trống/mobile không hỗ trợ; thiếu file ZIP/docs |
-| chess-ai | Cờ Vua Online | 249.750đ | 1 ảnh DB; đã sửa đường dẫn bundle nhưng demo vẫn dừng splash; thiếu file ZIP/docs |
+| bubble-shooter | Bắn Bóng Bóng | 249.750đ | Demo HTML5 mới chạy; 3 screenshot; ZIP private có README/license/checksum |
+| chess-ai | Cờ Vua Online | 249.750đ | Demo mới có legal move/check/checkmate/AI; 3 screenshot; ZIP private đầy đủ |
 | roguelike-dungeon | Thoát Mê Cung | 124.750đ | 4 ảnh; demo chạy; ZIP private có README/license/checksum |
-| match3-candy | Kẹo Ngọt Xếp 3 | 124.750đ | 1 ảnh DB; demo chỉ dừng ở splash; thiếu file ZIP/docs |
+| match3-candy | Kẹo Ngọt Xếp 3 | 124.750đ | Demo mới có swap/cascade/moves; 3 screenshot; ZIP private đầy đủ |
 | card-game-engine | Xếp Bài Một Mình | 124.750đ | 4 ảnh; demo chạy; ZIP private có README/license/checksum |
 | quiz-trivia | Đố Vui Kiến Thức | 124.750đ | 4 ảnh; demo chạy; ZIP private có README/license/checksum |
-| fps-multiplayer | FPS Multiplayer Template | 749.750đ | Không có ảnh/demo/file ZIP/docs |
+| fps-multiplayer | FPS Multiplayer Template | 749.750đ | Thiếu project Unreal, ảnh, demo và ZIP; tiếp tục `Chưa mở bán` |
 
 ## Tiến độ xác minh
 
-- 5/10 có demo đã chạy và tương tác bằng headless browser.
-- 5/10 có ba gameplay screenshots thật, khác trạng thái.
-- 10/10 có record downloadable link; 5/10 đã có ZIP trên private disk đúng đường dẫn DB.
-- 5/10 ZIP có README, LICENSE và CHECKSUMS.sha256; 5/10 còn thiếu.
+- 9/10 có demo chạy và tương tác bằng headless browser.
+- 9/10 có ba gameplay screenshots thật, khác trạng thái.
+- 10/10 có record downloadable link; 9/10 có ZIP trên private disk đúng đường dẫn DB.
+- 9/10 ZIP có README, LICENSE và CHECKSUMS.sha256.
 - Không dùng splash screen, canvas trống hoặc placeholder làm screenshot sản phẩm.
+- Blocker còn lại: cần bàn giao project Unreal Networking gốc cho `fps-multiplayer`; không thể tự suy diễn từ tên SKU.
 
 ## Definition of Done cho từng sản phẩm
 

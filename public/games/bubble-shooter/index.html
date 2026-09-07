@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="Bubble Shooter HTML5: ngắm, bắn và ghép ba bong bóng cùng màu.">
+    <title>Bubble Shooter HTML5 | LamGame</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game-shell">
+        <header class="game-header">
+            <div>
+                <p class="eyebrow">HTML5 GAME</p>
+                <h1>Bubble Shooter</h1>
+            </div>
+            <a href="https://lamgame.vn" rel="home">LamGame.vn</a>
+        </header>
+
+        <section class="game-layout" aria-label="Bubble Shooter">
+            <canvas id="game" width="720" height="960" aria-label="Khu vực chơi Bubble Shooter"></canvas>
+            <aside class="game-panel">
+                <div class="stat"><span>Điểm</span><strong id="score">0</strong></div>
+                <div class="stat"><span>Chuỗi tốt nhất</span><strong id="best">0</strong></div>
+                <div class="stat"><span>Lượt trượt</span><strong><span id="misses">0</span>/5</strong></div>
+                <div class="next-wrap">
+                    <span>Bóng kế tiếp</span>
+                    <i id="next-bubble" aria-hidden="true"></i>
+                </div>
+                <button id="restart" type="button">Chơi lại</button>
+                <div class="instructions">
+                    <h2>Cách chơi</h2>
+                    <p>Di chuột hoặc chạm để ngắm, nhả để bắn. Ghép ít nhất ba bóng cùng màu.</p>
+                    <p>Bàn phím: ← → để ngắm, Space để bắn.</p>
+                </div>
+            </aside>
+        </section>
+        <p id="status" class="status" role="status" aria-live="polite">Ghép ít nhất 3 bóng cùng màu.</p>
+    </main>
+    <script src="game.js" defer></script>
+</body>
+</html>

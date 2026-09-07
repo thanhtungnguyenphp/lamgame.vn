@@ -1,0 +1,122 @@
+<p>Bài cũ tập trung vào “tính năng mới Unity 2023”, nhưng dạng liệt kê phiên bản nhanh lỗi thời và ít giúp người đọc hoàn thành một sản phẩm. Bản hướng dẫn này chuyển trọng tâm sang workflow có thể áp dụng với Unity 6: tạo project nhỏ, tách input khỏi gameplay, quản lý cấu hình bằng ScriptableObject, đo hiệu năng bằng Profiler và chuẩn bị build. Hãy dùng đúng phiên bản Unity Editor mà dự án đã khóa; không nâng phiên bản giữa milestone nếu chưa có branch thử nghiệm và bản sao lưu.</p>
+
+<h2>1. Xác định vertical slice trước khi tạo project</h2>
+<p>Vertical slice là lát cắt nhỏ nhưng có đủ vòng lặp chính: người chơi điều khiển nhân vật, tương tác với mục tiêu, nhận phản hồi và có điều kiện thắng hoặc thua. Với prototype top-down, phạm vi hợp lý là một phòng, một nhân vật, ba mục tiêu và một màn kết quả. Không cần inventory, shop hay hệ thống nhiệm vụ trước khi cảm giác di chuyển và tương tác được kiểm chứng.</p>
+<p>Viết ba tiêu chí đo được: nhân vật phản hồi input trong cùng frame; người chơi mới hiểu mục tiêu trong 30 giây; build duy trì frame time ổn định trên thiết bị mục tiêu. Những tiêu chí này giúp team biết khi nào prototype “đủ”, thay vì tiếp tục thêm tính năng vì chưa có Definition of Done.</p>
+
+<h2>2. Tạo project và cấu trúc thư mục</h2>
+<p>Tạo project từ template 2D hoặc 3D phù hợp, sau đó commit ngay file cấu hình và lockfile package. Không commit thư mục Library, Temp, Logs hoặc build output. Một cấu trúc nhỏ có thể bắt đầu như sau:</p>
+<pre><code>Assets/
+├── Art/
+├── Audio/
+├── Prefabs/
+├── Scenes/
+│   ├── Bootstrap.unity
+│   └── Gameplay.unity
+├── Scripts/
+│   ├── Core/
+│   ├── Gameplay/
+│   └── UI/
+└── Settings/
+</code></pre>
+<p><code>Bootstrap</code> chỉ khởi tạo service cần sống qua nhiều scene. <code>Gameplay</code> chứa nội dung màn chơi. Tránh tạo một “GameManager” biết mọi thứ; phụ thuộc càng rộng thì Play Mode test và thay đổi scene càng khó. Mỗi component nên có một trách nhiệm và public API nhỏ.</p>
+
+<h2>3. Dùng Input System thay vì đọc phím trực tiếp trong gameplay</h2>
+<p>Unity Input System cho phép ánh xạ nhiều thiết bị vào action có ý nghĩa như Move, Interact và Pause. Gameplay không cần biết action đến từ WASD, gamepad hay touch. Cách tách này giúp remap phím, accessibility và multiplayer local dễ hơn.</p>
+<ol>
+<li>Cài Input System bằng Package Manager và kiểm tra package tương thích với Editor đang dùng.</li>
+<li>Tạo Input Actions asset, action map <code>Player</code> và action <code>Move</code> kiểu Vector2.</li>
+<li>Thêm binding WASD, arrow keys và left stick.</li>
+<li>Sinh C# class hoặc dùng <code>PlayerInput</code> tùy kiến trúc.</li>
+</ol>
+<p>Ví dụ component di chuyển 3D dưới đây nhận Vector2 từ action rồi xử lý trong <code>Update</code>. Tốc độ dùng delta time, vector được giới hạn để đi chéo không nhanh hơn:</p>
+<pre><code class="language-csharp">using UnityEngine;
+using UnityEngine.InputSystem;
+
+[RequireComponent(typeof(CharacterController))]
+public sealed class PlayerMover : MonoBehaviour
+{
+    [SerializeField, Min(0f)] private float speed = 5f;
+
+    private CharacterController controller;
+    private Vector2 moveInput;
+
+    private void Awake()
+    {
+        controller = GetComponent&lt;CharacterController&gt;();
+    }
+
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        moveInput = context.ReadValue&lt;Vector2&gt;();
+    }
+
+    private void Update()
+    {
+        Vector2 input = Vector2.ClampMagnitude(moveInput, 1f);
+        Vector3 direction = new(input.x, 0f, input.y);
+        controller.Move(direction * (speed * Time.deltaTime));
+    }
+}</code></pre>
+<p>Không dùng callback để thay đổi Transform trực tiếp nếu gameplay còn phụ thuộc physics hoặc state khác. Callback nên cập nhật intent; hệ thống gameplay quyết định khi nào intent được áp dụng. Khi dùng Rigidbody, chuyển phần vật lý sang <code>FixedUpdate</code> và tránh trộn CharacterController với Rigidbody trên cùng nhân vật.</p>
+
+<h2>4. Tách dữ liệu cân bằng bằng ScriptableObject</h2>
+<p>Thông số như tốc độ, máu, cooldown và phần thưởng thường thay đổi nhiều hơn code. ScriptableObject cho phép designer tạo asset cấu hình, so sánh diff và dùng chung giữa prefab. Tuy nhiên, không nên lưu trạng thái runtime trực tiếp vào asset vì thay đổi trong Editor có thể tồn tại ngoài dự kiến.</p>
+<pre><code class="language-csharp">using UnityEngine;
+
+[CreateAssetMenu(menuName = "LamGame/Player Config")]
+public sealed class PlayerConfig : ScriptableObject
+{
+    [field: SerializeField, Min(0f)] public float MoveSpeed { get; private set; } = 5f;
+    [field: SerializeField, Min(1)] public int MaxHealth { get; private set; } = 100;
+    [field: SerializeField, Min(0f)] public float InvulnerableSeconds { get; private set; } = 0.4f;
+}</code></pre>
+<p>Component nhận <code>PlayerConfig</code> qua SerializeField, đọc giá trị lúc khởi tạo và giữ state hiện tại trong instance. Với dự án lớn, thêm validation để build thất bại sớm khi thiếu config thay vì để NullReference xuất hiện ở giữa trận.</p>
+
+<h2>5. Prefab và scene: giảm liên kết ẩn</h2>
+<p>Prefab nên hoạt động khi được kéo vào scene thử nghiệm với số bước thiết lập tối thiểu. Nếu prefab yêu cầu người dùng nhớ kéo năm reference từ scene khác, đó là liên kết ẩn. Ưu tiên component trên cùng prefab, interface rõ ràng hoặc installer ở Bootstrap.</p>
+<p>Không dùng <code>FindObjectOfType</code> lặp lại trong Update. Với object cần spawn thường xuyên như projectile, dùng pool sau khi Profiler cho thấy instantiate/destroy tạo spike. Pool không phải mặc định cho mọi object: nó tăng state cần reset và dễ tạo bug khi object được tái sử dụng.</p>
+
+<h2>6. UI và phản hồi gameplay</h2>
+<p>Mỗi hành động quan trọng cần phản hồi ở ít nhất hai kênh phù hợp: hình ảnh, âm thanh, animation hoặc haptic. Khi nhân vật nhận sát thương, chỉ trừ biến máu là chưa đủ; người chơi cần biết nguồn, mức độ và thời điểm có thể điều khiển lại.</p>
+<p>UI nên phản ánh state chứ không sở hữu luật gameplay. Health component phát event khi giá trị đổi, health bar lắng nghe và cập nhật. Cách này cho phép thay UI mà không sửa combat. Đồng thời cung cấp tùy chọn giảm screen shake, tắt rung và điều chỉnh âm lượng riêng.</p>
+
+<h2>7. Đo hiệu năng bằng Profiler</h2>
+<p>Không tối ưu bằng cảm giác. Unity Profiler cho biết thời gian CPU, render, physics, animation, memory và allocation. Bắt đầu bằng Development Build trên thiết bị thật; số liệu trong Editor bị ảnh hưởng bởi Editor overhead.</p>
+<ul>
+<li>Xác định ngân sách frame: 60 fps tương ứng khoảng 16,67 ms; 30 fps khoảng 33,33 ms.</li>
+<li>Tìm spike, không chỉ nhìn trung bình. Một frame 100 ms vẫn tạo giật dù trung bình đẹp.</li>
+<li>Kiểm tra GC Alloc trong vòng lặp thường xuyên. LINQ, string và tạo collection mới trong Update có thể tạo allocation.</li>
+<li>Dùng ProfilerMarker cho hệ thống riêng khi sample mặc định chưa đủ chi tiết.</li>
+<li>Đo CPU và GPU riêng; giảm script không giải quyết bottleneck fill-rate.</li>
+</ul>
+<p>Deep Profiling rất hữu ích để điều tra nhưng tạo overhead lớn. Chỉ bật khi cần và luôn xác nhận lại bằng profiling bình thường. Với Web build, dùng workflow profiling do tài liệu Unity hướng dẫn thay vì suy luận từ Editor.</p>
+
+<h2>8. Kiểm thử trước khi thêm nội dung</h2>
+<p>Tách logic thuần C# khỏi MonoBehaviour giúp viết Edit Mode test nhanh. Ví dụ damage calculation, inventory rule hoặc điều kiện thắng không cần scene. Play Mode test dành cho vòng đời component, scene và integration. Một test nhỏ bảo vệ invariant quan trọng có giá trị hơn nhiều test chỉ xác nhận getter/setter.</p>
+<p>Thêm smoke checklist thủ công: khởi động từ build sạch, chơi bằng keyboard và gamepad, pause/resume, đổi scene, restart sau game over và thoát. Test ở độ phân giải hẹp, ultrawide và thiết bị có hiệu năng thấp hơn máy phát triển.</p>
+
+<h2>9. Build Profiles và cấu hình theo môi trường</h2>
+<p>Build Profiles giúp tách thiết lập theo nền tảng. Dù dùng profile hay pipeline riêng, không hardcode API key hoặc endpoint bí mật trong client; dữ liệu trong build có thể bị đọc. Endpoint public có thể đặt theo environment, nhưng secret phải nằm ở backend.</p>
+<p>Trước release, kiểm tra scene list, scripting backend, architecture, stripping, compression và Development Build đã tắt. Tạo version dễ truy vết tới commit. Với Web, kiểm tra MIME type, compression, cache, memory và input focus trên server thật. Với mobile, kiểm tra permission và lifecycle khi app background/foreground.</p>
+
+<h2>10. Checklist vertical slice</h2>
+<ul>
+<li>Core loop chơi được từ đầu tới kết quả mà không dùng Inspector để “cứu” state.</li>
+<li>Input map có keyboard/gamepad và không hardcode phím trong gameplay.</li>
+<li>Thông số cân bằng nằm trong config có validation.</li>
+<li>Không có error hoặc warning lặp trong Console.</li>
+<li>Profiler trên thiết bị mục tiêu đạt frame budget và không có allocation spike bất thường.</li>
+<li>Build sạch chạy độc lập ngoài Editor.</li>
+<li>Có ít nhất một vòng playtest với người không tham gia phát triển.</li>
+</ul>
+
+<h2>Kết luận</h2>
+<p>Giá trị của Unity 6 không nằm ở danh sách tính năng mới mà ở workflow giúp team kiểm chứng game sớm: scope nhỏ, input tách biệt, dữ liệu cấu hình rõ, component ít phụ thuộc, profiling trên thiết bị và build tái lập. Hoàn thành một vertical slice đo được trước khi mở rộng content sẽ giảm rủi ro hơn nhiều so với tạo hàng chục system chưa từng chạy cùng nhau.</p>
+
+<h2>Nguồn chính thức</h2>
+<ul>
+<li><a href="https://docs.unity3d.com/6000.3/Documentation/Manual/com.unity.inputsystem.html" target="_blank" rel="noopener noreferrer">Unity Manual — Input System</a></li>
+<li><a href="https://docs.unity3d.com/6000.0/Documentation/Manual/profiler-cpu-introduction.html" target="_blank" rel="noopener noreferrer">Unity Manual — CPU Usage Profiler</a></li>
+<li><a href="https://docs.unity3d.com/6000.5/Documentation/Manual/web-profile.html" target="_blank" rel="noopener noreferrer">Unity Manual — Profile a Web build</a></li>
+</ul>
