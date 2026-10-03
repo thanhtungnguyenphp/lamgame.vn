@@ -20,10 +20,10 @@
                 </div>
             </div>
             <div class="lg-v2-hero__media">
-                {{-- Video placeholder --}}
-                <div class="lg-v2-hero__video">
-                    <img src="https://img.youtube.com/vi/OHbte7hdxYU/maxresdefault.jpg" alt="LamGame Marketplace" loading="eager">
-                    <button class="lg-v2-hero__play-btn">
+                {{-- Video --}}
+                <div class="lg-v2-hero__video" data-video-id="uGaXgHTvzAw" onclick="lgLoadHeroVideo(this)">
+                    <img src="https://img.youtube.com/vi/uGaXgHTvzAw/sddefault.jpg" alt="LamGame Marketplace" loading="eager" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/uGaXgHTvzAw/hqdefault.jpg';">
+                    <button class="lg-v2-hero__play-btn" type="button" aria-label="Phát video">
                         <svg width="48" height="48" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     </button>
                 </div>
@@ -442,6 +442,7 @@
     overflow: hidden;
     aspect-ratio: 16/9;
     border: 1px solid var(--lg-border);
+    cursor: pointer;
 }
 
 .lg-v2-hero__video img {
@@ -1039,5 +1040,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Let the default <a href> behavior work - no preventDefault
     // This allows users to navigate to the filtered source-game page
 });
+
+// Load hero video on click (lazy-load YouTube iframe for faster initial page load)
+function lgLoadHeroVideo(el) {
+    const videoId = el.getAttribute('data-video-id');
+    if (!videoId || el.dataset.loaded === 'true') return;
+    el.dataset.loaded = 'true';
+    el.removeAttribute('onclick');
+    el.style.cursor = 'default';
+
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0';
+    iframe.title = 'LamGame Marketplace';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.allowFullscreen = true;
+    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;';
+
+    el.innerHTML = '';
+    el.appendChild(iframe);
+}
 </script>
 @endpush
