@@ -132,6 +132,10 @@ DOCKER.md
 # Database backups
 database/backups/
 
+# Generated sitemaps (auto-generated, not tracked)
+/public/sitemap.xml
+/public/sitemap-*.xml
+
 # II-Agent (cloned source — not committed)
 /docker/ii-agent/src/
 /docker/ii-agent/.env
