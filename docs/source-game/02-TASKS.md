@@ -24,7 +24,7 @@
 - **Files**: `app/Http/Middleware/CheckSeller.php` hoặc `SellerVersionController.php`.
 - **DoD**: trang quản lý version của seller hoạt động (không còn 404/null); ownership check đúng.
 
-### [ ] T3 — SEC-03/SEC-04: Chặn XSS khi render review & product card
+### [x] T3 — SEC-03/SEC-04: Chặn XSS khi render review & product card
 **Ưu tiên: 🔴 Cao**
 - Thêm hàm `escapeHtml()` phía client và escape mọi dữ liệu người dùng trước khi chèn `innerHTML` (review content/title/tên, product name/description).
 - **Files**: `resources/views/lamgame/pages/source-game-detail.blade.php`, `resources/views/home-v2/index.blade.php`.

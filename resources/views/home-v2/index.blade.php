@@ -887,28 +887,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Render product card HTML
+    function escapeHtml(str){if(str==null)return '';return String(str).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
     function renderProductCard(product) {
         const badgeLabel = product.badge === 'bestseller' ? 'BÁN CHẠY' : (product.badge === 'verified' ? 'ĐÃ KIỂM CHỨNG' : String(product.badge || '').toUpperCase());
-        const badgeHtml = product.badge ? `<span class="lg-v2-badge lg-v2-badge--${product.badge}">${badgeLabel}</span>` : '';
-        const tagsHtml = (product.genre_tags || []).slice(0, 3).map(t => `<span class="lg-v2-tag">${t}</span>`).join('');
-        const platformHtml = (product.platform || []).slice(0, 3).map(p => `<span class="lg-v2-tag">${p}</span>`).join('');
+        const badgeClass = String(product.badge || '').replace(/[^a-z0-9_-]/gi, '');
+        const badgeHtml = product.badge ? `<span class="lg-v2-badge lg-v2-badge--${badgeClass}">${escapeHtml(badgeLabel)}</span>` : '';
+        const tagsHtml = (product.genre_tags || []).slice(0, 3).map(t => `<span class="lg-v2-tag">${escapeHtml(t)}</span>`).join('');
+        const platformHtml = (product.platform || []).slice(0, 3).map(p => `<span class="lg-v2-tag">${escapeHtml(p)}</span>`).join('');
         const priceHtml = product.is_free
             ? '<span class="lg-v2-product-card__price lg-v2-product-card__price--free">Free</span>'
             : `<span class="lg-v2-product-card__price">${new Intl.NumberFormat('vi-VN').format(product.price)}đ</span>`;
 
         return `
-        <a href="${product.url}" class="lg-v2-card lg-v2-product-card lg-v2-fade-in visible">
+        <a href="${encodeURI(product.url || '#')}" class="lg-v2-card lg-v2-product-card lg-v2-fade-in visible">
             <div class="lg-v2-product-card__img">
-                <img src="${product.thumbnail}" alt="${product.name}" loading="lazy">
+                <img src="${encodeURI(product.thumbnail || '')}" alt="${escapeHtml(product.name)}" loading="lazy">
                 ${badgeHtml}
                 <button class="lg-v2-product-card__wishlist" title="Thêm vào wishlist">♡</button>
             </div>
             <div class="lg-v2-product-card__body">
-                <h3 class="lg-v2-product-card__title">${product.name}</h3>
-                <p class="lg-v2-product-card__desc">${product.description || ''}</p>
+                <h3 class="lg-v2-product-card__title">${escapeHtml(product.name)}</h3>
+                <p class="lg-v2-product-card__desc">${escapeHtml(product.description || '')}</p>
                 <div class="lg-v2-product-card__tags">${tagsHtml}</div>
                 <div class="lg-v2-product-card__meta">
-                    <span class="lg-v2-tag">${product.engine}</span>
+                    <span class="lg-v2-tag">${escapeHtml(product.engine)}</span>
                     ${platformHtml}
                 </div>
                 <div class="lg-v2-product-card__footer">
