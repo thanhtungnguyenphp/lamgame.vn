@@ -10,7 +10,7 @@
 
 ## Giai đoạn 1 — Bảo mật & tính năng gãy (ưu tiên cao nhất)
 
-### [ ] T1 — SEC-01/SEC-02: Khóa file version về private + validate upload
+### [x] T1 — SEC-01/SEC-02: Khóa file version về private + validate upload
 **Ưu tiên: 🔴 Cao nhất**
 - Đổi `SellerVersionController::store` lưu disk `private` thay vì `public`.
 - Thêm validate đuôi/MIME cho file version & `source_files.*` (allowlist: zip, rar, 7z, gz, tar). Chặn đuôi thực thi.
@@ -18,7 +18,7 @@
 - **Files**: `app/Http/Controllers/SellerVersionController.php`, `SellerProductController.php`, (route mới trong `routes/web.php`).
 - **DoD**: file version mới không truy cập được qua `/storage/...`; upload sai đuôi bị từ chối; tải version qua route có auth.
 
-### [ ] T2 — DATA-04: Sửa `auth_seller` null trong CheckSeller
+### [x] T2 — DATA-04: Sửa `auth_seller` null trong CheckSeller
 **Ưu tiên: 🔴 Cao**
 - Set `$request->auth_seller = $seller;` trong `CheckSeller` HOẶC đổi `SellerVersionController` sang `Auth::guard('customer')->user()->seller`.
 - **Files**: `app/Http/Middleware/CheckSeller.php` hoặc `SellerVersionController.php`.

@@ -45,6 +45,9 @@
                     @if($v->changelog)
                         <p style="color: #555; margin-top: 0.5rem; white-space: pre-line;">{{ $v->changelog }}</p>
                     @endif
+                    <div style="margin-top: 0.5rem;">
+                        <a href="{{ route('seller.products.versions.download', [$product->id, $v->id]) }}" style="color: #2c5f41; font-size: 0.85rem; text-decoration: none;">⬇ Tải file</a>
+                    </div>
                 </div>
             @empty
                 <p style="color: #999; text-align: center; padding: 2rem;">Chưa có phiên bản nào.</p>

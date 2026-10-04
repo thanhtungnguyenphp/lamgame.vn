@@ -176,8 +176,14 @@ Route::prefix('seller')->name('seller.')->middleware('theme')->group(function ()
         // Withdrawals
         Route::get('withdrawals', [App\Http\Controllers\SellerWithdrawalController::class, 'index'])->name('withdrawals.index');
         Route::get('withdrawals/create', [App\Http\Controllers\SellerWithdrawalController::class, 'create'])->name('withdrawals.create');
-        Route::post('withdrawals', [App\Http\Controllers\SellerWithdrawalController::class, 'store'])->name('withdrawals.store');
     });
+});
+
+// Download version source — accessible to product owner (seller) OR buyer who purchased.
+// Controller tự kiểm tra quyền; chỉ cần đăng nhập customer.
+Route::middleware('theme')->group(function () {
+    Route::get('seller/products/{product}/versions/{version}/download', [App\Http\Controllers\SellerVersionController::class, 'download'])
+        ->name('seller.products.versions.download');
 });
 
 // Admin Seller Management routes
