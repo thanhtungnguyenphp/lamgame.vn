@@ -30,7 +30,7 @@
 - **Files**: `resources/views/lamgame/pages/source-game-detail.blade.php`, `resources/views/home-v2/index.blade.php`.
 - **DoD**: review/product chứa `<img onerror>`/`<script>` hiển thị dưới dạng text, không thực thi.
 
-### [ ] T4 — FEAT-02/FEAT-06: Sửa form viết review (JS + guard)
+### [x] T4 — FEAT-02/FEAT-06: Sửa form viết review (JS + guard)
 **Ưu tiên: 🔴 Cao**
 - Viết hàm `submitReview(productId)` gửi POST tới endpoint review.
 - Thống nhất xác thực: đổi route review sang guard `web`/`customer` + CSRF (thay vì `auth:sanctum`) để khớp session customer, HOẶC cấp token.

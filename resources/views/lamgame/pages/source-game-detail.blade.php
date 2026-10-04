@@ -474,6 +474,39 @@ function renderStats(s){const el=document.getElementById('review-stats');if(!el)
 
 function renderReviews(reviews){const el=document.getElementById('review-list');if(!el)return;if(!reviews.length){el.innerHTML='<p style="color:#7A8599">Chưa có đánh giá nào.</p>';return;}el.innerHTML=reviews.map(r=>{const rating=Math.max(0,Math.min(5,parseInt(r.rating)||0));return '<div class="sd-review"><div class="sd-review__head"><strong>'+escapeHtml(r.customer?.first_name||'Ẩn danh')+'</strong>'+(r.is_verified_purchase?' <span class="sd-verified">✓ Đã mua</span>':'')+'<span class="sd-review__date">'+escapeHtml(new Date(r.created_at).toLocaleDateString('vi-VN'))+'</span></div><div class="sd-review__stars">'+'★'.repeat(rating)+'☆'.repeat(5-rating)+'</div>'+(r.title?'<div class="sd-review__title">'+escapeHtml(r.title)+'</div>':'')+'<p>'+escapeHtml(r.content)+'</p></div>';}).join('');}
 
+// Gửi đánh giá (form trong partial source-game-reviews)
+function submitReview(productId){
+    const form=document.getElementById('review-form');
+    const msg=document.getElementById('review-message');
+    if(!form)return;
+    const btn=form.querySelector('button[type="submit"]');
+    const payload={
+        rating:form.rating.value,
+        title:form.title.value,
+        content:form.content.value,
+        pros:form.pros.value,
+        cons:form.cons.value,
+    };
+    const token=document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    if(btn){btn.disabled=true;btn.textContent='Đang gửi...';}
+    fetch('/source-game/'+productId+'/reviews',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':token||'','X-Requested-With':'XMLHttpRequest'},
+        body:JSON.stringify(payload),
+    }).then(async r=>{const d=await r.json().catch(()=>({}));return {ok:r.ok,d};}).then(({ok,d})=>{
+        if(btn){btn.disabled=false;btn.textContent='Gửi đánh giá';}
+        if(ok){
+            if(msg)msg.innerHTML='<p style="color:#16a34a">Cảm ơn! Đánh giá của bạn đang chờ duyệt.</p>';
+            form.reset();
+        }else{
+            if(msg)msg.innerHTML='<p style="color:#dc2626">'+escapeHtml(d.message||'Gửi đánh giá thất bại.')+'</p>';
+        }
+    }).catch(()=>{
+        if(btn){btn.disabled=false;btn.textContent='Gửi đánh giá';}
+        if(msg)msg.innerHTML='<p style="color:#dc2626">Có lỗi xảy ra, vui lòng thử lại.</p>';
+    });
+}
+
 // Fade-in sections on scroll
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\SourceGameReviewService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SourceGameReviewController extends Controller
 {
@@ -53,6 +54,36 @@ class SourceGameReviewController extends Controller
 
         try {
             $review = $this->service->create($validated, $request->user()->id);
+            return response()->json(['status' => 'success', 'data' => $review], 201);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 422);
+        }
+    }
+
+    /**
+     * POST /source-game/{productId}/reviews (web, session guard customer + CSRF)
+     * Dùng cho form review trên trang chi tiết (customer đăng nhập bằng session).
+     */
+    public function storeWeb(Request $request, int $productId): JsonResponse
+    {
+        $customer = Auth::guard('customer')->user();
+
+        if (! $customer) {
+            return response()->json(['status' => 'error', 'message' => 'Vui lòng đăng nhập.'], 401);
+        }
+
+        $validated = $request->validate([
+            'rating'  => 'required|integer|between:1,5',
+            'title'   => 'nullable|string|max:255',
+            'content' => 'required|string|max:5000',
+            'pros'    => 'nullable|string|max:1000',
+            'cons'    => 'nullable|string|max:1000',
+        ]);
+
+        $validated['product_id'] = $productId;
+
+        try {
+            $review = $this->service->create($validated, $customer->id);
             return response()->json(['status' => 'success', 'data' => $review], 201);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 422);

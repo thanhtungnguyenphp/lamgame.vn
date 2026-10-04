@@ -20,6 +20,12 @@ Route::get('source-game', [LamGamePageController::class, 'sourceGame'])->name('l
 Route::get('source-game/{slug}', [LamGamePageController::class, 'sourceGameDetail'])->name('lamgame.source-game.detail');
 Route::get('source-game/{slug}/demo', [App\Http\Controllers\DemoController::class, 'show'])->name('source-game.demo');
 
+// Source Game review submit (web session + CSRF, guard customer)
+Route::post('source-game/{productId}/reviews', [App\Http\Controllers\Api\SourceGameReviewController::class, 'storeWeb'])
+    ->name('lamgame.source-game.review.store')
+    ->middleware('throttle:5,1')
+    ->where('productId', '[0-9]+');
+
 // Seller public profile
 Route::get('seller/{slug}', [App\Http\Controllers\SellerProfileController::class, 'show'])->name('seller.profile');
 
