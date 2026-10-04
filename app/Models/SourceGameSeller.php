@@ -73,6 +73,41 @@ class SourceGameSeller extends Model
         return $this->isActive() && $this->verified;
     }
 
+    // ---- Balance (nguồn chân lý duy nhất cho mọi nơi dùng số dư) ----
+
+    /** Tổng earning đã hoàn tất (completed). */
+    public function totalEarnings(): float
+    {
+        return (float) SourceGameEarning::where('seller_id', $this->id)
+            ->where('status', 'completed')
+            ->sum('seller_amount');
+    }
+
+    /** Tổng đã rút (withdrawal completed). */
+    public function totalWithdrawn(): float
+    {
+        return (float) SourceGameWithdrawal::where('seller_id', $this->id)
+            ->where('status', 'completed')
+            ->sum('amount');
+    }
+
+    /** Tổng đang chờ rút (pending/processing) — đã bị "giữ chỗ". */
+    public function pendingWithdrawals(): float
+    {
+        return (float) SourceGameWithdrawal::where('seller_id', $this->id)
+            ->whereIn('status', ['pending', 'processing'])
+            ->sum('amount');
+    }
+
+    /**
+     * Số dư khả dụng để rút = earning completed - đã rút - đang chờ rút.
+     * Dùng CHUNG cho dashboard, trang earnings và withdrawal để không lệch nhau.
+     */
+    public function availableBalance(): float
+    {
+        return $this->totalEarnings() - $this->totalWithdrawn() - $this->pendingWithdrawals();
+    }
+
     // Helpers
     public function getLogoUrlAttribute()
     {

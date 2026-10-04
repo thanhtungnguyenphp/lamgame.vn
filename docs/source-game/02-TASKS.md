@@ -65,7 +65,7 @@
 - **Files**: `app/Models/SourceGameEarning.php`, listener, migration mới, config.
 - **DoD**: chạy listener 2 lần cho cùng order không tạo earning trùng; phí lấy từ config.
 
-### [ ] T8 — DATA-02/DATA-03: Rút tiền an toàn + thống nhất balance
+### [x] T8 — DATA-02/DATA-03: Rút tiền an toàn + thống nhất balance
 **Ưu tiên: 🟠 Cao**
 - Gộp logic `getAvailableBalance` vào 1 nơi (service/trait), trừ cả pending/processing.
 - Bọc `SellerWithdrawalController::store` trong transaction + `lockForUpdate`, verify lại balance.

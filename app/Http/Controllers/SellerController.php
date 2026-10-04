@@ -212,17 +212,8 @@ class SellerController extends Controller
 
     private function getAvailableBalance($seller)
     {
-        $totalEarnings = \DB::table('source_game_earnings')
-            ->where('seller_id', $seller->id)
-            ->where('status', 'completed')
-            ->sum('seller_amount');
-
-        $totalWithdrawn = \DB::table('source_game_withdrawals')
-            ->where('seller_id', $seller->id)
-            ->where('status', 'completed')
-            ->sum('amount');
-
-        return $totalEarnings - $totalWithdrawn;
+        // Thống nhất với công thức chuẩn trong model (đã trừ cả withdrawal đang chờ)
+        return $seller->availableBalance();
     }
 
     public function orders()

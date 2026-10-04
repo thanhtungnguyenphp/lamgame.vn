@@ -35,7 +35,8 @@ class SellerEarningController extends Controller
                 ->sum('seller_amount'),
         ];
 
-        $stats['available_balance'] = $stats['total_earnings'] - $stats['total_withdrawn'];
+        // Dùng công thức thống nhất (đã trừ cả withdrawal đang chờ)
+        $stats['available_balance'] = $seller->availableBalance();
 
         return view('seller.earnings.index', compact('seller', 'earnings', 'stats'));
     }
@@ -55,7 +56,7 @@ class SellerWithdrawalController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        $availableBalance = $this->getAvailableBalance($seller);
+        $availableBalance = $seller->availableBalance();
 
         return view('seller.withdrawals.index', compact('seller', 'withdrawals', 'availableBalance'));
     }
@@ -68,7 +69,7 @@ class SellerWithdrawalController extends Controller
             return redirect()->route('seller.pending');
         }
 
-        $availableBalance = $this->getAvailableBalance($seller);
+        $availableBalance = $seller->availableBalance();
 
         if ($availableBalance < 100000) {
             return redirect()->route('seller.withdrawals.index')
@@ -86,41 +87,43 @@ class SellerWithdrawalController extends Controller
             return redirect()->route('seller.pending');
         }
 
-        $availableBalance = $this->getAvailableBalance($seller);
-
+        // Validate sơ bộ (chặn giá trị âm/dưới mức tối thiểu). Kiểm tra số dư
+        // CHÍNH XÁC được thực hiện lại trong transaction + lock bên dưới để
+        // tránh race condition (DATA-02).
         $validated = $request->validate([
-            'amount' => 'required|numeric|min:100000|max:' . $availableBalance,
-            'note' => 'nullable|string|max:500',
+            'amount' => 'required|numeric|min:100000',
+            'note'   => 'nullable|string|max:500',
         ]);
 
-        SourceGameWithdrawal::create([
-            'seller_id' => $seller->id,
-            'amount' => $validated['amount'],
-            'status' => 'pending',
-            'bank_name' => $seller->bank_name,
-            'bank_account' => $seller->bank_account,
-            'bank_holder' => $seller->bank_holder,
-            'note' => $validated['note'],
-        ]);
+        try {
+            DB::transaction(function () use ($seller, $validated) {
+                // Khóa các bản ghi earning/withdrawal của seller để tính số dư nhất quán
+                SourceGameEarning::where('seller_id', $seller->id)->lockForUpdate()->get();
+                SourceGameWithdrawal::where('seller_id', $seller->id)->lockForUpdate()->get();
+
+                $available = $seller->availableBalance();
+
+                if ($validated['amount'] > $available) {
+                    throw new \RuntimeException('Số tiền rút vượt quá số dư khả dụng (' . number_format($available) . 'đ).');
+                }
+
+                SourceGameWithdrawal::create([
+                    'seller_id'    => $seller->id,
+                    'amount'       => $validated['amount'],
+                    'status'       => 'pending',
+                    'bank_name'    => $seller->bank_name,
+                    'bank_account' => $seller->bank_account,
+                    'bank_holder'  => $seller->bank_holder,
+                    'note'         => $validated['note'] ?? null,
+                ]);
+            });
+        } catch (\RuntimeException $e) {
+            return redirect()->route('seller.withdrawals.create')
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
 
         return redirect()->route('seller.withdrawals.index')
             ->with('success', 'Yêu cầu rút tiền đã được gửi. Chúng tôi sẽ xử lý trong 3-5 ngày làm việc.');
-    }
-
-    private function getAvailableBalance($seller)
-    {
-        $totalEarnings = SourceGameEarning::where('seller_id', $seller->id)
-            ->where('status', 'completed')
-            ->sum('seller_amount');
-
-        $totalWithdrawn = SourceGameWithdrawal::where('seller_id', $seller->id)
-            ->where('status', 'completed')
-            ->sum('amount');
-
-        $pendingWithdrawals = SourceGameWithdrawal::where('seller_id', $seller->id)
-            ->whereIn('status', ['pending', 'processing'])
-            ->sum('amount');
-
-        return $totalEarnings - $totalWithdrawn - $pendingWithdrawals;
     }
 }
