@@ -2,6 +2,12 @@
 
 return [
     /*
+     * Phần trăm phí nền tảng mặc định áp cho mỗi order item khi tạo earning
+     * cho seller. Có thể override qua ENV SOURCE_GAME_PLATFORM_FEE_PERCENT.
+     */
+    'platform_fee_percent' => (float) env('SOURCE_GAME_PLATFORM_FEE_PERCENT', 30.00),
+
+    /*
      * Revenue catalog selected from paid downloadable products that currently
      * have at least one downloadable-link record. This list controls
      * merchandising labels only and never overwrites product data in the DB.

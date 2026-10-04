@@ -58,7 +58,7 @@
 
 ## Giai đoạn 3 — An toàn giao dịch tiền
 
-### [ ] T7 — DATA-01: Earning idempotent + transaction
+### [x] T7 — DATA-01: Earning idempotent + transaction
 **Ưu tiên: 🔴 Cao**
 - Bọc `createFromOrder` trong `DB::transaction`; thêm unique constraint `(order_item_id)` (migration); dùng `firstOrCreate`/`lockForUpdate`.
 - Đọc phí từ `config/source-game-revenue.php` (DATA-05).

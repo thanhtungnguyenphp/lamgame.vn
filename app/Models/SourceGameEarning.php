@@ -46,38 +46,49 @@ class SourceGameEarning extends Model
     {
         foreach ($order->items as $item) {
             $product = $item->product;
-            
+
             if (!$product || $product->type !== 'downloadable') {
                 continue;
             }
 
             $seller = SourceGameSeller::find($product->seller_id);
-            
+
             if (!$seller) {
                 continue;
             }
 
             $orderAmount = $item->total;
-            $platformFeePercent = 30.00; // Default 30%
+            $platformFeePercent = (float) config('source-game-revenue.platform_fee_percent', 30.00);
             $platformFeeAmount = $orderAmount * ($platformFeePercent / 100);
             $sellerAmount = $orderAmount - $platformFeeAmount;
 
-            self::create([
-                'seller_id' => $seller->id,
-                'order_id' => $order->id,
-                'order_item_id' => $item->id,
-                'product_id' => $product->id,
-                'order_amount' => $orderAmount,
-                'platform_fee_percent' => $platformFeePercent,
-                'platform_fee_amount' => $platformFeeAmount,
-                'seller_amount' => $sellerAmount,
-                'status' => 'completed',
-                'completed_at' => now(),
-            ]);
+            // Idempotent + atomic: khóa theo order_item_id để tránh tạo earning trùng
+            // (unique constraint sge_order_item_id_unique bảo vệ ở tầng DB).
+            \Illuminate\Support\Facades\DB::transaction(function () use (
+                $order, $item, $product, $seller,
+                $orderAmount, $platformFeePercent, $platformFeeAmount, $sellerAmount
+            ) {
+                $earning = self::firstOrCreate(
+                    ['order_item_id' => $item->id],
+                    [
+                        'seller_id'            => $seller->id,
+                        'order_id'             => $order->id,
+                        'product_id'           => $product->id,
+                        'order_amount'         => $orderAmount,
+                        'platform_fee_percent' => $platformFeePercent,
+                        'platform_fee_amount'  => $platformFeeAmount,
+                        'seller_amount'        => $sellerAmount,
+                        'status'               => 'completed',
+                        'completed_at'         => now(),
+                    ]
+                );
 
-            // Update seller stats
-            $seller->increment('total_sales');
-            $seller->increment('total_revenue', $sellerAmount);
+                // Chỉ cập nhật thống kê seller khi earning THỰC SỰ vừa được tạo
+                if ($earning->wasRecentlyCreated) {
+                    $seller->increment('total_sales');
+                    $seller->increment('total_revenue', $sellerAmount);
+                }
+            });
         }
     }
 }
