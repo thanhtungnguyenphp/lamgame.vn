@@ -88,7 +88,7 @@
 
 ## Giai đoạn 4 — UX catalog & hiệu năng
 
-### [ ] T10 — PERF-01/PERF-02: Khử N+1 ở 2 luồng catalog
+### [x] T10 — PERF-01/PERF-02: Khử N+1 ở 2 luồng catalog
 **Ưu tiên: 🟠 Cao**
 - Trang list: lấy `product_flat` theo `whereIn(product_id, ids)` 1 lần + cache file-exists.
 - API homepage: gộp query ảnh đại diện.

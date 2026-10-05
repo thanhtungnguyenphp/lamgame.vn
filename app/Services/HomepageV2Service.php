@@ -221,8 +221,12 @@ class HomepageV2Service
         $total = (clone $query)->count();
         $products = $query->offset($offset)->limit(self::PRODUCTS_PER_PAGE)->get();
 
+        // Batch-fetch thumbnail (ảnh đầu tiên) cho tất cả product 1 lần (PERF-02)
+        $productIds = $products->map(fn ($p) => $p->product_id ?? $p->id)->filter()->all();
+        $thumbnails = $this->getThumbnailsFor($productIds);
+
         return [
-            'items' => $products->map(fn($p) => $this->formatProduct($p))->toArray(),
+            'items' => $products->map(fn($p) => $this->formatProduct($p, $thumbnails))->toArray(),
             'total' => $total,
             'page' => $page,
             'per_page' => self::PRODUCTS_PER_PAGE,
@@ -364,7 +368,7 @@ class HomepageV2Service
     /**
      * Format product for frontend
      */
-    private function formatProduct($product): array
+    private function formatProduct($product, ?array $thumbnails = null): array
     {
         $price = (float) ($product->price ?? 0);
         $salesCount = (int) ($product->sales_count ?? 0);
@@ -375,7 +379,7 @@ class HomepageV2Service
             'name' => $product->name,
             'description' => $product->short_description,
             'url' => '/source-game/' . ($product->url_key ?? ''),
-            'thumbnail' => $this->getProductThumbnail($product->product_id ?? $product->id),
+            'thumbnail' => $this->resolveThumbnail($product->product_id ?? $product->id, $thumbnails),
             'price' => $price,
             'original_price' => null,
             'engine' => $product->engine,
@@ -394,7 +398,7 @@ class HomepageV2Service
     }
 
     /**
-     * Get product thumbnail URL
+     * Get product thumbnail URL (single — fallback khi không có batch preload)
      */
     private function getProductThumbnail(int $productId): string
     {
@@ -409,6 +413,47 @@ class HomepageV2Service
 
         // Default placeholder
         return '/images/placeholder-game.svg';
+    }
+
+    /**
+     * Batch-fetch ảnh đại diện (ảnh đầu theo position) cho nhiều product 1 query.
+     * Trả về map product_id => path. (PERF-02)
+     */
+    private function getThumbnailsFor(array $productIds): array
+    {
+        if (empty($productIds)) {
+            return [];
+        }
+
+        // Lấy toàn bộ ảnh của các product, sắp theo position, giữ ảnh đầu tiên mỗi product
+        $rows = DB::table('product_images')
+            ->whereIn('product_id', $productIds)
+            ->orderBy('product_id')
+            ->orderBy('position')
+            ->get(['product_id', 'path']);
+
+        $map = [];
+        foreach ($rows as $row) {
+            if (! isset($map[$row->product_id])) {
+                $map[$row->product_id] = $row->path;
+            }
+        }
+
+        return $map;
+    }
+
+    /**
+     * Lấy thumbnail từ batch preload nếu có, ngược lại fallback query đơn lẻ.
+     */
+    private function resolveThumbnail(int $productId, ?array $thumbnails): string
+    {
+        if (is_array($thumbnails)) {
+            return isset($thumbnails[$productId])
+                ? '/storage/' . $thumbnails[$productId]
+                : '/images/placeholder-game.svg';
+        }
+
+        return $this->getProductThumbnail($productId);
     }
 
     private function applyMerchandisableScope($query)

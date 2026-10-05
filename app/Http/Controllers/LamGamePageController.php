@@ -1090,14 +1090,18 @@ HTML;
             ->get()
             ->keyBy('product_id');
 
+        // Batch-fetch product_flat (locale vi) 1 lần thay vì query trong vòng lặp (PERF-01)
+        $flatRows = \DB::table('product_flat')
+            ->whereIn('product_id', $productIds)
+            ->where('locale', 'vi')
+            ->get()
+            ->keyBy('product_id');
+
         // Transform products for view
         $featuredSources = [];
         foreach ($products as $product) {
-            // Get flat row for vi locale
-            $flat = \DB::table('product_flat')
-                ->where('product_id', $product->id)
-                ->where('locale', 'vi')
-                ->first();
+            // Get flat row for vi locale (từ batch, không query lại)
+            $flat = $flatRows->get($product->id);
 
             $name = $flat->name ?? $product->sku;
             $description = $flat->description ?? 'No description available';
