@@ -48,11 +48,17 @@
 - **Files**: listener mới, `app/Services/LicenseService.php`, `app/Models/LicenseKey.php`, route + view.
 - **DoD**: sau khi order `completed`, người mua có license key xem được trong tài khoản.
 
-### [ ] T6 — FEAT-03: Hoàn tất đơn digital tự động
+### [x] T6 — FEAT-03: Hoàn tất đơn digital tự động
 **Ưu tiên: 🟠 Cao**
-- Xác minh `OnepageController::storeOrder` + Paypal callback; thêm cơ chế chuyển order digital sang `completed` khi thanh toán thành công (hoặc invoice+shipment tự động cho sản phẩm downloadable).
-- **Files**: cần đọc `packages/Webkul/Shop/.../OnepageController`, cấu hình payment.
-- **DoD**: mua xong + thanh toán thành công → order `completed` → tải được ngay; không kẹt `pending`.
+- CHÍNH SÁCH: chỉ dùng PayPal SmartButton (phương thức duy nhất được duyệt/active).
+- Luồng PayPal SmartButton đã hoàn chỉnh: capture tiền → tạo order (processing) → tự
+  invoice → vì hàng downloadable không cần ship nên Bagisto tự chuyển `completed`
+  → bắn `sales.order.update-status.after` → sinh license (T5) + earning (T7).
+- Đã TẮT các phương thức không dùng trong DB config để khách không tạo đơn kẹt pending:
+  cashondelivery=0, moneytransfer=0, paypal_standard=0 (chỉ còn paypal_smart_button=1).
+- Thêm `php artisan order:complete-digital` để admin hoàn tất thủ công đơn downloadable
+  pending khi cần (fallback), có `--dry-run`.
+- **DoD**: mua qua PayPal → order completed → tải được + có license. ✅ (đã xác minh logic Bagisto isInCompletedState cho hàng không stockable)
 
 ---
 
