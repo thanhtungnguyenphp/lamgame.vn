@@ -42,7 +42,7 @@ class LicenseService
     public function getMyLicenses(int $customerId)
     {
         return LicenseKey::where('customer_id', $customerId)
-            ->with('licenseType')
+            ->with(['licenseType', 'product'])
             ->orderByDesc('created_at')
             ->paginate(20);
     }

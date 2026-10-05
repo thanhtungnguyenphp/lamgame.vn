@@ -175,6 +175,7 @@
                     </button>
                     <div class="nav-redesign__user-dropdown">
                         <a href="{{ route('shop.customers.account.profile.index') }}">👤 Tài khoản</a>
+                        <a href="{{ route('lamgame.my-licenses') }}">🔑 License của tôi</a>
                         <a href="{{ route('lamgame.my-applications') }}">📋 Đơn ứng tuyển</a>
                         <a href="{{ route('lamgame.saved-jobs') }}">💼 Việc làm đã lưu</a>
                         <a href="{{ route('forum.bookmarks') }}">🔖 Bài viết đã lưu</a>

@@ -41,7 +41,7 @@
 
 ## Giai đoạn 2 — Entitlement sau mua (trọng tâm nghiệp vụ)
 
-### [ ] T5 — FEAT-01: Đấu nối hệ thống License
+### [x] T5 — FEAT-01: Đấu nối hệ thống License
 **Ưu tiên: 🔴 Cao**
 - Thêm listener trên order-complete gọi `LicenseService::generateAfterPurchase` để sinh license key cho người mua.
 - Thêm trang "License của tôi" + route; đấu nối `getMyLicenses/verify`.

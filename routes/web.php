@@ -234,6 +234,7 @@ Route::get('storage/company-logos/{filename}', [App\Http\Controllers\LogoControl
 Route::get('viec-lam-game', [LamGamePageController::class, 'jobs'])->name('lamgame.viec-lam-game');
 Route::get('viec-lam/{slug}', [LamGamePageController::class, 'jobDetail'])->name('lamgame.job.detail');
 Route::get('my-applications', [LamGamePageController::class, 'myApplications'])->name('lamgame.my-applications')->middleware('customer');
+Route::get('my-licenses', [App\Http\Controllers\MyLicenseController::class, 'index'])->name('lamgame.my-licenses')->middleware('customer');
 Route::get('saved-jobs', [LamGamePageController::class, 'savedJobs'])->name('lamgame.saved-jobs')->middleware('customer');
 Route::get('company/{slug}', [LamGamePageController::class, 'companyProfile'])->name('lamgame.company.profile');
 

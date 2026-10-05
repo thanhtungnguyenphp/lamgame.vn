@@ -77,5 +77,8 @@ class AppServiceProvider extends ServiceProvider
 
         // Create seller earnings when order is completed
         \Event::listen('sales.order.update-status.after', \App\Listeners\CreateSellerEarningOnOrderComplete::class);
+
+        // Generate license keys for buyer when order is completed (FEAT-01)
+        \Event::listen('sales.order.update-status.after', \App\Listeners\GenerateLicenseOnOrderComplete::class);
     }
 }

@@ -12,15 +12,24 @@ class LicenseKey extends Model
 
     public function licenseType() { return $this->belongsTo(LicenseType::class); }
 
+    public function product() { return $this->belongsTo(\Webkul\Product\Models\Product::class, 'product_id'); }
+
+    public function customer() { return $this->belongsTo(\Webkul\Customer\Models\Customer::class, 'customer_id'); }
+
     public static function generate(int $productId, int $licenseTypeId, int $customerId, ?int $orderId = null): self
     {
+        // Sinh key duy nhất, thử lại nếu trùng (cột key là unique)
+        do {
+            $key = strtoupper(Str::random(8) . '-' . Str::random(8) . '-' . Str::random(8) . '-' . Str::random(8));
+        } while (static::where('key', $key)->exists());
+
         return static::create([
-            'product_id' => $productId,
+            'product_id'      => $productId,
             'license_type_id' => $licenseTypeId,
-            'customer_id' => $customerId,
-            'order_id' => $orderId,
-            'key' => strtoupper(Str::random(8) . '-' . Str::random(8) . '-' . Str::random(8) . '-' . Str::random(8)),
-            'activated_at' => now(),
+            'customer_id'     => $customerId,
+            'order_id'        => $orderId,
+            'key'             => $key,
+            'activated_at'    => now(),
         ]);
     }
 }
