@@ -137,3 +137,9 @@
 6. T14 → T13 → T9 (phòng thủ còn lại)
 
 > Mỗi task hoàn thành: chạy kiểm chứng (lint/test thủ công), commit riêng với mã task trong message, cập nhật checkbox ở file này.
+
+---
+## CI/CD (2026-10-05)
+Đã fix luồng deploy GitHub Actions:
+- Nguyên nhân fail: account `deploy` không ghi được repo (dubious ownership + permission) và deploy key trỏ nhầm repo aiforkid.
+- Fix: cấp quyền group `deploy` lên repo + `safe.directory`; tạo deploy key riêng `lamgame_deploy` (add vào GitHub Deploy Keys của lamgame.vn); tạo key CI riêng `github_actions_ci` (private → Secret SERVER_SSH_KEY, public → authorized_keys của deploy); dùng SSH alias `github.com-lamgame` cho cả root và deploy để không ảnh hưởng aiforkid.
