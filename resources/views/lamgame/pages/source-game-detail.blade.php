@@ -84,14 +84,41 @@
             <span>{{ Str::limit($sourceGame['title'], 40) }}</span>
         </div>
         <div class="sd-hero__grid">
-            {{-- Gameplay Autoplay Preview --}}
+            {{-- Gameplay Preview (video) --}}
             <div class="sd-gallery">
-                @if(!empty($sourceGame['video_demo_url']))
+                @php
+                    $videoUrl = $sourceGame['video_demo_url'] ?? null;
+                    $videoMp4 = $sourceGame['video_preview_mp4'] ?? null;
+                    $ytId = null;
+                    $vimeoId = null;
+                    if ($videoUrl) {
+                        if (preg_match('~(?:youtube\.com/(?:watch\?v=|embed/|shorts/)|youtu\.be/)([A-Za-z0-9_-]{11})~', $videoUrl, $m)) {
+                            $ytId = $m[1];
+                        } elseif (preg_match('~vimeo\.com/(?:video/)?(\d+)~', $videoUrl, $m)) {
+                            $vimeoId = $m[1];
+                        }
+                    }
+                    $isMp4 = $videoMp4 || ($videoUrl && \Illuminate\Support\Str::endsWith(strtok($videoUrl, '?'), ['.mp4', '.webm']));
+                @endphp
+                @if($ytId)
+                <div class="sd-gallery__video">
+                    <iframe width="100%" height="100%" style="aspect-ratio:16/9;border:0;border-radius:12px"
+                        src="https://www.youtube.com/embed/{{ $ytId }}?rel=0"
+                        title="Gameplay preview" loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen></iframe>
+                </div>
+                @elseif($vimeoId)
+                <div class="sd-gallery__video">
+                    <iframe width="100%" height="100%" style="aspect-ratio:16/9;border:0;border-radius:12px"
+                        src="https://player.vimeo.com/video/{{ $vimeoId }}"
+                        title="Gameplay preview" loading="lazy"
+                        allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                @elseif($isMp4)
                 <div class="sd-gallery__video">
                     <video autoplay muted loop playsinline poster="{{ $sourceGame['images'][0]['url'] ?? '' }}">
-                        @if(!empty($sourceGame['video_preview_mp4']))
-                        <source src="{{ $sourceGame['video_preview_mp4'] }}" type="video/mp4">
-                        @endif
+                        <source src="{{ $videoMp4 ?: $videoUrl }}" type="video/mp4">
                     </video>
                     <div class="sd-gallery__video-badge">▶ Gameplay Preview</div>
                 </div>
@@ -121,7 +148,6 @@
                     @if(!empty($sourceGame['is_revenue_featured']))<span class="sd-badge sd-badge--prod">Sản phẩm chọn lọc</span>@endif
                     @if(empty($sourceGame['is_available']))<span class="sd-badge">Đang hoàn thiện</span>
                     @elseif($sourceGame['is_free'])<span class="sd-badge sd-badge--free">Miễn phí</span>@endif
-                    @if(!empty($sourceGame['production_ready']))<span class="sd-badge sd-badge--prod">Production Ready</span>@endif
                 </div>
                 <h1 class="sd-info__title">{{ $sourceGame['title'] }}</h1>
                 <p class="sd-info__desc">{{ $sourceGame['description'] }}</p>
@@ -465,14 +491,43 @@ document.addEventListener('DOMContentLoaded', function() {
         if(d.data && d.data.total > 0) renderStats(d.data);
         else document.getElementById('review-stats').innerHTML='<p style="color:#7A8599;font-size:.9rem">⭐ Chưa có đánh giá. Hãy là người đầu tiên!</p>';
     }).catch(()=>{document.getElementById('review-stats').innerHTML='<p style="color:#7A8599;font-size:.9rem">⭐ Chưa có đánh giá.</p>';});
-    fetch('/api/v1/source-game/{{ $sourceGame["id"] }}/reviews?per_page=10').then(r=>r.json()).then(d=>{if(d.data?.data)renderReviews(d.data.data)}).catch(()=>{});
+    loadReviews(1);
 });
+
+// Phân trang review: tải trang 1, có nút "Xem thêm" cho các trang tiếp theo (FEAT-05)
+let reviewAppendMode = false;
+function loadReviews(page){
+    fetch('/api/v1/source-game/{{ $sourceGame["id"] }}/reviews?per_page=10&page='+page)
+        .then(r=>r.json())
+        .then(d=>{
+            const pg = d.data || {};
+            if(pg.data) renderReviews(pg.data, reviewAppendMode);
+            renderReviewLoadMore(pg.current_page || page, pg.last_page || 1);
+            reviewAppendMode = true;
+        }).catch(()=>{});
+}
+function renderReviewLoadMore(current, last){
+    let el = document.getElementById('review-loadmore');
+    if(!el){
+        el = document.createElement('div');
+        el.id = 'review-loadmore';
+        el.style.textAlign = 'center';
+        el.style.marginTop = '1rem';
+        const list = document.getElementById('review-list');
+        if(list && list.parentNode) list.parentNode.insertBefore(el, list.nextSibling);
+    }
+    if(current < last){
+        el.innerHTML = '<button type="button" class="sd-btn sd-btn--outline" onclick="loadReviews('+(current+1)+')" style="padding:8px 20px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer">Xem thêm đánh giá</button>';
+    } else {
+        el.innerHTML = '';
+    }
+}
 
 function escapeHtml(str){if(str==null)return '';return String(str).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 
 function renderStats(s){const el=document.getElementById('review-stats');if(!el)return;let bars='';for(let i=5;i>=1;i--){const p=s.total>0?Math.round((s.distribution[i]||0)/s.total*100):0;bars+='<div class="sd-rbar"><span>'+i+'★</span><div class="sd-rbar__track"><div class="sd-rbar__fill" style="width:'+p+'%"></div></div><span>'+(s.distribution[i]||0)+'</span></div>';}el.innerHTML='<div class="sd-rating-summary"><div class="sd-rating-big">'+escapeHtml(s.avg_rating)+'<small>/5</small></div><div class="sd-rating-count">'+escapeHtml(s.total)+' đánh giá</div></div><div class="sd-rating-bars">'+bars+'</div>';}
 
-function renderReviews(reviews){const el=document.getElementById('review-list');if(!el)return;if(!reviews.length){el.innerHTML='<p style="color:#7A8599">Chưa có đánh giá nào.</p>';return;}el.innerHTML=reviews.map(r=>{const rating=Math.max(0,Math.min(5,parseInt(r.rating)||0));return '<div class="sd-review"><div class="sd-review__head"><strong>'+escapeHtml(r.customer?.first_name||'Ẩn danh')+'</strong>'+(r.is_verified_purchase?' <span class="sd-verified">✓ Đã mua</span>':'')+'<span class="sd-review__date">'+escapeHtml(new Date(r.created_at).toLocaleDateString('vi-VN'))+'</span></div><div class="sd-review__stars">'+'★'.repeat(rating)+'☆'.repeat(5-rating)+'</div>'+(r.title?'<div class="sd-review__title">'+escapeHtml(r.title)+'</div>':'')+'<p>'+escapeHtml(r.content)+'</p></div>';}).join('');}
+function renderReviews(reviews, append){const el=document.getElementById('review-list');if(!el)return;if(!reviews.length && !append){el.innerHTML='<p style="color:#7A8599">Chưa có đánh giá nào.</p>';return;}const html=reviews.map(r=>{const rating=Math.max(0,Math.min(5,parseInt(r.rating)||0));return '<div class="sd-review"><div class="sd-review__head"><strong>'+escapeHtml(r.customer?.first_name||'Ẩn danh')+'</strong>'+(r.is_verified_purchase?' <span class="sd-verified">✓ Đã mua</span>':'')+'<span class="sd-review__date">'+escapeHtml(new Date(r.created_at).toLocaleDateString('vi-VN'))+'</span></div><div class="sd-review__stars">'+'★'.repeat(rating)+'☆'.repeat(5-rating)+'</div>'+(r.title?'<div class="sd-review__title">'+escapeHtml(r.title)+'</div>':'')+'<p>'+escapeHtml(r.content)+'</p></div>';}).join('');if(append){el.insertAdjacentHTML('beforeend', html);}else{el.innerHTML=html;}}
 
 // Gửi đánh giá (form trong partial source-game-reviews)
 function submitReview(productId){

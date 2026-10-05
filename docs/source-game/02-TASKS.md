@@ -101,7 +101,7 @@
 - **Files**: `LamGamePageController::sourceGame`, `resources/views/lamgame/pages/source-game.blade.php`.
 - **DoD**: mọi filter hiển thị đều có tác dụng thực; không còn filter "giả".
 
-### [ ] T12 — FEAT-04/FEAT-05/QUAL-03: Sửa video, phân trang review, dọn code chết
+### [x] T12 — FEAT-04/FEAT-05/QUAL-03: Sửa video, phân trang review, dọn code chết
 **Ưu tiên: 🟡 Trung bình**
 - Dùng iframe cho YouTube/Vimeo; thêm "xem thêm" review; gỡ `production_ready`, `*-partial`, "25 MB" bịa.
 - **Files**: `source-game-detail.blade.php`.

@@ -26,12 +26,6 @@
     .review-form button:hover { background: #1d4ed8; }
 </style>
 
-<div class="review-stats-section" id="review-stats-partial" style="display:none">
-</div>
-
-<div id="review-list-partial" style="display:none">
-</div>
-
 @auth('customer')
 <div class="review-form">
     <h3>Viết đánh giá</h3>
