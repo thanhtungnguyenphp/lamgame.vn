@@ -1040,6 +1040,47 @@ HTML;
             });
         }
 
+        // Filter by engine (product_flat.engine, so khớp không phân biệt hoa thường)
+        $engine = $request->get('engine');
+        if ($engine) {
+            $productQuery->whereIn('id', function ($sub) use ($engine) {
+                $sub->from('product_flat')
+                    ->select('product_id')
+                    ->where('locale', 'vi')
+                    ->whereRaw('LOWER(engine) LIKE ?', ['%' . strtolower($engine) . '%']);
+            });
+        }
+
+        // Filter by platform (product_flat.platform là JSON array -> match LIKE)
+        $platform = $request->get('platform');
+        if ($platform) {
+            $platformMap = ['pc' => 'pc', 'mobile' => 'mobile', 'webgl' => 'web', 'cross' => 'cross'];
+            $needle = $platformMap[strtolower($platform)] ?? strtolower($platform);
+            $productQuery->whereIn('id', function ($sub) use ($needle) {
+                $sub->from('product_flat')
+                    ->select('product_id')
+                    ->where('locale', 'vi')
+                    ->whereRaw('LOWER(platform) LIKE ?', ['%' . $needle . '%']);
+            });
+        }
+
+        // Filter by pricing (free/paid) dựa trên product_flat.price
+        $pricing = $request->get('pricing');
+        if ($pricing === 'free' || $pricing === 'paid') {
+            $productQuery->whereIn('id', function ($sub) use ($pricing) {
+                $sub->from('product_flat')
+                    ->select('product_id')
+                    ->where('locale', 'vi');
+                if ($pricing === 'free') {
+                    $sub->where(function ($q) {
+                        $q->whereNull('price')->orWhere('price', '<=', 0);
+                    });
+                } else {
+                    $sub->where('price', '>', 0);
+                }
+            });
+        }
+
         // Optional search on product_flat fields
         if ($search) {
             $productQuery->whereIn('id', function ($sub) use ($search) {
@@ -1064,6 +1105,15 @@ HTML;
                 break;
             case 'name':
                 $productQuery->orderByRaw('(SELECT pf.name FROM product_flat pf WHERE pf.product_id = products.id AND pf.locale = ?) asc', ['vi']);
+                break;
+            case 'popular':
+                // Sắp theo lượt mua (order_items thuộc order processing/completed)
+                $productQuery->orderByRaw('(SELECT COUNT(*) FROM order_items oi JOIN orders o ON o.id = oi.order_id WHERE oi.product_id = products.id AND o.status IN (?, ?)) desc', ['processing', 'completed']);
+                break;
+            case 'featured':
+                // Ưu tiên sản phẩm có downloadable link (đã sẵn sàng bán), rồi mới nhất
+                $productQuery->orderByRaw('(SELECT COUNT(*) FROM product_downloadable_links pdl WHERE pdl.product_id = products.id) desc')
+                    ->orderBy('created_at', 'desc');
                 break;
             case 'newest':
             default:

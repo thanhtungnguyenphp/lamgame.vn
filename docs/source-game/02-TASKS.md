@@ -95,7 +95,7 @@
 - **Files**: `LamGamePageController::sourceGame`, `app/Services/HomepageV2Service.php`.
 - **DoD**: số query không tăng tuyến tính theo số sản phẩm (kiểm bằng debugbar/log).
 
-### [ ] T11 — QUAL-01: Hoàn thiện/dọn filter trang /source-game
+### [x] T11 — QUAL-01: Hoàn thiện/dọn filter trang /source-game
 **Ưu tiên: 🟡 Trung bình**
 - Xử lý `engine/platform/pricing` trong query; map `sort=popular/featured`; hoặc gỡ control chưa hỗ trợ.
 - **Files**: `LamGamePageController::sourceGame`, `resources/views/lamgame/pages/source-game.blade.php`.
