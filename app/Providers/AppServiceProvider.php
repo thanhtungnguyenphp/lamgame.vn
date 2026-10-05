@@ -80,5 +80,8 @@ class AppServiceProvider extends ServiceProvider
 
         // Generate license keys for buyer when order is completed (FEAT-01)
         \Event::listen('sales.order.update-status.after', \App\Listeners\GenerateLicenseOnOrderComplete::class);
+
+        // Reverse seller earnings when order is canceled/refunded (DATA-06)
+        \Event::listen('sales.order.update-status.after', \App\Listeners\ReverseEarningOnOrderCancel::class);
     }
 }

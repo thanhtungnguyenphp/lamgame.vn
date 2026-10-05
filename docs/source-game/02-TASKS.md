@@ -78,7 +78,7 @@
 - **Files**: `app/Http/Controllers/SellerEarningController.php`, `SellerController.php`.
 - **DoD**: 2 request rút đồng thời không vượt tổng số dư; dashboard & trang rút hiển thị cùng con số.
 
-### [ ] T9 — DATA-06: Holdback + reverse earning khi refund
+### [x] T9 — DATA-06: Holdback + reverse earning khi refund
 **Ưu tiên: 🟡 Trung bình**
 - Thêm trạng thái `hold`/clearing cho earning; listener trừ/huỷ earning khi order bị cancel/refund.
 - **Files**: `SourceGameEarning`, listener refund mới, migration (nếu cần cột).
