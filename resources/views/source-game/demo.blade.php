@@ -31,7 +31,7 @@
         <iframe
             src="{{ $demoUrl }}"
             id="gameIframe"
-            sandbox="allow-scripts allow-same-origin allow-popups"
+            sandbox="allow-scripts allow-popups allow-pointer-lock"
             allow="autoplay; fullscreen"
             loading="lazy"
         ></iframe>

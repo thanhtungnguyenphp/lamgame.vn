@@ -111,17 +111,20 @@
 
 ## Giai đoạn 5 — Dọn dẹp & phòng thủ
 
-### [ ] T13 — SEC-06: Zip-Slip + sandbox demo
+### [x] T13 — SEC-06: Zip-Slip + sandbox demo
 **Ưu tiên: 🟡 Trung bình**
 - Validate tên entry khi giải nén ZIP demo (chặn `../`); phục vụ demo không `allow-same-origin` hoặc domain riêng.
 - **Files**: `DemoController::store`, `source-game/demo.blade.php`.
 - **DoD**: ZIP chứa path traversal bị từ chối; demo không truy cập được cookie same-origin.
 
-### [ ] T14 — SEC-05: Scope seller cho API manage downloadable-links
-**Ưu tiên: 🟠 Cao (cần xác minh trước)**
-- Xác minh thực tế rồi thêm kiểm tra `product.seller_id` khớp caller.
-- **Files**: `ProductManageController`, `routes/api-ecommerce-manage.php`.
-- **DoD**: caller chỉ thao tác được downloadable-link của sản phẩm mình sở hữu.
+### [x] T14 — SEC-05: Scope seller cho API manage downloadable-links — KHÔNG CẦN SỬA
+**Kết luận sau khi xác minh: KHÔNG phải lỗ hổng.**
+- Middleware `api.key` (`ApiKeyAuth`) xác thực bằng **admin api_token** (bảng `Admin`),
+  KHÔNG cấp cho seller/customer (đã xác minh: chỉ 4 admin có token).
+- `/api/manage/*` là API quản trị toàn quyền theo thiết kế — admin được phép thao tác
+  trên mọi sản phẩm, nên việc không scope theo seller là ĐÚNG, không phải IDOR.
+- Đánh giá ban đầu (subagent) giả định caller là seller — sai. Không thay đổi code.
+- Khuyến nghị vận hành: bảo vệ admin api_token như secret; cân nhắc rate-limit/log đã có sẵn.
 
 ---
 
