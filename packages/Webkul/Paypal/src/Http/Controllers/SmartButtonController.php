@@ -69,6 +69,12 @@ class SmartButtonController extends Controller
     {
         $cart = Cart::getCart();
 
+        // Ép dùng USD cho PayPal: toàn site đã chuyển sang USD và SDK PayPal cũng
+        // Ép dùng USD cho PayPal: toàn site đã chuyển sang USD và SDK PayPal cũng
+        // load currency=USD. Không dựa vào cart currency code vì các cart cũ
+        // có thể còn giữ mã không hợp lệ/0-decimal (VND/USA) gây DECIMALS_NOT_SUPPORTED.
+        $currencyCode = 'USD';
+
         $billingAddressLines = $this->getAddressLines($cart->billing_address->address);
 
         $data = [
@@ -100,26 +106,26 @@ class SmartButtonController extends Controller
                 [
                     'amount'   => [
                         'value'         => $this->smartButton->formatCurrencyValue((float) $cart->sub_total + $cart->tax_total + ($cart->selected_shipping_rate ? $cart->selected_shipping_rate->price : 0) - $cart->discount_amount),
-                        'currency_code' => $cart->cart_currency_code,
+                        'currency_code' => $currencyCode,
 
                         'breakdown'     => [
                             'item_total' => [
-                                'currency_code' => $cart->cart_currency_code,
+                                'currency_code' => $currencyCode,
                                 'value'         => $this->smartButton->formatCurrencyValue((float) $cart->sub_total),
                             ],
 
                             'shipping'   => [
-                                'currency_code' => $cart->cart_currency_code,
+                                'currency_code' => $currencyCode,
                                 'value'         => $this->smartButton->formatCurrencyValue((float) ($cart->selected_shipping_rate ? $cart->selected_shipping_rate->price : 0)),
                             ],
 
                             'tax_total'  => [
-                                'currency_code' => $cart->cart_currency_code,
+                                'currency_code' => $currencyCode,
                                 'value'         => $this->smartButton->formatCurrencyValue((float) $cart->tax_total),
                             ],
 
                             'discount'   => [
-                                'currency_code' => $cart->cart_currency_code,
+                                'currency_code' => $currencyCode,
                                 'value'         => $this->smartButton->formatCurrencyValue((float) $cart->discount_amount),
                             ],
                         ],
@@ -176,7 +182,7 @@ class SmartButtonController extends Controller
         foreach ($cart->items as $item) {
             $lineItems[] = [
                 'unit_amount' => [
-                    'currency_code' => $cart->cart_currency_code,
+                    'currency_code' => 'USD',
                     'value'         => $this->smartButton->formatCurrencyValue((float) $item->price),
                 ],
                 'quantity'    => $item->quantity,
