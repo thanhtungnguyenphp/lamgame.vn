@@ -27,7 +27,11 @@ Route::post('source-game/{productId}/reviews', [App\Http\Controllers\Api\SourceG
     ->where('productId', '[0-9]+');
 
 // Seller public profile
-Route::get('seller/{slug}', [App\Http\Controllers\SellerProfileController::class, 'show'])->name('seller.profile');
+// Loại trừ các path reserved của khu vực seller (register, pending, dashboard, ...)
+// để không "nuốt" mất các route đó (vd GET /seller/register bị match nhầm -> 404).
+Route::get('seller/{slug}', [App\Http\Controllers\SellerProfileController::class, 'show'])
+    ->where('slug', '^(?!register$|pending$|dashboard$|analytics$|products|orders|earnings|withdrawals).+')
+    ->name('seller.profile');
 
 // Collections
 Route::middleware('customer')->prefix('collections')->name('collections.')->group(function () {

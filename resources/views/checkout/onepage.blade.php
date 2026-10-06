@@ -265,7 +265,16 @@
 <script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
 
 <script>
-const { createApp } = Vue;
+// Đợi Vue load (Vue CDN dùng defer trong master layout → chạy trước DOMContentLoaded)
+function _initCheckout() {
+    if (typeof Vue === 'undefined') {
+        console.error('Vue chưa sẵn sàng — checkout không khởi tạo được.');
+        document.getElementById('checkout-app')?.removeAttribute('v-cloak');
+        document.getElementById('checkout-app').innerHTML = '<p style="text-align:center;padding:2rem;color:#dc3545">Có lỗi tải trang. Vui lòng tải lại (Ctrl+F5).</p>';
+        return;
+    }
+
+    const { createApp } = Vue;
 
 createApp({
     data() {
@@ -757,5 +766,13 @@ createApp({
         }
     }
 }).mount('#checkout-app');
+} // end _initCheckout
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _initCheckout);
+} else {
+    // Nếu DOM đã parse xong (vd script chạy muộn), gọi ngay
+    _initCheckout();
+}
 </script>
 @endpush
