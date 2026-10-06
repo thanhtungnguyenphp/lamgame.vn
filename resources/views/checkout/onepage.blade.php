@@ -691,7 +691,8 @@ createApp({
                 
                 onError: (err) => {
                     console.error('PayPal error:', err);
-                    alert('Có lỗi xảy ra với PayPal. Vui lòng thử lại.');
+                    const detail = (err && (err.message || err.toString())) ? (err.message || err.toString()) : 'lỗi không xác định';
+                    alert('Lỗi PayPal: ' + detail);
                 }
             }).render('#paypal-button-container');
         },
