@@ -674,11 +674,32 @@ createApp({
                             body: JSON.stringify({ orderData: data })
                         });
                         const result = await res.json();
+
                         if (result.success) {
                             window.location.href = result.redirect_url || '/checkout/onepage/success';
-                        } else {
-                            alert(result.message || 'Thanh toán thất bại');
+                            return;
                         }
+
+                        // Trích xuất issue/mô tả lỗi từ PayPal (result.message có thể là object)
+                        let payload = result.message;
+                        if (typeof payload === 'string') {
+                            try { payload = JSON.parse(payload); } catch (_) {}
+                        }
+                        const issue = payload?.details?.[0]?.issue;
+                        const desc = payload?.details?.[0]?.description;
+
+                        // INSTRUMENT_DECLINED: cho người mua chọn lại phương thức thanh toán
+                        if (issue === 'INSTRUMENT_DECLINED' && actions && actions.restart) {
+                            return actions.restart();
+                        }
+
+                        const friendly = {
+                            'INSTRUMENT_DECLINED': 'Phương thức thanh toán bị từ chối. Vui lòng chọn thẻ/nguồn tiền khác.',
+                            'PAYER_ACTION_REQUIRED': 'Cần xác nhận thêm từ PayPal. Vui lòng thử lại.',
+                            'TRANSACTION_REFUSED': 'Giao dịch bị từ chối. Vui lòng dùng phương thức khác.'
+                        }[issue];
+
+                        alert(friendly || desc || 'Thanh toán thất bại. Vui lòng thử lại hoặc dùng phương thức khác.');
                     } catch (e) {
                         console.error('PayPal capture error:', e);
                         alert('Có lỗi xảy ra khi xử lý thanh toán.');
