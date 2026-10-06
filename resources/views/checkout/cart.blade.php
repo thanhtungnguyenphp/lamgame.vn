@@ -4,33 +4,47 @@
 
 @push('styles')
 <style>
-    .cart-container { padding: 2rem 0; min-height: 60vh; }
+    :root {
+        --co-bg: #070B14; --co-surface: #111827; --co-surface-2: rgba(17,24,39,.6);
+        --co-border: rgba(124,92,255,.15); --co-text: #F5F7FA; --co-text-2: #B7C0D1; --co-muted: #7A8599;
+        --co-accent: #7C5CFF; --co-accent-2: #00D1FF; --co-success: #34D399; --co-error: #F87171;
+        --co-radius: 14px;
+    }
+    .cart-container { padding: 2rem 0; min-height: 60vh; color: var(--co-text); }
+    .cart-container h1 { color: var(--co-text); }
     .cart-content { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start; }
-    .cart-items { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-    .cart-summary { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; }
-    .cart-item { display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid #eee; }
+    .cart-items { background: var(--co-surface-2); border: 1px solid var(--co-border); border-radius: var(--co-radius); padding: 1.5rem; }
+    .cart-summary { background: var(--co-surface-2); border: 1px solid var(--co-border); border-radius: var(--co-radius); padding: 1.5rem; position: sticky; top: 100px; }
+    .cart-item { display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--co-border); }
     .cart-item:last-child { border-bottom: none; }
-    .cart-item-image { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; background: #f5f5f5; }
+    .cart-item-image { width: 100px; height: 100px; object-fit: cover; border-radius: 10px; background: var(--co-surface); }
     .cart-item-details { flex: 1; }
-    .cart-item-name { font-weight: 600; color: #333; margin-bottom: 0.5rem; }
-    .cart-item-price { color: #2c5f41; font-weight: 700; font-size: 1.1rem; }
-    .cart-item-actions { display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem; }
-    .qty-control { display: flex; align-items: center; border: 1px solid #ddd; border-radius: 6px; }
-    .qty-btn { background: none; border: none; padding: 0.5rem 0.75rem; cursor: pointer; font-size: 1rem; }
-    .qty-btn:hover { background: #f5f5f5; }
-    .qty-input { width: 50px; text-align: center; border: none; font-size: 1rem; }
-    .remove-btn { color: #dc3545; background: none; border: none; cursor: pointer; font-size: 0.9rem; }
+    .cart-item-name { font-weight: 600; color: var(--co-text); margin-bottom: 0.5rem; }
+    .cart-item-price { color: var(--co-accent-2); font-weight: 700; font-size: 1.1rem; }
+    .cart-item-actions { display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem; flex-wrap: wrap; }
+    .qty-control { display: flex; align-items: center; border: 1px solid var(--co-border); border-radius: 8px; overflow: hidden; }
+    .qty-btn { background: var(--co-surface); border: none; padding: 0.5rem 0.9rem; cursor: pointer; font-size: 1.1rem; color: var(--co-text); min-width: 44px; min-height: 44px; }
+    .qty-btn:hover { background: var(--co-accent); color: #fff; }
+    .qty-input { width: 54px; text-align: center; border: none; font-size: 1rem; background: transparent; color: var(--co-text); }
+    .remove-btn { color: var(--co-error); background: none; border: none; cursor: pointer; font-size: 0.9rem; }
     .remove-btn:hover { text-decoration: underline; }
-    .summary-row { display: flex; justify-content: space-between; padding: 0.5rem 0; }
-    .summary-total { font-size: 1.1rem; font-weight: 700; color: #2c5f41; border-top: 1px solid #e5e7eb; padding-top: 0.75rem; margin-top: 0.5rem; }
-    .btn-checkout { width: 100%; padding: 0.875rem; background: #2c5f41; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 1rem; text-decoration: none; display: block; text-align: center; }
-    .btn-checkout:hover { background: #1e4530; }
-    .btn-continue { width: 100%; padding: 0.75rem; background: white; color: #2c5f41; border: 1px solid #2c5f41; border-radius: 8px; font-size: 0.9rem; cursor: pointer; margin-top: 0.5rem; text-decoration: none; display: block; text-align: center; }
-    .btn-continue:hover { background: #f0fdf4; }
-    .empty-cart { text-align: center; padding: 4rem 2rem; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .summary-row { display: flex; justify-content: space-between; padding: 0.5rem 0; color: var(--co-text-2); }
+    .summary-total { font-size: 1.15rem; font-weight: 700; color: var(--co-text); border-top: 1px solid var(--co-border); padding-top: 0.75rem; margin-top: 0.5rem; }
+    .summary-total span:last-child { color: var(--co-accent-2); }
+    .btn-checkout { width: 100%; padding: 0.9rem; background: linear-gradient(135deg,var(--co-accent),var(--co-accent-2)); color: #fff; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 1rem; text-decoration: none; display: block; text-align: center; transition: opacity .2s; }
+    .btn-checkout:hover { opacity: .9; }
+    .btn-continue { width: 100%; padding: 0.75rem; background: transparent; color: var(--co-text-2); border: 1px solid var(--co-border); border-radius: 10px; font-size: 0.9rem; cursor: pointer; margin-top: 0.5rem; text-decoration: none; display: block; text-align: center; }
+    .btn-continue:hover { border-color: var(--co-accent); color: var(--co-text); }
+    .empty-cart { text-align: center; padding: 4rem 2rem; background: var(--co-surface-2); border: 1px solid var(--co-border); border-radius: var(--co-radius); color: var(--co-text-2); }
     .empty-cart-icon { margin-bottom: 1.5rem; }
+    .cart-skeleton { height: 100px; border-radius: 10px; background: linear-gradient(90deg, rgba(124,92,255,.06) 25%, rgba(124,92,255,.12) 50%, rgba(124,92,255,.06) 75%); background-size: 200% 100%; animation: coShimmer 1.3s infinite; margin-bottom: 1rem; }
+    @keyframes coShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .co-alert { padding: 0.75rem 1rem; border-radius: 10px; margin-bottom: 1rem; font-size: 0.9rem; }
+    .co-alert--error { background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.3); color: var(--co-error); }
     @media (max-width: 768px) {
         .cart-content { grid-template-columns: 1fr; }
+        .cart-summary { position: static; }
+        .cart-item-image { width: 72px; height: 72px; }
     }
 </style>
 @endpush
@@ -38,23 +52,34 @@
 @section('content')
 <div class="cart-container">
     <div class="container">
-        <h1 style="margin-bottom: 1.5rem; color: #2c5f41;">🛒 Giỏ hàng</h1>
+        <h1 style="margin-bottom: 1.5rem;">🛒 Giỏ hàng</h1>
         
         <div id="cart-app">
-            <div v-if="loading" style="text-align: center; padding: 3rem;">
-                <p>Đang tải...</p>
+            <div v-if="loading">
+                <div class="cart-content">
+                    <div class="cart-items">
+                        <div class="cart-skeleton"></div>
+                        <div class="cart-skeleton"></div>
+                    </div>
+                    <div class="cart-summary"><div class="cart-skeleton" style="height:180px"></div></div>
+                </div>
             </div>
-            
+
+            <div v-else-if="loadError" class="empty-cart">
+                <div class="co-alert co-alert--error" style="display:inline-block">Không tải được giỏ hàng. Vui lòng thử lại.</div>
+                <div><button class="btn-checkout" style="max-width:220px;margin:1rem auto 0" @click="loadCart">Thử lại</button></div>
+            </div>
+
             <div v-else-if="!cart || !cart.items || cart.items.length === 0" class="empty-cart">
                 <div class="empty-cart-icon">
-                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#7A8599" stroke-width="1.5">
                         <circle cx="9" cy="21" r="1"></circle>
                         <circle cx="20" cy="21" r="1"></circle>
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                     </svg>
                 </div>
-                <h3 style="font-size: 1.5rem; color: #333; margin-bottom: 0.5rem;">Giỏ hàng trống</h3>
-                <p style="color: #666; margin-bottom: 1.5rem;">Bạn chưa có sản phẩm nào trong giỏ hàng</p>
+                <h3 style="font-size: 1.5rem; color: var(--co-text); margin-bottom: 0.5rem;">Giỏ hàng trống</h3>
+                <p style="margin-bottom: 1.5rem;">Bạn chưa có sản phẩm nào trong giỏ hàng</p>
                 <a href="{{ url('/source-game') }}" class="btn-checkout" style="max-width: 280px; margin: 0 auto 1rem;">
                     🎮 Khám phá Source Game
                 </a>
@@ -80,29 +105,29 @@
                             </div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-weight: 700; color: #2c5f41;">@{{ formatPrice(item.total) }}</div>
+                            <div style="font-weight: 700; color: var(--co-accent-2);">@{{ formatPrice(item.total) }}</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="cart-summary">
-                    <h3 style="margin-bottom: 1rem; color: #333;">Tóm tắt đơn hàng</h3>
+                    <h3 style="margin-bottom: 1rem; color: var(--co-text);">Tóm tắt đơn hàng</h3>
                     
                     <!-- Coupon -->
                     <div style="margin-bottom: 1rem;">
                         <div v-if="!cart.coupon_code" style="display: flex; gap: 0.5rem;">
                             <input type="text" v-model="couponCode" placeholder="Nhập mã giảm giá" 
-                                style="flex: 1; padding: 0.5rem; border: 1px solid #ddd; border-radius: 6px;">
+                                style="flex: 1; padding: 0.6rem; border: 1px solid var(--co-border); border-radius: 8px; background: var(--co-surface); color: var(--co-text);">
                             <button @click="applyCoupon" :disabled="applyingCoupon" 
-                                style="padding: 0.5rem 1rem; background: #2c5f41; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                                style="padding: 0.6rem 1rem; background: var(--co-accent); color: white; border: none; border-radius: 8px; cursor: pointer;">
                                 @{{ applyingCoupon ? '...' : 'Áp dụng' }}
                             </button>
                         </div>
-                        <div v-else style="display: flex; justify-content: space-between; align-items: center; background: #f0fdf4; padding: 0.5rem; border-radius: 6px;">
-                            <span style="color: #2c5f41;">🎫 @{{ cart.coupon_code }}</span>
-                            <button @click="removeCoupon" style="background: none; border: none; color: #dc3545; cursor: pointer;">Xóa</button>
+                        <div v-else style="display: flex; justify-content: space-between; align-items: center; background: rgba(52,211,153,.1); padding: 0.6rem; border-radius: 8px;">
+                            <span style="color: var(--co-success);">🎫 @{{ cart.coupon_code }}</span>
+                            <button @click="removeCoupon" style="background: none; border: none; color: var(--co-error); cursor: pointer;">Xóa</button>
                         </div>
-                        <p v-if="couponError" style="color: #dc3545; font-size: 0.85rem; margin-top: 0.25rem;">@{{ couponError }}</p>
+                        <p v-if="couponError" style="color: var(--co-error); font-size: 0.85rem; margin-top: 0.25rem;">@{{ couponError }}</p>
                     </div>
                     
                     <div class="summary-row">
@@ -111,7 +136,7 @@
                     </div>
                     <div class="summary-row" v-if="cart.discount_amount > 0">
                         <span>Giảm giá</span>
-                        <span style="color: #dc3545;">-@{{ formatPrice(cart.discount_amount) }}</span>
+                        <span style="color: var(--co-success);">-@{{ formatPrice(cart.discount_amount) }}</span>
                     </div>
                     <div class="summary-row">
                         <span>Thuế</span>
@@ -140,6 +165,7 @@ createApp({
         return {
             cart: null,
             loading: true,
+            loadError: false,
             couponCode: '',
             couponError: '',
             applyingCoupon: false
@@ -150,20 +176,24 @@ createApp({
     },
     methods: {
         async loadCart() {
+            this.loading = true;
+            this.loadError = false;
             try {
                 const res = await fetch('/api/checkout/cart', {
                     headers: { 'Accept': 'application/json' }
                 });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
                 const data = await res.json();
                 this.cart = data.data;
             } catch (e) {
                 console.error('Error loading cart:', e);
+                this.loadError = true;
             } finally {
                 this.loading = false;
             }
         },
         formatPrice(price) {
-            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price || 0);
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price || 0);
         },
         async updateQty(item, qty) {
             if (qty < 1) return;

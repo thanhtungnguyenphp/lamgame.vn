@@ -897,7 +897,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const platformHtml = (product.platform || []).slice(0, 3).map(p => `<span class="lg-v2-tag">${escapeHtml(p)}</span>`).join('');
         const priceHtml = product.is_free
             ? '<span class="lg-v2-product-card__price lg-v2-product-card__price--free">Free</span>'
-            : `<span class="lg-v2-product-card__price">${new Intl.NumberFormat('vi-VN').format(product.price)}đ</span>`;
+            : `<span class="lg-v2-product-card__price">${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(product.price)}</span>`;
 
         return `
         <a href="${encodeURI(product.url || '#')}" class="lg-v2-card lg-v2-product-card lg-v2-fade-in visible">

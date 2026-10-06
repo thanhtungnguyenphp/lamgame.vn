@@ -9,7 +9,7 @@
 @push('og_extra')
 <meta property="og:type" content="product">
 <meta property="product:price:amount" content="{{ $sourceGame['price'] ?? 0 }}">
-<meta property="product:price:currency" content="VND">
+<meta property="product:price:currency" content="USD">
 @endpush
 
 @push('meta')
@@ -26,7 +26,7 @@
     "programmingLanguage": "{{ $sourceGame['language'] ?? 'C#' }}",
     "runtimePlatform": "{{ $sourceGame['engine'] ?? 'Multi-platform' }}",
     "applicationCategory": "GameApplication",
-    "offers": {"@type": "Offer","price": "{{ $sourceGame['price'] ?? 0 }}","priceCurrency": "VND","availability": "{{ !empty($sourceGame['is_available']) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}"}
+    "offers": {"@type": "Offer","price": "{{ $sourceGame['price'] ?? 0 }}","priceCurrency": "USD","availability": "{{ !empty($sourceGame['is_available']) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}"}
     @if(($sourceGame['rating'] ?? 0) > 0 && ($sourceGame['review_count'] ?? 0) > 0)
     ,"aggregateRating": {"@type": "AggregateRating","ratingValue": "{{ $sourceGame['rating'] }}","reviewCount": "{{ $sourceGame['review_count'] }}","bestRating": "5","worstRating": "1"}
     @endif
@@ -173,12 +173,12 @@
                         @if(empty($sourceGame['is_available']))
                             <span class="sd-price__value">Chưa mở bán</span>
                             @if(($sourceGame['price'] ?? 0) > 0)
-                            <small>Giá dự kiến: {{ number_format($sourceGame['price'], 0, ',', '.') }}đ</small>
+                            <small>Giá dự kiến: {{ format_usd($sourceGame['price']) }}</small>
                             @endif
                         @elseif($sourceGame['is_free'])
                             <span class="sd-price__value sd-price__value--free">Miễn phí</span>
                         @else
-                            <span class="sd-price__value">{{ number_format($sourceGame['price'], 0, ',', '.') }}đ</span>
+                            <span class="sd-price__value">{{ format_usd($sourceGame['price']) }}</span>
                         @endif
                     </div>
 
@@ -330,7 +330,7 @@
                 <div class="sd-related__img"><img src="{{ $source['image'] }}" alt="{{ $source['title'] }}" loading="lazy"></div>
                 <div class="sd-related__body">
                     <h3>{{ Str::limit($source['title'], 40) }}</h3>
-                    <span class="sd-related__price">{{ ($source['price'] ?? 0) > 0 ? number_format($source['price'], 0, ',', '.') . 'đ' : 'Miễn phí' }}</span>
+                    <span class="sd-related__price">{{ ($source['price'] ?? 0) > 0 ? format_usd($source['price']) : 'Miễn phí' }}</span>
                 </div>
             </a>
             @endforeach
@@ -365,7 +365,7 @@
             @if($canDownload && $sourceGame['is_free'])
             <button onclick="document.getElementById('btn-add-cart')?.click()" class="sd-btn sd-btn--primary sd-btn--lg">Tải về miễn phí →</button>
             @elseif($canDownload)
-            <button onclick="document.getElementById('btn-buy-now')?.click()" class="sd-btn sd-btn--primary sd-btn--lg">Mua ngay — {{ number_format($sourceGame['price'], 0, ',', '.') }}đ</button>
+            <button onclick="document.getElementById('btn-buy-now')?.click()" class="sd-btn sd-btn--primary sd-btn--lg">Mua ngay — {{ format_usd($sourceGame['price']) }}</button>
             @else
             <button type="button" class="sd-btn sd-btn--primary sd-btn--lg" disabled>Tạm ngừng bán</button>
             @endif
@@ -383,7 +383,7 @@
 
 {{-- STICKY MOBILE CTA --}}
 <div class="sd-sticky-cta">
-    <span class="sd-sticky-cta__price">{{ empty($sourceGame['is_available']) ? 'Chưa mở bán' : ($sourceGame['is_free'] ? 'Miễn phí' : number_format($sourceGame['price'], 0, ',', '.') . 'đ') }}</span>
+    <span class="sd-sticky-cta__price">{{ empty($sourceGame['is_available']) ? 'Chưa mở bán' : ($sourceGame['is_free'] ? 'Miễn phí' : format_usd($sourceGame['price'])) }}</span>
     @if($canDownload)
     <button onclick="document.getElementById('{{ $sourceGame['is_free'] ? 'btn-add-cart' : 'btn-buy-now' }}')?.click()" class="sd-btn sd-btn--primary sd-btn--sm">{{ $sourceGame['is_free'] ? 'Tải về' : 'Mua ngay' }}</button>
     @else
@@ -439,7 +439,7 @@ function closeSourceLightbox() {
 
 document.addEventListener('DOMContentLoaded', function() {
     const item = {
-        currency: 'VND',
+        currency: 'USD',
         value: {{ (float) ($sourceGame['price'] ?? 0) }},
         items: [{item_id: '{{ $sourceGame['id'] }}', item_name: @json($sourceGame['title']), price: {{ (float) ($sourceGame['price'] ?? 0) }}, quantity: 1}]
     };

@@ -4,40 +4,51 @@
 
 @push('styles')
 <style>
+    :root {
+        --co-bg: #070B14; --co-surface: #111827; --co-surface-2: rgba(17,24,39,.6);
+        --co-border: rgba(124,92,255,.15); --co-text: #F5F7FA; --co-text-2: #B7C0D1; --co-muted: #7A8599;
+        --co-accent: #7C5CFF; --co-accent-2: #00D1FF; --co-success: #34D399; --co-error: #F87171;
+        --co-radius: 14px;
+    }
     [v-cloak] { display: none !important; }
-    .checkout-container { padding: 2rem 0; min-height: 60vh; }
+    .checkout-container { padding: 2rem 0; min-height: 60vh; color: var(--co-text); }
+    .checkout-container h1 { color: var(--co-text); }
     .checkout-content { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; align-items: start; }
-    .checkout-steps { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-    .checkout-summary { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; position: sticky; top: 100px; }
-    .step-section { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #eee; }
+    .checkout-steps { background: var(--co-surface-2); border: 1px solid var(--co-border); border-radius: var(--co-radius); padding: 1.5rem; }
+    .checkout-summary { background: var(--co-surface-2); border: 1px solid var(--co-border); border-radius: var(--co-radius); padding: 1.5rem; position: sticky; top: 100px; }
+    .step-section { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--co-border); }
     .step-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-    .step-title { font-size: 1.25rem; font-weight: 600; color: #333; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
-    .step-title .step-number { background: #2c5f41; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; }
-    .address-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s; margin-bottom: 0.5rem; }
-    .address-card:hover { border-color: #2c5f41; }
-    .address-card.selected { border-color: #2c5f41; background: #f0fdf4; }
+    .step-title { font-size: 1.15rem; font-weight: 700; color: var(--co-text); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .step-title .step-number { background: linear-gradient(135deg,var(--co-accent),var(--co-accent-2)); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; }
+    .address-card { border: 1px solid var(--co-border); border-radius: 10px; padding: 1rem; cursor: pointer; transition: all 0.2s; margin-bottom: 0.5rem; color: var(--co-text-2); }
+    .address-card:hover { border-color: var(--co-accent); }
+    .address-card.selected { border-color: var(--co-accent); background: rgba(124,92,255,.08); }
     .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333; }
-    .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
-    .form-group input:focus, .form-group select:focus { outline: none; border-color: #2c5f41; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--co-text-2); }
+    .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid var(--co-border); border-radius: 8px; font-size: 1rem; background: var(--co-surface); color: var(--co-text); }
+    .form-group input::placeholder { color: var(--co-muted); }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--co-accent); }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .summary-item { display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid #eee; }
+    .summary-item { display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--co-border); }
     .summary-item:last-child { border-bottom: none; }
-    .summary-item-image { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; background: #f5f5f5; }
-    .summary-row { display: flex; justify-content: space-between; padding: 0.5rem 0; }
-    .summary-total { font-size: 1.1rem; font-weight: 700; color: #2c5f41; border-top: 1px solid #e5e7eb; padding-top: 0.75rem; margin-top: 0.5rem; }
-    .btn-proceed { width: 100%; padding: 0.875rem; background: #2c5f41; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 1rem; }
-    .btn-proceed:hover { background: #1e4530; }
-    .btn-proceed:disabled { background: #ccc; cursor: not-allowed; }
-    .shipping-option, .payment-option { border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin-bottom: 0.5rem; cursor: pointer; display: flex; align-items: center; gap: 0.75rem; }
-    .shipping-option:hover, .payment-option:hover { border-color: #2c5f41; }
-    .shipping-option.selected, .payment-option.selected { border-color: #2c5f41; background: #f0fdf4; }
-    .radio-circle { width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .radio-circle.checked { border-color: #2c5f41; }
-    .radio-circle.checked::after { content: ''; width: 10px; height: 10px; background: #2c5f41; border-radius: 50%; }
-    .login-prompt { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
-    .login-prompt a { color: #2c5f41; font-weight: 600; }
-    .error-msg { color: #dc3545; font-size: 0.875rem; margin-top: 0.25rem; }
+    .summary-item-image { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; background: var(--co-surface); }
+    .summary-row { display: flex; justify-content: space-between; padding: 0.5rem 0; color: var(--co-text-2); }
+    .summary-total { font-size: 1.15rem; font-weight: 700; color: var(--co-text); border-top: 1px solid var(--co-border); padding-top: 0.75rem; margin-top: 0.5rem; }
+    .summary-total span:last-child { color: var(--co-accent-2); }
+    .btn-proceed { width: 100%; padding: 0.9rem; background: linear-gradient(135deg,var(--co-accent),var(--co-accent-2)); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 1rem; transition: opacity .2s; }
+    .btn-proceed:hover { opacity: .9; }
+    .btn-proceed:disabled { background: var(--co-surface); color: var(--co-muted); cursor: not-allowed; }
+    .shipping-option, .payment-option { border: 1px solid var(--co-border); border-radius: 10px; padding: 1rem; margin-bottom: 0.5rem; cursor: pointer; display: flex; align-items: center; gap: 0.75rem; color: var(--co-text-2); }
+    .shipping-option:hover, .payment-option:hover { border-color: var(--co-accent); }
+    .shipping-option.selected, .payment-option.selected { border-color: var(--co-accent); background: rgba(124,92,255,.08); }
+    .radio-circle { width: 20px; height: 20px; border: 2px solid var(--co-muted); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .radio-circle.checked { border-color: var(--co-accent); }
+    .radio-circle.checked::after { content: ''; width: 10px; height: 10px; background: var(--co-accent); border-radius: 50%; }
+    .login-prompt { background: rgba(0,209,255,.08); border: 1px solid rgba(0,209,255,.25); border-radius: 10px; padding: 1rem; margin-bottom: 1rem; color: var(--co-text-2); }
+    .login-prompt a { color: var(--co-accent-2); font-weight: 600; }
+    .error-msg { color: var(--co-error); font-size: 0.875rem; margin-top: 0.25rem; }
+    .checkout-shimmer div { background: linear-gradient(90deg, rgba(124,92,255,.06) 25%, rgba(124,92,255,.12) 50%, rgba(124,92,255,.06) 75%) !important; background-size: 200% 100% !important; animation: coShimmer 1.3s infinite; }
+    @keyframes coShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     @media (max-width: 768px) {
         .checkout-content { grid-template-columns: 1fr; }
         .checkout-summary { position: static; order: -1; }
@@ -49,7 +60,7 @@
 @section('content')
 <div class="checkout-container">
     <div class="container">
-        <h1 style="margin-bottom: 1.5rem; color: #2c5f41;">💳 Thanh toán</h1>
+        <h1 style="margin-bottom: 1.5rem;">💳 Thanh toán</h1>
         
         <div id="checkout-app" v-cloak>
             <div v-if="loading" style="text-align: center; padding: 3rem;">
@@ -86,11 +97,11 @@
                                 @click="selectSavedAddress(addr)"
                             >
                                 <div style="font-weight: 600;">@{{ addr.first_name }} @{{ addr.last_name }}</div>
-                                <div style="color: #666; font-size: 0.9rem;">@{{ addr.address1 || addr.address }}, @{{ addr.city }}, @{{ addr.state }}</div>
-                                <div style="color: #666; font-size: 0.9rem;">@{{ addr.phone }}</div>
+                                <div style="color: var(--co-muted); font-size: 0.9rem;">@{{ addr.address1 || addr.address }}, @{{ addr.city }}, @{{ addr.state }}</div>
+                                <div style="color: var(--co-muted); font-size: 0.9rem;">@{{ addr.phone }}</div>
                             </div>
                             <div class="address-card" :class="{ selected: useNewAddress }" @click="useNewAddress = true; selectedAddress = null;">
-                                <div style="text-align: center; color: #2c5f41;">+ Nhập địa chỉ mới</div>
+                                <div style="text-align: center; color: var(--co-accent-2);">+ Nhập địa chỉ mới</div>
                             </div>
                         </div>
                         @endauth
@@ -157,9 +168,9 @@
                             <div class="radio-circle" :class="{ checked: selectedShipping?.method === method.method }"></div>
                             <div style="flex: 1;">
                                 <div style="font-weight: 500;">@{{ method.method_title }}</div>
-                                <div style="color: #666; font-size: 0.875rem;">@{{ method.method_description }}</div>
+                                <div style="color: var(--co-muted); font-size: 0.875rem;">@{{ method.method_description }}</div>
                             </div>
-                            <div style="font-weight: 600; color: #2c5f41;">@{{ formatPrice(method.price) }}</div>
+                            <div style="font-weight: 600; color: var(--co-accent-2);">@{{ formatPrice(method.price) }}</div>
                         </div>
                     </div>
 
@@ -179,7 +190,7 @@
                             <div class="radio-circle" :class="{ checked: selectedPayment?.method === method.method }"></div>
                             <div>
                                 <div style="font-weight: 500;">@{{ method.method_title }}</div>
-                                <div style="color: #666; font-size: 0.875rem;">@{{ method.description }}</div>
+                                <div style="color: var(--co-muted); font-size: 0.875rem;">@{{ method.description }}</div>
                             </div>
                         </div>
                     </div>
@@ -193,7 +204,7 @@
                         <img :src="item.base_image?.small_image_url || '/images/placeholder.png'" class="summary-item-image">
                         <div style="flex: 1;">
                             <div style="font-weight: 500; font-size: 0.9rem;">@{{ item.name }}</div>
-                            <div style="color: #666; font-size: 0.875rem;">@{{ formatPrice(item.price) }} × @{{ item.quantity }}</div>
+                            <div style="color: var(--co-muted); font-size: 0.875rem;">@{{ formatPrice(item.price) }} × @{{ item.quantity }}</div>
                         </div>
                     </div>
 
@@ -208,7 +219,7 @@
                         </div>
                         <div class="summary-row" v-if="cart?.discount_amount > 0">
                             <span>Giảm giá</span>
-                            <span style="color: #dc3545;">-@{{ formatPrice(cart?.discount_amount) }}</span>
+                            <span style="color: var(--co-error);">-@{{ formatPrice(cart?.discount_amount) }}</span>
                         </div>
                         <div class="summary-row">
                             <span>Thuế</span>
@@ -270,7 +281,7 @@ function _initCheckout() {
     if (typeof Vue === 'undefined') {
         console.error('Vue chưa sẵn sàng — checkout không khởi tạo được.');
         document.getElementById('checkout-app')?.removeAttribute('v-cloak');
-        document.getElementById('checkout-app').innerHTML = '<p style="text-align:center;padding:2rem;color:#dc3545">Có lỗi tải trang. Vui lòng tải lại (Ctrl+F5).</p>';
+        document.getElementById('checkout-app').innerHTML = '<p style="text-align:center;padding:2rem;color:#F87171">Có lỗi tải trang. Vui lòng tải lại (Ctrl+F5).</p>';
         return;
     }
 
@@ -762,7 +773,7 @@ createApp({
         },
         
         formatPrice(price) {
-            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price || 0);
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price || 0);
         }
     }
 }).mount('#checkout-app');

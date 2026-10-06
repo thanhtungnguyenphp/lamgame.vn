@@ -52,7 +52,7 @@
             @elseif($isFree)
                 <span class="sg-card__price sg-card__price--free">Miễn phí</span>
             @else
-                <span class="sg-card__price">{{ number_format($source['price'], 0, ',', '.') }}đ</span>
+                <span class="sg-card__price">{{ ($source['price'] ?? 0) > 0 ? format_usd($source['price']) : 'Miễn phí' }}</span>
             @endif
             <span class="sg-card__cta">{{ $isAvailable ? 'Xem chi tiết' : 'Xem trạng thái' }}</span>
         </div>

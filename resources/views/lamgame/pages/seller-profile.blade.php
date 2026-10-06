@@ -49,7 +49,7 @@
                         <div style="padding: 1rem;">
                             <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">{{ $product->name }}</h3>
                             <p style="color: #2c5f41; font-weight: 700; font-size: 1.1rem;">
-                                {{ $product->price > 0 ? number_format($product->price) . 'đ' : 'Miễn phí' }}
+                                {{ $product->price > 0 ? format_usd($product->price) : 'Miễn phí' }}
                             </p>
                         </div>
                     </a>

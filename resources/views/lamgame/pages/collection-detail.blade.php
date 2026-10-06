@@ -19,7 +19,7 @@
                     </a>
                     <div style="padding: 1rem;">
                         <a href="{{ route('lamgame.source-game.detail', $p->url_key ?? '') }}" style="font-weight: 600; color: #1f2937; text-decoration: none;">{{ $p->name }}</a>
-                        <p style="color: #2c5f41; font-weight: 700; margin-top: 0.5rem;">{{ $p->price > 0 ? number_format($p->price) . 'đ' : 'Miễn phí' }}</p>
+                        <p style="color: #7C5CFF; font-weight: 700; margin-top: 0.5rem;">{{ $p->price > 0 ? format_usd($p->price) : 'Miễn phí' }}</p>
                     </div>
                 </div>
                 @endforeach
