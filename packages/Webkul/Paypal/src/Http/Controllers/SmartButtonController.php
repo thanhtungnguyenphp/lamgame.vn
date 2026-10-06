@@ -31,7 +31,16 @@ class SmartButtonController extends Controller
         try {
             return response()->json($this->smartButton->createOrder($this->buildRequestBody()));
         } catch (\Exception $e) {
-            return response()->json(json_decode($e->getMessage()), 400);
+            \Log::error('PayPal createOrder error', [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
+
+            $decoded = json_decode($e->getMessage());
+
+            return response()->json([
+                'message' => $decoded ?: $e->getMessage(),
+            ], 400);
         }
     }
 

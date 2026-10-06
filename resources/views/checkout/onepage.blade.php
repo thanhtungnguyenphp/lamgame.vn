@@ -651,10 +651,12 @@ createApp({
                         if (result.result?.id) {
                             return result.result.id;
                         }
-                        throw new Error(result.message || 'Failed to create PayPal order');
+                        const msg = (typeof result.message === 'string' ? result.message : JSON.stringify(result.message)) || 'Failed to create PayPal order';
+                        console.error('PayPal create-order response:', result);
+                        throw new Error(msg);
                     } catch (e) {
                         console.error('PayPal create order error:', e);
-                        alert('Không thể tạo đơn hàng PayPal. Vui lòng thử lại.');
+                        alert('Không thể tạo đơn hàng PayPal: ' + (e.message || 'lỗi không xác định'));
                         throw e;
                     }
                 },
