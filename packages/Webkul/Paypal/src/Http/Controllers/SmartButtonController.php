@@ -56,7 +56,17 @@ class SmartButtonController extends Controller
 
             return $this->saveOrder();
         } catch (\Exception $e) {
-            return response()->json(json_decode($e->getMessage()), 400);
+            \Log::error('PayPal captureOrder error', [
+                'message'  => $e->getMessage(),
+                'order_id' => request()->input('orderData.orderID'),
+                'trace'    => substr($e->getTraceAsString(), 0, 2000),
+            ]);
+
+            $decoded = json_decode($e->getMessage());
+
+            return response()->json([
+                'message' => $decoded ?: $e->getMessage(),
+            ], 400);
         }
     }
 
