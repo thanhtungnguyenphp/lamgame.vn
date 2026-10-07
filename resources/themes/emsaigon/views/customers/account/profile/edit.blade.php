@@ -19,23 +19,23 @@
             @csrf
             
             @if ($errors->any())
-                <div class="alert alert-danger" style="background: #fee; border: 1px solid #fcc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <div style="background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.3); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
                     <ul style="margin: 0; padding-left: 1.5rem;">
                         @foreach ($errors->all() as $error)
-                            <li style="color: #c00;">{{ $error }}</li>
+                            <li style="color: #F87171;">{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
             @endif
 
             @if (session('success'))
-                <div class="alert alert-success" style="background: #efe; border: 1px solid #cfc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; color: #060;">
+                <div style="background: rgba(52,211,153,.1); border: 1px solid rgba(52,211,153,.3); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; color: #34D399;">
                     {{ session('success') }}
                 </div>
             @endif
 
             @if (session('warning'))
-                <div class="alert alert-warning" style="background: #ffc; border: 1px solid #fc6; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; color: #630;">
+                <div style="background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.3); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; color: #FBBF24;">
                     {{ session('warning') }}
                 </div>
             @endif
@@ -126,32 +126,46 @@
 
     @push('styles')
     <style>
-        .edit-profile-container { max-width: 100%; }
+        :root {
+            --ef-surface: rgba(255,255,255,.03); --ef-border: rgba(124,92,255,.15);
+            --ef-text: #F5F7FA; --ef-text-2: #B7C0D1; --ef-muted: #7A8599;
+            --ef-accent: #7C5CFF; --ef-accent-2: #00D1FF; --ef-input-bg: #070B14;
+        }
+        .edit-profile-container { max-width: 100%; color: var(--ef-text); }
         .edit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-        .edit-title { font-size: 1.75rem; font-weight: 700; color: #1f2937; margin: 0; }
-        .edit-subtitle { color: #6b7280; margin: 0.25rem 0 0 0; }
-        .btn-back { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: white; color: #6b7280; border: 1px solid #e5e7eb; border-radius: 8px; text-decoration: none; font-weight: 500; transition: all 0.2s; }
-        .btn-back:hover { background: #f9fafb; border-color: #d1d5db; }
-        .form-card { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
-        .form-section-title { font-size: 1.125rem; font-weight: 600; color: #1f2937; margin: 0 0 0.5rem 0; }
-        .form-section-desc { font-size: 0.875rem; color: #6b7280; margin: 0 0 1.5rem 0; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .edit-title { font-size: 1.6rem; font-weight: 800; color: var(--ef-text); margin: 0; }
+        .edit-subtitle { color: var(--ef-muted); margin: 0.25rem 0 0 0; }
+        .btn-back { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.3rem; background: transparent; color: var(--ef-text-2); border: 1px solid var(--ef-border); border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.2s; }
+        .btn-back:hover { background: rgba(124,92,255,.1); color: var(--ef-text); border-color: var(--ef-accent); }
+        .form-card { background: var(--ef-surface); border: 1px solid var(--ef-border); border-radius: 14px; padding: 1.75rem; margin-bottom: 1.25rem; }
+        .form-section-title {
+            font-size: 1.05rem; font-weight: 700; color: var(--ef-text); margin: 0 0 1.25rem 0;
+            padding-bottom: 0.6rem; border-bottom: 1px solid var(--ef-border);
+        }
+        .form-section-desc { font-size: 0.85rem; color: var(--ef-muted); margin: -0.75rem 0 1.25rem 0; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
         .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        .form-label { font-size: 0.875rem; font-weight: 500; color: #374151; margin: 0; }
-        .form-input { width: 100%; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; transition: all 0.2s; }
-        .form-input:focus { outline: none; border-color: #2c5f41; box-shadow: 0 0 0 3px rgba(44,95,65,0.1); }
-        .checkbox-wrapper { display: flex; align-items: center; gap: 0.75rem; }
-        .checkbox-label { font-size: 0.875rem; color: #374151; margin: 0; }
+        .form-label { font-size: 0.85rem; font-weight: 600; color: var(--ef-text-2); margin: 0; }
+        .form-input {
+            width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--ef-border); border-radius: 10px;
+            font-size: 1rem; transition: all 0.2s; background: var(--ef-input-bg); color: var(--ef-text);
+        }
+        .form-input::placeholder { color: var(--ef-muted); }
+        .form-input:focus { outline: none; border-color: var(--ef-accent); box-shadow: 0 0 0 3px rgba(124,92,255,0.15); }
+        .form-input option { background: var(--ef-input-bg); color: var(--ef-text); }
+        .checkbox-wrapper { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
+        .checkbox-wrapper input { width: 18px; height: 18px; accent-color: var(--ef-accent); }
+        .checkbox-label { font-size: 0.95rem; color: var(--ef-text-2); margin: 0; }
         .form-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
-        .btn-cancel { padding: 0.75rem 1.5rem; background: white; color: #6b7280; border: 1px solid #d1d5db; border-radius: 8px; text-decoration: none; font-weight: 500; transition: all 0.2s; }
-        .btn-cancel:hover { background: #f9fafb; }
-        .btn-save { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: #2c5f41; color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
-        .btn-save:hover { background: #1e4530; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(44,95,65,0.2); }
-        .btn-save:active { transform: translateY(0); }
+        .btn-cancel { padding: 0.75rem 1.5rem; background: transparent; color: var(--ef-text-2); border: 1px solid var(--ef-border); border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.2s; }
+        .btn-cancel:hover { background: rgba(124,92,255,.1); color: var(--ef-text); }
+        .btn-save { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.75rem; background: linear-gradient(135deg,var(--ef-accent),var(--ef-accent-2)); color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+        .btn-save:hover { opacity: .9; }
+        .btn-save:disabled { opacity: .6; cursor: not-allowed; }
         @media (max-width: 768px) {
             .edit-header { flex-direction: column; align-items: flex-start; }
-            .edit-title { font-size: 1.5rem; }
-            .form-card { padding: 1.5rem; }
+            .edit-title { font-size: 1.4rem; }
+            .form-card { padding: 1.25rem; }
             .form-grid { grid-template-columns: 1fr; }
             .form-actions { flex-direction: column-reverse; }
             .btn-cancel, .btn-save { width: 100%; justify-content: center; }
