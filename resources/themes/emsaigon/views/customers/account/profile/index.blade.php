@@ -80,217 +80,98 @@
                     <h3 class="danger-title">Xóa tài khoản</h3>
                     <p class="danger-description">Xóa vĩnh viễn tài khoản và tất cả dữ liệu của bạn. Hành động này không thể hoàn tác.</p>
                 </div>
-                
-                <x-shop::form action="{{ route('shop.customers.account.profile.destroy') }}">
-                    <x-shop::modal>
-                        <x-slot:toggle>
-                            <button type="button" class="btn-danger">
-                                Xóa tài khoản
-                            </button>
-                        </x-slot>
 
-                        <x-slot:header>
-                            <h2 class="text-xl font-semibold">Xác nhận xóa tài khoản</h2>
-                        </x-slot>
+                <button type="button" class="btn-danger" onclick="document.getElementById('deleteAccountModal').style.display='flex'">
+                    Xóa tài khoản
+                </button>
 
-                        <x-slot:content>
-                            <p class="mb-4 text-gray-600">Vui lòng nhập mật khẩu để xác nhận xóa tài khoản.</p>
-                            
-                            <x-shop::form.control-group class="!mb-0">
-                                <x-shop::form.control-group.control
-                                    type="password"
-                                    name="password"
-                                    class="px-4 py-3 border rounded-lg"
-                                    rules="required"
-                                    placeholder="Nhập mật khẩu"
-                                />
-                                <x-shop::form.control-group.error control-name="password" />
-                            </x-shop::form.control-group>
-                        </x-slot>
-
-                        <x-slot:footer>
-                            <button type="submit" class="px-6 py-3 text-white bg-red-600 rounded-lg hover:bg-red-700">
-                                Xác nhận xóa
-                            </button>
-                        </x-slot>
-                    </x-shop::modal>
-                </x-shop::form>
+                <!-- Delete account modal (thuần, không dùng Vue component) -->
+                <div id="deleteAccountModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:1rem">
+                    <div style="background:#111827;border:1px solid rgba(124,92,255,.2);border-radius:14px;max-width:440px;width:100%;padding:1.75rem;color:#F5F7FA">
+                        <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:0.75rem">Xác nhận xóa tài khoản</h2>
+                        <p style="color:#B7C0D1;margin-bottom:1rem;font-size:0.9rem">Hành động này không thể hoàn tác. Vui lòng nhập mật khẩu để xác nhận.</p>
+                        <form method="POST" action="{{ route('shop.customers.account.profile.destroy') }}">
+                            @csrf
+                            @method('DELETE')
+                            <input
+                                type="password"
+                                name="password"
+                                required
+                                placeholder="Nhập mật khẩu"
+                                style="width:100%;padding:0.75rem;border:1px solid rgba(124,92,255,.2);border-radius:10px;background:#070B14;color:#F5F7FA;margin-bottom:1rem"
+                            >
+                            <div style="display:flex;gap:0.75rem;justify-content:flex-end">
+                                <button type="button" onclick="document.getElementById('deleteAccountModal').style.display='none'" style="padding:0.6rem 1.2rem;border:1px solid rgba(124,92,255,.2);border-radius:10px;background:transparent;color:#B7C0D1;cursor:pointer">Hủy</button>
+                                <button type="submit" style="padding:0.6rem 1.2rem;border:none;border-radius:10px;background:#F87171;color:#fff;font-weight:600;cursor:pointer">Xác nhận xóa</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     @push('styles')
     <style>
-        .profile-container {
-            max-width: 100%;
+        :root {
+            --pf-surface-2: #111827; --pf-border: rgba(124,92,255,.15);
+            --pf-text: #F5F7FA; --pf-text-2: #B7C0D1; --pf-muted: #7A8599;
+            --pf-accent: #7C5CFF; --pf-accent-2: #00D1FF; --pf-error: #F87171;
         }
-
+        .profile-container { max-width: 100%; color: var(--pf-text); }
         .profile-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
         }
-
-        .profile-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin: 0;
-        }
-
-        .profile-subtitle {
-            color: #6b7280;
-            margin: 0.25rem 0 0 0;
-        }
-
+        .profile-title { font-size: 1.6rem; font-weight: 800; color: var(--pf-text); margin: 0; }
+        .profile-subtitle { color: var(--pf-muted); margin: 0.25rem 0 0 0; }
         .btn-edit-profile {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            background: #2c5f41;
-            color: white;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.7rem 1.4rem;
+            background: linear-gradient(135deg,var(--pf-accent),var(--pf-accent-2));
+            color: #fff; border-radius: 10px; text-decoration: none; font-weight: 600;
+            transition: opacity .2s;
         }
-
-        .btn-edit-profile:hover {
-            background: #1e4530;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(44, 95, 65, 0.2);
-        }
-
+        .btn-edit-profile:hover { opacity: .9; }
         .profile-card {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,.03);
+            border: 1px solid var(--pf-border);
+            border-radius: 14px; padding: 2rem; margin-bottom: 1.5rem;
         }
-
-        .profile-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .profile-section:last-child {
-            margin-bottom: 0;
-        }
-
-        .section-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin: 0 0 1.5rem 0;
-        }
-
+        .profile-section { margin-bottom: 1.5rem; }
+        .profile-section:last-child { margin-bottom: 0; }
+        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--pf-text); margin: 0 0 1.5rem 0; }
         .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;
         }
-
-        .info-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .info-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #6b7280;
-            margin: 0;
-        }
-
-        .info-value {
-            font-size: 1rem;
-            font-weight: 500;
-            color: #1f2937;
-            margin: 0;
-        }
-
-        .profile-divider {
-            height: 1px;
-            background: #e5e7eb;
-            margin: 2rem 0;
-        }
-
+        .info-item { display: flex; flex-direction: column; gap: 0.4rem; }
+        .info-label { font-size: 0.82rem; font-weight: 500; color: var(--pf-muted); margin: 0; }
+        .info-value { font-size: 1rem; font-weight: 600; color: var(--pf-text); margin: 0; }
+        .profile-divider { height: 1px; background: var(--pf-border); margin: 2rem 0; }
         .danger-zone {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 12px;
-            padding: 1.5rem;
+            background: rgba(248,113,113,.08);
+            border: 1px solid rgba(248,113,113,.25);
+            border-radius: 14px; padding: 1.5rem;
         }
-
         .danger-zone-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 1rem; flex-wrap: wrap;
         }
-
-        .danger-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #991b1b;
-            margin: 0 0 0.25rem 0;
-        }
-
-        .danger-description {
-            font-size: 0.875rem;
-            color: #7f1d1d;
-            margin: 0;
-        }
-
+        .danger-title { font-size: 1rem; font-weight: 700; color: var(--pf-error); margin: 0 0 0.25rem 0; }
+        .danger-description { font-size: 0.85rem; color: var(--pf-text-2); margin: 0; }
         .btn-danger {
-            padding: 0.625rem 1.25rem;
-            background: white;
-            color: #dc2626;
-            border: 1px solid #dc2626;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
+            padding: 0.6rem 1.25rem; background: transparent; color: var(--pf-error);
+            border: 1px solid var(--pf-error); border-radius: 10px; font-weight: 600; cursor: pointer;
             transition: all 0.2s;
         }
-
-        .btn-danger:hover {
-            background: #dc2626;
-            color: white;
-        }
-
+        .btn-danger:hover { background: var(--pf-error); color: #fff; }
         @media (max-width: 768px) {
-            .profile-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .profile-title {
-                font-size: 1.5rem;
-            }
-
-            .profile-card {
-                padding: 1.5rem;
-            }
-
-            .info-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .danger-zone-content {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .btn-danger {
-                width: 100%;
-            }
+            .profile-header { flex-direction: column; align-items: flex-start; }
+            .profile-title { font-size: 1.4rem; }
+            .profile-card { padding: 1.5rem; }
+            .info-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .danger-zone-content { flex-direction: column; align-items: flex-start; }
+            .btn-danger { width: 100%; }
         }
     </style>
     @endpush
