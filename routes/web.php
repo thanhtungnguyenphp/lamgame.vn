@@ -234,23 +234,6 @@ Route::get('storage/company-logos/{filename}', [App\Http\Controllers\LogoControl
     ->where('filename', '[A-Za-z0-9\-_\.]+')
     ->name('company.logo');
 
-// TEMP DEBUG: kiểm tra customer đang login + order (xóa sau khi debug xong)
-Route::get('_debug/whoami', function () {
-    $c = auth()->guard('customer')->user();
-    if (! $c) {
-        return response()->json(['logged_in' => false, 'message' => 'Chưa đăng nhập (session customer không nhận diện).']);
-    }
-    return response()->json([
-        'logged_in'    => true,
-        'customer_id'  => $c->id,
-        'email'        => $c->email,
-        'name'         => trim($c->first_name . ' ' . $c->last_name),
-        'orders_count' => \Webkul\Sales\Models\Order::where('customer_id', $c->id)->count(),
-        'orders'       => \Webkul\Sales\Models\Order::where('customer_id', $c->id)
-            ->get(['increment_id', 'status', 'grand_total']),
-    ]);
-})->name('debug.whoami');
-
 // Job routes
 Route::get('viec-lam-game', [LamGamePageController::class, 'jobs'])->name('lamgame.viec-lam-game');
 Route::get('viec-lam/{slug}', [LamGamePageController::class, 'jobDetail'])->name('lamgame.job.detail');

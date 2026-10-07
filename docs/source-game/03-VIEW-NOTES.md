@@ -60,6 +60,6 @@ Dự án có NHIỀU bản trùng tên cho cùng một view. Thứ tự ưu tiê
    - `ReverseEarningOnOrderCancel` — đảo earning khi cancel/refund.
    - `saveOrder` (PayPal) gắn customer vào cart nếu đã login mà cart là guest.
 
-## Việc tạm chưa dọn (TODO)
-- Route debug `_debug/whoami` trong `routes/web.php` — XÓA sau khi hết debug.
-- Giá `tower-defense-complete` (product#61) đang = **$0.50** để test — khôi phục về $9.99 khi xong.
+## Dọn dẹp đã hoàn tất (2026-10-07)
+- Đã XÓA route debug `_debug/whoami`.
+- Đã khôi phục giá `tower-defense-complete` (product#61) về $9.99.
