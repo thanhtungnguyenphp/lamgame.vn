@@ -47,38 +47,30 @@ class DownloadableProductController extends Controller
             abort(403);
         }
 
-        $totalInvoiceQty = 0;
+        /**
+         * download_bought <= 0 nghĩa là KHÔNG giới hạn số lượt tải (source code bán 1 lần,
+         * cho phép tải lại nhiều lần). Chỉ áp giới hạn khi download_bought > 0.
+         */
+        if ($downloadableLinkPurchased->download_bought > 0) {
+            $totalInvoiceQty = 0;
 
-        if (isset($downloadableLinkPurchased->order->invoices)) {
-            foreach ($downloadableLinkPurchased->order->invoices as $invoice) {
-                $totalInvoiceQty = $totalInvoiceQty + $invoice->total_qty;
+            if (isset($downloadableLinkPurchased->order->invoices)) {
+                foreach ($downloadableLinkPurchased->order->invoices as $invoice) {
+                    $totalInvoiceQty = $totalInvoiceQty + $invoice->total_qty;
+                }
             }
-        }
 
-        $orderedQty = $downloadableLinkPurchased->order->total_qty_ordered;
-        $totalInvoiceQty = $totalInvoiceQty * ($downloadableLinkPurchased->download_bought / $orderedQty);
+            $orderedQty = $downloadableLinkPurchased->order->total_qty_ordered ?: 1;
+            $totalInvoiceQty = $totalInvoiceQty * ($downloadableLinkPurchased->download_bought / $orderedQty);
 
-        if (
-            $downloadableLinkPurchased->download_used == $totalInvoiceQty
-            || $downloadableLinkPurchased->download_used > $totalInvoiceQty
-        ) {
-            session()->flash('warning', trans('shop::app.customers.account.downloadable-products.download-error'));
+            if ($downloadableLinkPurchased->download_used >= $totalInvoiceQty) {
+                session()->flash('warning', trans('shop::app.customers.account.downloadable-products.download-error'));
 
-            return redirect()->route('shop.customers.account.downloadable_products.index');
-        }
+                return redirect()->route('shop.customers.account.downloadable_products.index');
+            }
 
-        if (
-            $downloadableLinkPurchased->download_bought
-            && ($downloadableLinkPurchased->download_bought - ($downloadableLinkPurchased->download_used + $downloadableLinkPurchased->download_canceled)) <= 0
-        ) {
-            session()->flash('warning', trans('shop::app.customers.account.downloadable-products.download-error'));
+            $remainingDownloads = $downloadableLinkPurchased->download_bought - ($downloadableLinkPurchased->download_used + $downloadableLinkPurchased->download_canceled + 1);
 
-            return redirect()->route('shop.customers.account.downloadable_products.index');
-        }
-
-        $remainingDownloads = $downloadableLinkPurchased->download_bought - ($downloadableLinkPurchased->download_used + $downloadableLinkPurchased->download_canceled + 1);
-
-        if ($downloadableLinkPurchased->download_bought) {
             $this->downloadableLinkPurchasedRepository->update([
                 'download_used' => $downloadableLinkPurchased->download_used + 1,
                 'status'        => $remainingDownloads <= 0 ? 'expired' : $downloadableLinkPurchased->status,
