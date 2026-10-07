@@ -32,69 +32,58 @@
 
         {!! view_render_event('bagisto.shop.customers.account.orders.list.before') !!}
 
-        <!-- For Desktop View -->
-        <div class="max-md:hidden">
-            <x-shop::datagrid :src="route('shop.customers.account.orders.index')" />
-        </div>
+        @php
+            $myOrders = \Webkul\Sales\Models\Order::where('customer_id', auth()->guard('customer')->id())
+                ->orderByDesc('id')
+                ->get();
+        @endphp
 
-        <!-- For Mobile View -->
-        <div class="md:hidden">
-            <x-shop::datagrid :src="route('shop.customers.account.orders.index')">
-                <!-- Datagrid Header -->
-                <template #header="{
-                    isLoading,
-                    available,
-                    applied,
-                    selectAll,
-                    sort,
-                    performAction
-                }">
-                    <div class="hidden"></div>
-                </template>
+        @if($myOrders->isEmpty())
+            <div style="padding:3rem 1rem;text-align:center;color:#6b7280;border:1px dashed #e5e7eb;border-radius:12px">
+                <p style="margin-bottom:1rem">Bạn chưa có đơn hàng nào.</p>
+                <a href="{{ route('lamgame.source-game') }}" style="color:#2c5f41;font-weight:600">🎮 Khám phá Source Game</a>
+            </div>
+        @else
+            <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:0.95rem">
+                    <thead>
+                        <tr style="text-align:left;border-bottom:2px solid #e5e7eb;color:#374151">
+                            <th style="padding:12px 10px">Mã đơn</th>
+                            <th style="padding:12px 10px">Ngày đặt</th>
+                            <th style="padding:12px 10px">Trạng thái</th>
+                            <th style="padding:12px 10px">Tổng tiền</th>
+                            <th style="padding:12px 10px"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($myOrders as $o)
+                            @php
+                                $statusLabels = [
+                                    'completed' => ['Hoàn thành', '#dcfce7', '#166534'],
+                                    'processing' => ['Đang xử lý', '#dbeafe', '#1e40af'],
+                                    'pending' => ['Chờ xử lý', '#fef9c3', '#854d0e'],
+                                    'canceled' => ['Đã hủy', '#fee2e2', '#991b1b'],
+                                    'closed' => ['Đã đóng', '#f3f4f6', '#374151'],
+                                ];
+                                $s = $statusLabels[$o->status] ?? [ucfirst($o->status), '#f3f4f6', '#374151'];
+                            @endphp
+                            <tr style="border-bottom:1px solid #eee">
+                                <td style="padding:12px 10px;font-weight:600">#{{ $o->increment_id }}</td>
+                                <td style="padding:12px 10px;color:#6b7280">{{ $o->created_at?->format('d/m/Y H:i') }}</td>
+                                <td style="padding:12px 10px">
+                                    <span style="padding:3px 10px;border-radius:12px;font-size:0.8rem;background:{{ $s[1] }};color:{{ $s[2] }}">{{ $s[0] }}</span>
+                                </td>
+                                <td style="padding:12px 10px;font-weight:700;color:#2c5f41">${{ number_format($o->grand_total, 2) }}</td>
+                                <td style="padding:12px 10px">
+                                    <a href="{{ route('shop.customers.account.orders.view', $o->id) }}" style="color:#2c5f41;font-weight:600">Xem</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
 
-                <template #body="{
-                    isLoading,
-                    available,
-                    applied,
-                    selectAll,
-                    sort,
-                    performAction
-                }">
-                    <template v-if="isLoading">
-                        <x-shop::shimmer.datagrid.table.body />
-                    </template>
-    
-                    <template v-else>
-                        <template v-for="record in available.records">
-                            <div class="w-full p-4 border rounded-md transition-all hover:bg-gray-50 [&>*]:border-0 mb-4 last:mb-0">
-                                <a :href="record.actions[0].url">
-                                    <div class="flex justify-between">
-                                        <div class="text-sm font-semibold">
-                                            @lang('shop::app.customers.account.orders.order-id'): #@{{ record.id }}
-    
-                                            <p class="text-xs font-normal text-neutral-500">
-                                                @{{ record.created_at }}
-                                            </p>
-                                        </div>
-    
-                                        <p v-html="record.status"></p>
-                                    </div>
-        
-                                    <div class="mt-2.5 text-xs font-normal text-neutral-500">
-                                        @lang('shop::app.customers.account.orders.subtotal')
-    
-                                        <p class="text-xl font-semibold text-black">
-                                            @{{ record.grand_total }}
-                                        </p>
-                                    </div>
-                                </a>
-                            </div>
-                        </template>
-                    </template>
-                </template>
-            </x-shop::datagrid>
-        </div>
-    
         {!! view_render_event('bagisto.shop.customers.account.orders.list.after') !!}
 
     </div>

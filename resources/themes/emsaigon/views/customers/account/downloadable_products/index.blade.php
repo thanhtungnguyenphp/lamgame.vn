@@ -32,77 +32,56 @@
 
         {!! view_render_event('bagisto.shop.customers.account.downloadable_products.list.before') !!}
 
-            <!-- For Desktop View -->
-        <div class="max-md:hidden">
-            <x-shop::datagrid :src="route('shop.customers.account.downloadable_products.index')" />
-        </div>
+        @php
+            $myDownloads = \Webkul\Sales\Models\DownloadableLinkPurchased::where('customer_id', auth()->guard('customer')->id())
+                ->orderByDesc('id')
+                ->get();
+        @endphp
 
-        <!-- For Mobile View -->
-        <div class="hidden max-md:block">
-            <x-shop::datagrid :src="route('shop.customers.account.downloadable_products.index')">
-                <!-- Datagrid Header -->
-                <template #header="{
-                    isLoading,
-                    available,
-                    applied,
-                    selectAll,
-                    sort,
-                    performAction
-                }">
-                    <div class="hidden"></div>
-                </template>
-
-                <template #body="{
-                    isLoading,
-                    available,
-                    applied,
-                    selectAll,
-                    sort,
-                    performAction
-                }">
-                    <template v-if="isLoading">
-                        <x-shop::shimmer.datagrid.table.body />
-                    </template>
-
-                    <template v-else>
-                        <div class="grid gap-4">
-                            <template
-                                v-for="record in available.records"
-                                v-if="available.records.length"
-                            >
-                                <div class="grid w-full gap-2.5 rounded-md border p-4 transition-all">
-                                    <div class="flex justify-between">
-                                        <div class="text-sm font-semibold">
-                                            <p>@lang('shop::app.customers.account.downloadable-products.orderId'): #@{{ record.increment_id }}</p>
-
-                                            <p class="text-xs font-normal text-neutral-500">
-                                                @{{ record.created_at }}
-                                            </p>
-                                        </div>
-
-                                        <p v-html="record.status"></p>
-                                    </div>
-            
-                                    <div class="text-xs font-normal">
-                                        <p
-                                            class="text-sm font-semibold text-blue-600"
-                                            v-html="record.product_name"
-                                        >
-                                        </p>
-
-                                        <p><span class="text-neutral-500">@lang('Remaining Downloads'):</span> <span class="font-medium">@{{ record.remaining_downloads }}</span></p>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <template v-else>
-                                @{{ available.records.length }} @lang('shop::app.customers.account.downloadable-products.records-found')
-                            </template>
-                        </div>
-                    </template>
-                </template>
-            </x-shop::datagrid>
-        </div>
+        @if($myDownloads->isEmpty())
+            <div style="padding:3rem 1rem;text-align:center;color:#6b7280;border:1px dashed #e5e7eb;border-radius:12px">
+                <p style="margin-bottom:1rem">Bạn chưa có sản phẩm tải về nào.</p>
+                <a href="{{ route('lamgame.source-game') }}" style="color:#2c5f41;font-weight:600">🎮 Khám phá Source Game</a>
+            </div>
+        @else
+            <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:0.95rem">
+                    <thead>
+                        <tr style="text-align:left;border-bottom:2px solid #e5e7eb;color:#374151">
+                            <th style="padding:12px 10px">Sản phẩm</th>
+                            <th style="padding:12px 10px">Mã đơn</th>
+                            <th style="padding:12px 10px">Trạng thái</th>
+                            <th style="padding:12px 10px"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($myDownloads as $dl)
+                            @php
+                                $canDownload = $dl->status !== 'pending';
+                            @endphp
+                            <tr style="border-bottom:1px solid #eee">
+                                <td style="padding:12px 10px;font-weight:600">{{ $dl->name }}</td>
+                                <td style="padding:12px 10px;color:#6b7280">#{{ optional($dl->order)->increment_id ?? $dl->order_id }}</td>
+                                <td style="padding:12px 10px">
+                                    @if($canDownload)
+                                        <span style="padding:3px 10px;border-radius:12px;font-size:0.8rem;background:#dcfce7;color:#166534">Sẵn sàng</span>
+                                    @else
+                                        <span style="padding:3px 10px;border-radius:12px;font-size:0.8rem;background:#fef9c3;color:#854d0e">Chờ xử lý</span>
+                                    @endif
+                                </td>
+                                <td style="padding:12px 10px">
+                                    @if($canDownload)
+                                        <a href="{{ route('shop.customers.account.downloadable_products.download', $dl->id) }}" style="color:#2c5f41;font-weight:600">⬇ Tải về</a>
+                                    @else
+                                        <span style="color:#9ca3af">—</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
 
         {!! view_render_event('bagisto.shop.customers.account.downloadable_products.list.after') !!}
 
