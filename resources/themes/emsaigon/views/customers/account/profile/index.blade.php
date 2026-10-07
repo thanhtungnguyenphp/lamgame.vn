@@ -21,7 +21,7 @@
         <!-- Profile Info Card -->
         <div class="profile-card">
             <div class="profile-section">
-                <h2 class="section-title">Thông tin cơ bản</h2>
+                <h2 class="section-title">👤 Thông tin cơ bản</h2>
                 
                 <div class="info-grid">
                     <div class="info-item">
@@ -57,7 +57,7 @@
             <div class="profile-divider"></div>
 
             <div class="profile-section">
-                <h2 class="section-title">Thông tin liên hệ</h2>
+                <h2 class="section-title">📞 Thông tin liên hệ</h2>
                 
                 <div class="info-grid">
                     <div class="info-item">
@@ -137,15 +137,25 @@
             background: rgba(255,255,255,.03);
             border: 1px solid var(--pf-border);
             border-radius: 14px; padding: 2rem; margin-bottom: 1.5rem;
+            text-align: left;
         }
         .profile-section { margin-bottom: 1.5rem; }
         .profile-section:last-child { margin-bottom: 0; }
-        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--pf-text); margin: 0 0 1.5rem 0; }
+        .section-title {
+            font-size: 1.05rem; font-weight: 700; color: var(--pf-text);
+            margin: 0 0 1.25rem 0; text-align: left;
+            padding-bottom: 0.6rem; border-bottom: 1px solid var(--pf-border);
+            display: flex; align-items: center; gap: 0.5rem;
+        }
         .info-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;
         }
-        .info-item { display: flex; flex-direction: column; gap: 0.4rem; }
-        .info-label { font-size: 0.82rem; font-weight: 500; color: var(--pf-muted); margin: 0; }
+        .info-item {
+            display: flex; flex-direction: column; gap: 0.4rem;
+            background: rgba(255,255,255,.02); border: 1px solid var(--pf-border);
+            border-radius: 10px; padding: 0.9rem 1rem;
+        }
+        .info-label { font-size: 0.8rem; font-weight: 500; color: var(--pf-muted); margin: 0; text-transform: uppercase; letter-spacing: 0.3px; }
         .info-value { font-size: 1rem; font-weight: 600; color: var(--pf-text); margin: 0; }
         .profile-divider { height: 1px; background: var(--pf-border); margin: 2rem 0; }
         .danger-zone {
