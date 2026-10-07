@@ -258,19 +258,22 @@
 
                             <!--Customers logout-->
                             @auth('customer')
-                                <x-shop::form
-                                    method="DELETE"
+                                <form
+                                    method="POST"
                                     action="{{ route('shop.customer.session.destroy') }}"
                                     id="customerLogout"
-                                />
-
-                                <a
-                                    class="cursor-pointer px-5 py-2 text-base hover:bg-gray-100"
-                                    href="{{ route('shop.customer.session.destroy') }}"
-                                    onclick="event.preventDefault(); document.getElementById('customerLogout').submit();"
+                                    style="margin:0"
                                 >
-                                    @lang('shop::app.components.layouts.header.logout')
-                                </a>
+                                    @csrf
+                                    @method('DELETE')
+                                    <button
+                                        type="submit"
+                                        class="w-full cursor-pointer px-5 py-2 text-left text-base hover:bg-gray-100"
+                                        style="background:none;border:none;color:inherit"
+                                    >
+                                        @lang('shop::app.components.layouts.header.logout')
+                                    </button>
+                                </form>
                             @endauth
 
                             {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.profile_dropdown.links.after') !!}
