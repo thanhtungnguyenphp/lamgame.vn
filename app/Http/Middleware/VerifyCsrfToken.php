@@ -15,5 +15,6 @@ class VerifyCsrfToken extends Middleware
         'api/ai/thumbnails/*',
         'api/webhooks/lemonsqueezy',
         'auth/logout',
+        'customer/logout',
     ];
 }
