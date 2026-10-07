@@ -14,5 +14,6 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         'api/ai/thumbnails/*',
         'api/webhooks/lemonsqueezy',
+        'auth/logout',
     ];
 }

@@ -210,6 +210,21 @@
         <li><a href="{{ route('mini-game.index') }}">🕹️ Chơi Game</a></li>
         <li><a href="{{ route('lamgame.blog') }}?category=game-industry">📰 Game Industry</a></li>
         <li><a href="{{ route('lamgame.blog') }}?category=unity-development">🎯 Unity</a></li>
+
+        <li style="border-top:1px solid rgba(124,92,255,.15);margin-top:8px;padding-top:8px"></li>
+        @guest('customer')
+            <li><a href="{{ route('auth.login') }}">🔑 Đăng nhập</a></li>
+        @else
+            <li><a href="{{ route('shop.customers.account.profile.index') }}">👤 Tài khoản</a></li>
+            <li><a href="{{ route('lamgame.my-licenses') }}">🔑 License của tôi</a></li>
+            <li><a href="{{ route('shop.customers.account.orders.index') }}">📦 Đơn hàng</a></li>
+            <li>
+                <form method="POST" action="{{ route('auth.logout') }}" style="margin:0">
+                    @csrf
+                    <button type="submit" style="width:100%;text-align:left;background:none;border:none;padding:12px 16px;color:#F87171;cursor:pointer;font-size:1rem">🚪 Đăng xuất</button>
+                </form>
+            </li>
+        @endguest
     </ul>
 </nav>
 
