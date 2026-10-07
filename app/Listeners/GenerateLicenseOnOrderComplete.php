@@ -28,15 +28,22 @@ class GenerateLicenseOnOrderComplete
         }
 
         foreach ($order->items as $item) {
-            $product = $item->product;
+            $productId = $item->product_id;
 
-            if (! $product || $product->type !== 'downloadable') {
+            // Xác định loại sản phẩm: ưu tiên $item->type, fallback query trực tiếp
+            // (relation $item->product đôi khi trả null do proxy/soft-delete).
+            $type = $item->type;
+            if (! $type && $productId) {
+                $type = \DB::table('products')->where('id', $productId)->value('type');
+            }
+
+            if (! $productId || $type !== 'downloadable') {
                 continue;
             }
 
             // Idempotent: đã có license cho đơn + sản phẩm + khách này thì bỏ qua
             $exists = LicenseKey::where('order_id', $order->id)
-                ->where('product_id', $product->id)
+                ->where('product_id', $productId)
                 ->where('customer_id', $customerId)
                 ->exists();
 
@@ -46,7 +53,7 @@ class GenerateLicenseOnOrderComplete
 
             // Chọn license type: ưu tiên license mặc định của sản phẩm (rẻ nhất/đang bật),
             // nếu sản phẩm chưa cấu hình thì dùng loại "single" (id nhỏ nhất) làm mặc định.
-            $licenseTypeId = ProductLicense::where('product_id', $product->id)
+            $licenseTypeId = ProductLicense::where('product_id', $productId)
                 ->where('is_active', true)
                 ->orderBy('price')
                 ->value('license_type_id');
@@ -59,8 +66,8 @@ class GenerateLicenseOnOrderComplete
                 continue; // Hệ thống chưa có license type nào -> không thể sinh
             }
 
-            DB::transaction(function () use ($product, $licenseTypeId, $customerId, $order) {
-                LicenseKey::generate($product->id, $licenseTypeId, $customerId, $order->id);
+            DB::transaction(function () use ($productId, $licenseTypeId, $customerId, $order) {
+                LicenseKey::generate($productId, $licenseTypeId, $customerId, $order->id);
             });
         }
     }

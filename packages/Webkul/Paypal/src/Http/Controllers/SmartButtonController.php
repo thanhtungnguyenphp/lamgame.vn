@@ -244,6 +244,23 @@ class SmartButtonController extends Controller
 
             $cart = Cart::getCart();
 
+            // Nếu khách đã đăng nhập nhưng cart đang là guest (customer_id null),
+            // gắn customer vào cart để order thuộc về tài khoản (hiện trong My Orders,
+            // sinh license, tải được). Fix cart tạo như guest dù đã login.
+            if (auth()->guard('customer')->check() && empty($cart->customer_id)) {
+                $customer = auth()->guard('customer')->user();
+
+                \Webkul\Checkout\Models\Cart::where('id', $cart->id)->update([
+                    'customer_id'        => $customer->id,
+                    'customer_email'     => $customer->email,
+                    'customer_first_name'=> $customer->first_name,
+                    'customer_last_name' => $customer->last_name,
+                    'is_guest'           => 0,
+                ]);
+
+                $cart = Cart::getCart();
+            }
+
             $data = (new OrderResource($cart))->jsonSerialize();
 
             $order = $this->orderRepository->create($data);
