@@ -3,7 +3,7 @@
     <div class="nav-redesign__inner">
         {{-- Logo --}}
         <a href="{{ url('/') }}" class="nav-redesign__logo" aria-label="Trang chủ Làm Game">
-            <img src="{{ asset('assets/logos/png/logo-horizontal-200.png" alt="LamGame.vn" height="36" style="height:36px;width:auto;>
+            <img src="{{ asset('assets/logos/png/logo-horizontal-200.png') }}" alt="LamGame.vn" height="36" style="height:36px;width:auto;">
         </a>
 
         {{-- Desktop Menu --}}
@@ -118,12 +118,12 @@
             </button>
 
             {{-- CTA / User --}}
-            @auth
-                <a href="{{ route('customer.profile.index') }}" class="ds-avatar ds-avatar--sm">
-                    <img src="{{ auth()->user()->image_url ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) }}" alt="{{ auth()->user()->name }}">
+            @auth('customer')
+                <a href="{{ route('shop.customers.account.profile.index') }}" class="ds-avatar ds-avatar--sm">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth('customer')->user()->first_name) }}" alt="{{ auth('customer')->user()->first_name }}">
                 </a>
             @else
-                <a href="{{ route('customer.session.index') }}" class="nav-redesign__cta">Đăng nhập</a>
+                <a href="{{ route('shop.customer.session.index') }}" class="nav-redesign__cta">Đăng nhập</a>
             @endauth
 
             {{-- Mobile toggle --}}
