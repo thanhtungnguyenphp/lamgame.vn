@@ -33,8 +33,8 @@
     {{-- Hero --}}
     <section class="lg-contact__hero">
         <div class="lg-v2-container">
-            <h1>Liên hệ với chúng tôi</h1>
-            <p>Có câu hỏi về source game, AI tools, hoặc muốn hợp tác? Chúng tôi sẵn sàng hỗ trợ!</p>
+            <h1>{{ __('lamgame.contact.title') }}</h1>
+            <p>{{ __('lamgame.contact.sub') }}</p>
         </div>
     </section>
 
@@ -46,14 +46,14 @@
                 <div class="lg-contact__form-wrap">
                     <div class="lg-contact__card">
                         <h2>📬 Gửi tin nhắn</h2>
-                        <p class="lg-contact__card-desc">Điền form bên dưới, chúng tôi sẽ phản hồi trong 24h.</p>
+                        <p class="lg-contact__card-desc">{{ __('lamgame.contact.form_note') }}</p>
                         
                         <form id="contactForm" class="lg-contact__form">
                             @csrf
                             <div class="lg-contact__form-row">
                                 <div class="lg-contact__field">
-                                    <label for="name">Họ và tên *</label>
-                                    <input type="text" id="name" name="name" placeholder="Nguyễn Văn A" required>
+                                    <label for="name">{{ __('lamgame.contact.name') }}</label>
+                                    <input type="text" id="name" name="name" placeholder="{{ __('lamgame.contact.name_ph') }}" required>
                                 </div>
                                 <div class="lg-contact__field">
                                     <label for="email">Email *</label>
@@ -63,16 +63,16 @@
                             
                             <div class="lg-contact__form-row">
                                 <div class="lg-contact__field">
-                                    <label for="phone">Số điện thoại</label>
+                                    <label for="phone">{{ __('lamgame.contact.phone') }}</label>
                                     <input type="tel" id="phone" name="phone" placeholder="0912 345 678">
                                 </div>
                                 <div class="lg-contact__field">
-                                    <label for="subject">Chủ đề *</label>
+                                    <label for="subject">{{ __('lamgame.contact.subject') }}</label>
                                     <select id="subject" name="subject" required>
-                                        <option value="">Chọn chủ đề</option>
+                                        <option value="">{{ __('lamgame.contact.choose_subject') }}</option>
                                         <option value="source-game">Hỏi về Source Game</option>
                                         <option value="ai-tools">Hỏi về AI Tools</option>
-                                        <option value="hop-tac">Hợp tác kinh doanh</option>
+                                        <option value="hop-tac">{{ __('lamgame.contact.biz') }}</option>
                                         <option value="ho-tro">Hỗ trợ kỹ thuật</option>
                                         <option value="khac">Khác</option>
                                     </select>
@@ -81,7 +81,7 @@
                             
                             <div class="lg-contact__field">
                                 <label for="message">Nội dung *</label>
-                                <textarea id="message" name="message" rows="5" placeholder="Mô tả chi tiết câu hỏi hoặc yêu cầu của bạn..." required></textarea>
+                                <textarea id="message" name="message" rows="5" placeholder="{{ __('lamgame.contact.message_ph') }}" required></textarea>
                             </div>
                             
                             <button type="submit" class="lg-contact__submit">
@@ -95,27 +95,27 @@
 
                     {{-- FAQ --}}
                     <div class="lg-contact__card lg-contact__faq">
-                        <h2>❓ Câu hỏi thường gặp</h2>
+                        <h2>{{ __('lamgame.contact.faq') }}</h2>
                         
                         <div class="lg-contact__faq-list">
                             <details class="lg-contact__faq-item">
-                                <summary>Source game có bao gồm hướng dẫn không?</summary>
-                                <p>Có! Tất cả source game đều có documentation, video hướng dẫn setup, và support qua Discord trong 30 ngày đầu.</p>
+                                <summary>{{ __('lamgame.contact.q1') }}</summary>
+                                <p>{{ __('lamgame.contact.a1') }}</p>
                             </details>
                             
                             <details class="lg-contact__faq-item">
-                                <summary>Tôi có thể dùng source cho dự án thương mại không?</summary>
-                                <p>Có, license cho phép sử dụng trong dự án thương mại. Bạn có thể publish game lên App Store, Google Play mà không cần chia sẻ revenue.</p>
+                                <summary>{{ __('lamgame.contact.q2') }}</summary>
+                                <p>{{ __('lamgame.contact.a2') }}</p>
                             </details>
                             
                             <details class="lg-contact__faq-item">
-                                <summary>Thời gian hoàn tiền là bao lâu?</summary>
-                                <p>Chúng tôi có chính sách hoàn tiền 7 ngày nếu source không đúng mô tả. Liên hệ support để được hỗ trợ.</p>
+                                <summary>{{ __('lamgame.contact.q3') }}</summary>
+                                <p>{{ __('lamgame.contact.a3') }}</p>
                             </details>
                             
                             <details class="lg-contact__faq-item">
-                                <summary>AI Tools có miễn phí không?</summary>
-                                <p>Có! Tất cả AI Tools (GDD Generator, Name Generator, Story Writer) đều miễn phí sử dụng, không giới hạn số lần.</p>
+                                <summary>{{ __('lamgame.contact.q4') }}</summary>
+                                <p>{{ __('lamgame.contact.a4') }}</p>
                             </details>
                         </div>
                     </div>
@@ -125,7 +125,7 @@
                 <aside class="lg-contact__sidebar">
                     {{-- Contact Info --}}
                     <div class="lg-contact__card">
-                        <h3>📍 Thông tin liên hệ</h3>
+                        <h3>{{ __('lamgame.contact.info') }}</h3>
                         
                         <div class="lg-contact__info">
                             <div class="lg-contact__info-item">
@@ -155,7 +155,7 @@
                             <div class="lg-contact__info-item">
                                 <div class="lg-contact__info-icon">⏰</div>
                                 <div>
-                                    <strong>Giờ làm việc</strong>
+                                    <strong>{{ __('lamgame.contact.hours') }}</strong>
                                     <span>T2-T6: 8:00 - 18:00<br>T7: 9:00 - 12:00</span>
                                 </div>
                             </div>
@@ -164,7 +164,7 @@
 
                     {{-- Social --}}
                     <div class="lg-contact__card">
-                        <h3>🌐 Kết nối với chúng tôi</h3>
+                        <h3>{{ __('lamgame.contact.connect') }}</h3>
                         <div class="lg-contact__social">
                             <a href="https://www.facebook.com/groups/lamgame" target="_blank" class="lg-contact__social-link lg-contact__social-link--fb">
                                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
@@ -183,13 +183,13 @@
 
                     {{-- Quick Links --}}
                     <div class="lg-contact__card">
-                        <h3>🔗 Liên kết nhanh</h3>
+                        <h3>{{ __('lamgame.contact.quick_links') }}</h3>
                         <div class="lg-contact__links">
                             <a href="{{ route('lamgame.source-game') }}">🎮 Source Game</a>
                             <a href="{{ route('lamgame.ai-tools') }}">🤖 AI Tools</a>
                             <a href="{{ route('lamgame.blog') }}">📝 Blog & Tutorials</a>
                             <a href="{{ route('forum.index') }}">💬 Forum</a>
-                            <a href="/page/chinh-sach-hoan-tien-tranh-chap">📋 Chính sách hoàn tiền</a>
+                            <a href="/page/chinh-sach-hoan-tien-tranh-chap">📋 {{ __('lamgame.footer.refund') }}</a>
                         </div>
                     </div>
                 </aside>

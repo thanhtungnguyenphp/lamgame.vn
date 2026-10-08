@@ -12,7 +12,7 @@
     "alternateName": "Làm Game",
     "url": "{{ url('/') }}",
     "logo": "{{ asset('logo/lamgame-logo.png') }}",
-    "description": "Hệ sinh thái dành cho Game Developer Việt Nam - Source code, tutorial, việc làm và cộng đồng",
+    "description": "{{ __('lamgame.about.hero') }} - Source code, tutorial, việc làm và cộng đồng",
     "foundingDate": "2024",
     "founder": {
         "@type": "Person",
@@ -56,7 +56,7 @@
     <section class="about-hero">
         <div class="container">
             <h1>LamGame.vn</h1>
-            <p class="about-hero__tagline">Hệ sinh thái dành cho Game Developer Việt Nam</p>
+            <p class="about-hero__tagline">{{ __('lamgame.about.hero') }}</p>
             <p class="about-hero__motto">Learn. Build. Connect. Ship.</p>
         </div>
     </section>
@@ -69,11 +69,11 @@
                 <div class="about-main">
                     {{-- Mission --}}
                     <div class="about-block">
-                        <h2>Sứ mệnh</h2>
+                        <h2>{{ __('lamgame.about.mission') }}</h2>
                         <p class="about-intro">
                             <strong>LamGame.vn</strong> là hệ sinh thái dành cho cộng đồng Game Developer Việt Nam, 
                             kết nối kiến thức, công cụ, source code, cơ hội việc làm và cộng đồng 
-                            để giúp developer <strong>học, xây dựng và phát hành game</strong> tốt hơn.
+                            để giúp developer <strong>{{ __('lamgame.about.mission_hl') }}</strong> tốt hơn.
                         </p>
                         <p>
                             Chúng tôi tin rằng ngành game Việt Nam có tiềm năng to lớn. 
@@ -84,22 +84,22 @@
 
                     {{-- What We Offer --}}
                     <div class="about-block">
-                        <h2>Chúng tôi cung cấp</h2>
+                        <h2>{{ __('lamgame.about.provide') }}</h2>
                         <div class="about-features">
                             <div class="about-feature">
                                 <div class="about-feature__icon">🎮</div>
                                 <div class="about-feature__content">
                                     <h4>Source Game Marketplace</h4>
-                                    <p>Mua bán source code game chất lượng cao, tiết kiệm thời gian phát triển.</p>
-                                    <a href="{{ route('lamgame.source-game') }}">Khám phá Source Game →</a>
+                                    <p>{{ __('lamgame.about.source_d') }}</p>
+                                    <a href="{{ route('lamgame.source-game') }}">{{ __('lamgame.about.source_cta') }}</a>
                                 </div>
                             </div>
                             
                             <div class="about-feature">
                                 <div class="about-feature__icon">📚</div>
                                 <div class="about-feature__content">
-                                    <h4>Tutorial & Kiến thức</h4>
-                                    <p>Bài viết chuyên sâu về Unity, Godot, Unreal, Game Design và best practices.</p>
+                                    <h4>{{ __('lamgame.about.tutorial') }}</h4>
+                                    <p>{{ __('lamgame.about.tutorial_d') }}</p>
                                     <a href="{{ route('lamgame.blog') }}">Đọc Blog →</a>
                                 </div>
                             </div>
@@ -107,17 +107,17 @@
                             <div class="about-feature">
                                 <div class="about-feature__icon">💼</div>
                                 <div class="about-feature__content">
-                                    <h4>Việc làm Game Developer</h4>
-                                    <p>Cơ hội việc làm từ các game studio hàng đầu Việt Nam và quốc tế.</p>
-                                    <a href="{{ route('lamgame.viec-lam-game') }}">Tìm việc →</a>
+                                    <h4>{{ __('lamgame.about.jobs') }}</h4>
+                                    <p>{{ __('lamgame.about.jobs_d') }}</p>
+                                    <a href="{{ route('lamgame.viec-lam-game') }}">{{ __('lamgame.about.jobs_cta') }}</a>
                                 </div>
                             </div>
                             
                             <div class="about-feature">
                                 <div class="about-feature__icon">💬</div>
                                 <div class="about-feature__content">
-                                    <h4>Cộng đồng & Forum</h4>
-                                    <p>Nơi developer Việt Nam trao đổi, hỏi đáp và chia sẻ kinh nghiệm.</p>
+                                    <h4>{{ __('lamgame.about.forum') }}</h4>
+                                    <p>{{ __('lamgame.about.forum_d') }}</p>
                                     <a href="{{ route('forum.index') }}">Tham gia Forum →</a>
                                 </div>
                             </div>
@@ -126,7 +126,7 @@
                                 <div class="about-feature__icon">🤖</div>
                                 <div class="about-feature__content">
                                     <h4>AI Tools</h4>
-                                    <p>Công cụ AI hỗ trợ game development: generate ideas, code snippets, và more.</p>
+                                    <p>{{ __('lamgame.about.ai_d') }}</p>
                                     <a href="{{ route('lamgame.ai-tools') }}">Thử AI Tools →</a>
                                 </div>
                             </div>
@@ -135,7 +135,7 @@
                                 <div class="about-feature__icon">🎯</div>
                                 <div class="about-feature__content">
                                     <h4>Showcase & Game Jam</h4>
-                                    <p>Trưng bày dự án, tham gia game jam và nhận feedback từ cộng đồng.</p>
+                                    <p>{{ __('lamgame.about.showcase_d') }}</p>
                                     <a href="{{ route('forum.index') }}?category=showcase">Xem Showcase →</a>
                                 </div>
                             </div>
@@ -144,7 +144,7 @@
 
                     {{-- Community Stats --}}
                     <div class="about-block about-stats">
-                        <h2>Cộng đồng LamGame</h2>
+                        <h2>{{ __('lamgame.about.community') }}</h2>
                         <div class="stats-grid">
                             <div class="stat-card">
                                 <div class="stat-card__number">{{ number_format($metrics['registered_users'] ?? 0) }}</div>
@@ -164,29 +164,29 @@
                             </div>
                         </div>
                         <p class="stats-note">
-                            <small>* Số liệu được cập nhật tự động từ hệ thống LamGame.vn</small>
+                            <small>{{ __('lamgame.about.stats_note') }}</small>
                         </p>
                     </div>
 
                     {{-- Our Values --}}
                     <div class="about-block">
-                        <h2>Giá trị cốt lõi</h2>
+                        <h2>{{ __('lamgame.about.values') }}</h2>
                         <div class="values-grid">
                             <div class="value-item">
                                 <h4>🎯 Quality First</h4>
-                                <p>Source code được review kỹ lưỡng. Nội dung technical được fact-check bởi developer có kinh nghiệm.</p>
+                                <p>{{ __('lamgame.about.value_1') }}</p>
                             </div>
                             <div class="value-item">
                                 <h4>🤝 Community Driven</h4>
-                                <p>Mọi quyết định đều hướng tới lợi ích của cộng đồng game developer Việt Nam.</p>
+                                <p>{{ __('lamgame.about.value_2') }}</p>
                             </div>
                             <div class="value-item">
                                 <h4>🚀 Always Learning</h4>
-                                <p>Liên tục cập nhật công nghệ mới, xu hướng mới trong ngành game development.</p>
+                                <p>{{ __('lamgame.about.value_3') }}</p>
                             </div>
                             <div class="value-item">
                                 <h4>💡 Open & Transparent</h4>
-                                <p>Quy trình rõ ràng, chính sách công khai, hỗ trợ nhanh chóng.</p>
+                                <p>{{ __('lamgame.about.value_4') }}</p>
                             </div>
                         </div>
                     </div>
@@ -196,7 +196,7 @@
                 <div class="about-sidebar">
                     {{-- Contact Card --}}
                     <div class="sidebar-card">
-                        <h3>📞 Liên hệ</h3>
+                        <h3>{{ __('lamgame.about.contact') }}</h3>
                         <div class="contact-list">
                             <div class="contact-item">
                                 <i class="fa fa-phone"></i>
@@ -237,20 +237,20 @@
 
                     {{-- Policy Links --}}
                     <div class="sidebar-card">
-                        <h3>📋 Chính sách</h3>
+                        <h3>{{ __('lamgame.about.policy') }}</h3>
                         <ul class="policy-links">
-                            <li><a href="{{ route('lamgame.chinh-sach-bien-tap') }}">Chính sách biên tập</a></li>
-                            <li><a href="{{ route('lamgame.chinh-sach-chinh-sua') }}">Chính sách chỉnh sửa</a></li>
-                            <li><a href="/page/chinh-sach-bao-mat">Chính sách bảo mật</a></li>
-                            <li><a href="/page/dieu-khoan-dich-vu">Điều khoản dịch vụ</a></li>
+                            <li><a href="{{ route('lamgame.chinh-sach-bien-tap') }}">{{ __('lamgame.about.policy_editorial') }}</a></li>
+                            <li><a href="{{ route('lamgame.chinh-sach-chinh-sua') }}">{{ __('lamgame.about.policy_correction') }}</a></li>
+                            <li><a href="/page/chinh-sach-bao-mat">{{ __('lamgame.about.policy_privacy') }}</a></li>
+                            <li><a href="/page/dieu-khoan-dich-vu">{{ __('lamgame.about.policy_terms') }}</a></li>
                             <li><a href="/page/chinh-sach-hoan-tien-tranh-chap">Hoàn tiền & Tranh chấp</a></li>
                         </ul>
                     </div>
 
                     {{-- CTA --}}
                     <div class="sidebar-card sidebar-card--cta">
-                        <h3>🚀 Bắt đầu ngay</h3>
-                        <p>Tham gia cộng đồng game developer Việt Nam!</p>
+                        <h3>{{ __('lamgame.about.start_now') }}</h3>
+                        <p>{{ __('lamgame.about.join_community') }}</p>
                         <a href="{{ route('shop.customers.register.index') }}" class="sidebar-btn sidebar-btn--primary">
                             Đăng ký miễn phí
                         </a>
