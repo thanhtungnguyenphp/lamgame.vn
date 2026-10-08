@@ -1,15 +1,15 @@
 @extends('layouts.master')
 
-@section('page_title', 'Learn Game Development — Hướng dẫn Unity, Godot, AI cho Developer')
-@section('page_description', 'Trung tâm học game development. Hướng dẫn Unity, Godot, AI tools và career roadmap cho game developer Việt Nam.')
+@section('page_title', __('lamgame.learn.page_title'))
+@section('page_description', __('lamgame.learn.page_desc'))
 
 @section('content')
 <div class="learn-hub">
     <div class="container">
         {{-- Hero --}}
         <header class="learn-hero">
-            <h1>🎓 Learn Game Development</h1>
-            <p>Hướng dẫn toàn diện cho game developer. Từ beginner đến professional.</p>
+            <h1>{{ __('lamgame.learn.hero_title') }}</h1>
+            <p>{{ __('lamgame.learn.hero_sub') }}</p>
         </header>
 
         {{-- Pillar Grid --}}
@@ -17,59 +17,59 @@
             <a href="{{ route('learn.unity') }}" class="learn-pillar learn-pillar--unity">
                 <div class="learn-pillar__icon">🎮</div>
                 <h2>Unity Development</h2>
-                <p>Game engine phổ biến nhất. Từ cơ bản đến publish game.</p>
+                <p>{{ __('lamgame.learn.unity_sub') }}</p>
                 <ul>
                     <li>C# Programming</li>
                     <li>2D & 3D Games</li>
                     <li>Mobile Development</li>
                     <li>Performance Tips</li>
                 </ul>
-                <span class="learn-pillar__cta">Học Unity →</span>
+                <span class="learn-pillar__cta">{{ __('lamgame.learn.unity_cta') }}</span>
             </a>
 
             <a href="{{ route('learn.godot') }}" class="learn-pillar learn-pillar--godot">
                 <div class="learn-pillar__icon">🤖</div>
                 <h2>Godot Engine</h2>
-                <p>Open-source, miễn phí 100%. Lựa chọn cho indie developer.</p>
+                <p>{{ __('lamgame.learn.godot_sub') }}</p>
                 <ul>
                     <li>GDScript Basics</li>
                     <li>2D Game Excellence</li>
                     <li>Godot 4 Features</li>
                     <li>Export & Publish</li>
                 </ul>
-                <span class="learn-pillar__cta">Học Godot →</span>
+                <span class="learn-pillar__cta">{{ __('lamgame.learn.godot_cta') }}</span>
             </a>
 
             <a href="{{ route('learn.ai-game-dev') }}" class="learn-pillar learn-pillar--ai">
                 <div class="learn-pillar__icon">✨</div>
-                <h2>AI cho Game Dev</h2>
-                <p>Tận dụng AI để tăng tốc workflow phát triển game.</p>
+                <h2>{{ __('lamgame.learn.ai_title') }}</h2>
+                <p>{{ __('lamgame.learn.ai_sub') }}</p>
                 <ul>
                     <li>AI Coding Assistants</li>
                     <li>AI Art Generation</li>
                     <li>NPC AI & Behavior</li>
                     <li>Workflow 2026</li>
                 </ul>
-                <span class="learn-pillar__cta">Khám phá AI →</span>
+                <span class="learn-pillar__cta">{{ __('lamgame.learn.ai_cta') }}</span>
             </a>
 
             <a href="{{ route('learn.career') }}" class="learn-pillar learn-pillar--career">
                 <div class="learn-pillar__icon">💼</div>
-                <h2>Game Dev Career</h2>
-                <p>Lộ trình, kỹ năng và việc làm game developer tại Việt Nam.</p>
+                <h2>{{ __('lamgame.learn.career_title') }}</h2>
+                <p>{{ __('lamgame.learn.career_sub') }}</p>
                 <ul>
                     <li>Career Roadmap</li>
                     <li>Salary Guide</li>
                     <li>Interview Prep</li>
                     <li>Job Listings</li>
                 </ul>
-                <span class="learn-pillar__cta">Xem Career →</span>
+                <span class="learn-pillar__cta">{{ __('lamgame.learn.career_cta') }}</span>
             </a>
         </section>
 
         {{-- Quick Links --}}
         <section class="learn-quick">
-            <h2>🔗 Truy cập nhanh</h2>
+            <h2>{{ __('lamgame.learn.quick') }}</h2>
             <div class="learn-quick__grid">
                 <a href="{{ route('lamgame.blog') }}" class="learn-quick__link">
                     <span>📚</span> Blog & Tutorials
@@ -78,7 +78,7 @@
                     <span>🎮</span> Source Code
                 </a>
                 <a href="{{ route('lamgame.viec-lam-game') }}" class="learn-quick__link">
-                    <span>💼</span> Việc làm
+                    <span>💼</span> {{ __('lamgame.learn.quick_jobs') }}
                 </a>
                 <a href="{{ route('forum.index') }}" class="learn-quick__link">
                     <span>💬</span> Forum
@@ -87,7 +87,7 @@
                     <span>🤖</span> AI Tools
                 </a>
                 <a href="{{ route('lamgame.cong-dong') }}" class="learn-quick__link">
-                    <span>👥</span> Cộng đồng
+                    <span>👥</span> {{ __('lamgame.learn.quick_comm') }}
                 </a>
             </div>
         </section>
