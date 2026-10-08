@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('page_title', $page_title ?? 'Cộng đồng Game Developer - Làm Game')
+@section('page_title', $page_title ?? __('lamgame.community.page_title'))
 
 @section('page_description', $page_description ?? 'Tham gia cộng đồng game developer Việt Nam. Chia sẻ kinh nghiệm, tìm kiếm đồng đội và học hỏi từ những chuyên gia.')
 
@@ -9,7 +9,7 @@
     <section class="community-hero">
         <div class="container">
             <div class="hero-content">
-                <h1>🎮 Cộng đồng Game Developer</h1>
+                <h1>{{ __('lamgame.community.hero') }}</h1>
                 <p class="hero-subtitle">
                     Nơi kết nối các game developer Việt Nam. Chia sẻ kinh nghiệm, thảo luận kỹ thuật, 
                     tìm kiếm đồng đội và cùng nhau phát triển trong ngành công nghiệp game.
@@ -17,11 +17,11 @@
                 <div class="community-stats">
                     <div class="stat-item">
                         <div class="stat-number">{{ number_format($siteMetrics['registered_users'] ?? 0) }}+</div>
-                        <div class="stat-label">Thành viên</div>
+                        <div class="stat-label">{{ __('lamgame.community.members') }}</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">{{ $siteMetrics['forum_posts'] ?? 0 }}+</div>
-                        <div class="stat-label">Bài viết</div>
+                        <div class="stat-label">{{ __('lamgame.community.posts') }}</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">{{ $siteMetrics['blog_posts'] ?? 0 }}+</div>
@@ -38,24 +38,24 @@
             <div class="actions-grid">
                 <div class="action-card featured" onclick="location.href='{{ route('lamgame.chia-se-y-tuong') }}'">
                     <div class="action-icon">💡</div>
-                    <h3>Chia Sẻ Ý Tưởng Game</h3>
-                    <p>Đăng ý tưởng game của bạn và tìm team phát triển</p>
+                    <h3>{{ __('lamgame.community.share_idea') }}</h3>
+                    <p>{{ __('lamgame.community.share_idea_d') }}</p>
                     <span class="action-badge">Hot</span>
                 </div>
                 <div class="action-card" onclick="showNewPostForm('thao-luan')">
                     <div class="action-icon">💬</div>
-                    <h3>Tạo Bài Thảo Luận</h3>
-                    <p>Đặt câu hỏi và thảo luận về kỹ thuật game dev</p>
+                    <h3>{{ __('lamgame.community.new_discuss') }}</h3>
+                    <p>{{ __('lamgame.community.new_discuss_d') }}</p>
                 </div>
                 <div class="action-card" onclick="showNewPostForm('tim-team')">
                     <div class="action-icon">👥</div>
-                    <h3>Tìm Team</h3>
-                    <p>Tìm kiếm đồng đội cho dự án game của bạn</p>
+                    <h3>{{ __('lamgame.community.find_team') }}</h3>
+                    <p>{{ __('lamgame.community.find_team_d') }}</p>
                 </div>
                 <div class="action-card" onclick="showNewPostForm('showcase')">
                     <div class="action-icon">🎯</div>
-                    <h3>Showcase Dự Án</h3>
-                    <p>Khoe game và nhận feedback từ cộng đồng</p>
+                    <h3>{{ __('lamgame.community.showcase') }}</h3>
+                    <p>{{ __('lamgame.community.showcase_d') }}</p>
                 </div>
             </div>
         </div>
@@ -67,7 +67,7 @@
             <div class="content-grid">
                 <!-- Categories Sidebar -->
                 <div class="categories-sidebar">
-                    <h3>Danh mục thảo luận</h3>
+                    <h3>{{ __('lamgame.community.cats') }}</h3>
                     <div class="categories-list">
                         @foreach($categories as $key => $category)
                         <div class="category-item {{ $key === 'chia-se-y-tuong' ? 'featured' : '' }}" 
@@ -95,12 +95,12 @@
                     
                     <!-- Community Guidelines -->
                     <div class="guidelines-box">
-                        <h4>📋 Quy tắc cộng đồng</h4>
+                        <h4>{{ __('lamgame.community.rules') }}</h4>
                         <ul>
-                            <li>Tôn trọng ý kiến của mọi người</li>
-                            <li>Không spam hoặc quảng cáo</li>
-                            <li>Chia sẻ kiến thức hữu ích</li>
-                            <li>Giúp đỡ thành viên mới</li>
+                            <li>{{ __('lamgame.community.rule1') }}</li>
+                            <li>{{ __('lamgame.community.rule2') }}</li>
+                            <li>{{ __('lamgame.community.rule3') }}</li>
+                            <li>{{ __('lamgame.community.rule4') }}</li>
                         </ul>
                     </div>
                 </div>
@@ -108,12 +108,12 @@
                 <!-- Posts Feed -->
                 <div class="posts-feed">
                     <div class="feed-header">
-                        <h2>Bài viết mới nhất</h2>
+                        <h2>{{ __('lamgame.community.latest') }}</h2>
                         <div class="feed-filters">
                             <select id="sortFilter" onchange="sortPosts(this.value)">
-                                <option value="newest">Mới nhất</option>
-                                <option value="popular">Phổ biến</option>
-                                <option value="trending">Đang hot</option>
+                                <option value="newest">{{ __('lamgame.community.sort_newest') }}</option>
+                                <option value="popular">{{ __('lamgame.community.sort_popular') }}</option>
+                                <option value="trending">{{ __('lamgame.community.sort_trending') }}</option>
                             </select>
                         </div>
                     </div>
@@ -154,7 +154,7 @@
                             
                             @if($post['category'] === 'Chia sẻ ý tưởng')
                             <div class="idea-badge">
-                                <span class="badge-text">💡 Ý tưởng game mới</span>
+                                <span class="badge-text">{{ __('lamgame.community.badge_idea') }}</span>
                             </div>
                             @endif
                         </div>
@@ -175,27 +175,27 @@
     <!-- Community Features -->
     <section class="community-features">
         <div class="container">
-            <h2 class="section-title">Tính năng cộng đồng</h2>
+            <h2 class="section-title">{{ __('lamgame.community.features') }}</h2>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">🏆</div>
-                    <h3>Hệ thống tích điểm</h3>
-                    <p>Tích lũy điểm qua việc đóng góp và được công nhận trong cộng đồng</p>
+                    <h3>{{ __('lamgame.community.points') }}</h3>
+                    <p>{{ __('lamgame.community.points_d') }}</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🎓</div>
                     <h3>Mentorship</h3>
-                    <p>Kết nối với các mentor kinh nghiệm để được hướng dẫn phát triển sự nghiệp</p>
+                    <p>{{ __('lamgame.community.mentor_d') }}</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">📅</div>
-                    <h3>Sự kiện offline</h3>
-                    <p>Tham gia các buổi meetup, workshop và game jam được tổ chức định kỳ</p>
+                    <h3>{{ __('lamgame.community.events') }}</h3>
+                    <p>{{ __('lamgame.community.events_d') }}</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">💼</div>
                     <h3>Job board</h3>
-                    <p>Tìm kiếm cơ hội việc làm độc quyền dành cho thành viên cộng đồng</p>
+                    <p>{{ __('lamgame.community.jobs_d') }}</p>
                 </div>
             </div>
         </div>
@@ -205,8 +205,8 @@
     <section class="join-community">
         <div class="container">
             <div class="join-content">
-                <h2>Tham gia cộng đồng Game Developer Việt Nam!</h2>
-                <p>Chia sẻ kinh nghiệm, học hỏi kỹ năng mới và cùng nhau phát triển sự nghiệp game dev</p>
+                <h2>{{ __('lamgame.community.cta') }}</h2>
+                <p>{{ __('lamgame.community.cta_sub') }}</p>
                 <div class="join-actions">
                     <button class="btn btn-primary btn-large" onclick="showRegistrationForm()">
                         🚀 Tham gia ngay
