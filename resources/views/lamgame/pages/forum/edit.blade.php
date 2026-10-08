@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('page_title', 'Chỉnh sửa bài viết - ' . $post->title)
+@section('page_title', __('lamgame.forum.edit_title') . ' - ' . $post->title)
 @section('page_description', 'Chỉnh sửa và cập nhật bài viết forum')
 
 @section('content')
@@ -9,17 +9,17 @@
         <!-- Header -->
         <div class="edit-header">
             <div class="header-content">
-                <h1>✏️ Chỉnh sửa bài viết</h1>
-                <p>Cập nhật nội dung và thông tin bài viết</p>
+                <h1>{{ __('lamgame.forum.edit_h') }}</h1>
+                <p>{{ __('lamgame.forum.edit_sub') }}</p>
             </div>
             <div class="header-actions">
                 <a href="{{ route('forum.posts.show', $post->slug) }}" class="btn-back">
                     <i class="fas fa-eye"></i>
-                    Xem bài viết
+                    {{ __('lamgame.forum.view_post') }}
                 </a>
                 <a href="{{ route('forum.index') }}" class="btn-back">
                     <i class="fas fa-arrow-left"></i>
-                    Quay lại Forum
+                    {{ __('lamgame.forum.back_forum3') }}
                 </a>
             </div>
         </div>
@@ -32,15 +32,15 @@
                 
                 <!-- Post Type & Category -->
                 <div class="form-section">
-                    <h3>Loại bài viết</h3>
+                    <h3>{{ __('lamgame.forum.post_type') }}</h3>
                     <div class="post-types">
                         <label class="type-option {{ $post->type === 'discussion' ? 'active' : '' }}">
                             <input type="radio" name="type" value="discussion" {{ $post->type === 'discussion' ? 'checked' : '' }}>
                             <div class="type-card">
                                 <div class="type-icon">💬</div>
                                 <div class="type-info">
-                                    <h4>Thảo luận</h4>
-                                    <p>Thảo luận chung về game development</p>
+                                    <h4>{{ __('lamgame.forum.type_discuss') }}</h4>
+                                    <p>{{ __('lamgame.forum.type_discuss_d') }}</p>
                                 </div>
                             </div>
                         </label>
@@ -50,8 +50,8 @@
                             <div class="type-card">
                                 <div class="type-icon">💡</div>
                                 <div class="type-info">
-                                    <h4>Ý tưởng</h4>
-                                    <p>Chia sẻ ý tưởng game mới</p>
+                                    <h4>{{ __('lamgame.forum.type_idea') }}</h4>
+                                    <p>{{ __('lamgame.forum.type_idea_d') }}</p>
                                 </div>
                             </div>
                         </label>
@@ -61,8 +61,8 @@
                             <div class="type-card">
                                 <div class="type-icon">❓</div>
                                 <div class="type-info">
-                                    <h4>Câu hỏi</h4>
-                                    <p>Đặt câu hỏi và tìm giải đáp</p>
+                                    <h4>{{ __('lamgame.forum.type_question') }}</h4>
+                                    <p>{{ __('lamgame.forum.type_question_d') }}</p>
                                 </div>
                             </div>
                         </label>
@@ -72,8 +72,8 @@
                             <div class="type-card">
                                 <div class="type-icon">🎯</div>
                                 <div class="type-info">
-                                    <h4>Showcase</h4>
-                                    <p>Khoe dự án và nhận feedback</p>
+                                    <h4>{{ __('lamgame.forum.type_showcase') }}</h4>
+                                    <p>{{ __('lamgame.forum.type_showcase_d') }}</p>
                                 </div>
                             </div>
                         </label>
@@ -82,9 +82,9 @@
 
                 <!-- Category -->
                 <div class="form-section">
-                    <h3>Danh mục</h3>
+                    <h3>{{ __('lamgame.forum.category') }}</h3>
                     <select name="category_id" required class="form-select">
-                        <option value="">Chọn danh mục</option>
+                        <option value="">{{ __('lamgame.forum.choose_category') }}</option>
                         @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ $post->category_id === $category->id ? 'selected' : '' }}>
                             {{ $category->icon }} {{ $category->name }}
@@ -95,18 +95,18 @@
 
                 <!-- Title -->
                 <div class="form-section">
-                    <h3>Tiêu đề <span class="required">*</span></h3>
+                    <h3>{{ __('lamgame.forum.title_label') }} <span class="required">*</span></h3>
                     <input type="text" name="title" required class="form-input" 
-                           placeholder="Nhập tiêu đề hấp dẫn cho bài viết..." 
+                           placeholder="{{ __('lamgame.forum.title_ph') }}" 
                            maxlength="255" id="titleInput" value="{{ old('title', $post->title) }}">
                     <div class="form-help">
-                        <span id="titleCount">{{ strlen($post->title) }}</span>/255 ký tự
+                        <span id="titleCount">{{ strlen($post->title) }}</span>/255 {{ __('lamgame.forum.chars') }}
                     </div>
                 </div>
 
                 <!-- Content -->
                 <div class="form-section">
-                    <h3>Nội dung <span class="required">*</span></h3>
+                    <h3>{{ __('lamgame.forum.content') }} <span class="required">*</span></h3>
                     <div class="editor-toolbar">
                         <button type="button" onclick="formatText('bold')" class="editor-btn" title="Bold">
                             <i class="fas fa-bold"></i>
@@ -133,21 +133,21 @@
                     </div>
                     <div class="editor-container">
                         <div class="editor" id="contentEditor" contenteditable="true" 
-                             data-placeholder="Viết nội dung bài viết tại đây...">{!! old('content', $post->content) !!}</div>
+                             data-placeholder="{{ __('lamgame.forum.content_ph') }}">{!! old('content', $post->content) !!}</div>
                         <textarea name="content" id="contentTextarea" style="display: none;" required>{!! old('content', $post->content) !!}</textarea>
                     </div>
                 </div>
 
                 <!-- Tags -->
                 <div class="form-section">
-                    <h3>Tags</h3>
+                    <h3>{{ __('lamgame.forum.tags') }}</h3>
                     <div class="tags-input-container">
                         <div class="selected-tags" id="selectedTags"></div>
-                        <input type="text" id="tagInput" placeholder="Nhập tag và nhấn Enter..." class="tag-input">
+                        <input type="text" id="tagInput" placeholder="{{ __('lamgame.forum.tag_ph') }}" class="tag-input">
                         <input type="hidden" name="tags" id="tagsValue" value="{{ $post->tags->pluck('name')->implode(',') }}">
                     </div>
                     <div class="popular-tags">
-                        <span class="tags-label">Tags phổ biến:</span>
+                        <span class="tags-label">{{ __('lamgame.forum.popular_tags_label') }}</span>
                         @foreach($popularTags->take(10) as $tag)
                         <button type="button" class="popular-tag" onclick="addTag('{{ $tag->name }}')">
                             {{ $tag->name }}
@@ -158,7 +158,7 @@
 
                 <!-- Author Info Display -->
                 <div class="form-section">
-                    <h3>Đăng bởi</h3>
+                    <h3>{{ __('lamgame.forum.posted_by') }}</h3>
                     <div class="author-display">
                         <div class="user-info">
                             <div class="user-avatar">
@@ -174,11 +174,11 @@
 
                 <!-- Edit reason -->
                 <div class="form-section">
-                    <h3>Lý do chỉnh sửa</h3>
+                    <h3>{{ __('lamgame.forum.edit_reason') }}</h3>
                     <input type="text" name="edit_reason" class="form-input" 
-                           placeholder="Mô tả ngắn gọn về những thay đổi (tùy chọn)">
+                           placeholder="{{ __('lamgame.forum.edit_reason_ph') }}">
                     <div class="form-help">
-                        Thông tin này sẽ được hiển thị trong lịch sử chỉnh sửa
+                        {{ __('lamgame.forum.edit_reason_help') }}
                     </div>
                 </div>
 
@@ -186,11 +186,11 @@
                 <div class="form-actions">
                     <button type="button" class="btn btn-outline" onclick="saveDraft()">
                         <i class="fas fa-save"></i>
-                        Lưu nháp
+                        {{ __('lamgame.forum.save_draft') }}
                     </button>
                     <button type="submit" class="btn btn-primary" id="submitBtn">
                         <i class="fas fa-check"></i>
-                        Cập nhật bài viết
+                        {{ __('lamgame.forum.update_post') }}
                     </button>
                 </div>
             </form>
@@ -199,13 +199,13 @@
         <!-- Edit History -->
         @if($post->edit_history && count($post->edit_history) > 0)
         <div class="edit-history-container">
-            <h3>Lịch sử chỉnh sửa</h3>
+            <h3>{{ __('lamgame.forum.edit_history') }}</h3>
             <div class="edit-history-list">
                 @foreach($post->edit_history as $edit)
                 <div class="edit-item">
                     <div class="edit-meta">
                         <span class="edit-date">{{ \Carbon\Carbon::parse($edit['date'])->format('d/m/Y H:i') }}</span>
-                        <span class="edit-author">bởi {{ $edit['author'] ?? 'Không xác định' }}</span>
+                        <span class="edit-author">{{ __('lamgame.forum.edit_by') }} {{ $edit['author'] ?? __('lamgame.forum.edit_unknown') }}</span>
                     </div>
                     @if(!empty($edit['reason']))
                     <div class="edit-reason">{{ $edit['reason'] }}</div>

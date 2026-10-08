@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('page_title', 'Tạo bài viết mới - Forum')
+@section('page_title', __('lamgame.forum.create_title'))
 @section('page_description', 'Chia sẻ kiến thức và ý tưởng với cộng đồng game developer')
 
 @section('content')
@@ -9,12 +9,12 @@
         <!-- Header -->
         <div class="create-header">
             <div class="header-content">
-                <h1>✍️ Tạo bài viết mới</h1>
-                <p>Chia sẻ kiến thức, ý tưởng hoặc câu hỏi với cộng đồng</p>
+                <h1>{{ __('lamgame.forum.create_h') }}</h1>
+                <p>{{ __('lamgame.forum.create_sub') }}</p>
             </div>
             <a href="{{ route('forum.index') }}" class="btn-back">
                 <i class="fas fa-arrow-left"></i>
-                Quay lại Forum
+                {{ __('lamgame.forum.back_forum3') }}
             </a>
         </div>
 
@@ -28,9 +28,9 @@
 
                 <!-- Category -->
                 <div class="form-section">
-                    <h3>Danh mục</h3>
+                    <h3>{{ __('lamgame.forum.category') }}</h3>
                     <select name="category_id" required class="form-select">
-                        <option value="">Chọn danh mục</option>
+                        <option value="">{{ __('lamgame.forum.choose_category') }}</option>
                         @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ $selectedCategory === $category->slug ? 'selected' : '' }}>
                             {{ $category->icon }} {{ $category->name }}
@@ -41,18 +41,18 @@
 
                 <!-- Title -->
                 <div class="form-section">
-                    <h3>Tiêu đề <span class="required">*</span></h3>
+                    <h3>{{ __('lamgame.forum.title_label') }} <span class="required">*</span></h3>
                     <input type="text" name="title" required class="form-input" 
-                           placeholder="Nhập tiêu đề hấp dẫn cho bài viết..." 
+                           placeholder="{{ __('lamgame.forum.title_ph') }}" 
                            maxlength="255" id="titleInput">
                     <div class="form-help">
-                        <span id="titleCount">0</span>/255 ký tự
+                        <span id="titleCount">0</span>/255 {{ __('lamgame.forum.chars') }}
                     </div>
                 </div>
 
                 <!-- Content -->
                 <div class="form-section">
-                    <h3>Nội dung <span class="required">*</span></h3>
+                    <h3>{{ __('lamgame.forum.content') }} <span class="required">*</span></h3>
                     <div class="editor-toolbar">
                         <button type="button" onclick="formatText('bold')" class="editor-btn" title="Bold">
                             <i class="fas fa-bold"></i>
@@ -79,21 +79,21 @@
                     </div>
                     <div class="editor-container">
                         <div class="editor" id="contentEditor" contenteditable="true" 
-                             data-placeholder="Viết nội dung bài viết tại đây..."></div>
+                             data-placeholder="{{ __('lamgame.forum.content_ph') }}"></div>
                         <textarea name="content" id="contentTextarea" style="display: none;" required></textarea>
                     </div>
                 </div>
 
                 <!-- Tags -->
                 <div class="form-section">
-                    <h3>Tags</h3>
+                    <h3>{{ __('lamgame.forum.tags') }}</h3>
                     <div class="tags-input-container">
                         <div class="selected-tags" id="selectedTags"></div>
-                        <input type="text" id="tagInput" placeholder="Nhập tag và nhấn Enter..." class="tag-input">
+                        <input type="text" id="tagInput" placeholder="{{ __('lamgame.forum.tag_ph') }}" class="tag-input">
                         <input type="hidden" name="tags" id="tagsValue">
                     </div>
                     <div class="popular-tags">
-                        <span class="tags-label">Tags phổ biến:</span>
+                        <span class="tags-label">{{ __('lamgame.forum.popular_tags_label') }}</span>
                         @foreach($tags->take(10) as $tag)
                         <button type="button" class="popular-tag" onclick="addTag('{{ $tag->name }}')">
                             {{ $tag->name }}
@@ -104,24 +104,24 @@
 
                 <!-- Poll (Optional) -->
                 <div class="form-section">
-                    <h3><label><input type="checkbox" id="enablePoll" name="has_poll" value="1"> 📊 Thêm Poll</label></h3>
+                    <h3><label><input type="checkbox" id="enablePoll" name="has_poll" value="1"> {{ __('lamgame.forum.add_poll') }}</label></h3>
                     <div id="pollSection" style="display:none;margin-top:12px">
-                        <input type="text" name="poll_question" class="form-control" placeholder="Câu hỏi poll..." style="margin-bottom:8px">
+                        <input type="text" name="poll_question" class="form-control" placeholder="{{ __('lamgame.forum.poll_q_ph') }}" style="margin-bottom:8px">
                         <div id="pollOptions">
-                            <input type="text" name="poll_options[]" class="form-control" placeholder="Lựa chọn 1" style="margin-bottom:6px">
-                            <input type="text" name="poll_options[]" class="form-control" placeholder="Lựa chọn 2" style="margin-bottom:6px">
+                            <input type="text" name="poll_options[]" class="form-control" placeholder="{{ __('lamgame.forum.poll_opt1') }}" style="margin-bottom:6px">
+                            <input type="text" name="poll_options[]" class="form-control" placeholder="{{ __('lamgame.forum.poll_opt2') }}" style="margin-bottom:6px">
                         </div>
-                        <button type="button" class="btn btn-outline btn-sm" onclick="addPollOption()" style="margin-top:4px">+ Thêm lựa chọn</button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="addPollOption()" style="margin-top:4px">{{ __('lamgame.forum.add_option') }}</button>
                         <div style="margin-top:8px">
-                            <label><input type="checkbox" name="poll_multiple" value="1"> Cho phép chọn nhiều</label>
-                            <label style="margin-left:12px"><input type="number" name="poll_expires_days" min="1" max="30" value="7" style="width:50px"> ngày hết hạn</label>
+                            <label><input type="checkbox" name="poll_multiple" value="1"> {{ __('lamgame.forum.poll_multiple') }}</label>
+                            <label style="margin-left:12px"><input type="number" name="poll_expires_days" min="1" max="30" value="7" style="width:50px"> {{ __('lamgame.forum.poll_expire') }}</label>
                         </div>
                     </div>
                 </div>
 
                 <!-- Author Info Display -->
                 <div class="form-section">
-                    <h3>Đăng bởi</h3>
+                    <h3>{{ __('lamgame.forum.posted_by') }}</h3>
                     <div class="author-display">
                         <div class="user-info">
                             <div class="user-avatar">
@@ -139,11 +139,11 @@
                 <div class="form-actions">
                     <button type="button" class="btn btn-outline" onclick="saveDraft()">
                         <i class="fas fa-save"></i>
-                        Lưu nháp
+                        {{ __('lamgame.forum.save_draft') }}
                     </button>
                     <button type="submit" class="btn btn-primary" id="submitBtn">
                         <i class="fas fa-paper-plane"></i>
-                        Đăng bài viết
+                        {{ __('lamgame.forum.submit_post') }}
                     </button>
                 </div>
             </form>
