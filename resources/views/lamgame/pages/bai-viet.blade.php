@@ -92,38 +92,38 @@
                     <!-- Post Actions -->
                     <div class="post-actions">
                         <button class="action-btn like-btn" onclick="likePost({{ $post['id'] }})">
-                            👍 Thích (15)
+                            {{ __('lamgame.article.like') }} (15)
                         </button>
                         <button class="action-btn share-btn" onclick="sharePost({{ $post['id'] }})">
-                            📤 Chia sẻ
+                            {{ __('lamgame.article.share') }}
                         </button>
                         <button class="action-btn bookmark-btn" onclick="bookmarkPost({{ $post['id'] }})">
-                            🔖 Lưu
+                            {{ __('lamgame.article.save') }}
                         </button>
                     </div>
 
                     <!-- Comments Section -->
                     <div class="comments-section">
-                        <h3 class="comments-title">💬 Bình luận ({{ count($comments) }})</h3>
+                        <h3 class="comments-title">{{ __('lamgame.article.comments') }} ({{ count($comments) }})</h3>
                         
                         <!-- Add Comment Form -->
                         <div class="add-comment">
                             <form class="comment-form" onsubmit="submitComment(event)">
                                 <div class="comment-input">
                                     <div class="commenter-avatar">👤</div>
-                                    <textarea name="content" placeholder="Chia sẻ ý kiến của bạn..." rows="4" required></textarea>
+                                    <textarea name="content" placeholder="{{ __('lamgame.article.comment_ph') }}" rows="4" required></textarea>
                                 </div>
                                 <div class="comment-actions">
                                     <div class="comment-options">
                                         <label class="option">
                                             <input type="checkbox" name="anonymous">
-                                            <span>Đăng ẩn danh</span>
+                                            <span>{{ __('lamgame.article.anonymous') }}</span>
                                         </label>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Gửi bình luận</button>
+                                    <button type="submit" class="btn btn-primary">{{ __('lamgame.article.submit') }}</button>
                                 </div>
                                 <input type="hidden" name="post_id" value="{{ $post['id'] }}">
-                                <input type="hidden" name="author" value="Người dùng">
+                                <input type="hidden" name="author" value="{{ __('lamgame.article.user') }}">
                             </form>
                         </div>
 
@@ -143,10 +143,10 @@
                                 </div>
                                 <div class="comment-actions">
                                     <button class="comment-action" onclick="likeComment({{ $loop->index }})">
-                                        👍 Thích@if (($comment['likes_count'] ?? 0) > 0) ({{ (int) $comment['likes_count'] }})@endif
+                                        {{ __('lamgame.article.c_like') }}@if (($comment['likes_count'] ?? 0) > 0) ({{ (int) $comment['likes_count'] }})@endif
                                     </button>
                                     <button class="comment-action" onclick="replyComment({{ $loop->index }})">
-                                        💬 Trả lời
+                                        {{ __('lamgame.article.c_reply') }}
                                     </button>
                                 </div>
                             </div>
@@ -156,7 +156,7 @@
                         <!-- Load More Comments -->
                         <div class="load-more-comments">
                             <button class="btn btn-outline" onclick="loadMoreComments()">
-                                Xem thêm bình luận
+                                {{ __('lamgame.article.load_more') }}
                             </button>
                         </div>
                     </div>
@@ -166,7 +166,7 @@
                 <div class="sidebar">
                     <!-- Author Card -->
                     <div class="author-card">
-                        <h4>👤 Tác giả</h4>
+                        <h4>{{ __('lamgame.article.author') }}</h4>
                         <div class="author-profile">
                             <div class="author-avatar-large">👤</div>
                             <div class="author-info">
@@ -175,24 +175,24 @@
                                 @if (($post['author_posts_count'] ?? 0) > 0 || ($post['author_points'] ?? 0) > 0)
                                 <div class="author-stats">
                                     @if (($post['author_posts_count'] ?? 0) > 0)
-                                    <span>📝 {{ (int) $post['author_posts_count'] }} bài viết</span>
+                                    <span>📝 {{ (int) $post['author_posts_count'] }} {{ __('lamgame.article.posts') }}</span>
                                     @endif
                                     @if (($post['author_points'] ?? 0) > 0)
-                                    <span>⭐ {{ (int) $post['author_points'] }} điểm</span>
+                                    <span>⭐ {{ (int) $post['author_points'] }} {{ __('lamgame.article.points') }}</span>
                                     @endif
                                 </div>
                                 @endif
                             </div>
                         </div>
                         <div class="author-actions">
-                            <button class="btn btn-primary btn-small">Theo dõi</button>
-                            <button class="btn btn-outline btn-small">Nhắn tin</button>
+                            <button class="btn btn-primary btn-small">{{ __('lamgame.article.follow') }}</button>
+                            <button class="btn btn-outline btn-small">{{ __('lamgame.article.message') }}</button>
                         </div>
                     </div>
 
                     <!-- Related Posts -->
                     <div class="related-posts">
-                        <h4>📖 Bài viết liên quan</h4>
+                        <h4>{{ __('lamgame.article.related') }}</h4>
                         <div class="related-list">
                             <div class="related-item">
                                 <h5><a href="#">Tối ưu rendering trong Unity 2023</a></h5>
@@ -220,12 +220,12 @@
 
                     <!-- Community Guidelines -->
                     <div class="guidelines-widget">
-                        <h4>📋 Quy tắc thảo luận</h4>
+                        <h4>{{ __('lamgame.article.guidelines') }}</h4>
                         <ul>
-                            <li>Tôn trọng ý kiến khác biệt</li>
-                            <li>Đưa ra lời khuyên xây dựng</li>
-                            <li>Không spam hay quảng cáo</li>
-                            <li>Chia sẻ kiến thức hữu ích</li>
+                            <li>{{ __('lamgame.article.rule1') }}</li>
+                            <li>{{ __('lamgame.article.rule2') }}</li>
+                            <li>{{ __('lamgame.article.rule3') }}</li>
+                            <li>{{ __('lamgame.article.rule4') }}</li>
                         </ul>
                     </div>
                 </div>
