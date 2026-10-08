@@ -38,7 +38,7 @@
         </svg>
     </div>
 
-    <h1>Cảm ơn bạn đã đặt hàng!</h1>
+    <h1>{{ __('lamgame.checkout.order_success') }}</h1>
 
     <p class="success-order-id">
         Mã đơn hàng: <strong>#{{ $order->increment_id }}</strong>
@@ -79,15 +79,15 @@
             </h3>
 
             @auth('customer')
-                <p>Đơn hàng của bạn chứa source code có thể tải về ngay. Bạn cũng có thể xem license trong mục "License của tôi".</p>
+                <p>{{ __('lamgame.checkout.dl_desc_auth') }}</p>
                 <a href="{{ route('shop.customers.account.downloadable_products.index') }}" class="co-btn co-btn--primary">
-                    ⬇ Tải Source Code
+                    {{ __('lamgame.checkout.download_btn') }}
                 </a>
             @else
                 <p>Link tải về đã được gửi qua email: <strong style="color:var(--co-text)">{{ $order->customer_email }}</strong>. Vui lòng kiểm tra hộp thư (bao gồm spam).</p>
                 <div class="success-actions">
-                    <a href="{{ route('shop.customer.session.create') }}" class="co-btn co-btn--primary">Đăng nhập để tải</a>
-                    <a href="{{ route('shop.customers.register.index') }}" class="co-btn co-btn--ghost">Tạo tài khoản</a>
+                    <a href="{{ route('shop.customer.session.create') }}" class="co-btn co-btn--primary">{{ __('lamgame.checkout.dl_login') }}</a>
+                    <a href="{{ route('shop.customers.register.index') }}" class="co-btn co-btn--ghost">{{ __('lamgame.checkout.dl_register') }}</a>
                 </div>
             @endauth
         </div>
@@ -95,9 +95,9 @@
 
     <div class="success-actions">
         @auth('customer')
-            <a href="{{ route('shop.customers.account.orders.index') }}" class="co-btn co-btn--ghost">Xem đơn hàng</a>
+            <a href="{{ route('shop.customers.account.orders.index') }}" class="co-btn co-btn--ghost">{{ __('lamgame.checkout.view_orders') }}</a>
         @endauth
-        <a href="{{ route('lamgame.source-game') }}" class="co-btn co-btn--primary">Tiếp tục mua sắm</a>
+        <a href="{{ route('lamgame.source-game') }}" class="co-btn co-btn--primary">{{ __('lamgame.checkout.continue_shop') }}</a>
     </div>
 </div>
 @endsection

@@ -60,7 +60,7 @@
 @section('content')
 <div class="checkout-container">
     <div class="container">
-        <h1 style="margin-bottom: 1.5rem;">💳 Thanh toán</h1>
+        <h1 style="margin-bottom: 1.5rem;">{{ __('lamgame.checkout.title') }}</h1>
         
         <div id="checkout-app" v-cloak>
             <div v-if="loading" style="text-align: center; padding: 3rem;">
@@ -101,7 +101,7 @@
                                 <div style="color: var(--co-muted); font-size: 0.9rem;">@{{ addr.phone }}</div>
                             </div>
                             <div class="address-card" :class="{ selected: useNewAddress }" @click="useNewAddress = true; selectedAddress = null;">
-                                <div style="text-align: center; color: var(--co-accent-2);">+ Nhập địa chỉ mới</div>
+                                <div style="text-align: center; color: var(--co-accent-2);">{{ __('lamgame.checkout.new_address') }}</div>
                             </div>
                         </div>
                         @endauth
@@ -126,7 +126,7 @@
                                 <div class="error-msg" v-if="errors.email">@{{ errors.email }}</div>
                             </div>
                             <div class="form-group">
-                                <label>Số điện thoại *</label>
+                                <label>{{ __('lamgame.checkout.phone') }} *</label>
                                 <input type="tel" v-model="guestAddress.phone" placeholder="0901234567">
                                 <div class="error-msg" v-if="errors.phone">@{{ errors.phone }}</div>
                             </div>
@@ -142,7 +142,7 @@
                                     <div class="error-msg" v-if="errors.city">@{{ errors.city }}</div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Tỉnh/Thành</label>
+                                    <label>{{ __('lamgame.checkout.state') }}</label>
                                     <input type="text" v-model="guestAddress.state" placeholder="Hồ Chí Minh">
                                 </div>
                             </div>
@@ -198,7 +198,7 @@
 
                 <!-- Summary -->
                 <div class="checkout-summary">
-                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">Đơn hàng của bạn</h3>
+                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">{{ __('lamgame.checkout.your_order') }}</h3>
                     
                     <div v-for="item in cart?.items" :key="item.id" class="summary-item">
                         <img :src="item.base_image?.small_image_url || '/images/placeholder.png'" class="summary-item-image">
@@ -210,7 +210,7 @@
 
                     <div style="margin-top: 1rem;">
                         <div class="summary-row">
-                            <span>Tạm tính</span>
+                            <span>{{ __('lamgame.checkout.subtotal') }}</span>
                             <span>@{{ formatPrice(cart?.sub_total) }}</span>
                         </div>
                         <div class="summary-row" v-if="cart?.shipping_amount > 0">
@@ -218,15 +218,15 @@
                             <span>@{{ formatPrice(cart?.shipping_amount) }}</span>
                         </div>
                         <div class="summary-row" v-if="cart?.discount_amount > 0">
-                            <span>Giảm giá</span>
+                            <span>{{ __('lamgame.checkout.discount') }}</span>
                             <span style="color: var(--co-error);">-@{{ formatPrice(cart?.discount_amount) }}</span>
                         </div>
                         <div class="summary-row">
-                            <span>Thuế</span>
+                            <span>{{ __('lamgame.checkout.tax') }}</span>
                             <span>@{{ formatPrice(cart?.tax_total || 0) }}</span>
                         </div>
                         <div class="summary-row summary-total">
-                            <span>Tổng cộng</span>
+                            <span>{{ __('lamgame.checkout.total') }}</span>
                             <span>@{{ formatPrice(cart?.grand_total) }}</span>
                         </div>
                     </div>
@@ -281,7 +281,7 @@ function _initCheckout() {
     if (typeof Vue === 'undefined') {
         console.error('Vue chưa sẵn sàng — checkout không khởi tạo được.');
         document.getElementById('checkout-app')?.removeAttribute('v-cloak');
-        document.getElementById('checkout-app').innerHTML = '<p style="text-align:center;padding:2rem;color:#F87171">Có lỗi tải trang. Vui lòng tải lại (Ctrl+F5).</p>';
+        document.getElementById('checkout-app').innerHTML = '<p style="text-align:center;padding:2rem;color:#F87171">' + @json(__('lamgame.checkout.page_error')) + '</p>';
         return;
     }
 

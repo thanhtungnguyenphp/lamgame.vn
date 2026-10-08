@@ -52,7 +52,7 @@
 @section('content')
 <div class="cart-container">
     <div class="container">
-        <h1 style="margin-bottom: 1.5rem;">🛒 Giỏ hàng</h1>
+        <h1 style="margin-bottom: 1.5rem;">{{ __('lamgame.cart.title') }}</h1>
         
         <div id="cart-app">
             <div v-if="loading">
@@ -66,8 +66,8 @@
             </div>
 
             <div v-else-if="loadError" class="empty-cart">
-                <div class="co-alert co-alert--error" style="display:inline-block">Không tải được giỏ hàng. Vui lòng thử lại.</div>
-                <div><button class="btn-checkout" style="max-width:220px;margin:1rem auto 0" @click="loadCart">Thử lại</button></div>
+                <div class="co-alert co-alert--error" style="display:inline-block">{{ __('lamgame.cart.load_error') }}</div>
+                <div><button class="btn-checkout" style="max-width:220px;margin:1rem auto 0" @click="loadCart">{{ __('lamgame.cart.retry') }}</button></div>
             </div>
 
             <div v-else-if="!cart || !cart.items || cart.items.length === 0" class="empty-cart">
@@ -78,10 +78,10 @@
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                     </svg>
                 </div>
-                <h3 style="font-size: 1.5rem; color: var(--co-text); margin-bottom: 0.5rem;">Giỏ hàng trống</h3>
-                <p style="margin-bottom: 1.5rem;">Bạn chưa có sản phẩm nào trong giỏ hàng</p>
+                <h3 style="font-size: 1.5rem; color: var(--co-text); margin-bottom: 0.5rem;">{{ __('lamgame.cart.empty') }}</h3>
+                <p style="margin-bottom: 1.5rem;">{{ __('lamgame.cart.empty_desc') }}</p>
                 <a href="{{ url('/source-game') }}" class="btn-checkout" style="max-width: 280px; margin: 0 auto 1rem;">
-                    🎮 Khám phá Source Game
+                    {{ __('lamgame.cart.explore_source') }}
                 </a>
                 <a href="{{ url('/') }}" class="btn-continue" style="max-width: 280px; margin: 0 auto;">
                     Về trang chủ
@@ -101,7 +101,7 @@
                                     <input type="number" class="qty-input" :value="item.quantity" @change="updateQty(item, $event.target.value)" min="1">
                                     <button class="qty-btn" @click="updateQty(item, item.quantity + 1)">+</button>
                                 </div>
-                                <button class="remove-btn" @click="removeItem(item)">Xóa</button>
+                                <button class="remove-btn" @click="removeItem(item)">{{ __('lamgame.cart.remove') }}</button>
                             </div>
                         </div>
                         <div style="text-align: right;">
@@ -111,43 +111,43 @@
                 </div>
                 
                 <div class="cart-summary">
-                    <h3 style="margin-bottom: 1rem; color: var(--co-text);">Tóm tắt đơn hàng</h3>
+                    <h3 style="margin-bottom: 1rem; color: var(--co-text);">{{ __('lamgame.cart.summary') }}</h3>
                     
                     <!-- Coupon -->
                     <div style="margin-bottom: 1rem;">
                         <div v-if="!cart.coupon_code" style="display: flex; gap: 0.5rem;">
-                            <input type="text" v-model="couponCode" placeholder="Nhập mã giảm giá" 
+                            <input type="text" v-model="couponCode" placeholder="{{ __('lamgame.cart.coupon_ph') }}" 
                                 style="flex: 1; padding: 0.6rem; border: 1px solid var(--co-border); border-radius: 8px; background: var(--co-surface); color: var(--co-text);">
                             <button @click="applyCoupon" :disabled="applyingCoupon" 
                                 style="padding: 0.6rem 1rem; background: var(--co-accent); color: white; border: none; border-radius: 8px; cursor: pointer;">
-                                @{{ applyingCoupon ? '...' : 'Áp dụng' }}
+                                @{{ applyingCoupon ? '...' : @json(__('lamgame.cart.apply')) }}
                             </button>
                         </div>
                         <div v-else style="display: flex; justify-content: space-between; align-items: center; background: rgba(52,211,153,.1); padding: 0.6rem; border-radius: 8px;">
                             <span style="color: var(--co-success);">🎫 @{{ cart.coupon_code }}</span>
-                            <button @click="removeCoupon" style="background: none; border: none; color: var(--co-error); cursor: pointer;">Xóa</button>
+                            <button @click="removeCoupon" style="background: none; border: none; color: var(--co-error); cursor: pointer;">{{ __('lamgame.cart.remove') }}</button>
                         </div>
                         <p v-if="couponError" style="color: var(--co-error); font-size: 0.85rem; margin-top: 0.25rem;">@{{ couponError }}</p>
                     </div>
                     
                     <div class="summary-row">
-                        <span>Tạm tính</span>
+                        <span>{{ __('lamgame.cart.subtotal') }}</span>
                         <span>@{{ formatPrice(cart.sub_total) }}</span>
                     </div>
                     <div class="summary-row" v-if="cart.discount_amount > 0">
-                        <span>Giảm giá</span>
+                        <span>{{ __('lamgame.cart.discount') }}</span>
                         <span style="color: var(--co-success);">-@{{ formatPrice(cart.discount_amount) }}</span>
                     </div>
                     <div class="summary-row">
-                        <span>Thuế</span>
+                        <span>{{ __('lamgame.cart.tax') }}</span>
                         <span>@{{ formatPrice(cart.tax_total || 0) }}</span>
                     </div>
                     <div class="summary-row summary-total">
-                        <span>Tổng cộng</span>
+                        <span>{{ __('lamgame.cart.total') }}</span>
                         <span>@{{ formatPrice(cart.grand_total) }}</span>
                     </div>
-                    <a href="/checkout/onepage" class="btn-checkout">Tiến hành thanh toán</a>
-                    <a href="{{ url('/') }}" class="btn-continue">Tiếp tục mua sắm</a>
+                    <a href="/checkout/onepage" class="btn-checkout">{{ __('lamgame.cart.checkout') }}</a>
+                    <a href="{{ url('/') }}" class="btn-continue">{{ __('lamgame.cart.continue') }}</a>
                 </div>
             </div>
         </div>
