@@ -1,7 +1,7 @@
 {{-- Company Profile — Public company page with active jobs --}}
 @extends('layouts.master')
 
-@section('page_title', $page_title ?? $company->name . ' - Tuyển dụng')
+@section('page_title', $page_title ?? $company->name . ' - ' . __('lamgame.company.recruiting'))
 @section('page_description', $page_description ?? '')
 
 @section('canonical_url'){{ route('lamgame.company.profile', $company->id) }}@endsection
@@ -40,15 +40,15 @@
                     <div class="cp-hero__meta">
                         @if($company->industry)<span>🎮 {{ $company->industry }}</span>@endif
                         @if($company->address)<span>📍 {{ $company->address }}</span>@endif
-                        @if($company->employee_count)<span>👥 {{ $company->employee_count }} nhân viên</span>@endif
-                        @if($company->founded_year)<span>📅 Thành lập {{ $company->founded_year }}</span>@endif
+                        @if($company->employee_count)<span>👥 {{ $company->employee_count }} {{ __('lamgame.company.employees') }}</span>@endif
+                        @if($company->founded_year)<span>📅 {{ __('lamgame.company.founded') }} {{ $company->founded_year }}</span>@endif
                     </div>
                     <div class="cp-hero__actions">
                         @if($company->website)
                         <a href="{{ $company->website }}" target="_blank" rel="noopener" class="cp-btn cp-btn--outline">🌐 Website</a>
                         @endif
                         @if($company->email)
-                        <a href="mailto:{{ $company->email }}" class="cp-btn cp-btn--outline">📧 Liên hệ</a>
+                        <a href="mailto:{{ $company->email }}" class="cp-btn cp-btn--outline">{{ __('lamgame.company.contact') }}</a>
                         @endif
                     </div>
                 </div>
@@ -56,8 +56,8 @@
 
             {{-- Stats --}}
             <div class="cp-stats">
-                <div class="cp-stat"><span class="cp-stat__num">{{ $totalJobs }}</span><span class="cp-stat__label">Việc làm</span></div>
-                <div class="cp-stat"><span class="cp-stat__num">{{ $totalApplications }}</span><span class="cp-stat__label">Lượt ứng tuyển</span></div>
+                <div class="cp-stat"><span class="cp-stat__num">{{ $totalJobs }}</span><span class="cp-stat__label">{{ __('lamgame.company.jobs') }}</span></div>
+                <div class="cp-stat"><span class="cp-stat__num">{{ $totalApplications }}</span><span class="cp-stat__label">{{ __('lamgame.company.applications') }}</span></div>
             </div>
         </div>
     </section>
@@ -66,19 +66,19 @@
         {{-- About --}}
         @if($company->description)
         <section class="cp-section">
-            <h2 class="cp-section__title">Giới thiệu</h2>
+            <h2 class="cp-section__title">{{ __('lamgame.company.about') }}</h2>
             <div class="cp-about">{!! nl2br(e($company->description)) !!}</div>
         </section>
         @endif
 
         {{-- Active Jobs --}}
         <section class="cp-section">
-            <h2 class="cp-section__title">Vị trí đang tuyển ({{ $totalJobs }})</h2>
+            <h2 class="cp-section__title">{{ __('lamgame.company.open_jobs') }} ({{ $totalJobs }})</h2>
 
             @if($jobs->isEmpty())
             <div class="cp-empty">
-                <p>Hiện tại {{ $company->name }} chưa có vị trí tuyển dụng nào.</p>
-                <a href="{{ route('lamgame.viec-lam-game') }}" class="cp-btn">Xem tất cả việc làm →</a>
+                <p>{{ $company->name }} {{ __('lamgame.company.no_jobs') }}</p>
+                <a href="{{ route('lamgame.viec-lam-game') }}" class="cp-btn">{{ __('lamgame.company.view_all') }}</a>
             </div>
             @else
             <div class="cp-jobs">
@@ -87,8 +87,8 @@
                     <div class="cp-job-card__main">
                         <h3 class="cp-job-card__title">{{ $job->title }}</h3>
                         <div class="cp-job-card__meta">
-                            <span>💰 {{ $job->salary_range ?? 'Thỏa thuận' }}</span>
-                            <span>📍 {{ $job->location ?? 'Việt Nam' }}</span>
+                            <span>💰 {{ $job->salary_range ?? __('lamgame.company.negotiable') }}</span>
+                            <span>📍 {{ $job->location ?? __('lamgame.company.vietnam') }}</span>
                             <span>💼 {{ $job->job_type ?? 'Full-time' }}</span>
                         </div>
                         @if($job->skills->count())
@@ -101,7 +101,7 @@
                     </div>
                     <div class="cp-job-card__action">
                         <span class="cp-job-card__time">{{ $job->created_at->diffForHumans() }}</span>
-                        <span class="cp-btn cp-btn--sm">Xem chi tiết →</span>
+                        <span class="cp-btn cp-btn--sm">{{ __('lamgame.company.view_detail') }}</span>
                     </div>
                 </a>
                 @endforeach

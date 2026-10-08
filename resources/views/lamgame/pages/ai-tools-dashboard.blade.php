@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('page_title', 'AI Game Assistant - Làm Game')
+@section('page_title', __('lamgame.aichat.page_title'))
 
 @push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
@@ -52,15 +52,15 @@
 
     <div class="ai-messages" id="ai-messages">
         <div class="ai-welcome" id="ai-welcome">
-            <h2>Xin chào! Tôi là AI trợ lý game dev 🚀</h2>
-            <p>Hỏi bất kỳ điều gì: tạo concept, sinh code, debug, review, tạo ảnh pixel art...</p>
+            <h2>{{ __('lamgame.aichat.welcome') }}</h2>
+            <p>{{ __('lamgame.aichat.welcome_sub') }}</p>
             <div class="ai-suggestions">
-                <div class="ai-sug" onclick="useSuggestion(this)">💡 Tạo concept game bắn trứng casual</div>
-                <div class="ai-sug" onclick="useSuggestion(this)">💻 Code player controller Godot 4</div>
-                <div class="ai-sug" onclick="useSuggestion(this)">🎨 Tạo pixel art hiệp sĩ 32x32</div>
-                <div class="ai-sug" onclick="useSuggestion(this)">🐛 Debug lỗi collision Phaser</div>
-                <div class="ai-sug" onclick="useSuggestion(this)">📋 Review code Unity PlayerController</div>
-                <div class="ai-sug" onclick="useSuggestion(this)">🧪 Tạo unit test cho inventory system</div>
+                <div class="ai-sug" onclick="useSuggestion(this)">{{ __('lamgame.aichat.sug_concept') }}</div>
+                <div class="ai-sug" onclick="useSuggestion(this)">{{ __('lamgame.aichat.sug_code') }}</div>
+                <div class="ai-sug" onclick="useSuggestion(this)">{{ __('lamgame.aichat.sug_pixel') }}</div>
+                <div class="ai-sug" onclick="useSuggestion(this)">{{ __('lamgame.aichat.sug_debug') }}</div>
+                <div class="ai-sug" onclick="useSuggestion(this)">{{ __('lamgame.aichat.sug_review') }}</div>
+                <div class="ai-sug" onclick="useSuggestion(this)">{{ __('lamgame.aichat.sug_test') }}</div>
             </div>
         </div>
     </div>
@@ -69,7 +69,7 @@
 
     <div class="ai-input-area">
         <div class="ai-input-wrap">
-            <textarea class="ai-input" id="ai-input" placeholder="Hỏi AI bất cứ điều gì về game dev..." rows="1" onkeydown="handleKey(event)"></textarea>
+            <textarea class="ai-input" id="ai-input" placeholder="{{ __('lamgame.aichat.input_ph') }}" rows="1" onkeydown="handleKey(event)"></textarea>
             <button class="ai-send" id="ai-send" onclick="sendMessage()">➤</button>
         </div>
     </div>
@@ -80,6 +80,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
 <script>
+const LG_I18N = { errRetry: @json(__('lamgame.aichat.err_retry')), errConn: @json(__('lamgame.aichat.err_conn')) };
 const CHAT_API = '{{ url("/api/v1/ai-chat/message") }}';
 const DASHBOARD_API = '{{ url("/api/v1/ai-tools/dashboard") }}';
 const AUTH_TOKEN = @json($token);
@@ -162,11 +163,11 @@ async function sendMessage() {
                 tool_type: 'chat',
                 error_code: d.error || ('http_' + r.status)
             });
-            addMessage('⚠️ ' + (d.detail || d.message || 'Lỗi. Vui lòng thử lại.'), 'bot');
+            addMessage('⚠️ ' + (d.detail || d.message || LG_I18N.errRetry), 'bot');
         }
     } catch(e) {
         window.trackRevenueEvent?.('ai_tool_error', {tool_type: 'chat', error_code: 'network'});
-        addMessage('⚠️ Không kết nối được. Vui lòng thử lại.', 'bot');
+        addMessage(LG_I18N.errConn, 'bot');
     }
 
     typingEl.style.display = 'none';

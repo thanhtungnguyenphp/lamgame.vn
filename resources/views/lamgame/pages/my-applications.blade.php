@@ -1,7 +1,7 @@
 {{-- My Applications — Track job application status --}}
 @extends('layouts.master')
 
-@section('page_title', $page_title ?? 'Đơn ứng tuyển của tôi')
+@section('page_title', $page_title ?? __('lamgame.apps.page_title'))
 @section('page_description', $page_description ?? '')
 
 @push('meta')
@@ -12,27 +12,27 @@
 <div class="ma-page">
     <div class="ma-container">
         <div class="ma-header">
-            <h1 class="ma-header__title">📋 Đơn ứng tuyển của tôi</h1>
-            <p class="ma-header__desc">Theo dõi trạng thái đơn ứng tuyển việc làm game</p>
+            <h1 class="ma-header__title">{{ __('lamgame.apps.title') }}</h1>
+            <p class="ma-header__desc">{{ __('lamgame.apps.desc') }}</p>
         </div>
 
         {{-- Status filter tabs --}}
         <div class="ma-tabs">
-            <a href="{{ route('lamgame.my-applications') }}" class="ma-tab {{ !$currentStatus ? 'ma-tab--active' : '' }}">Tất cả</a>
-            <a href="{{ route('lamgame.my-applications', ['status' => 'pending']) }}" class="ma-tab {{ $currentStatus === 'pending' ? 'ma-tab--active' : '' }}">⏳ Chờ xử lý</a>
-            <a href="{{ route('lamgame.my-applications', ['status' => 'reviewed']) }}" class="ma-tab {{ $currentStatus === 'reviewed' ? 'ma-tab--active' : '' }}">👁 Đã xem</a>
-            <a href="{{ route('lamgame.my-applications', ['status' => 'shortlisted']) }}" class="ma-tab {{ $currentStatus === 'shortlisted' ? 'ma-tab--active' : '' }}">⭐ Lọt vòng</a>
-            <a href="{{ route('lamgame.my-applications', ['status' => 'accepted']) }}" class="ma-tab {{ $currentStatus === 'accepted' ? 'ma-tab--active' : '' }}">✅ Chấp nhận</a>
-            <a href="{{ route('lamgame.my-applications', ['status' => 'rejected']) }}" class="ma-tab {{ $currentStatus === 'rejected' ? 'ma-tab--active' : '' }}">❌ Từ chối</a>
+            <a href="{{ route('lamgame.my-applications') }}" class="ma-tab {{ !$currentStatus ? 'ma-tab--active' : '' }}">{{ __('lamgame.apps.all') }}</a>
+            <a href="{{ route('lamgame.my-applications', ['status' => 'pending']) }}" class="ma-tab {{ $currentStatus === 'pending' ? 'ma-tab--active' : '' }}">{{ __('lamgame.apps.pending') }}</a>
+            <a href="{{ route('lamgame.my-applications', ['status' => 'reviewed']) }}" class="ma-tab {{ $currentStatus === 'reviewed' ? 'ma-tab--active' : '' }}">{{ __('lamgame.apps.reviewed') }}</a>
+            <a href="{{ route('lamgame.my-applications', ['status' => 'shortlisted']) }}" class="ma-tab {{ $currentStatus === 'shortlisted' ? 'ma-tab--active' : '' }}">{{ __('lamgame.apps.shortlisted') }}</a>
+            <a href="{{ route('lamgame.my-applications', ['status' => 'accepted']) }}" class="ma-tab {{ $currentStatus === 'accepted' ? 'ma-tab--active' : '' }}">{{ __('lamgame.apps.accepted') }}</a>
+            <a href="{{ route('lamgame.my-applications', ['status' => 'rejected']) }}" class="ma-tab {{ $currentStatus === 'rejected' ? 'ma-tab--active' : '' }}">{{ __('lamgame.apps.rejected') }}</a>
         </div>
 
         {{-- Applications list --}}
         @if($applications->isEmpty())
         <div class="ma-empty">
             <div class="ma-empty__icon">📭</div>
-            <h3>Chưa có đơn ứng tuyển nào</h3>
-            <p>Bạn chưa ứng tuyển vị trí nào. Khám phá các cơ hội việc làm game ngay!</p>
-            <a href="{{ route('lamgame.viec-lam-game') }}" class="ma-btn">🎮 Xem việc làm Game</a>
+            <h3>{{ __('lamgame.apps.empty') }}</h3>
+            <p>{{ __('lamgame.apps.empty_sub') }}</p>
+            <a href="{{ route('lamgame.viec-lam-game') }}" class="ma-btn">{{ __('lamgame.apps.view_jobs') }}</a>
         </div>
         @else
         <div class="ma-list">
@@ -40,11 +40,11 @@
             @php
                 $job = $app->jobPosting;
                 $statusMap = [
-                    'pending' => ['label' => 'Chờ xử lý', 'class' => 'pending', 'icon' => '⏳'],
-                    'reviewed' => ['label' => 'Đã xem', 'class' => 'reviewed', 'icon' => '👁'],
-                    'shortlisted' => ['label' => 'Lọt vòng', 'class' => 'shortlisted', 'icon' => '⭐'],
-                    'accepted' => ['label' => 'Chấp nhận', 'class' => 'accepted', 'icon' => '✅'],
-                    'rejected' => ['label' => 'Từ chối', 'class' => 'rejected', 'icon' => '❌'],
+                    'pending' => ['label' => __('lamgame.apps.s_pending'), 'class' => 'pending', 'icon' => '⏳'],
+                    'reviewed' => ['label' => __('lamgame.apps.s_reviewed'), 'class' => 'reviewed', 'icon' => '👁'],
+                    'shortlisted' => ['label' => __('lamgame.apps.s_shortlisted'), 'class' => 'shortlisted', 'icon' => '⭐'],
+                    'accepted' => ['label' => __('lamgame.apps.s_accepted'), 'class' => 'accepted', 'icon' => '✅'],
+                    'rejected' => ['label' => __('lamgame.apps.s_rejected'), 'class' => 'rejected', 'icon' => '❌'],
                 ];
                 $status = $statusMap[$app->status] ?? $statusMap['pending'];
             @endphp
@@ -55,14 +55,14 @@
                         <h3 class="ma-card__title">
                             <a href="{{ route('lamgame.job.detail', $job->slug) }}">{{ $job->title }}</a>
                         </h3>
-                        <p class="ma-card__company">{{ $job->company_name ?? 'Công ty' }} · {{ $job->location ?? 'Việt Nam' }}</p>
+                        <p class="ma-card__company">{{ $job->company_name ?? __('lamgame.apps.company') }} · {{ $job->location ?? __('lamgame.apps.vietnam') }}</p>
                         @else
-                        <h3 class="ma-card__title">Vị trí không còn tồn tại</h3>
+                        <h3 class="ma-card__title">{{ __('lamgame.apps.no_longer') }}</h3>
                         <p class="ma-card__company">—</p>
                         @endif
                         <div class="ma-card__meta">
-                            <span>📅 Nộp: {{ $app->applied_at ? $app->applied_at->format('d/m/Y') : $app->created_at->format('d/m/Y') }}</span>
-                            <span>🔑 Mã: {{ $app->application_code ?? '—' }}</span>
+                            <span>📅 {{ __('lamgame.apps.applied') }}: {{ $app->applied_at ? $app->applied_at->format('d/m/Y') : $app->created_at->format('d/m/Y') }}</span>
+                            <span>🔑 {{ __('lamgame.apps.code') }}: {{ $app->application_code ?? '—' }}</span>
                         </div>
                     </div>
                     <div class="ma-card__status">
@@ -71,7 +71,7 @@
                 </div>
                 @if($app->cover_letter)
                 <details class="ma-card__detail">
-                    <summary>Xem cover letter</summary>
+                    <summary>{{ __('lamgame.apps.view_cover') }}</summary>
                     <p>{{ Str::limit($app->cover_letter, 300) }}</p>
                 </details>
                 @endif
