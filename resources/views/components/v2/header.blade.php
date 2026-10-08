@@ -110,7 +110,7 @@
                     </button>
                     <div x-show="langOpen" x-transition style="position:absolute;top:calc(100% + 8px);right:0;background:#111827;border:1px solid rgba(124,92,255,.2);border-radius:10px;min-width:170px;padding:6px 0;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:1000" x-cloak>
                         @foreach($langsV2 as $code => $info)
-                            <a href="{{ request()->fullUrlWithQuery(['locale' => $code]) }}" style="display:flex;align-items:center;gap:10px;padding:9px 16px;color:{{ $code === $curLangV2 ? '#00D1FF' : '#B7C0D1' }};text-decoration:none;font-size:0.9rem">
+                            <a href="{{ route('lamgame.set-locale', $code) }}" style="display:flex;align-items:center;gap:10px;padding:9px 16px;color:{{ $code === $curLangV2 ? '#00D1FF' : '#B7C0D1' }};text-decoration:none;font-size:0.9rem">
                                 <span>{{ $info[0] }}</span> {{ $info[1] }}
                             </a>
                         @endforeach

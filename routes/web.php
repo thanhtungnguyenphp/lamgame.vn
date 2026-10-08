@@ -10,6 +10,23 @@ use Illuminate\Support\Facades\Route;
 // Homepage route - using V2 design (shop.home.index alias needed by Bagisto)
 Route::get('/', [HomeController::class, 'indexV2'])->name('shop.home.index');
 
+// Language switcher: set locale vào session rồi redirect về trang trước (URL sạch, không cộng dồn ?locale=)
+Route::get('lang/{code}', function (string $code) {
+    $allowed = \Webkul\Core\Models\Channel::where('code', core()->getCurrentChannelCode())
+        ->first()?->locales->pluck('code')->toArray() ?? ['vi', 'en', 'de'];
+
+    if (in_array($code, $allowed, true)) {
+        session()->put('locale', $code);
+    }
+
+    // Quay lại trang trước, loại bỏ ?locale= nếu có trong URL cũ
+    $back = url()->previous();
+    $back = preg_replace('/([?&])locale=[^&]*(&|$)/', '$1', $back);
+    $back = rtrim(preg_replace('/[?&]$/', '', $back), '?&') ?: url('/');
+
+    return redirect($back);
+})->name('lamgame.set-locale')->where('code', '[a-z]{2}');
+
 // Checkout routes (override Bagisto)
 Route::get('checkout/cart', fn() => view('checkout.cart'))->name('shop.checkout.cart.index');
 Route::get('checkout/onepage', fn() => view('checkout.onepage'))->name('shop.checkout.onepage.index');

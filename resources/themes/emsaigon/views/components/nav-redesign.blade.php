@@ -120,7 +120,7 @@
                 </button>
                 <div class="nav-redesign__lang-menu">
                     @foreach($langs as $code => $info)
-                        <a href="{{ request()->fullUrlWithQuery(['locale' => $code]) }}" class="{{ $code === $curLang ? 'active' : '' }}">
+                        <a href="{{ route('lamgame.set-locale', $code) }}" class="{{ $code === $curLang ? 'active' : '' }}">
                             <span>{{ $info[0] }}</span> {{ $code === 'vi' ? 'Tiếng Việt' : ($code === 'en' ? 'English' : 'Deutsch') }}
                         </a>
                     @endforeach
