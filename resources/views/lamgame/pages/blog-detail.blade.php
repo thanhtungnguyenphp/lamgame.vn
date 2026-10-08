@@ -31,7 +31,7 @@
     </script>
     <script type="application/ld+json">
     {!! \App\Helpers\StructuredDataHelper::breadcrumb([
-        ['name' => 'Trang chủ', 'url' => config('app.url')],
+        ['name' => __('lamgame.blog.home'), 'url' => config('app.url')],
         ['name' => 'Blog', 'url' => config('app.url') . '/blog'],
         ['name' => $blog->name, 'url' => config('app.url') . '/blog/' . $blog->slug]
     ]) !!}
@@ -73,7 +73,7 @@
         <div class="bd-hero__bg"></div>
         <div class="bd-container bd-hero__inner">
             <div class="bd-breadcrumb">
-                <a href="{{ url('/') }}">Trang chủ</a>
+                <a href="{{ url('/') }}">{{ __('lamgame.blog.home') }}</a>
                 <span>/</span>
                 <a href="{{ route('lamgame.blog') }}">Blog</a>
                 <span>/</span>
@@ -86,7 +86,7 @@
                 <span class="bd-badge">{{ $blog->category->name }}</span>
                 @endif
                 <time datetime="{{ $blog->published_at ? $blog->published_at->toIso8601String() : $blog->created_at->toIso8601String() }}" class="bd-meta">{{ $blog->formatted_date }}</time>
-                <span class="bd-meta">{{ $blog->reading_time }} phút đọc</span>
+                <span class="bd-meta">{{ $blog->reading_time }} {{ __('lamgame.blog.read_time') }}</span>
             </div>
             <h1 class="bd-hero__title">{{ $blog->name }}</h1>
             @if($blog->short_description)
@@ -123,7 +123,7 @@
                         <div class="bd-avatar">{{ strtoupper(substr($blog->author ?? 'L', 0, 1)) }}</div>
                         <div>
                             <span class="bd-author__name">{{ $blog->author ?? 'LamGame' }}</span>
-                            <span class="bd-author__role">Game Developer & Writer</span>
+                            <span class="bd-author__role">{{ __('lamgame.blog.author_role') }}</span>
                         </div>
                     @endif
                 </div>
@@ -144,7 +144,7 @@
 
                 {{-- Reactions --}}
                 <div class="bd-reactions">
-                    <span class="bd-reactions__label">Bài viết hữu ích?</span>
+                    <span class="bd-reactions__label">{{ __('lamgame.blog.useful') }}</span>
                     <div class="bd-reactions__btns">
                         <button class="bd-react" data-type="like">👍</button>
                         <button class="bd-react" data-type="love">❤️</button>
@@ -155,7 +155,7 @@
 
                 {{-- Social Share --}}
                 <div class="bd-share">
-                    <span class="bd-share__label">Chia sẻ:</span>
+                    <span class="bd-share__label">{{ __('lamgame.blog.share') }}</span>
                     <div class="bd-share__btns">
                         <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" target="_blank" rel="noopener noreferrer" class="bd-share__btn bd-share--fb">FB</a>
                         <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($blog->name) }}" target="_blank" rel="noopener noreferrer" class="bd-share__btn bd-share--tw">X</a>
@@ -172,7 +172,7 @@
                     <div class="bd-avatar bd-avatar--lg">{{ strtoupper(substr($blog->author ?? 'L', 0, 1)) }}</div>
                     <div class="bd-author-box__info">
                         <h4>{{ $blog->author ?? 'LamGame' }}</h4>
-                        <p>Game Developer & Technical Writer tại LamGame.vn. Chia sẻ kiến thức về game development, Unity, AI tools cho cộng đồng developer Việt Nam.</p>
+                        <p>{{ __('lamgame.blog.author_bio') }}</p>
                     </div>
                 </div>
                 @endif
@@ -182,13 +182,13 @@
             <aside class="bd-sidebar">
                 {{-- Table of Contents --}}
                 <div class="bd-toc" id="tocWidget">
-                    <h3 class="bd-toc__title">📑 Mục lục</h3>
+                    <h3 class="bd-toc__title">{{ __('lamgame.blog.toc') }}</h3>
                     <nav class="bd-toc__nav" id="tocNav"></nav>
                 </div>
 
                 {{-- Recent Posts --}}
                 <div class="bd-widget">
-                    <h3 class="bd-widget__title">Bài viết mới</h3>
+                    <h3 class="bd-widget__title">{{ __('lamgame.blog.recent') }}</h3>
                     @foreach($recentPosts->take(4) as $post)
                     <a href="/blog/{{ $post->slug }}" class="bd-recent">
                         <img src="{{ $post->featured_image }}" alt="{{ $post->name }}" loading="lazy">
@@ -207,7 +207,7 @@
     @if($relatedPosts->count() > 0)
     <section class="bd-section">
         <div class="bd-container">
-            <h2 class="bd-section__title">Bài viết liên quan</h2>
+            <h2 class="bd-section__title">{{ __('lamgame.blog.related') }}</h2>
             <div class="bd-related">
                 @foreach($relatedPosts as $relatedPost)
                 <a href="/blog/{{ $relatedPost->slug }}" class="bd-related__card">
@@ -217,7 +217,7 @@
                     <div class="bd-related__body">
                         <span class="bd-badge bd-badge--sm">{{ $relatedPost->category->name ?? '' }}</span>
                         <h3>{{ Str::limit($relatedPost->name, 60) }}</h3>
-                        <span class="bd-meta">{{ $relatedPost->reading_time }} phút đọc</span>
+                        <span class="bd-meta">{{ $relatedPost->reading_time }} {{ __('lamgame.blog.read_time') }}</span>
                     </div>
                 </a>
                 @endforeach
@@ -229,9 +229,9 @@
     {{-- CTA --}}
     <section class="bd-section bd-section--cta">
         <div class="bd-container" style="text-align:center">
-            <h2 class="bd-section__title">Đọc thêm bài viết hay</h2>
-            <p style="color:#7A8599;margin-bottom:20px">Khám phá kiến thức game dev, tips & tricks từ cộng đồng</p>
-            <a href="{{ route('lamgame.blog') }}" class="bd-btn bd-btn--primary">← Về trang Blog</a>
+            <h2 class="bd-section__title">{{ __('lamgame.blog.read_more_t') }}</h2>
+            <p style="color:#7A8599;margin-bottom:20px">{{ __('lamgame.blog.read_more_s') }}</p>
+            <a href="{{ route('lamgame.blog') }}" class="bd-btn bd-btn--primary">{{ __('lamgame.blog.back_blog') }}</a>
         </div>
     </section>
 </div>

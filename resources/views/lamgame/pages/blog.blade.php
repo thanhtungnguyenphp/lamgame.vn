@@ -1,7 +1,7 @@
 {{-- Blog — Dark Gaming UI - Optimized UX/UI --}}
 @extends('layouts.master')
 
-@section('page_title', $page_title ?? 'Blog - LamGame.vn')
+@section('page_title', $page_title ?? __('lamgame.blog.page_title'))
 @section('page_description', $page_description ?? '')
 
 {{-- SEO: Tag/category pages canonical to /blog (Google already chose /blog as canonical) --}}
@@ -21,7 +21,7 @@
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": "{{ $page_title ?? 'Blog - LamGame.vn' }}",
-    "description": "{{ $page_description ?? 'Kiến thức Game Dev, tips lập trình game, và xu hướng công nghệ mới nhất.' }}",
+    "description": "{{ $page_description ?? __('lamgame.blog.schema_desc') }}",
     "url": "{{ route('lamgame.blog') }}",
     "isPartOf": {"@id": "https://lamgame.vn/#website"}
     @if(isset($blogs) && $blogs->count() > 0)
@@ -51,15 +51,15 @@
 <section class="bl-hero">
     <div class="bl-hero__bg"></div>
     <div class="bl-container bl-hero__inner">
-        <span class="bl-hero__badge">📖 Blog & Tutorial</span>
-        <h1 class="bl-hero__title">Kiến thức <span class="bl-gradient-text">Game Dev</span> mới nhất</h1>
-        <p class="bl-hero__sub">Tips, tricks, xu hướng công nghệ và hướng dẫn từ cộng đồng developer Việt Nam</p>
+        <span class="bl-hero__badge">{{ __('lamgame.blog.hero_badge') }}</span>
+        <h1 class="bl-hero__title">{{ __('lamgame.blog.hero_title_1') }} <span class="bl-gradient-text">Game Dev</span> {{ __('lamgame.blog.hero_title_2') }}</h1>
+        <p class="bl-hero__sub">{{ __('lamgame.blog.hero_sub') }}</p>
 
         {{-- SEARCH PREMIUM --}}
         <form action="{{ route('lamgame.blog') }}" method="GET" class="bl-search">
             <svg class="bl-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input type="text" name="search" placeholder="Tìm bài viết, tutorial, tips..." value="{{ $searchQuery ?? '' }}" class="bl-search__input">
-            <button type="submit" class="bl-search__btn">Tìm kiếm</button>
+            <input type="text" name="search" placeholder="{{ __('lamgame.blog.search_ph') }}" value="{{ $searchQuery ?? '' }}" class="bl-search__input">
+            <button type="submit" class="bl-search__btn">{{ __('lamgame.blog.search_btn') }}</button>
         </form>
     </div>
 </section>
@@ -82,9 +82,9 @@
                     <span>·</span>
                     <span>{{ $featuredBlog->published_at ? $featuredBlog->published_at->diffForHumans() : '' }}</span>
                     <span>·</span>
-                    <span>{{ ceil(str_word_count(strip_tags($featuredBlog->description ?? '')) / 200) }} phút đọc</span>
+                    <span>{{ ceil(str_word_count(strip_tags($featuredBlog->description ?? '')) / 200) }} {{ __('lamgame.blog.read_time') }}</span>
                 </div>
-                <span class="bl-cta bl-cta--inline">Đọc ngay →</span>
+                <span class="bl-cta bl-cta--inline">{{ __('lamgame.blog.read_now') }}</span>
             </div>
         </a>
     </div>
@@ -96,14 +96,14 @@
     <div class="bl-container">
         {{-- CATEGORY FILTER — max 10 chips to avoid clutter --}}
         <div class="bl-chips">
-            <a href="{{ route('lamgame.blog') }}" class="bl-chip {{ !$currentCategory && !$currentTag ? 'bl-chip--active' : '' }}">Tất cả</a>
+            <a href="{{ route('lamgame.blog') }}" class="bl-chip {{ !$currentCategory && !$currentTag ? 'bl-chip--active' : '' }}">{{ __('lamgame.blog.all') }}</a>
             @foreach($categories->take(10) as $cat)
             <a href="{{ route('lamgame.blog', ['category' => $cat->slug]) }}" class="bl-chip {{ $currentCategory == $cat->slug ? 'bl-chip--active' : '' }}">{{ $cat->name }}</a>
             @endforeach
         </div>
 
         @if($searchQuery)
-        <p class="bl-results">Kết quả cho "<strong>{{ $searchQuery }}</strong>" — {{ $blogs->total() }} bài viết</p>
+        <p class="bl-results">{{ __('lamgame.blog.results_for') }} "<strong>{{ $searchQuery }}</strong>" — {{ $blogs->total() }} {{ __('lamgame.blog.posts') }}</p>
         @endif
 
         <div class="bl-grid">
@@ -121,14 +121,14 @@
                             <span>{{ $blog->author ?? 'LamGame' }}</span>
                             <span>{{ $blog->published_at ? $blog->published_at->diffForHumans() : '' }}</span>
                         </div>
-                        <span class="bl-card__cta">Đọc →</span>
+                        <span class="bl-card__cta">{{ __('lamgame.blog.read') }}</span>
                     </div>
                 </div>
             </a>
             @empty
             <div class="bl-empty">
-                <p>Không tìm thấy bài viết nào.</p>
-                <a href="{{ route('lamgame.blog') }}" class="bl-cta bl-cta--outline">Xem tất cả bài viết</a>
+                <p>{{ __('lamgame.blog.empty') }}</p>
+                <a href="{{ route('lamgame.blog') }}" class="bl-cta bl-cta--outline">{{ __('lamgame.blog.view_all') }}</a>
             </div>
             @endforelse
         </div>
@@ -146,7 +146,7 @@
 @if($popularTags && $popularTags->count() > 0)
 <section class="bl-section bl-section--alt">
     <div class="bl-container">
-        <h2 class="bl-section__title">Tags phổ biến</h2>
+        <h2 class="bl-section__title">{{ __('lamgame.blog.popular_tags') }}</h2>
         <div class="bl-tags">
             @foreach($popularTags->take(20) as $tag)
             <a href="{{ route('lamgame.blog', ['tag' => $tag->slug]) }}" class="bl-tag {{ $currentTag == $tag->slug ? 'bl-tag--active' : '' }}">{{ $tag->name }}</a>
@@ -159,9 +159,9 @@
 {{-- CTA SECTION --}}
 <section class="bl-section bl-section--cta">
     <div class="bl-container" style="text-align:center">
-        <h2 class="bl-section__title">Bạn muốn chia sẻ kiến thức?</h2>
-        <p style="color:#7A8599;margin-bottom:24px">Tham gia cộng đồng LamGame và đóng góp bài viết của bạn</p>
-        <a href="/community" class="bl-cta bl-cta--primary">Tham gia cộng đồng</a>
+        <h2 class="bl-section__title">{{ __('lamgame.blog.cta_title') }}</h2>
+        <p style="color:#7A8599;margin-bottom:24px">{{ __('lamgame.blog.cta_sub') }}</p>
+        <a href="/community" class="bl-cta bl-cta--primary">{{ __('lamgame.blog.cta_join') }}</a>
     </div>
 </section>
 
