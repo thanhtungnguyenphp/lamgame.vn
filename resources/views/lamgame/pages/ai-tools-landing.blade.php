@@ -1,7 +1,7 @@
 {{-- AI Tools — Marketplace Landing Page (Optimized UX/UI) --}}
 @extends('layouts.master')
 
-@section('page_title', 'AI Tools cho Game Developer — LamGame.vn')
+@section('page_title', __('lamgame.ai.help_title') . ' — LamGame.vn')
 @section('page_description', 'Công cụ AI hỗ trợ game developer tạo concept, code, debug, test và review với quota minh bạch.')
 
 @section('content')
@@ -11,12 +11,12 @@
 <section class="ai-hero">
     <div class="ai-hero__bg"></div>
     <div class="ai-hero__content">
-        <span class="ai-badge">✨ Multi-model AI · Quota minh bạch</span>
-        <h1>Tăng tốc workflow <br>phát triển game</h1>
-        <p>Code, Debug, Test, Review — AI hỗ trợ các tác vụ lặp lại. Bạn tập trung vào sáng tạo.</p>
+        <span class="ai-badge">{{ __('lamgame.ai.badge') }}</span>
+        <h1>{!! __('lamgame.ai.hero_title') !!}</h1>
+        <p>{{ __('lamgame.ai.hero_sub') }}</p>
         <div class="ai-hero__cta">
-            <a href="{{ route('lamgame.ai-tools-dashboard') }}" class="ai-btn ai-btn--primary">Dùng thử miễn phí</a>
-            <a href="#pricing" class="ai-btn ai-btn--ghost">Xem bảng giá ↓</a>
+            <a href="{{ route('lamgame.ai-tools-dashboard') }}" class="ai-btn ai-btn--primary">{{ __('lamgame.ai.try_free') }}</a>
+            <a href="#pricing" class="ai-btn ai-btn--ghost">{{ __('lamgame.ai.view_pricing') }}</a>
         </div>
     </div>
 </section>
@@ -25,10 +25,10 @@
 <section class="ai-trust">
     <div class="ai-container">
         <div class="ai-trust__grid">
-            <div class="ai-trust__item"><strong>{{ number_format($siteMetrics['registered_users'] ?? 0) }}+</strong><span>Developers</span></div>
-            <div class="ai-trust__item"><strong>{{ $siteMetrics['published_sources'] ?? 0 }}+</strong><span>Source Code</span></div>
-            <div class="ai-trust__item"><strong>{{ $siteMetrics['blog_posts'] ?? 0 }}+</strong><span>Bài viết</span></div>
-            <div class="ai-trust__item"><strong>7</strong><span>Workflow AI</span></div>
+            <div class="ai-trust__item"><strong>{{ number_format($siteMetrics['registered_users'] ?? 0) }}+</strong><span>{{ __('lamgame.ai.t_developers') }}</span></div>
+            <div class="ai-trust__item"><strong>{{ $siteMetrics['published_sources'] ?? 0 }}+</strong><span>{{ __('lamgame.ai.t_sources') }}</span></div>
+            <div class="ai-trust__item"><strong>{{ $siteMetrics['blog_posts'] ?? 0 }}+</strong><span>{{ __('lamgame.ai.t_posts') }}</span></div>
+            <div class="ai-trust__item"><strong>7</strong><span>{{ __('lamgame.ai.t_workflow') }}</span></div>
         </div>
     </div>
 </section>
@@ -36,38 +36,38 @@
 {{-- USE CASES — Outcome driven --}}
 <section class="ai-sec">
     <div class="ai-container">
-        <h2 class="ai-sec__title">AI hỗ trợ gì cho bạn?</h2>
-        <p class="ai-sec__sub">Tăng tốc các tác vụ coding thường ngày</p>
+        <h2 class="ai-sec__title">{{ __('lamgame.ai.help_title') }}</h2>
+        <p class="ai-sec__sub">{{ __('lamgame.ai.help_sub') }}</p>
         <div class="ai-outcomes">
             <div class="ai-outcome">
                 <span class="ai-outcome__icon">⚡</span>
-                <h3>Sinh code nhanh hơn</h3>
-                <p>AI sinh code Unity/Unreal/Godot từ mô tả. Bạn review và tùy chỉnh.</p>
+                <h3>{{ __('lamgame.ai.f_code') }}</h3>
+                <p>{{ __('lamgame.ai.f_code_d') }}</p>
             </div>
             <div class="ai-outcome">
                 <span class="ai-outcome__icon">🐛</span>
-                <h3>Hỗ trợ debug</h3>
-                <p>Paste error → AI phân tích nguyên nhân → đề xuất hướng xử lý.</p>
+                <h3>{{ __('lamgame.ai.f_debug') }}</h3>
+                <p>{{ __('lamgame.ai.f_debug_d') }}</p>
             </div>
             <div class="ai-outcome">
                 <span class="ai-outcome__icon">🧪</span>
-                <h3>Tạo unit test</h3>
-                <p>AI gợi ý test cases cho game logic, giảm thời gian viết test.</p>
+                <h3>{{ __('lamgame.ai.f_test') }}</h3>
+                <p>{{ __('lamgame.ai.f_test_d') }}</p>
             </div>
             <div class="ai-outcome">
                 <span class="ai-outcome__icon">📝</span>
-                <h3>Giảm tác vụ lặp lại</h3>
-                <p>Boilerplate code, documentation, refactoring — AI xử lý nhanh.</p>
+                <h3>{{ __('lamgame.ai.f_reduce') }}</h3>
+                <p>{{ __('lamgame.ai.f_reduce_d') }}</p>
             </div>
             <div class="ai-outcome">
                 <span class="ai-outcome__icon">🎨</span>
-                <h3>Hỗ trợ tạo asset</h3>
-                <p>Tạo sprite, UI mockup, tilemap concept với AI image generation.</p>
+                <h3>{{ __('lamgame.ai.f_asset') }}</h3>
+                <p>{{ __('lamgame.ai.f_asset_d') }}</p>
             </div>
             <div class="ai-outcome">
                 <span class="ai-outcome__icon">🔍</span>
-                <h3>Code review</h3>
-                <p>AI review code — phát hiện issues, gợi ý tối ưu và best practices.</p>
+                <h3>{{ __('lamgame.ai.f_review') }}</h3>
+                <p>{{ __('lamgame.ai.f_review_d') }}</p>
             </div>
         </div>
     </div>
@@ -76,51 +76,51 @@
 {{-- PRICING — rendered from active database plans --}}
 <section class="ai-sec ai-sec--alt" id="pricing">
     <div class="ai-container">
-        <h2 class="ai-sec__title">Chọn gói phù hợp</h2>
-        <p class="ai-sec__sub">Giá và quota dưới đây được lấy trực tiếp từ cấu hình đang hoạt động</p>
+        <h2 class="ai-sec__title">{{ __('lamgame.ai.choose_plan') }}</h2>
+        <p class="ai-sec__sub">{{ __('lamgame.ai.pricing_note') }}</p>
         @php
-            $quotaLabel = fn ($value) => $value === -1 ? 'Không giới hạn' : number_format((int) $value) . ' lượt/tháng';
+            $quotaLabel = fn ($value) => $value === -1 ? __('lamgame.ai.unlimited') : number_format((int) $value) . __('lamgame.ai.per_month_q');
         @endphp
         <div class="ai-pricing">
             @foreach($plans as $plan)
             @php $features = $plan->features ?? []; @endphp
             <div class="ai-plan {{ $plan->slug === 'pro' ? 'ai-plan--pop' : '' }}">
-                @if($plan->slug === 'pro')<span class="ai-plan__badge">Phổ biến nhất</span>@endif
+                @if($plan->slug === 'pro')<span class="ai-plan__badge">{{ __('lamgame.ai.most_popular') }}</span>@endif
                 <h3>{{ $plan->name }}</h3>
                 <p class="ai-plan__for">
                     {{ match($plan->slug) {
-                        'free' => 'Trải nghiệm workflow cơ bản',
-                        'basic' => 'Cho indie developer',
-                        'pro' => 'Cho developer sử dụng thường xuyên',
-                        'studio', 'business' => 'Cho team phát triển game',
-                        'enterprise' => 'Giải pháp tùy chỉnh',
-                        default => 'Gói AI Tools'
+                        'free' => __('lamgame.ai.for_free'),
+                        'basic' => __('lamgame.ai.for_basic'),
+                        'pro' => __('lamgame.ai.for_pro'),
+                        'studio', 'business' => __('lamgame.ai.for_studio'),
+                        'enterprise' => __('lamgame.ai.for_enterprise'),
+                        default => __('lamgame.ai.for_default')
                     } }}
                 </p>
                 <div class="ai-plan__price">
                     @if($plan->slug === 'enterprise')
-                        Liên hệ
+                        {{ __('lamgame.ai.contact') }}
                     @elseif((float) $plan->price === 0.0)
                         $0
                     @else
-                        ${{ number_format((float) $plan->price, 0) }}<span>/tháng</span>
+                        ${{ number_format((float) $plan->price, 0) }}<span>{{ __('lamgame.ai.per_month') }}</span>
                     @endif
                 </div>
-                <div class="ai-plan__period">{{ $plan->billing_interval === 'monthly' ? 'Thanh toán hàng tháng' : $plan->billing_interval }}</div>
+                <div class="ai-plan__period">{{ $plan->billing_interval === 'monthly' ? __('lamgame.ai.billed_monthly') : $plan->billing_interval }}</div>
                 <ul>
                     <li>✅ Concept: {{ $quotaLabel($features['ai_concept'] ?? 0) }}</li>
                     <li>{{ ($features['ai_generate'] ?? 0) !== 0 ? '✅' : '—' }} Sinh code: {{ $quotaLabel($features['ai_generate'] ?? 0) }}</li>
                     <li>{{ ($features['ai_debug'] ?? 0) !== 0 ? '✅' : '—' }} Debug: {{ $quotaLabel($features['ai_debug'] ?? 0) }}</li>
                     <li>{{ ($features['ai_code_review'] ?? 0) !== 0 ? '✅' : '—' }} Review: {{ $quotaLabel($features['ai_code_review'] ?? 0) }}</li>
-                    <li>{{ !empty($features['priority_queue']) ? '✅ Priority queue' : '— Standard queue' }}</li>
+                    <li>{{ !empty($features['priority_queue']) ? '✅ Priority queue' : __('lamgame.ai.standard_queue') }}</li>
                 </ul>
                 @if($plan->slug === 'enterprise')
-                    <a href="/hire" class="ai-btn ai-btn--outline" data-ai-plan="enterprise">Liên hệ tư vấn</a>
+                    <a href="/hire" class="ai-btn ai-btn--outline" data-ai-plan="enterprise">{{ __('lamgame.ai.contact_sales') }}</a>
                 @else
                     <a href="{{ route('lamgame.ai-tools-dashboard') }}?subscribe={{ $plan->slug }}"
                        class="ai-btn {{ $plan->slug === 'pro' ? 'ai-btn--primary' : 'ai-btn--outline' }}"
                        data-ai-plan="{{ $plan->slug }}">
-                        {{ $plan->slug === 'free' ? 'Bắt đầu miễn phí' : 'Chọn ' . $plan->name }}
+                        {{ $plan->slug === 'free' ? __('lamgame.ai.start_free') : __('lamgame.ai.choose') . $plan->name }}
                     </a>
                 @endif
             </div>
@@ -135,12 +135,12 @@
 {{-- FAQ --}}
 <section class="ai-sec ai-sec--alt">
     <div class="ai-container">
-        <h2 class="ai-sec__title">Câu hỏi thường gặp</h2>
+        <h2 class="ai-sec__title">{{ __('lamgame.ai.faq') }}</h2>
         <div class="ai-faq">
-            <details class="ai-faq__item"><summary>Có cần biết code để dùng AI Tools?</summary><p>Không bắt buộc. AI Tools hỗ trợ cả người mới bắt đầu. Bạn chỉ cần mô tả yêu cầu bằng tiếng Việt.</p></details>
-            <details class="ai-faq__item"><summary>Gói Free có giới hạn gì?</summary><p>Quota của từng gói được hiển thị trực tiếp trong bảng giá. Gói Free hiện cung cấp lượt Concept giới hạn theo tháng để bạn trải nghiệm trước khi nâng cấp.</p></details>
-            <details class="ai-faq__item"><summary>Có thể hủy gói bất cứ lúc nào?</summary><p>Có. Bạn có thể hủy subscription bất cứ lúc nào. Gói sẽ còn hiệu lực đến hết chu kỳ thanh toán.</p></details>
-            <details class="ai-faq__item"><summary>AI có hỗ trợ Unity, Unreal, Godot?</summary><p>Có. AI được train trên code của cả 3 engine phổ biến nhất. Bạn chỉ cần chọn engine khi sử dụng.</p></details>
+            <details class="ai-faq__item"><summary>{{ __('lamgame.ai.q1') }}</summary><p>{{ __('lamgame.ai.a1') }}</p></details>
+            <details class="ai-faq__item"><summary>{{ __('lamgame.ai.q2') }}</summary><p>{{ __('lamgame.ai.a2') }}</p></details>
+            <details class="ai-faq__item"><summary>{{ __('lamgame.ai.q3') }}</summary><p>{{ __('lamgame.ai.a3') }}</p></details>
+            <details class="ai-faq__item"><summary>{{ __('lamgame.ai.q4b') }}</summary><p>{{ __('lamgame.ai.a4') }}</p></details>
         </div>
     </div>
 </section>
@@ -148,9 +148,9 @@
 {{-- FINAL CTA --}}
 <section class="ai-final-cta">
     <div class="ai-container">
-        <h2>Sẵn sàng tăng tốc workflow?</h2>
-        <p>Dùng thử miễn phí — không cần thẻ tín dụng</p>
-        <a href="{{ route('lamgame.ai-tools-dashboard') }}" class="ai-btn ai-btn--primary ai-btn--lg">Dùng thử miễn phí →</a>
+        <h2>{{ __('lamgame.ai.cta_title') }}</h2>
+        <p>{{ __('lamgame.ai.cta_sub') }}</p>
+        <a href="{{ route('lamgame.ai-tools-dashboard') }}" class="ai-btn ai-btn--primary ai-btn--lg">{{ __('lamgame.ai.try_free_arrow') }}</a>
     </div>
 </section>
 
