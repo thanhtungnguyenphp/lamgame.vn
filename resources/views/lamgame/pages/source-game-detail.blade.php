@@ -145,8 +145,8 @@
             <div class="sd-info">
                 <div class="sd-info__badges">
                     @if(!empty($sourceGame['engine']))<span class="sd-badge">{{ $sourceGame['engine'] }}</span>@endif
-                    @if(!empty($sourceGame['is_revenue_featured']))<span class="sd-badge sd-badge--prod">Sản phẩm chọn lọc</span>@endif
-                    @if(empty($sourceGame['is_available']))<span class="sd-badge">Đang hoàn thiện</span>
+                    @if(!empty($sourceGame['is_revenue_featured']))<span class="sd-badge sd-badge--prod">{{ __('lamgame.detail.featured') }}</span>@endif
+                    @if(empty($sourceGame['is_available']))<span class="sd-badge">{{ __('lamgame.detail.in_progress') }}</span>
                     @elseif($sourceGame['is_free'])<span class="sd-badge sd-badge--free">Miễn phí</span>@endif
                 </div>
                 <h1 class="sd-info__title">{{ $sourceGame['title'] }}</h1>
@@ -155,7 +155,7 @@
                 {{-- Trust signals --}}
                 <div class="sd-trust">
                     @if(($sourceGame['rating'] ?? 0) > 0 && ($sourceGame['review_count'] ?? 0) > 0)
-                    <span class="sd-trust__item">⭐ {{ number_format($sourceGame['rating'], 1) }}/5 · {{ $sourceGame['review_count'] }} đánh giá</span>
+                    <span class="sd-trust__item">⭐ {{ number_format($sourceGame['rating'], 1) }}/5 · {{ $sourceGame['review_count'] }} {{ __('lamgame.detail.reviews_count') }}</span>
                     @endif
                     @if(($sourceGame['downloads_count'] ?? 0) > 0)
                     <span class="sd-trust__item">↓ {{ number_format($sourceGame['downloads_count']) }} lượt mua</span>
@@ -166,12 +166,12 @@
                 {{-- CTA Priority: #1 Demo > #2 Buy > #3 Save --}}
                 <div class="sd-price-box">
                     @if(!empty($sourceGame['demo_url']))
-                    <a href="{{ $sourceGame['demo_url'] }}" target="_blank" rel="noopener" class="sd-btn sd-btn--demo sd-btn--pulse" data-source-demo>🚀 Chơi thử Demo</a>
+                    <a href="{{ $sourceGame['demo_url'] }}" target="_blank" rel="noopener" class="sd-btn sd-btn--demo sd-btn--pulse" data-source-demo>{{ __('lamgame.detail.try_demo') }}</a>
                     @endif
 
                     <div class="sd-price">
                         @if(empty($sourceGame['is_available']))
-                            <span class="sd-price__value">Chưa mở bán</span>
+                            <span class="sd-price__value">{{ __('lamgame.detail.not_for_sale') }}</span>
                             @if(($sourceGame['price'] ?? 0) > 0)
                             <small>Giá dự kiến: {{ format_usd($sourceGame['price']) }}</small>
                             @endif
@@ -205,7 +205,7 @@
                         $directUrl = $directLink['url'] ?? null;
                     @endphp
                     @if($directUrl)
-                    <a href="{{ $directUrl }}" target="_blank" rel="noopener" id="btn-add-cart" class="sd-btn sd-btn--primary">📥 Tải Source Code (Free)</a>
+                    <a href="{{ $directUrl }}" target="_blank" rel="noopener" id="btn-add-cart" class="sd-btn sd-btn--primary">{{ __('lamgame.detail.download_free') }}</a>
                     @else
                     <form id="add-to-cart-form">
                         <input type="hidden" name="product_id" value="{{ $sourceGame['id'] }}">
@@ -213,7 +213,7 @@
                         @foreach($downloadableLinkIds as $linkId)
                         <input type="hidden" name="links[]" value="{{ $linkId }}">
                         @endforeach
-                        <button type="button" id="btn-add-cart" class="sd-btn sd-btn--primary">📦 Tải về miễn phí</button>
+                        <button type="button" id="btn-add-cart" class="sd-btn sd-btn--primary">{{ __('lamgame.detail.download_free_2') }}</button>
                     </form>
                     @endif
                     @else
@@ -221,7 +221,7 @@
                         Gói tải chưa đạt đủ điều kiện giao hàng. Sản phẩm chưa mở bán để tránh cung cấp file không đầy đủ.
                     </div>
                     @endif
-                    <button class="sd-btn sd-btn--save" onclick="addToFavorites()">❤ Lưu Source</button>
+                    <button class="sd-btn sd-btn--save" onclick="addToFavorites()">{{ __('lamgame.detail.save_source') }}</button>
                     <div id="cart-message" class="sd-message"></div>
                 </div>
 
@@ -248,7 +248,7 @@
 @if(count($sourceGame['features']) > 0)
 <section class="sd-sec sd-fadein">
     <div class="sd-container">
-        <h2 class="sd-sec__title">⚡ Tính năng nổi bật</h2>
+        <h2 class="sd-sec__title">{{ __('lamgame.detail.features') }}</h2>
         <div class="sd-features">
             @foreach($sourceGame['features'] as $feature)
             <div class="sd-feature"><span class="sd-feature__check">✓</span>{{ $feature }}</div>
@@ -261,7 +261,7 @@
 {{-- TRUST PANEL --}}
 <section class="sd-sec sd-sec--trust sd-fadein">
     <div class="sd-container">
-        <h2 class="sd-sec__title">🛡️ Cam kết chất lượng</h2>
+        <h2 class="sd-sec__title">{{ __('lamgame.detail.quality_commit') }}</h2>
         <div class="sd-trust-panel">
             @foreach($sourceGame['buyer_benefits'] ?? [] as $benefit)
             <div class="sd-trust-item"><span class="sd-trust-item__icon">✓</span><span>{{ $benefit }}</span></div>
@@ -285,12 +285,12 @@
 {{-- TECHNICAL SPECS --}}
 <section class="sd-sec">
     <div class="sd-container">
-        <h2 class="sd-sec__title">🔧 Thông số kỹ thuật</h2>
+        <h2 class="sd-sec__title">{{ __('lamgame.detail.specs') }}</h2>
         <div class="sd-specs">
             <div class="sd-spec"><span class="sd-spec__label">Game Engine</span><span class="sd-spec__value">{{ $sourceGame['engine'] }}</span></div>
             <div class="sd-spec"><span class="sd-spec__label">Ngôn ngữ</span><span class="sd-spec__value">{{ $sourceGame['language'] }}</span></div>
-            <div class="sd-spec"><span class="sd-spec__label">Dung lượng</span><span class="sd-spec__value">{{ $sourceGame['file_size'] }}</span></div>
-            <div class="sd-spec"><span class="sd-spec__label">Phiên bản</span><span class="sd-spec__value">{{ $sourceGame['version'] }}</span></div>
+            <div class="sd-spec"><span class="sd-spec__label">{{ __('lamgame.detail.file_size') }}</span><span class="sd-spec__value">{{ $sourceGame['file_size'] }}</span></div>
+            <div class="sd-spec"><span class="sd-spec__label">{{ __('lamgame.detail.version') }}</span><span class="sd-spec__value">{{ $sourceGame['version'] }}</span></div>
             <div class="sd-spec"><span class="sd-spec__label">Cập nhật</span><span class="sd-spec__value">{{ $sourceGame['last_updated'] }}</span></div>
             @if($sourceGame['requirements'])
             <div class="sd-spec"><span class="sd-spec__label">Yêu cầu</span><span class="sd-spec__value">{{ $sourceGame['requirements'] }}</span></div>
@@ -303,7 +303,7 @@
 @if($sourceGame['full_description'])
 <section class="sd-sec sd-sec--alt">
     <div class="sd-container">
-        <h2 class="sd-sec__title">📖 Mô tả chi tiết</h2>
+        <h2 class="sd-sec__title">{{ __('lamgame.detail.description') }}</h2>
         <div class="sd-content">{!! strip_tags($sourceGame['full_description'], '<p><br><strong><b><em><i><ul><ol><li><a><h1><h2><h3><h4><h5><h6><img><table><tr><td><th><thead><tbody><blockquote><pre><code><span><div><hr>') !!}</div>
     </div>
 </section>
@@ -323,7 +323,7 @@
 @if(count($relatedSources) > 0)
 <section class="sd-sec sd-sec--alt">
     <div class="sd-container">
-        <h2 class="sd-sec__title">🎮 Source game liên quan</h2>
+        <h2 class="sd-sec__title">{{ __('lamgame.detail.related') }}</h2>
         <div class="sd-related">
             @foreach($relatedSources as $source)
             <a href="{{ $source['url'] }}" class="sd-related__card">
@@ -343,7 +343,7 @@
 @if(!empty($sourceGame['faq']))
 <section class="sd-sec">
     <div class="sd-container">
-        <h2 class="sd-sec__title">❓ Câu hỏi thường gặp</h2>
+        <h2 class="sd-sec__title">{{ __('lamgame.detail.faq') }}</h2>
         <div class="sd-faq">
             @foreach($sourceGame['faq'] as $qa)
             <details class="sd-faq__item">
@@ -359,17 +359,17 @@
 {{-- FINAL CTA --}}
 <section class="sd-cta">
     <div class="sd-container" style="text-align:center">
-        <h2>Sẵn sàng tiết kiệm thời gian phát triển?</h2>
-        <p>Kiểm tra demo, thông số, nội dung gói tải và điều khoản trước khi mua</p>
+        <h2>{{ __('lamgame.detail.cta_title') }}</h2>
+        <p>{{ __('lamgame.detail.cta_sub') }}</p>
         <div class="sd-cta__btns">
             @if($canDownload && $sourceGame['is_free'])
             <button onclick="document.getElementById('btn-add-cart')?.click()" class="sd-btn sd-btn--primary sd-btn--lg">Tải về miễn phí →</button>
             @elseif($canDownload)
             <button onclick="document.getElementById('btn-buy-now')?.click()" class="sd-btn sd-btn--primary sd-btn--lg">Mua ngay — {{ format_usd($sourceGame['price']) }}</button>
             @else
-            <button type="button" class="sd-btn sd-btn--primary sd-btn--lg" disabled>Tạm ngừng bán</button>
+            <button type="button" class="sd-btn sd-btn--primary sd-btn--lg" disabled>{{ __('lamgame.detail.paused') }}</button>
             @endif
-            <a href="{{ route('lamgame.source-game') }}" class="sd-btn sd-btn--ghost">← Xem thêm source khác</a>
+            <a href="{{ route('lamgame.source-game') }}" class="sd-btn sd-btn--ghost">{{ __('lamgame.detail.back_more') }}</a>
         </div>
     </div>
 </section>
@@ -387,7 +387,7 @@
     @if($canDownload)
     <button onclick="document.getElementById('{{ $sourceGame['is_free'] ? 'btn-add-cart' : 'btn-buy-now' }}')?.click()" class="sd-btn sd-btn--primary sd-btn--sm">{{ $sourceGame['is_free'] ? 'Tải về' : 'Mua ngay' }}</button>
     @else
-    <button type="button" class="sd-btn sd-btn--primary sd-btn--sm" disabled>Chưa sẵn sàng</button>
+    <button type="button" class="sd-btn sd-btn--primary sd-btn--sm" disabled>{{ __('lamgame.detail.not_ready') }}</button>
     @endif
 </div>
 @endsection
@@ -418,6 +418,20 @@
 
 @push('scripts')
 <script>
+// Chuỗi dịch cho JS review (theo locale hiện tại)
+const LG_I18N = {
+    no_review_first: @json(__('lamgame.detail.no_review_first')),
+    no_review:       @json(__('lamgame.detail.no_review')),
+    load_more_review:@json(__('lamgame.detail.load_more_review')),
+    reviews_count:   @json(__('lamgame.detail.reviews_count')),
+    no_reviews_yet:  @json(__('lamgame.detail.no_reviews_yet')),
+    verified_buy:    @json(__('lamgame.detail.verified_buy')),
+    review_thanks:   @json(__('lamgame.detail.review_thanks')),
+    review_failed:   @json(__('lamgame.detail.review_failed')),
+    error_retry:     @json(__('lamgame.detail.error_retry')),
+    anonymous:       @json(__('lamgame.detail.anonymous')),
+    submit_review:   @json(__('lamgame.detail.submit_review')),
+};
 function changeMainImage(url, el) {
     document.getElementById('main-image').src = url;
     document.querySelectorAll('.sd-thumb').forEach(t => t.classList.remove('active'));
@@ -480,7 +494,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.redirect) window.location.href = data.redirect;
             else if (data.message) { showMessage(data.message, false); if (!buyNow) setTimeout(() => window.location.href = '{{ route("shop.checkout.cart.index") }}', 1000); }
             else if (data.data?.message) showMessage(data.data.message, true);
-        }).catch(() => { btn.innerHTML = orig; btn.disabled = false; showMessage('Có lỗi xảy ra.', true); });
+        }).catch(() => { btn.innerHTML = orig; btn.disabled = false; showMessage(LG_I18N.error_retry, true); });
     }
 
     if (addCartBtn) addCartBtn.addEventListener('click', () => addToCart(false, addCartBtn));
@@ -489,8 +503,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load reviews
     fetch('/api/v1/source-game/{{ $sourceGame["id"] }}/review-stats').then(r=>r.json()).then(d=>{
         if(d.data && d.data.total > 0) renderStats(d.data);
-        else document.getElementById('review-stats').innerHTML='<p style="color:#7A8599;font-size:.9rem">⭐ Chưa có đánh giá. Hãy là người đầu tiên!</p>';
-    }).catch(()=>{document.getElementById('review-stats').innerHTML='<p style="color:#7A8599;font-size:.9rem">⭐ Chưa có đánh giá.</p>';});
+        else document.getElementById('review-stats').innerHTML='<p style="color:#7A8599;font-size:.9rem">'+LG_I18N.no_review_first+'</p>';
+    }).catch(()=>{document.getElementById('review-stats').innerHTML='<p style="color:#7A8599;font-size:.9rem">'+LG_I18N.no_review+'</p>';});
     loadReviews(1);
 });
 
@@ -517,7 +531,7 @@ function renderReviewLoadMore(current, last){
         if(list && list.parentNode) list.parentNode.insertBefore(el, list.nextSibling);
     }
     if(current < last){
-        el.innerHTML = '<button type="button" class="sd-btn sd-btn--outline" onclick="loadReviews('+(current+1)+')" style="padding:8px 20px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer">Xem thêm đánh giá</button>';
+        el.innerHTML = '<button type="button" class="sd-btn sd-btn--outline" onclick="loadReviews('+(current+1)+')" style="padding:8px 20px;border:1px solid #d1d5db;border-radius:8px;background:#fff;cursor:pointer">'+LG_I18N.load_more_review+'</button>';
     } else {
         el.innerHTML = '';
     }
@@ -525,9 +539,9 @@ function renderReviewLoadMore(current, last){
 
 function escapeHtml(str){if(str==null)return '';return String(str).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 
-function renderStats(s){const el=document.getElementById('review-stats');if(!el)return;let bars='';for(let i=5;i>=1;i--){const p=s.total>0?Math.round((s.distribution[i]||0)/s.total*100):0;bars+='<div class="sd-rbar"><span>'+i+'★</span><div class="sd-rbar__track"><div class="sd-rbar__fill" style="width:'+p+'%"></div></div><span>'+(s.distribution[i]||0)+'</span></div>';}el.innerHTML='<div class="sd-rating-summary"><div class="sd-rating-big">'+escapeHtml(s.avg_rating)+'<small>/5</small></div><div class="sd-rating-count">'+escapeHtml(s.total)+' đánh giá</div></div><div class="sd-rating-bars">'+bars+'</div>';}
+function renderStats(s){const el=document.getElementById('review-stats');if(!el)return;let bars='';for(let i=5;i>=1;i--){const p=s.total>0?Math.round((s.distribution[i]||0)/s.total*100):0;bars+='<div class="sd-rbar"><span>'+i+'★</span><div class="sd-rbar__track"><div class="sd-rbar__fill" style="width:'+p+'%"></div></div><span>'+(s.distribution[i]||0)+'</span></div>';}el.innerHTML='<div class="sd-rating-summary"><div class="sd-rating-big">'+escapeHtml(s.avg_rating)+'<small>/5</small></div><div class="sd-rating-count">'+escapeHtml(s.total)+' '+LG_I18N.reviews_count+'</div></div><div class="sd-rating-bars">'+bars+'</div>';}
 
-function renderReviews(reviews, append){const el=document.getElementById('review-list');if(!el)return;if(!reviews.length && !append){el.innerHTML='<p style="color:#7A8599">Chưa có đánh giá nào.</p>';return;}const html=reviews.map(r=>{const rating=Math.max(0,Math.min(5,parseInt(r.rating)||0));return '<div class="sd-review"><div class="sd-review__head"><strong>'+escapeHtml(r.customer?.first_name||'Ẩn danh')+'</strong>'+(r.is_verified_purchase?' <span class="sd-verified">✓ Đã mua</span>':'')+'<span class="sd-review__date">'+escapeHtml(new Date(r.created_at).toLocaleDateString('vi-VN'))+'</span></div><div class="sd-review__stars">'+'★'.repeat(rating)+'☆'.repeat(5-rating)+'</div>'+(r.title?'<div class="sd-review__title">'+escapeHtml(r.title)+'</div>':'')+'<p>'+escapeHtml(r.content)+'</p></div>';}).join('');if(append){el.insertAdjacentHTML('beforeend', html);}else{el.innerHTML=html;}}
+function renderReviews(reviews, append){const el=document.getElementById('review-list');if(!el)return;if(!reviews.length && !append){el.innerHTML='<p style="color:#7A8599">'+LG_I18N.no_reviews_yet+'</p>';return;}const html=reviews.map(r=>{const rating=Math.max(0,Math.min(5,parseInt(r.rating)||0));return '<div class="sd-review"><div class="sd-review__head"><strong>'+escapeHtml(r.customer?.first_name||LG_I18N.anonymous)+'</strong>'+(r.is_verified_purchase?' <span class="sd-verified">'+LG_I18N.verified_buy+'</span>':'')+'<span class="sd-review__date">'+escapeHtml(new Date(r.created_at).toLocaleDateString('vi-VN'))+'</span></div><div class="sd-review__stars">'+'★'.repeat(rating)+'☆'.repeat(5-rating)+'</div>'+(r.title?'<div class="sd-review__title">'+escapeHtml(r.title)+'</div>':'')+'<p>'+escapeHtml(r.content)+'</p></div>';}).join('');if(append){el.insertAdjacentHTML('beforeend', html);}else{el.innerHTML=html;}}
 
 // Gửi đánh giá (form trong partial source-game-reviews)
 function submitReview(productId){
@@ -549,16 +563,16 @@ function submitReview(productId){
         headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-TOKEN':token||'','X-Requested-With':'XMLHttpRequest'},
         body:JSON.stringify(payload),
     }).then(async r=>{const d=await r.json().catch(()=>({}));return {ok:r.ok,d};}).then(({ok,d})=>{
-        if(btn){btn.disabled=false;btn.textContent='Gửi đánh giá';}
+        if(btn){btn.disabled=false;btn.textContent=LG_I18N.submit_review;}
         if(ok){
-            if(msg)msg.innerHTML='<p style="color:#16a34a">Cảm ơn! Đánh giá của bạn đang chờ duyệt.</p>';
+            if(msg)msg.innerHTML='<p style="color:#16a34a">'+LG_I18N.review_thanks+'</p>';
             form.reset();
         }else{
-            if(msg)msg.innerHTML='<p style="color:#dc2626">'+escapeHtml(d.message||'Gửi đánh giá thất bại.')+'</p>';
+            if(msg)msg.innerHTML='<p style="color:#dc2626">'+escapeHtml(d.message||LG_I18N.review_failed)+'</p>';
         }
     }).catch(()=>{
-        if(btn){btn.disabled=false;btn.textContent='Gửi đánh giá';}
-        if(msg)msg.innerHTML='<p style="color:#dc2626">Có lỗi xảy ra, vui lòng thử lại.</p>';
+        if(btn){btn.disabled=false;btn.textContent=LG_I18N.submit_review;}
+        if(msg)msg.innerHTML='<p style="color:#dc2626">'+LG_I18N.error_retry+'</p>';
     });
 }
 

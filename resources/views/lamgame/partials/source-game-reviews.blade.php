@@ -28,31 +28,31 @@
 
 @auth('customer')
 <div class="review-form">
-    <h3>Viết đánh giá</h3>
+    <h3>{{ __('lamgame.detail.write_review') }}</h3>
     <div id="review-message"></div>
     <form id="review-form" onsubmit="event.preventDefault(); submitReview({{ $productId }})">
-        <label>Đánh giá *</label>
+        <label>{{ __('lamgame.detail.rating_label') }}</label>
         <select name="rating" required>
-            <option value="">Chọn số sao</option>
-            <option value="5">⭐⭐⭐⭐⭐ Tuyệt vời</option>
-            <option value="4">⭐⭐⭐⭐ Tốt</option>
-            <option value="3">⭐⭐⭐ Bình thường</option>
-            <option value="2">⭐⭐ Kém</option>
-            <option value="1">⭐ Rất kém</option>
+            <option value="">{{ __('lamgame.detail.choose_stars') }}</option>
+            <option value="5">{{ __('lamgame.detail.star5') }}</option>
+            <option value="4">{{ __('lamgame.detail.star4') }}</option>
+            <option value="3">{{ __('lamgame.detail.star3') }}</option>
+            <option value="2">{{ __('lamgame.detail.star2') }}</option>
+            <option value="1">{{ __('lamgame.detail.star1') }}</option>
         </select>
-        <label>Tiêu đề</label>
-        <input type="text" name="title" maxlength="255" placeholder="Tóm tắt đánh giá">
-        <label>Nội dung *</label>
-        <textarea name="content" required maxlength="5000" placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
-        <label>Ưu điểm</label>
-        <input type="text" name="pros" maxlength="1000" placeholder="Điểm mạnh của sản phẩm">
-        <label>Nhược điểm</label>
-        <input type="text" name="cons" maxlength="1000" placeholder="Điểm cần cải thiện">
-        <button type="submit">Gửi đánh giá</button>
+        <label>{{ __('lamgame.detail.title_label') }}</label>
+        <input type="text" name="title" maxlength="255" placeholder="{{ __('lamgame.detail.title_ph') }}">
+        <label>{{ __('lamgame.detail.content_label') }}</label>
+        <textarea name="content" required maxlength="5000" placeholder="{{ __('lamgame.detail.content_ph') }}"></textarea>
+        <label>{{ __('lamgame.detail.pros_label') }}</label>
+        <input type="text" name="pros" maxlength="1000" placeholder="{{ __('lamgame.detail.pros_ph') }}">
+        <label>{{ __('lamgame.detail.cons_label') }}</label>
+        <input type="text" name="cons" maxlength="1000" placeholder="{{ __('lamgame.detail.cons_ph') }}">
+        <button type="submit">{{ __('lamgame.detail.submit_review') }}</button>
     </form>
 </div>
 @else
 <div class="review-form" style="text-align:center">
-    <p>Vui lòng <a href="{{ route('shop.customer.session.index') }}">đăng nhập</a> để viết đánh giá.</p>
+    <p>{!! __('lamgame.detail.login_to_review', ['login' => '<a href="'.route('shop.customer.session.index').'">'.__('lamgame.detail.login_word').'</a>']) !!}</p>
 </div>
 @endauth
