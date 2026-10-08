@@ -12,10 +12,10 @@
         <div class="lg-v2-hero__grid">
             <div class="lg-v2-hero__content">
                 <span class="lg-v2-hero__badge">SOURCE GAME THỰC HÀNH CHO GAME DEVELOPER VIỆT</span>
-                <h1>Source Game đã kiểm chứng <br>cho <span class="lg-v2-hero__accent">Game Developer</span></h1>
-                <p class="lg-v2-hero__sub">Khám phá source có demo, ảnh gameplay, license và gói tải được kiểm tra trước khi mở bán.</p>
+                <h1>{{ __('lamgame.home.hero_title_1') }} <br><span class="lg-v2-hero__accent">{{ __('lamgame.home.hero_title_2') }}</span></h1>
+                <p class="lg-v2-hero__sub">{{ __('lamgame.home.hero_sub') }}</p>
                 <div class="lg-v2-hero__cta">
-                    <a href="{{ route('lamgame.source-game') }}" class="lg-v2-btn lg-v2-btn--primary">✨ Khám phá Source</a>
+                    <a href="{{ route('lamgame.source-game') }}" class="lg-v2-btn lg-v2-btn--primary">{{ __('lamgame.home.hero_cta') }}</a>
                     <a href="{{ route('lamgame.source-game') }}?sort=featured" class="lg-v2-btn lg-v2-btn--secondary">⭐ Source Nổi Bật</a>
                 </div>
             </div>
@@ -29,10 +29,10 @@
                 </div>
                 {{-- USP Cards --}}
                 <div class="lg-v2-hero__usps">
-                    <div class="lg-v2-hero__usp">✅ Demo kiểm tra trước</div>
-                    <div class="lg-v2-hero__usp">📦 Gói tải được xác minh</div>
-                    <div class="lg-v2-hero__usp">📄 License rõ ràng</div>
-                    <div class="lg-v2-hero__usp">💬 Kênh hỗ trợ công khai</div>
+                    <div class="lg-v2-hero__usp">{{ __('lamgame.home.usp_demo') }}</div>
+                    <div class="lg-v2-hero__usp">{{ __('lamgame.home.usp_package') }}</div>
+                    <div class="lg-v2-hero__usp">{{ __('lamgame.home.usp_license') }}</div>
+                    <div class="lg-v2-hero__usp">{{ __('lamgame.home.usp_support') }}</div>
                 </div>
             </div>
         </div>
@@ -52,12 +52,12 @@
             <div class="lg-v2-hero__stat">
                 <span class="lg-v2-hero__stat-icon">💼</span>
                 <span class="lg-v2-hero__stat-number">{{ $siteMetrics['job_listings'] ?? 0 }}+</span>
-                <span class="lg-v2-hero__stat-label">Việc làm</span>
+                <span class="lg-v2-hero__stat-label">{{ __('lamgame.home.stat_jobs') }}</span>
             </div>
             <div class="lg-v2-hero__stat">
                 <span class="lg-v2-hero__stat-icon">📝</span>
                 <span class="lg-v2-hero__stat-number">{{ $siteMetrics['forum_posts'] ?? 0 }}+</span>
-                <span class="lg-v2-hero__stat-label">Bài viết Forum</span>
+                <span class="lg-v2-hero__stat-label">{{ __('lamgame.home.stat_forum') }}</span>
             </div>
         </div>
     </div>
@@ -67,8 +67,8 @@
 <section class="lg-v2-section">
     <div class="lg-v2-container">
         <div class="lg-v2-section__header">
-            <h2 class="lg-v2-section__title">Danh mục phổ biến</h2>
-            <a href="{{ route('lamgame.source-game') }}" class="lg-v2-section__link">Xem tất cả danh mục →</a>
+            <h2 class="lg-v2-section__title">{{ __('lamgame.home.popular_cat') }}</h2>
+            <a href="{{ route('lamgame.source-game') }}" class="lg-v2-section__link">{{ __('lamgame.home.view_all_cat') }}</a>
         </div>
         <div class="lg-v2-hscroll">
             @foreach($categories ?? [] as $cat)
@@ -90,10 +90,10 @@
             @if(!empty($trending ?? []))
             <div class="lg-v2-curated__col">
                 <div class="lg-v2-curated__header">
-                    <h3>🔥 Đang được mua</h3>
-                    <a href="{{ route('lamgame.source-game') }}?sort=popular" class="lg-v2-section__link">Xem tất cả →</a>
+                    <h3>{{ __('lamgame.home.buying_now') }}</h3>
+                    <a href="{{ route('lamgame.source-game') }}?sort=popular" class="lg-v2-section__link">{{ __('lamgame.common.view_all_arrow') }}</a>
                 </div>
-                <p class="lg-v2-curated__desc">Xếp theo giao dịch đã hoàn tất</p>
+                <p class="lg-v2-curated__desc">{{ __('lamgame.home.sorted_by_sales') }}</p>
                 <div class="lg-v2-curated__thumbs">
                     @foreach($trending as $item)
                     <a href="{{ $item['url'] }}" class="lg-v2-curated__thumb" title="{{ $item['name'] }}">
@@ -107,10 +107,10 @@
             @if(!empty($best_selling ?? []))
             <div class="lg-v2-curated__col">
                 <div class="lg-v2-curated__header">
-                    <h3>✅ Source đã kiểm chứng</h3>
-                    <a href="{{ route('lamgame.source-game') }}" class="lg-v2-section__link">Xem tất cả →</a>
+                    <h3>{{ __('lamgame.home.verified_source') }}</h3>
+                    <a href="{{ route('lamgame.source-game') }}" class="lg-v2-section__link">{{ __('lamgame.common.view_all_arrow') }}</a>
                 </div>
-                <p class="lg-v2-curated__desc">Có demo, ảnh, license và gói tải đã xác minh</p>
+                <p class="lg-v2-curated__desc">{{ __('lamgame.home.verified_desc') }}</p>
                 <div class="lg-v2-curated__thumbs">
                     @foreach($best_selling as $item)
                     <a href="{{ $item['url'] }}" class="lg-v2-curated__thumb" title="{{ $item['name'] }}">
@@ -125,9 +125,9 @@
             <div class="lg-v2-curated__col">
                 <div class="lg-v2-curated__header">
                     <h3>👑 Staff Picks</h3>
-                    <a href="{{ route('lamgame.source-game') }}?sort=featured" class="lg-v2-section__link">Xem tất cả →</a>
+                    <a href="{{ route('lamgame.source-game') }}?sort=featured" class="lg-v2-section__link">{{ __('lamgame.common.view_all_arrow') }}</a>
                 </div>
-                <p class="lg-v2-curated__desc">SKU đã kiểm chứng và được đội ngũ lựa chọn</p>
+                <p class="lg-v2-curated__desc">{{ __('lamgame.home.curated_desc') }}</p>
                 <div class="lg-v2-curated__thumbs">
                     @foreach($staff_picks as $item)
                     <a href="{{ $item['url'] }}" class="lg-v2-curated__thumb" title="{{ $item['name'] }}">
@@ -156,11 +156,11 @@
                 <select class="lg-v2-filter-select" id="filter-engine"><option value="">Engine</option><option>Unity</option><option>Unreal</option><option>Godot</option><option>Phaser</option></select>
                 <select class="lg-v2-filter-select" id="filter-genre"><option value="">Genre</option>@foreach($categories ?? [] as $cat)@if(!($cat['active'] ?? false))<option value="{{ $cat['slug'] }}">{{ $cat['name'] }}</option>@endif @endforeach</select>
                 <select class="lg-v2-filter-select" id="filter-platform"><option value="">Platform</option><option>PC</option><option>Mobile</option><option>Web</option><option>Console</option></select>
-                <select class="lg-v2-filter-select" id="filter-price"><option value="">Giá</option><option value="0-0">Miễn phí</option><option value="1-10">Đến 250.000đ</option><option value="10-20">250.000đ - 500.000đ</option><option value="20-100">Trên 500.000đ</option></select>
+                <select class="lg-v2-filter-select" id="filter-price"><option value="">Giá</option><option value="0-0">Miễn phí</option><option value="1-10">{{ __('lamgame.home.price_under') }}</option><option value="10-20">{{ __('lamgame.home.price_mid') }}</option><option value="20-100">{{ __('lamgame.home.price_over') }}</option></select>
                 <select class="lg-v2-filter-select" id="filter-difficulty"><option value="">Độ khó</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select>
             </div>
             <div class="lg-v2-filters__right">
-                <span style="color:var(--lg-text-muted);font-size:0.8125rem;">Sắp xếp:</span>
+                <span style="color:var(--lg-text-muted);font-size:0.8125rem;">{{ __('lamgame.home.sort_by') }}</span>
                 <select class="lg-v2-filter-select" id="filter-sort"><option value="trending">Trending</option><option value="newest">Mới nhất</option><option value="featured">Nổi bật</option><option value="price_low">Giá thấp→cao</option><option value="price_high">Giá cao→thấp</option><option value="rating">Rating</option></select>
             </div>
         </div>
@@ -194,7 +194,7 @@
                         @if(($product['review_count'] ?? 0) > 0 || ($product['sales_count'] ?? 0) > 0)
                         <div class="lg-v2-product-card__rating">
                             @if(($product['review_count'] ?? 0) > 0)<span>⭐ {{ $product['rating'] }} ({{ $product['review_count'] }})</span>@endif
-                            @if(($product['sales_count'] ?? 0) > 0)<span>• {{ number_format($product['sales_count']) }} lượt mua</span>@endif
+                            @if(($product['sales_count'] ?? 0) > 0)<span>• {{ number_format($product['sales_count']) }} {{ __('lamgame.home.sales_count') }}</span>@endif
                         </div>
                         @endif
                         <div class="lg-v2-product-card__price-row">
@@ -203,7 +203,7 @@
                             @else
                             <span class="lg-v2-product-card__price">{{ number_format($product['price'], 0, ',', '.') }}đ</span>
                             @endif
-                            <span class="lg-v2-btn lg-v2-btn--outline lg-v2-btn--sm">Xem chi tiết</span>
+                            <span class="lg-v2-btn lg-v2-btn--outline lg-v2-btn--sm">{{ __('lamgame.common.view_detail') }}</span>
                         </div>
                     </div>
                 </div>
@@ -232,7 +232,7 @@
 
         @if(($products['has_more'] ?? false))
         <div style="text-align:center;margin-top:2rem;">
-            <button class="lg-v2-btn lg-v2-btn--secondary" id="load-more-btn">Xem thêm sản phẩm</button>
+            <button class="lg-v2-btn lg-v2-btn--secondary" id="load-more-btn">{{ __('lamgame.home.load_more') }}</button>
         </div>
         @endif
     </div>
@@ -245,36 +245,36 @@
             <div class="lg-v2-trust__item">
                 <span class="lg-v2-trust__icon">✅</span>
                 <div>
-                    <strong>Source chất lượng</strong>
-                    <span>Được kiểm duyệt kỹ càng</span>
+                    <strong>{{ __('lamgame.home.feat_quality') }}</strong>
+                    <span>{{ __('lamgame.home.feat_quality_desc') }}</span>
                 </div>
             </div>
             <div class="lg-v2-trust__item">
                 <span class="lg-v2-trust__icon">🔄</span>
                 <div>
-                    <strong>Cập nhật thường xuyên</strong>
-                    <span>Update liên tục, tối ưu</span>
+                    <strong>{{ __('lamgame.home.feat_update') }}</strong>
+                    <span>{{ __('lamgame.home.feat_update_desc') }}</span>
                 </div>
             </div>
             <div class="lg-v2-trust__item">
                 <span class="lg-v2-trust__icon">💬</span>
                 <div>
                     <strong>Hỗ trợ nhanh chóng</strong>
-                    <span>Hỗ trợ 24/7 từ đội ngũ</span>
+                    <span>{{ __('lamgame.home.feat_support') }}</span>
                 </div>
             </div>
             <div class="lg-v2-trust__item">
                 <span class="lg-v2-trust__icon">📄</span>
                 <div>
-                    <strong>Tài liệu đầy đủ</strong>
-                    <span>Hướng dẫn chi tiết, dễ hiểu</span>
+                    <strong>{{ __('lamgame.home.feat_docs') }}</strong>
+                    <span>{{ __('lamgame.home.feat_docs_desc') }}</span>
                 </div>
             </div>
             <div class="lg-v2-trust__item">
                 <span class="lg-v2-trust__icon">💰</span>
                 <div>
-                    <strong>Hoàn tiền 7 ngày</strong>
-                    <span>Không hài lòng, hoàn tiền 100%</span>
+                    <strong>{{ __('lamgame.home.feat_refund') }}</strong>
+                    <span>{{ __('lamgame.home.feat_refund_desc') }}</span>
                 </div>
             </div>
         </div>
@@ -290,7 +290,7 @@
     <div class="lg-v2-container">
         <div class="lg-v2-section__header">
             <h2 class="lg-v2-section__title">📝 Blog & Tutorial</h2>
-            <a href="/blog" class="lg-v2-section__link">Xem tất cả →</a>
+            <a href="/blog" class="lg-v2-section__link">{{ __('lamgame.common.view_all_arrow') }}</a>
         </div>
         <div class="lg-v2-blog-grid">
             @forelse(($latestBlogs ?? []) as $blog)
@@ -323,7 +323,7 @@
 <section class="lg-v2-section lg-v2-section--alt">
     <div class="lg-v2-container">
         <div class="lg-v2-section__header">
-            <h2 class="lg-v2-section__title">💬 Cộng đồng đang bàn</h2>
+            <h2 class="lg-v2-section__title">{{ __('lamgame.home.community') }}</h2>
             <a href="/forum" class="lg-v2-section__link">Xem Forum →</a>
         </div>
         <div class="lg-v2-forum-list">
@@ -361,7 +361,7 @@
                 <span class="lg-v2-lottery-widget__icon">🤖</span>
                 <div>
                     <strong>AI Tools cho Game Developer</strong>
-                    <span>Generate ideas, code snippets, assets và nhiều hơn nữa</span>
+                    <span>{{ __('lamgame.home.ai_desc') }}</span>
                 </div>
             </div>
             <span class="lg-v2-btn lg-v2-btn--outline lg-v2-btn--sm">Thử AI Tools →</span>
@@ -848,6 +848,13 @@
 @push('scripts')
 {{-- Alpine.js is loaded in master-v2 layout --}}
 <script>
+// Chuỗi dịch cho JS (render phía client) — theo locale hiện tại
+const LG_I18N = {
+    sales_count: @json(__('lamgame.home.sales_count')),
+    view_detail: @json(__('lamgame.common.view_detail')),
+    load_error:  @json(__('lamgame.home.load_error')),
+    free:        @json(__('lamgame.common.free')),
+};
 document.addEventListener('DOMContentLoaded', function() {
     const grid = document.getElementById('product-grid');
     const loadMoreBtn = document.getElementById('load-more-btn');
@@ -917,11 +924,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="lg-v2-product-card__footer">
                     ${(product.review_count > 0 || product.sales_count > 0) ? `<div class="lg-v2-product-card__rating">
                         ${product.review_count > 0 ? `<span>⭐ ${product.rating} (${product.review_count})</span>` : ''}
-                        ${product.sales_count > 0 ? `<span>• ${product.sales_count.toLocaleString()} lượt mua</span>` : ''}
+                        ${product.sales_count > 0 ? `<span>• ${product.sales_count.toLocaleString()} ${LG_I18N.sales_count}</span>` : ''}
                     </div>` : ''}
                     <div class="lg-v2-product-card__price-row">
                         ${priceHtml}
-                        <span class="lg-v2-btn lg-v2-btn--outline lg-v2-btn--sm">Xem chi tiết</span>
+                        <span class="lg-v2-btn lg-v2-btn--outline lg-v2-btn--sm">${LG_I18N.view_detail}</span>
                     </div>
                 </div>
             </div>
@@ -985,7 +992,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (err) {
             console.error('Failed to fetch products:', err);
             if (!append) {
-                grid.innerHTML = '<p style="text-align:center;color:var(--lg-text-muted);grid-column:1/-1;padding:2rem;">Không thể tải sản phẩm. Vui lòng thử lại.</p>';
+                grid.innerHTML = '<p style="text-align:center;color:var(--lg-text-muted);grid-column:1/-1;padding:2rem;">' + LG_I18N.load_error + '</p>';
             }
         } finally {
             isLoading = false;
