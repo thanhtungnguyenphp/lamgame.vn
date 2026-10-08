@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
-@section('page_title', $page_title ?? 'Chi tiết việc làm - Làm Game')
-@section('page_description', $page_description ?? 'Thông tin chi tiết về cơ hội việc làm trong ngành game development')
+@section('page_title', $page_title ?? __('lamgame.jobdetail.page_title'))
+@section('page_description', $page_description ?? __('lamgame.jobdetail.page_desc'))
 
 @push('meta')
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -18,7 +18,7 @@
     <script type="application/ld+json">
     {!! \App\Helpers\StructuredDataHelper::breadcrumb([
         ['name' => 'Trang chủ', 'url' => config('app.url')],
-        ['name' => 'Việc làm Game', 'url' => config('app.url') . '/viec-lam-game'],
+        ['name' => __('lamgame.jobdetail.crumb_jobs'), 'url' => config('app.url') . '/viec-lam-game'],
         ['name' => $job->title ?? $job->name, 'url' => config('app.url') . '/viec-lam/' . $job->url_key]
     ]) !!}
     </script>
@@ -67,7 +67,7 @@
             <nav class="breadcrumb-nav">
                 <a href="{{ url('/') }}" class="breadcrumb-link">Trang chủ</a>
                 <span class="breadcrumb-separator">›</span>
-                <a href="{{ route('lamgame.viec-lam-game') }}" class="breadcrumb-link">Việc làm Game</a>
+                <a href="{{ route('lamgame.viec-lam-game') }}" class="breadcrumb-link">{{ __('lamgame.jobdetail.crumb_jobs') }}</a>
                 <span class="breadcrumb-separator">›</span>
                 <span class="breadcrumb-current">{{ $jobTitle }}</span>
             </nav>
@@ -95,7 +95,7 @@
                                 <div class="job-meta">
                                     <div class="meta-item">
                                         <i class="fa fa-map-marker"></i>
-                                        <span>{{ $job->attributes['job_location'] ?? 'Việt Nam' }}</span>
+                                        <span>{{ $job->attributes['job_location'] ?? __('lamgame.jobdetail.vietnam') }}</span>
                                     </div>
                                     <div class="meta-item">
                                         <i class="fa fa-money"></i>
@@ -125,7 +125,7 @@
                                         $hiddenSkillsCount = max(0, count($skills) - 4);
                                     @endphp
                                     <div class="quick-info-row">
-                                        <span class="quick-info-label">Kỹ năng:</span>
+                                        <span class="quick-info-label">{{ __('lamgame.jobdetail.skills') }}</span>
                                         <div class="quick-info-content">
                                             @foreach($visibleSkills as $skill)
                                                 <span class="info-pill">{{ $skill }}</span>
@@ -183,11 +183,11 @@
                         <div class="action-buttons">
                             <button class="btn-apply" onclick="openApplyModal()">
                                 <i class="fa fa-paper-plane"></i>
-                                <span>Ứng tuyển ngay</span>
+                                <span>{{ __('lamgame.jobdetail.apply_now') }}</span>
                             </button>
                             <button class="btn-save" onclick="toggleSaveJob(this)">
                                 <i class="fa fa-heart-o"></i>
-                                <span>Lưu việc làm</span>
+                                <span>{{ __('lamgame.jobdetail.save_job') }}</span>
                             </button>
                         </div>
                     </div>
@@ -196,12 +196,12 @@
                     <div class="content-sections">
                         <!-- Job Description -->
                         <div class="content-section">
-                            <h2 class="section-title">Mô tả công việc</h2>
+                            <h2 class="section-title">{{ __('lamgame.jobdetail.job_desc') }}</h2>
                             <div class="section-content editor-content">
                                 @if($job->description)
                                     {!! \App\Helpers\HtmlSanitizer::sanitize($job->description) !!}
                                 @else
-                                    <p>Thông tin mô tả công việc sẽ được cập nhật sớm.</p>
+                                    <p>{{ __('lamgame.jobdetail.desc_updating') }}</p>
                                 @endif
                             </div>
                         </div>
@@ -215,7 +215,7 @@
                     <!-- Similar Jobs Card -->
                     @if($similarJobs->count() > 0)
                     <div class="sidebar-card">
-                        <h3 class="sidebar-title">Việc làm tương tự</h3>
+                        <h3 class="sidebar-title">{{ __('lamgame.jobdetail.similar') }}</h3>
                         <div class="similar-jobs">
                             @foreach($similarJobs as $similarJob)
                                 @php
@@ -247,13 +247,13 @@
         <div class="container">
             <div class="bottom-apply-content">
                 <div class="apply-cta">
-                    <h3>Sẵn sàng ứng tuyển?</h3>
-                    <p>Gửi hồ sơ ngay hôm nay!</p>
+                    <h3>{{ __('lamgame.jobdetail.ready') }}</h3>
+                    <p>{{ __('lamgame.jobdetail.ready_sub') }}</p>
                 </div>
                 <div class="apply-action">
                     <button class="btn-apply-bottom" onclick="openApplyModal()">
                         <i class="fa fa-paper-plane"></i>
-                        <span>Ứng tuyển ngay</span>
+                        <span>{{ __('lamgame.jobdetail.apply_now') }}</span>
                     </button>
                 </div>
             </div>
@@ -265,7 +265,7 @@
 <div id="applyModal" class="modal-overlay" onclick="closeApplyModal()">
     <div class="modal-container" onclick="event.stopPropagation()">
         <div class="modal-header">
-            <h3>Ứng tuyển vị trí: {{ $jobTitle }}</h3>
+            <h3>{{ __('lamgame.jobdetail.apply_for') }} {{ $jobTitle }}</h3>
             <button class="modal-close" onclick="closeApplyModal()">
                 <i class="fa fa-times"></i>
             </button>
@@ -279,7 +279,7 @@
                     <div class="auth-indicator">
                         <i class="fa fa-check-circle" style="color: #10b981;"></i>
                         <span>Đã đăng nhập: {{ $customer['full_name'] }}</span>
-                        <small style="display: block; color: #6b7280; margin-top: 2px;">Thông tin sẽ được tự động điền</small>
+                        <small style="display: block; color: #6b7280; margin-top: 2px;">{{ __('lamgame.jobdetail.autofill') }}</small>
                     </div>
                 </div>
 @else
@@ -288,7 +288,7 @@
                         <div class="guest-message">
                             <i class="fa fa-info-circle" style="color: #667eea;"></i>
                             <div>
-                                <span>Đang ứng tuyển với tư cách khách</span>
+                                <span>{{ __('lamgame.jobdetail.as_guest') }}</span>
                                 <small style="display: block; color: #6b7280; margin-top: 2px;">
                                     Đăng nhập để tự động điền thông tin và quản lý hồ sơ ứng tuyển
                                 </small>
@@ -310,8 +310,8 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="full_name">Họ và tên <span class="required">*</span></label>
-                        <input type="text" id="full_name" name="full_name" required placeholder="Nhập họ và tên của bạn">
+                        <label for="full_name">{{ __('lamgame.jobdetail.full_name') }} <span class="required">*</span></label>
+                        <input type="text" id="full_name" name="full_name" required placeholder="{{ __('lamgame.jobdetail.full_name_ph') }}">
                     </div>
                     <div class="form-group">
                         <label for="email">Email <span class="required">*</span></label>
@@ -320,7 +320,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="phone">Số điện thoại <span class="required">*</span></label>
+                    <label for="phone">{{ __('lamgame.jobdetail.phone') }} <span class="required">*</span></label>
                     <input type="tel" id="phone" name="phone" required placeholder="0123456789">
                 </div>
 
@@ -330,16 +330,16 @@
                         <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required>
                         <div class="file-upload-text">
                             <i class="fa fa-upload"></i>
-                            <span>Chọn file CV (PDF, DOC, DOCX)</span>
+                            <span>{{ __('lamgame.jobdetail.cv_choose') }}</span>
                         </div>
                         <div id="fileName" style="display: none; margin-top: 8px;"></div>
                     </div>
-                    <small class="form-help">Kích thước tối đa: 5MB</small>
+                    <small class="form-help">{{ __('lamgame.jobdetail.cv_max') }}</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="cover_letter">Thư xin việc (tùy chọn)</label>
-                    <textarea id="cover_letter" name="cover_letter" rows="4" placeholder="Giới thiệu ngắn gọn về bản thân và lý do ứng tuyển..."></textarea>
+                    <label for="cover_letter">{{ __('lamgame.jobdetail.cover_letter') }}</label>
+                    <textarea id="cover_letter" name="cover_letter" rows="4" placeholder="{{ __('lamgame.jobdetail.cover_ph') }}"></textarea>
                 </div>
             </form>
         </div>
@@ -350,7 +350,7 @@
             </button>
             <button type="submit" form="applyForm" class="btn-submit">
                 <i class="fa fa-paper-plane"></i>
-                Gửi hồ sơ
+                {{ __('lamgame.jobdetail.submit') }}
             </button>
         </div>
     </div>
