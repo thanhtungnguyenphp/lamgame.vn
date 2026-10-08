@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('page_title', $page_title ?? 'Việc làm Game - Cơ hội nghề nghiệp ngành Game')
-@section('page_description', $page_description ?? 'Khám phá cơ hội việc làm Game Developer, Game Designer, 3D Artist tại Việt Nam. Kết nối với các studio game hàng đầu.')
+@section('page_description', $page_description ?? __('lamgame.jobs.meta_desc'))
 
 @push('schema_markup')
 <script type="application/ld+json">
@@ -9,7 +9,7 @@
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": "Việc làm Game Developer",
-    "description": "Tìm kiếm cơ hội việc làm trong ngành game development tại Việt Nam",
+    "description": "{{ __('lamgame.jobs.schema_desc') }}",
     "url": "{{ url('/viec-lam-game') }}",
     "isPartOf": {
         "@type": "WebSite",
@@ -35,27 +35,27 @@
                     Game Industry Careers
                 </span>
                 <h1 class="lg-jobs__title">
-                    Tìm <span class="lg-jobs__title-accent">việc làm Game</span> phù hợp với bạn
+                    {{ __('lamgame.jobs.hero_find') }} <span class="lg-jobs__title-accent">{{ __('lamgame.jobs.hero_accent') }}</span> {{ __('lamgame.jobs.hero_suffix') }}
                 </h1>
                 <p class="lg-jobs__subtitle">
-                    Kết nối với các studio game hàng đầu Việt Nam. Khám phá cơ hội nghề nghiệp trong ngành công nghiệp game đang phát triển mạnh mẽ.
+                    {{ __('lamgame.jobs.hero_sub') }}
                 </p>
                 
                 {{-- Hero Stats --}}
                 <div class="lg-jobs__stats">
                     <div class="lg-jobs__stat">
                         <span class="lg-jobs__stat-value">{{ $totalJobs }}</span>
-                        <span class="lg-jobs__stat-label">Việc làm đang tuyển</span>
+                        <span class="lg-jobs__stat-label">{{ __('lamgame.jobs.stat_open') }}</span>
                     </div>
                     <div class="lg-jobs__stat-divider"></div>
                     <div class="lg-jobs__stat">
                         <span class="lg-jobs__stat-value">{{ isset($topCompanies) ? $topCompanies->count() : 0 }}+</span>
-                        <span class="lg-jobs__stat-label">Studios & Companies</span>
+                        <span class="lg-jobs__stat-label">{{ __('lamgame.jobs.stat_studios') }}</span>
                     </div>
                     <div class="lg-jobs__stat-divider"></div>
                     <div class="lg-jobs__stat">
                         <span class="lg-jobs__stat-value">15-50M</span>
-                        <span class="lg-jobs__stat-label">Mức lương phổ biến</span>
+                        <span class="lg-jobs__stat-label">{{ __('lamgame.jobs.stat_salary') }}</span>
                     </div>
                 </div>
             </div>
@@ -76,7 +76,7 @@
                             type="text" 
                             name="keyword" 
                             class="lg-jobs__search-input"
-                            placeholder="Tìm kiếm: Unity Developer, Game Designer, 3D Artist..." 
+                            placeholder="{{ __('lamgame.jobs.search_ph') }}" 
                             value="{{ $searchParams['keyword'] ?? '' }}"
                             autocomplete="off"
                         >
@@ -93,7 +93,7 @@
                             <circle cx="11" cy="11" r="8"/>
                             <path d="m21 21-4.35-4.35"/>
                         </svg>
-                        Tìm kiếm
+                        {{ __('lamgame.jobs.search_btn') }}
                     </button>
                 </div>
 
@@ -105,13 +105,13 @@
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                                 <circle cx="12" cy="10" r="3"/>
                             </svg>
-                            Địa điểm
+                            {{ __('lamgame.jobs.f_location') }}
                         </label>
                         <select name="location" class="lg-jobs__filter-select">
-                            <option value="">Tất cả</option>
-                            <option value="ho-chi-minh" {{ ($searchParams['location'] ?? '') == 'ho-chi-minh' ? 'selected' : '' }}>TP. Hồ Chí Minh</option>
-                            <option value="ha-noi" {{ ($searchParams['location'] ?? '') == 'ha-noi' ? 'selected' : '' }}>Hà Nội</option>
-                            <option value="da-nang" {{ ($searchParams['location'] ?? '') == 'da-nang' ? 'selected' : '' }}>Đà Nẵng</option>
+                            <option value="">{{ __('lamgame.jobs.all') }}</option>
+                            <option value="ho-chi-minh" {{ ($searchParams['location'] ?? '') == 'ho-chi-minh' ? 'selected' : '' }}>{{ __('lamgame.jobs.loc_hcm') }}</option>
+                            <option value="ha-noi" {{ ($searchParams['location'] ?? '') == 'ha-noi' ? 'selected' : '' }}>{{ __('lamgame.jobs.loc_hanoi') }}</option>
+                            <option value="da-nang" {{ ($searchParams['location'] ?? '') == 'da-nang' ? 'selected' : '' }}>{{ __('lamgame.jobs.loc_danang') }}</option>
                             <option value="remote" {{ ($searchParams['location'] ?? '') == 'remote' ? 'selected' : '' }}>Remote</option>
                         </select>
                     </div>
@@ -121,15 +121,15 @@
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path d="M12 20V10M18 20V4M6 20v-4"/>
                             </svg>
-                            Cấp độ
+                            {{ __('lamgame.jobs.f_level') }}
                         </label>
                         <select name="level" class="lg-jobs__filter-select">
-                            <option value="">Tất cả</option>
+                            <option value="">{{ __('lamgame.jobs.all') }}</option>
                             <option value="intern" {{ ($searchParams['level'] ?? '') == 'intern' ? 'selected' : '' }}>Intern</option>
                             <option value="fresher" {{ ($searchParams['level'] ?? '') == 'fresher' ? 'selected' : '' }}>Fresher</option>
                             <option value="junior" {{ ($searchParams['level'] ?? '') == 'junior' ? 'selected' : '' }}>Junior</option>
                             <option value="senior" {{ ($searchParams['level'] ?? '') == 'senior' ? 'selected' : '' }}>Senior</option>
-                            <option value="lead" {{ ($searchParams['level'] ?? '') == 'lead' ? 'selected' : '' }}>Lead/Manager</option>
+                            <option value="lead" {{ ($searchParams['level'] ?? '') == 'lead' ? 'selected' : '' }}>{{ __('lamgame.jobs.lvl_lead') }}</option>
                         </select>
                     </div>
 
@@ -139,10 +139,10 @@
                                 <rect x="2" y="7" width="20" height="14" rx="2"/>
                                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
                             </svg>
-                            Loại hình
+                            {{ __('lamgame.jobs.f_type') }}
                         </label>
                         <select name="type" class="lg-jobs__filter-select">
-                            <option value="">Tất cả</option>
+                            <option value="">{{ __('lamgame.jobs.all') }}</option>
                             <option value="fulltime" {{ ($searchParams['type'] ?? '') == 'fulltime' ? 'selected' : '' }}>Full-time</option>
                             <option value="parttime" {{ ($searchParams['type'] ?? '') == 'parttime' ? 'selected' : '' }}>Part-time</option>
                             <option value="contract" {{ ($searchParams['type'] ?? '') == 'contract' ? 'selected' : '' }}>Contract</option>
@@ -153,7 +153,7 @@
 
                 {{-- Quick Tags --}}
                 <div class="lg-jobs__quick-tags">
-                    <span class="lg-jobs__quick-label">Phổ biến:</span>
+                    <span class="lg-jobs__quick-label">{{ __('lamgame.jobs.popular') }}</span>
                     <button type="button" class="lg-jobs__quick-tag {{ ($searchParams['keyword'] ?? '') == 'Unity' ? 'active' : '' }}" data-keyword="Unity">Unity</button>
                     <button type="button" class="lg-jobs__quick-tag {{ ($searchParams['keyword'] ?? '') == 'Unreal' ? 'active' : '' }}" data-keyword="Unreal">Unreal</button>
                     <button type="button" class="lg-jobs__quick-tag {{ ($searchParams['location'] ?? '') == 'remote' ? 'active' : '' }}" data-location="remote">Remote</button>
@@ -170,17 +170,17 @@
             {{-- Results Header --}}
             <div class="lg-jobs__results-header">
                 <div class="lg-jobs__results-count">
-                    <strong>{{ $totalJobs }}</strong> việc làm 
+                    <strong>{{ $totalJobs }}</strong> {{ __('lamgame.jobs.results_jobs') }} 
                     @if($searchParams['keyword'] ?? false)
-                        cho "<em>{{ $searchParams['keyword'] }}</em>"
+                        {{ __('lamgame.jobs.results_for') }} "<em>{{ $searchParams['keyword'] }}</em>"
                     @endif
                 </div>
                 <div class="lg-jobs__results-sort">
-                    <label>Sắp xếp:</label>
+                    <label>{{ __('lamgame.jobs.sort') }}</label>
                     <select name="sort" form="jobSearchForm" onchange="document.getElementById('jobSearchForm').submit()">
-                        <option value="newest" {{ ($searchParams['sort'] ?? 'newest') == 'newest' ? 'selected' : '' }}>Mới nhất</option>
-                        <option value="salary-high" {{ ($searchParams['sort'] ?? '') == 'salary-high' ? 'selected' : '' }}>Lương cao nhất</option>
-                        <option value="company" {{ ($searchParams['sort'] ?? '') == 'company' ? 'selected' : '' }}>Theo công ty</option>
+                        <option value="newest" {{ ($searchParams['sort'] ?? 'newest') == 'newest' ? 'selected' : '' }}>{{ __('lamgame.jobs.sort_newest') }}</option>
+                        <option value="salary-high" {{ ($searchParams['sort'] ?? '') == 'salary-high' ? 'selected' : '' }}>{{ __('lamgame.jobs.sort_salary') }}</option>
+                        <option value="company" {{ ($searchParams['sort'] ?? '') == 'company' ? 'selected' : '' }}>{{ __('lamgame.jobs.sort_company') }}</option>
                     </select>
                 </div>
             </div>
@@ -191,8 +191,8 @@
                 <div class="lg-jobs__list">
                     @forelse($jobs as $index => $job)
                         @php
-                            $salaryFormatted = $job->attributes['salary_range'] ?? 'Thỏa thuận';
-                            $location = $job->attributes['job_location'] ?? 'Việt Nam';
+                            $salaryFormatted = $job->attributes['salary_range'] ?? __('lamgame.jobs.negotiable');
+                            $location = $job->attributes['job_location'] ?? __('lamgame.jobs.vietnam');
                             $jobType = $job->attributes['job_type'] ?? 'Full-time';
                             $postedAgo = \Carbon\Carbon::parse($job->created_at)->diffForHumans();
                             $isFeatured = $index < 2;
@@ -202,7 +202,7 @@
                         
                         <article class="lg-jobs__card {{ $isFeatured ? 'lg-jobs__card--featured' : '' }}">
                             @if($isFeatured)
-                            <div class="lg-jobs__card-badge">⭐ Nổi bật</div>
+                            <div class="lg-jobs__card-badge">{{ __('lamgame.jobs.featured') }}</div>
                             @endif
                             
                             <div class="lg-jobs__card-header">
@@ -261,8 +261,8 @@
                                     {{ $postedAgo }}
                                 </span>
                                 <div class="lg-jobs__card-actions">
-                                    <a href="{{ route('lamgame.job.detail', $job->url_key) }}" class="lg-jobs__btn lg-jobs__btn--outline">Chi tiết</a>
-                                    <a href="{{ route('lamgame.job.detail', $job->url_key) }}#apply" class="lg-jobs__btn lg-jobs__btn--primary">Ứng tuyển</a>
+                                    <a href="{{ route('lamgame.job.detail', $job->url_key) }}" class="lg-jobs__btn lg-jobs__btn--outline">{{ __('lamgame.jobs.detail') }}</a>
+                                    <a href="{{ route('lamgame.job.detail', $job->url_key) }}#apply" class="lg-jobs__btn lg-jobs__btn--primary">{{ __('lamgame.jobs.apply') }}</a>
                                 </div>
                             </div>
                         </article>
@@ -271,9 +271,9 @@
                             <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                             </svg>
-                            <h3>Không tìm thấy việc làm</h3>
-                            <p>Hãy thử thay đổi từ khóa hoặc bộ lọc tìm kiếm</p>
-                            <a href="{{ url('/viec-lam-game') }}" class="lg-jobs__btn lg-jobs__btn--primary">Xem tất cả việc làm</a>
+                            <h3>{{ __('lamgame.jobs.not_found') }}</h3>
+                            <p>{{ __('lamgame.jobs.not_found_sub') }}</p>
+                            <a href="{{ url('/viec-lam-game') }}" class="lg-jobs__btn lg-jobs__btn--primary">{{ __('lamgame.jobs.view_all') }}</a>
                         </div>
                     @endforelse
                 </div>
@@ -315,11 +315,11 @@
                                 </div>
                                 <div class="lg-jobs__company-info">
                                     <strong>{{ $company->company_name }}</strong>
-                                    <span>{{ $company->job_count }} việc làm</span>
+                                    <span>{{ $company->job_count }} {{ __('lamgame.jobs.company_jobs') }}</span>
                                 </div>
                             </div>
                             @empty
-                            <p class="lg-jobs__sidebar-empty">Chưa có dữ liệu</p>
+                            <p class="lg-jobs__sidebar-empty">{{ __('lamgame.jobs.no_data') }}</p>
                             @endforelse
                         </div>
                     </div>
@@ -330,28 +330,28 @@
                             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                             </svg>
-                            Mức lương tham khảo
+                            {{ __('lamgame.jobs.salary_guide') }}
                         </h3>
                         <div class="lg-jobs__salary-guide">
                             <div class="lg-jobs__salary-item">
                                 <span class="lg-jobs__salary-role">Unity Developer</span>
-                                <span class="lg-jobs__salary-range">15-35 triệu</span>
+                                <span class="lg-jobs__salary-range">15-35 {{ __('lamgame.jobs.salary_unit') }}</span>
                             </div>
                             <div class="lg-jobs__salary-item">
                                 <span class="lg-jobs__salary-role">Game Designer</span>
-                                <span class="lg-jobs__salary-range">12-28 triệu</span>
+                                <span class="lg-jobs__salary-range">12-28 {{ __('lamgame.jobs.salary_unit') }}</span>
                             </div>
                             <div class="lg-jobs__salary-item">
                                 <span class="lg-jobs__salary-role">3D Artist</span>
-                                <span class="lg-jobs__salary-range">10-25 triệu</span>
+                                <span class="lg-jobs__salary-range">10-25 {{ __('lamgame.jobs.salary_unit') }}</span>
                             </div>
                             <div class="lg-jobs__salary-item">
                                 <span class="lg-jobs__salary-role">QA Tester</span>
-                                <span class="lg-jobs__salary-range">8-18 triệu</span>
+                                <span class="lg-jobs__salary-range">8-18 {{ __('lamgame.jobs.salary_unit') }}</span>
                             </div>
                             <div class="lg-jobs__salary-item">
                                 <span class="lg-jobs__salary-role">Technical Lead</span>
-                                <span class="lg-jobs__salary-range">35-60 triệu</span>
+                                <span class="lg-jobs__salary-range">35-60 {{ __('lamgame.jobs.salary_unit') }}</span>
                             </div>
                         </div>
                     </div>
@@ -362,16 +362,16 @@
                             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
                             </svg>
-                            Nhận thông báo việc làm
+                            {{ __('lamgame.jobs.alert_title') }}
                         </h3>
-                        <p class="lg-jobs__sidebar-desc">Đăng ký để nhận email khi có việc làm mới phù hợp với bạn.</p>
+                        <p class="lg-jobs__sidebar-desc">{{ __('lamgame.jobs.alert_desc') }}</p>
                         <form class="lg-jobs__alert-form">
-                            <input type="email" placeholder="Email của bạn" required>
+                            <input type="email" placeholder="{{ __('lamgame.jobs.alert_email_ph') }}" required>
                             <button type="submit" class="lg-jobs__btn lg-jobs__btn--primary lg-jobs__btn--full">
                                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
                                 </svg>
-                                Đăng ký ngay
+                                {{ __('lamgame.jobs.alert_submit') }}
                             </button>
                         </form>
                     </div>
