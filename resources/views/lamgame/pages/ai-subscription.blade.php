@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('page_title', $page_title ?? 'AI Tools cho Game Developer - Làm Game')
+@section('page_title', $page_title ?? __('lamgame.aisub.page_title'))
 @section('page_description', $page_description ?? 'Công cụ AI hỗ trợ lập trình game: Code Generate, Debug, Unit Test, Asset Generate.')
 
 @push('meta')
@@ -31,8 +31,8 @@
     @endif
     <section style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);padding:60px 0;text-align:center;color:#fff">
         <div class="container">
-            <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:12px">🤖 AI Tools cho Game Developer</h1>
-            <p style="font-size:1.15rem;color:#94a3b8;max-width:600px;margin:0 auto">Tăng tốc phát triển game với AI — Code Generate, Debug, Unit Test, Asset Generate</p>
+            <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:12px">{{ __('lamgame.aisub.hero_title') }}</h1>
+            <p style="font-size:1.15rem;color:#94a3b8;max-width:600px;margin:0 auto">{{ __('lamgame.aisub.hero_sub') }}</p>
         </div>
     </section>
 
@@ -40,7 +40,7 @@
     <section style="padding:48px 0;background:#f8fafc">
         <div class="container">
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:960px;margin:0 auto" id="plans-grid">
-                <div style="text-align:center;padding:40px;color:#64748b">Đang tải gói dịch vụ...</div>
+                <div style="text-align:center;padding:40px;color:#64748b">{{ __('lamgame.aisub.loading') }}</div>
             </div>
         </div>
     </section>
@@ -48,27 +48,27 @@
     {{-- Features --}}
     <section style="padding:48px 0">
         <div class="container" style="max-width:800px;margin:0 auto">
-            <h2 style="text-align:center;font-size:1.8rem;font-weight:700;margin-bottom:32px">So sánh tính năng</h2>
+            <h2 style="text-align:center;font-size:1.8rem;font-weight:700;margin-bottom:32px">{{ __('lamgame.aisub.compare') }}</h2>
             <div style="overflow-x:auto">
                 <table style="width:100%;border-collapse:collapse;font-size:0.95rem" id="features-table">
                     <thead>
                         <tr style="background:#f1f5f9">
-                            <th style="padding:12px 16px;text-align:left;border-bottom:2px solid #e2e8f0">Tính năng</th>
+                            <th style="padding:12px 16px;text-align:left;border-bottom:2px solid #e2e8f0">{{ __('lamgame.aisub.feature') }}</th>
                             <th style="padding:12px 16px;text-align:center;border-bottom:2px solid #e2e8f0">Free</th>
                             <th style="padding:12px 16px;text-align:center;border-bottom:2px solid #e2e8f0;background:#eff6ff">Pro</th>
                             <th style="padding:12px 16px;text-align:center;border-bottom:2px solid #e2e8f0">Business</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">AI Game Concept</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">3/tháng</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">100/tháng</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">♾️ Unlimited</td></tr>
-                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">AI Code Generate</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">❌</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">50/tháng</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">♾️ Unlimited</td></tr>
-                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">AI Debug</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">❌</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">30/tháng</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">♾️ Unlimited</td></tr>
-                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">AI Unit Test</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">❌</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">20/tháng</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">♾️ Unlimited</td></tr>
-                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">AI Asset Generate</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">❌</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">❌</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">100/tháng</td></tr>
-                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">AI Code Review</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">❌</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">10/tháng</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">♾️ Unlimited</td></tr>
+                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">AI Game Concept</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">3{{ __('lamgame.aisub.per_month') }}</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">100{{ __('lamgame.aisub.per_month') }}</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">♾️ Unlimited</td></tr>
+                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">AI Code Generate</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">❌</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">50{{ __('lamgame.aisub.per_month') }}</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">♾️ Unlimited</td></tr>
+                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">AI Debug</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">❌</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">30{{ __('lamgame.aisub.per_month') }}</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">♾️ Unlimited</td></tr>
+                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">AI Unit Test</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">❌</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">20{{ __('lamgame.aisub.per_month') }}</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">♾️ Unlimited</td></tr>
+                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">AI Asset Generate</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">❌</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">❌</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">100{{ __('lamgame.aisub.per_month') }}</td></tr>
+                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">AI Code Review</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">❌</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">10{{ __('lamgame.aisub.per_month') }}</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">♾️ Unlimited</td></tr>
                         <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">AI Model</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">GPT-4o mini</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">GPT-4o</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">GPT-4o + Claude</td></tr>
                         <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">Export Project</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">❌</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">✅</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">✅</td></tr>
-                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">Chat History</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">7 ngày</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">30 ngày</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">♾️ Unlimited</td></tr>
+                        <tr><td style="padding:10px 16px;border-bottom:1px solid #f1f5f9">Chat History</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">7 {{ __('lamgame.aisub.days') }}</td><td style="text-align:center;border-bottom:1px solid #f1f5f9;background:#eff6ff">30 {{ __('lamgame.aisub.days') }}</td><td style="text-align:center;border-bottom:1px solid #f1f5f9">♾️ Unlimited</td></tr>
                         <tr><td style="padding:10px 16px">Priority Queue</td><td style="text-align:center">❌</td><td style="text-align:center;background:#eff6ff">✅</td><td style="text-align:center">✅</td></tr>
                     </tbody>
                 </table>
@@ -79,22 +79,22 @@
     {{-- FAQ --}}
     <section style="padding:48px 0;background:#f8fafc">
         <div class="container" style="max-width:700px;margin:0 auto">
-            <h2 style="text-align:center;font-size:1.8rem;font-weight:700;margin-bottom:24px">Câu hỏi thường gặp</h2>
+            <h2 style="text-align:center;font-size:1.8rem;font-weight:700;margin-bottom:24px">{{ __('lamgame.aisub.faq') }}</h2>
             <div style="margin-bottom:16px">
-                <h4 style="font-weight:600;margin-bottom:6px">Thanh toán bằng gì?</h4>
-                <p style="color:#64748b">Thanh toán qua PayPal — hỗ trợ thẻ Visa, Mastercard, tài khoản PayPal quốc tế.</p>
+                <h4 style="font-weight:600;margin-bottom:6px">{{ __('lamgame.aisub.q_pay') }}</h4>
+                <p style="color:#64748b">{{ __('lamgame.aisub.a_pay') }}</p>
             </div>
             <div style="margin-bottom:16px">
-                <h4 style="font-weight:600;margin-bottom:6px">Có thể hủy bất cứ lúc nào không?</h4>
-                <p style="color:#64748b">Có. Bạn có thể hủy subscription bất cứ lúc nào. Gói sẽ còn hiệu lực đến hết chu kỳ thanh toán.</p>
+                <h4 style="font-weight:600;margin-bottom:6px">{{ __('lamgame.aisub.q_cancel') }}</h4>
+                <p style="color:#64748b">{{ __('lamgame.aisub.a_cancel') }}</p>
             </div>
             <div style="margin-bottom:16px">
-                <h4 style="font-weight:600;margin-bottom:6px">Quota reset khi nào?</h4>
-                <p style="color:#64748b">Quota được reset vào đầu mỗi tháng (ngày 1).</p>
+                <h4 style="font-weight:600;margin-bottom:6px">{{ __('lamgame.aisub.q_reset') }}</h4>
+                <p style="color:#64748b">{{ __('lamgame.aisub.a_reset') }}</p>
             </div>
             <div>
-                <h4 style="font-weight:600;margin-bottom:6px">Gói Free có giới hạn thời gian không?</h4>
-                <p style="color:#64748b">Không. Gói Free miễn phí vĩnh viễn với 3 lần AI Game Concept mỗi tháng.</p>
+                <h4 style="font-weight:600;margin-bottom:6px">{{ __('lamgame.aisub.q_free') }}</h4>
+                <p style="color:#64748b">{{ __('lamgame.aisub.a_free') }}</p>
             </div>
         </div>
     </section>
@@ -103,21 +103,22 @@
 {{-- Subscription JS --}}
 <script>
 (function() {
+    const LG_I18N = { perMonth: @json(__('lamgame.aisub.per_month')), popular: @json(__('lamgame.aisub.popular')), free: @json(__('lamgame.aisub.free')), startFree: @json(__('lamgame.aisub.start_free')), subscribe: @json(__('lamgame.aisub.subscribe')) };
     const API = '{{ url("/api/v1/subscription") }}';
 
     function formatLimit(v) {
         if (v === -1) return '♾️ Unlimited';
         if (v === 0 || v === false) return '❌';
         if (v === true) return '✅';
-        return v + '/tháng';
+        return v + LG_I18N.perMonth;
     }
 
     function planCard(p, highlight) {
         const border = highlight ? 'border:2px solid #3b82f6;' : 'border:1px solid #e2e8f0;';
-        const badge = highlight ? '<div style="background:#3b82f6;color:#fff;padding:4px 12px;border-radius:20px;font-size:0.8rem;font-weight:600;display:inline-block;margin-bottom:12px">Phổ biến nhất</div>' : '';
-        const price = parseFloat(p.price) === 0 ? '<span style="font-size:2.2rem;font-weight:800">Miễn phí</span>' : '<span style="font-size:2.2rem;font-weight:800">$' + parseInt(p.price) + '</span><span style="color:#64748b;font-size:0.95rem">/tháng</span>';
+        const badge = highlight ? '<div style="background:#3b82f6;color:#fff;padding:4px 12px;border-radius:20px;font-size:0.8rem;font-weight:600;display:inline-block;margin-bottom:12px"'+LG_I18N.popular+'</div>' : '';
+        const price = parseFloat(p.price) === 0 ? '<span style="font-size:2.2rem;font-weight:800">'+LG_I18N.free+'</span>' : '<span style="font-size:2.2rem;font-weight:800">$' + parseInt(p.price) + '</span><span style="color:#64748b;font-size:0.95rem">'+LG_I18N.perMonth+'</span>';
         const btnStyle = highlight ? 'background:#3b82f6;color:#fff;' : 'background:#1e293b;color:#fff;';
-        const btnText = parseFloat(p.price) === 0 ? 'Bắt đầu miễn phí' : 'Đăng ký ' + p.name;
+        const btnText = parseFloat(p.price) === 0 ? LG_I18N.startFree : LG_I18N.subscribe + ' ' + p.name;
 
         @if($customer)
         var btnHtml = '<form method="POST" action="{{ route("lamgame.ai-subscribe") }}">'
