@@ -50,35 +50,35 @@
 @section('content')
     <section class="hire-hero">
         <div class="container">
-            <h1>Thuê Team Dev chuyên nghiệp</h1>
-            <p>Đội ngũ lập trình viên giàu kinh nghiệm, sẵn sàng biến ý tưởng của bạn thành sản phẩm thực tế</p>
+            <h1>{{ __('lamgame.hire.hero_title') }}</h1>
+            <p>{{ __('lamgame.hire.hero_sub') }}</p>
         </div>
     </section>
 
     <section class="section-content">
         <div class="container">
-            <h2 class="section-title">Dịch vụ của chúng tôi</h2>
-            <p class="section-subtitle">Giải pháp toàn diện cho mọi nhu cầu phát triển phần mềm</p>
+            <h2 class="section-title">{{ __('lamgame.hire.services') }}</h2>
+            <p class="section-subtitle">{{ __('lamgame.hire.services_sub') }}</p>
             <div class="services-grid">
                 <div class="service-card">
                     <div class="service-icon">🎮</div>
                     <h3>Game Development</h3>
-                    <p>Unity, Unreal Engine, Godot. Game mobile, PC, WebGL. Từ casual đến mid-core.</p>
+                    <p>{{ __('lamgame.hire.svc_game_d') }}</p>
                 </div>
                 <div class="service-card">
                     <div class="service-icon">🌐</div>
                     <h3>Web Development</h3>
-                    <p>Laravel, React, Vue.js. Website, web app, e-commerce, CMS, API backend.</p>
+                    <p>{{ __('lamgame.hire.svc_web_d') }}</p>
                 </div>
                 <div class="service-card">
                     <div class="service-icon">📱</div>
                     <h3>Mobile App</h3>
-                    <p>React Native, Flutter. Ứng dụng iOS & Android, cross-platform.</p>
+                    <p>{{ __('lamgame.hire.svc_app_d') }}</p>
                 </div>
                 <div class="service-card">
                     <div class="service-icon">🤖</div>
                     <h3>AI Solutions</h3>
-                    <p>Chatbot, AI agent, tích hợp LLM, xử lý ngôn ngữ tự nhiên, computer vision.</p>
+                    <p>{{ __('lamgame.hire.svc_ai_d') }}</p>
                 </div>
             </div>
         </div>
@@ -86,27 +86,27 @@
 
     <section class="process-section">
         <div class="container">
-            <h2 class="section-title">Quy trình làm việc</h2>
+            <h2 class="section-title">{{ __('lamgame.hire.process') }}</h2>
             <div class="process-steps">
                 <div class="step">
                     <div class="step-num">1</div>
-                    <h4>Tư vấn & Báo giá</h4>
-                    <p>Phân tích yêu cầu, đề xuất giải pháp và báo giá minh bạch</p>
+                    <h4>{{ __('lamgame.hire.step1') }}</h4>
+                    <p>{{ __('lamgame.hire.step1_d') }}</p>
                 </div>
                 <div class="step">
                     <div class="step-num">2</div>
-                    <h4>Thiết kế & Lên kế hoạch</h4>
-                    <p>Wireframe, UI/UX, kiến trúc hệ thống, timeline chi tiết</p>
+                    <h4>{{ __('lamgame.hire.step2') }}</h4>
+                    <p>{{ __('lamgame.hire.step2_d') }}</p>
                 </div>
                 <div class="step">
                     <div class="step-num">3</div>
-                    <h4>Phát triển & Review</h4>
-                    <p>Sprint 2 tuần, demo thường xuyên, feedback liên tục</p>
+                    <h4>{{ __('lamgame.hire.step3') }}</h4>
+                    <p>{{ __('lamgame.hire.step3_d') }}</p>
                 </div>
                 <div class="step">
                     <div class="step-num">4</div>
-                    <h4>Bàn giao & Hỗ trợ</h4>
-                    <p>Deploy, chuyển giao source code, hỗ trợ sau bàn giao</p>
+                    <h4>{{ __('lamgame.hire.step4') }}</h4>
+                    <p>{{ __('lamgame.hire.step4_d') }}</p>
                 </div>
             </div>
         </div>
@@ -115,44 +115,44 @@
     <section class="section-content">
         <div class="container">
             <div class="quote-section">
-                <h2>Gửi yêu cầu báo giá</h2>
+                <h2>{{ __('lamgame.hire.quote') }}</h2>
                 <div id="quote-message"></div>
                 <form class="quote-form" id="hireForm" onsubmit="event.preventDefault(); submitHireForm()">
-                    <label>Họ và tên *</label>
+                    <label>{{ __('lamgame.hire.f_name') }}</label>
                     <input type="text" name="name" required maxlength="100">
 
                     <label>Email *</label>
                     <input type="email" name="email" required maxlength="255">
 
-                    <label>Số điện thoại</label>
+                    <label>{{ __('lamgame.hire.f_phone') }}</label>
                     <input type="tel" name="phone" maxlength="20">
 
-                    <label>Công ty</label>
+                    <label>{{ __('lamgame.hire.f_company') }}</label>
                     <input type="text" name="company" maxlength="255">
 
-                    <label>Loại dự án *</label>
+                    <label>{{ __('lamgame.hire.f_type') }}</label>
                     <select name="project_type" required>
-                        <option value="">Chọn loại dự án</option>
+                        <option value="">{{ __('lamgame.hire.choose_type') }}</option>
                         <option value="game">🎮 Game Development</option>
                         <option value="web">🌐 Web Development</option>
                         <option value="app">📱 Mobile App</option>
                         <option value="ai">🤖 AI Solutions</option>
-                        <option value="other">📦 Khác</option>
+                        <option value="other">{{ __('lamgame.hire.type_other') }}</option>
                     </select>
 
-                    <label>Ngân sách dự kiến</label>
+                    <label>{{ __('lamgame.hire.f_budget') }}</label>
                     <select name="budget_range">
-                        <option value="">Chưa xác định</option>
-                        <option value="< 10M">Dưới 10 triệu</option>
-                        <option value="10M - 50M">10 - 50 triệu</option>
-                        <option value="50M - 200M">50 - 200 triệu</option>
-                        <option value="> 200M">Trên 200 triệu</option>
+                        <option value="">{{ __('lamgame.hire.budget_none') }}</option>
+                        <option value="< 10M">{{ __('lamgame.hire.budget_1') }}</option>
+                        <option value="10M - 50M">{{ __('lamgame.hire.budget_2') }}</option>
+                        <option value="50M - 200M">{{ __('lamgame.hire.budget_3') }}</option>
+                        <option value="> 200M">{{ __('lamgame.hire.budget_4') }}</option>
                     </select>
 
-                    <label>Mô tả dự án *</label>
-                    <textarea name="description" required maxlength="5000" placeholder="Mô tả chi tiết yêu cầu, tính năng mong muốn, timeline..."></textarea>
+                    <label>{{ __('lamgame.hire.f_desc') }}</label>
+                    <textarea name="description" required maxlength="5000" placeholder="{{ __('lamgame.hire.f_desc_ph') }}"></textarea>
 
-                    <button type="submit" id="hireSubmitBtn">Gửi yêu cầu báo giá</button>
+                    <button type="submit" id="hireSubmitBtn">{{ __('lamgame.hire.submit') }}</button>
                 </form>
             </div>
         </div>
@@ -161,6 +161,7 @@
 
 @push('scripts')
 <script>
+const LG_I18N = { sending: @json(__('lamgame.hire.sending')), submit: @json(__('lamgame.hire.submit')), error: @json(__('lamgame.hire.error')), errorRetry: @json(__('lamgame.hire.error_retry')) };
 function submitHireForm() {
     const form = document.getElementById('hireForm');
     const btn = document.getElementById('hireSubmitBtn');
@@ -168,7 +169,7 @@ function submitHireForm() {
     const data = Object.fromEntries(new FormData(form));
 
     btn.disabled = true;
-    btn.textContent = 'Đang gửi...';
+    btn.textContent = LG_I18N.sending;
 
     fetch('/api/v1/hire-request', {
         method: 'POST',
@@ -178,19 +179,19 @@ function submitHireForm() {
     .then(r => r.json())
     .then(d => {
         btn.disabled = false;
-        btn.textContent = 'Gửi yêu cầu báo giá';
+        btn.textContent = LG_I18N.submit;
         if (d.status === 'success') {
             msg.innerHTML = '<div style="background:#f0fdf4;color:#16a34a;padding:16px;border-radius:8px;margin-bottom:16px;text-align:center">' + d.message + '</div>';
             form.reset();
         } else {
-            const errors = d.errors ? Object.values(d.errors).flat().join('<br>') : (d.message || 'Có lỗi xảy ra');
+            const errors = d.errors ? Object.values(d.errors).flat().join('<br>') : (d.message || LG_I18N.error);
             msg.innerHTML = '<div style="background:#fef2f2;color:#dc2626;padding:16px;border-radius:8px;margin-bottom:16px">' + errors + '</div>';
         }
     })
     .catch(() => {
         btn.disabled = false;
-        btn.textContent = 'Gửi yêu cầu báo giá';
-        msg.innerHTML = '<div style="background:#fef2f2;color:#dc2626;padding:16px;border-radius:8px;margin-bottom:16px">Có lỗi xảy ra. Vui lòng thử lại.</div>';
+        btn.textContent = LG_I18N.submit;
+        msg.innerHTML = '<div style="background:#fef2f2;color:#dc2626;padding:16px;border-radius:8px;margin-bottom:16px"'+LG_I18N.errorRetry+'</div>';
     });
 }
 </script>
