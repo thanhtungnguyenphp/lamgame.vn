@@ -867,4 +867,20 @@ return [
         'msg_send' => 'Gửi',
         'best_answer'    => 'Câu trả lời tốt nhất',
     ],
+
+    'minigame' => [
+        'list_title'    => 'Chơi Game Miễn Phí Online - Kho :count Mini Game HTML5 | LamGame',
+        'list_desc'     => 'Kho :count mini game HTML5 miễn phí - Chơi ngay trên trình duyệt, không cần cài đặt. Game arcade, puzzle, casual, card, action.',
+        'hero_title'    => '🎮 Kho Mini Game Miễn Phí',
+        'hero_sub_1'    => 'game HTML5 · Chơi ngay trên trình duyệt · Không cần cài đặt',
+        'search_ph'     => 'Tìm game...',
+        'all_cats'      => 'Tất cả thể loại',
+        'search_btn'    => 'Tìm',
+        'empty'         => 'Không tìm thấy game nào.',
+        'home'          => 'Trang chủ',
+        'play_game'     => 'Chơi Game',
+        'fullscreen'    => '⛶ Toàn màn hình',
+        'plays'         => 'lượt chơi',
+        'similar'       => 'Game tương tự',
+    ],
 ];

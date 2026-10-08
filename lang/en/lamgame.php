@@ -867,4 +867,20 @@ return [
         'msg_send' => 'Send',
         'best_answer'    => 'Best answer',
     ],
+
+    'minigame' => [
+        'list_title'    => 'Play Free Games Online - :count HTML5 Mini Games | LamGame',
+        'list_desc'     => ':count free HTML5 mini games - Play instantly in your browser, no install needed. Arcade, puzzle, casual, card, action games.',
+        'hero_title'    => '🎮 Free Mini Game Library',
+        'hero_sub_1'    => 'HTML5 games · Play instantly in your browser · No install needed',
+        'search_ph'     => 'Search games...',
+        'all_cats'      => 'All categories',
+        'search_btn'    => 'Search',
+        'empty'         => 'No games found.',
+        'home'          => 'Home',
+        'play_game'     => 'Play Games',
+        'fullscreen'    => '⛶ Fullscreen',
+        'plays'         => 'plays',
+        'similar'       => 'Similar games',
+    ],
 ];

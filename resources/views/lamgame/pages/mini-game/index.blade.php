@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
-@section('page_title', 'Chơi Game Miễn Phí Online - Kho ' . $games->total() . ' Mini Game HTML5 | LamGame')
-@section('page_description', 'Kho ' . $games->total() . ' mini game HTML5 miễn phí - Chơi ngay trên trình duyệt, không cần cài đặt. Game arcade, puzzle, casual, card, action.')
+@section('page_title', __('lamgame.minigame.list_title', ['count' => $games->total()]))
+@section('page_description', __('lamgame.minigame.list_desc', ['count' => $games->total()]))
 @section('canonical_url', url('/choi-game'))
 
 @push('og_extra')
@@ -30,8 +30,8 @@
     {{-- Hero --}}
     <section class="mg-hero">
         <div class="container">
-            <h1 class="mg-hero__title">🎮 Kho Mini Game Miễn Phí</h1>
-            <p class="mg-hero__sub">{{ $games->total() }} game HTML5 · Chơi ngay trên trình duyệt · Không cần cài đặt</p>
+            <h1 class="mg-hero__title">{{ __('lamgame.minigame.hero_title') }}</h1>
+            <p class="mg-hero__sub">{{ $games->total() }} {{ __('lamgame.minigame.hero_sub_1') }}</p>
         </div>
     </section>
 
@@ -39,14 +39,14 @@
     <section class="mg-filter">
         <div class="container">
             <form action="{{ route('mini-game.index') }}" method="GET" class="mg-filter__form">
-                <input type="text" name="search" value="{{ $search }}" placeholder="Tìm game..." class="mg-filter__input">
+                <input type="text" name="search" value="{{ $search }}" placeholder="{{ __('lamgame.minigame.search_ph') }}" class="mg-filter__input">
                 <select name="category" class="mg-filter__select" onchange="this.form.submit()">
-                    <option value="">Tất cả thể loại</option>
+                    <option value="">{{ __('lamgame.minigame.all_cats') }}</option>
                     @foreach($categories as $key => $label)
                         <option value="{{ $key }}" {{ $current === $key ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
                 </select>
-                <button type="submit" class="mg-filter__btn">Tìm</button>
+                <button type="submit" class="mg-filter__btn">{{ __('lamgame.minigame.search_btn') }}</button>
             </form>
         </div>
     </section>
@@ -55,7 +55,7 @@
     <section class="mg-grid-section">
         <div class="container">
             @if($games->isEmpty())
-                <p style="text-align:center;padding:40px;color:#999;">Không tìm thấy game nào.</p>
+                <p style="text-align:center;padding:40px;color:#999;">{{ __('lamgame.minigame.empty') }}</p>
             @else
                 <div class="mg-grid">
                     @foreach($games as $game)

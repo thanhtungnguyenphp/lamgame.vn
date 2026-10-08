@@ -867,4 +867,20 @@ return [
         'msg_send' => 'Senden',
         'best_answer'    => 'Beste Antwort',
     ],
+
+    'minigame' => [
+        'list_title'    => 'Kostenlose Spiele online spielen - :count HTML5-Minispiele | LamGame',
+        'list_desc'     => ':count kostenlose HTML5-Minispiele - Sofort im Browser spielen, keine Installation nötig. Arcade-, Puzzle-, Casual-, Karten-, Action-Spiele.',
+        'hero_title'    => '🎮 Kostenlose Minispiel-Bibliothek',
+        'hero_sub_1'    => 'HTML5-Spiele · Sofort im Browser spielen · Keine Installation nötig',
+        'search_ph'     => 'Spiele suchen...',
+        'all_cats'      => 'Alle Kategorien',
+        'search_btn'    => 'Suchen',
+        'empty'         => 'Keine Spiele gefunden.',
+        'home'          => 'Startseite',
+        'play_game'     => 'Spiele spielen',
+        'fullscreen'    => '⛶ Vollbild',
+        'plays'         => 'Spiele',
+        'similar'       => 'Ähnliche Spiele',
+    ],
 ];

@@ -56,8 +56,8 @@
     {{-- Breadcrumb --}}
     <nav class="mg-breadcrumb">
         <div class="container">
-            <a href="{{ url('/') }}">Trang chủ</a> ›
-            <a href="{{ route('mini-game.index') }}">Chơi Game</a> ›
+            <a href="{{ url('/') }}">{{ __('lamgame.minigame.home') }}</a> ›
+            <a href="{{ route('mini-game.index') }}">{{ __('lamgame.minigame.play_game') }}</a> ›
             <span>{{ $game->title }}</span>
         </div>
     </nav>
@@ -76,8 +76,8 @@
                 ></iframe>
             </div>
             <div class="mg-play__actions">
-                <button onclick="toggleFullscreen()" class="mg-play__btn">⛶ Toàn màn hình</button>
-                <span class="mg-play__stat">🎮 {{ number_format($game->play_count) }} lượt chơi</span>
+                <button onclick="toggleFullscreen()" class="mg-play__btn">{{ __('lamgame.minigame.fullscreen') }}</button>
+                <span class="mg-play__stat">🎮 {{ number_format($game->play_count) }} {{ __('lamgame.minigame.plays') }}</span>
                 <span class="mg-play__cat">{{ $game->category_label }}</span>
             </div>
             @if($game->description)
@@ -90,7 +90,7 @@
     @if($related->isNotEmpty())
     <section class="mg-related">
         <div class="container">
-            <h2 class="mg-related__title">Game tương tự</h2>
+            <h2 class="mg-related__title">{{ __('lamgame.minigame.similar') }}</h2>
             <div class="mg-grid">
                 @foreach($related as $r)
                 <a href="{{ $r->url }}" class="mg-card">
