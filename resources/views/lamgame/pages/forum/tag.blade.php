@@ -19,13 +19,13 @@
                     @if($tag->description)
                     <p>{{ $tag->description }}</p>
                     @else
-                    <p>Tất cả bài viết có tag {{ $tag->name }}</p>
+                    <p>{{ __('lamgame.forum.tag_all_with') }} {{ $tag->name }}</p>
                     @endif
                 </div>
                 <div class="forum-stats">
                     <div class="stat-item">
                         <span class="stat-number">{{ $posts->total() }}</span>
-                        <span class="stat-label">Bài viết</span>
+                        <span class="stat-label">{{ __('lamgame.forum.tag_posts') }}</span>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                 <div class="forum-search">
                     <form action="{{ route('forum.search') }}" method="GET" class="search-form">
                         <i class="fas fa-search search-icon"></i>
-                        <input type="text" name="q" placeholder="Tìm kiếm bài viết, thảo luận..." class="search-input">
+                        <input type="text" name="q" placeholder="{{ __('lamgame.forum.search_ph2') }}" class="search-input">
                     </form>
                 </div>
                 
@@ -49,12 +49,12 @@
                     <div class="tags-scroll">
                         <a href="{{ route('forum.index') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i>
-                            <span class="btn-text">Quay lại</span>
+                            <span class="btn-text">{{ __('lamgame.forum.back') }}</span>
                         </a>
                         
                         <a href="{{ route('forum.posts.create') }}" class="btn btn-primary btn-create">
                             <i class="fas fa-pen"></i>
-                            <span class="btn-text">Đăng bài</span>
+                            <span class="btn-text">{{ __('lamgame.forum.post_btn') }}</span>
                         </a>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
                     <div class="tag-meta">
                         <span class="meta-item">
                             <i class="fas fa-file-alt"></i>
-                            {{ $posts->total() }} bài viết
+                            {{ $posts->total() }} {{ __('lamgame.forum.posts_count_unit') }}
                         </span>
                     </div>
                 </div>
@@ -87,10 +87,10 @@
                     @empty
                         <div class="empty-state">
                             <div class="empty-icon">🔍</div>
-                            <h3>Chưa có bài viết nào</h3>
-                            <p>Chưa có bài viết nào với tag <strong>{{ $tag->name }}</strong></p>
+                            <h3>{{ __('lamgame.forum.tag_empty') }}</h3>
+                            <p>{{ __('lamgame.forum.tag_empty_with') }} <strong>{{ $tag->name }}</strong></p>
                             <a href="{{ route('forum.posts.create') }}" class="btn btn-primary">
-                                Tạo bài viết đầu tiên
+                                {{ __('lamgame.forum.first_post') }}
                             </a>
                         </div>
                     @endforelse

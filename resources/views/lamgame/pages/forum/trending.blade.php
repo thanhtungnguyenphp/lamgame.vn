@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('page_title', '🔥 Trending - Forum')
+@section('page_title', __('lamgame.forum.trending_title'))
 
 @section('content')
 <div class="fm-page">
@@ -8,8 +8,8 @@
         <div class="container">
             <div class="fm-hdr-row">
                 <div>
-                    <h1 class="fm-hdr-title">🔥 Bài viết đang hot</h1>
-                    <p class="fm-hdr-desc">Nội dung được quan tâm nhiều nhất trong 30 ngày qua</p>
+                    <h1 class="fm-hdr-title">{{ __('lamgame.forum.trending_hot') }}</h1>
+                    <p class="fm-hdr-desc">{{ __('lamgame.forum.trending_desc') }}</p>
                 </div>
                 <a href="{{ route('forum.index') }}" class="fm-btn-back"><i class="fas fa-arrow-left"></i> Forum</a>
             </div>
@@ -36,7 +36,7 @@
             @empty
             <div style="text-align:center;padding:3rem;color:#94a3b8;">
                 <div style="font-size:2.5rem;">📊</div>
-                <p>Chưa có dữ liệu trending. Hot scores được tính mỗi giờ.</p>
+                <p>{{ __('lamgame.forum.trending_empty') }}</p>
             </div>
             @endforelse
         </div>

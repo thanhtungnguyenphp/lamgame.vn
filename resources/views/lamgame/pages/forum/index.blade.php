@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
-@section('page_title', 'Forum - Cộng đồng Game Developer')
-@section('page_description', 'Cộng đồng Game Developer lớn nhất Việt Nam. Chia sẻ project, source game, AI workflow và kết nối với indie developers.')
+@section('page_title', __('lamgame.forum.page_title'))
+@section('page_description', __('lamgame.forum.page_desc'))
 
 @push('schema_markup')
 <script type="application/ld+json">
@@ -23,11 +23,11 @@
 <section class="fm-hero">
     <div class="fm-hero__bg"></div>
     <div class="fm-container fm-hero__inner">
-        <h1 class="fm-hero__title">Cộng đồng Game Developer <br><span class="fm-glow">lớn nhất Việt Nam</span></h1>
-        <p class="fm-hero__sub">Chia sẻ project, source game, AI workflow và kết nối với indie developers.</p>
+        <h1 class="fm-hero__title">{{ __('lamgame.forum.hero_title_1') }} <br><span class="fm-glow">{{ __('lamgame.forum.hero_title_2') }}</span></h1>
+        <p class="fm-hero__sub">{{ __('lamgame.forum.hero_sub') }}</p>
         <div class="fm-hero__cta">
-            <a href="{{ route('forum.posts.create') }}" class="fm-btn fm-btn--primary">Đăng project</a>
-            <a href="#feed" class="fm-btn fm-btn--ghost">Tham gia thảo luận ↓</a>
+            <a href="{{ route('forum.posts.create') }}" class="fm-btn fm-btn--primary">{{ __('lamgame.forum.post_project') }}</a>
+            <a href="#feed" class="fm-btn fm-btn--ghost">{{ __('lamgame.forum.join_discuss') }}</a>
         </div>
         <div class="fm-hero__trust">
             <div><strong>{{ number_format($siteMetrics['registered_users'] ?? 0) }}+</strong><span>Developers</span></div>
@@ -43,13 +43,13 @@
         <div class="fm-toolbar__row">
             <form action="{{ route('forum.search') }}" method="GET" class="fm-search">
                 <svg class="fm-search__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                <input type="text" name="q" placeholder="Tìm kiếm bài viết..." value="{{ $search }}" class="fm-search__input">
+                <input type="text" name="q" placeholder="{{ __('lamgame.forum.search_ph') }}" value="{{ $search }}" class="fm-search__input">
                 @if($search)
                 <a href="{{ route('forum.index') }}" class="fm-search__clear">✕</a>
                 @endif
             </form>
             <div class="fm-sort">
-                @php $sorts = ['latest' => 'Mới nhất', 'popular' => 'Phổ biến', 'activity' => 'Hoạt động']; @endphp
+                @php $sorts = ['latest' => __('lamgame.forum.sort_latest'), 'popular' => __('lamgame.forum.sort_popular'), 'activity' => __('lamgame.forum.sort_activity')]; @endphp
                 @foreach($sorts as $key => $label)
                 <a href="{{ request()->fullUrlWithQuery(['sort' => $key]) }}" class="fm-sort__tab {{ $sort === $key ? 'active' : '' }}">{{ $label }}</a>
                 @endforeach
@@ -58,7 +58,7 @@
         {{-- Category chips --}}
         @if($categories->count() > 0)
         <div class="fm-chips">
-            <a href="{{ route('forum.index') }}" class="fm-chip {{ !$category ? 'active' : '' }}">Tất cả</a>
+            <a href="{{ route('forum.index') }}" class="fm-chip {{ !$category ? 'active' : '' }}">{{ __('lamgame.forum.all') }}</a>
             @foreach($categories->take(10) as $cat)
             <a href="{{ route('forum.category', $cat->slug) }}" class="fm-chip {{ $category === $cat->slug ? 'active' : '' }}">
                 {{ $cat->icon ?? '' }} {{ $cat->name }}
@@ -76,11 +76,11 @@
         <div class="fm-feed">
             {{-- Sticky --}}
             @if($stickyPosts->count() > 0)
-            <div class="fm-label">📌 Ghim</div>
+            <div class="fm-label">{{ __('lamgame.forum.pinned') }}</div>
             @foreach($stickyPosts as $post)
                 @include('lamgame.pages.forum.partials.post-card', ['post' => $post, 'isSticky' => true])
             @endforeach
-            <div class="fm-label" style="margin-top:16px">💬 Thảo luận</div>
+            <div class="fm-label" style="margin-top:16px">{{ __('lamgame.forum.discussion') }}</div>
             @endif
 
             {{-- Posts --}}
@@ -89,9 +89,9 @@
             @empty
             <div class="fm-empty">
                 <div class="fm-empty__icon">📝</div>
-                <h3>Chưa có bài viết nào</h3>
-                <p>Hãy là người đầu tiên chia sẻ trong cộng đồng!</p>
-                <a href="{{ route('forum.posts.create') }}" class="fm-btn fm-btn--primary">Tạo bài viết đầu tiên</a>
+                <h3>{{ __('lamgame.forum.empty') }}</h3>
+                <p>{{ __('lamgame.forum.empty_sub') }}</p>
+                <a href="{{ route('forum.posts.create') }}" class="fm-btn fm-btn--primary">{{ __('lamgame.forum.first_post') }}</a>
             </div>
             @endforelse
 
@@ -105,13 +105,13 @@
             {{-- Popular creators --}}
             @if(!empty($popularCreators ?? null) && count($popularCreators) > 0)
             <div class="fm-widget">
-                <h3 class="fm-widget__title">🏆 Top Creators</h3>
+                <h3 class="fm-widget__title">{{ __('lamgame.forum.top_creators') }}</h3>
                 @foreach(($popularCreators ?? collect())->take(5) as $creator)
                 <div class="fm-creator">
                     <div class="fm-avatar">{{ strtoupper(substr($creator->name ?? 'U', 0, 1)) }}</div>
                     <div>
                         <span class="fm-creator__name">{{ $creator->name }}</span>
-                        <span class="fm-creator__stat">{{ $creator->posts_count ?? 0 }} bài</span>
+                        <span class="fm-creator__stat">{{ $creator->posts_count ?? 0 }} {{ __('lamgame.forum.posts_unit') }}</span>
                     </div>
                 </div>
                 @endforeach
@@ -121,7 +121,7 @@
             {{-- Popular tags --}}
             @if($popularTags->count() > 0)
             <div class="fm-widget">
-                <h3 class="fm-widget__title">🏷️ Tags phổ biến</h3>
+                <h3 class="fm-widget__title">{{ __('lamgame.forum.popular_tags') }}</h3>
                 <div class="fm-widget__tags">
                     @foreach($popularTags->take(15) as $tag)
                     <a href="{{ route('forum.tag', $tag->slug) }}" class="fm-wtag">{{ $tag->name }}</a>
@@ -132,9 +132,9 @@
 
             {{-- CTA --}}
             <div class="fm-widget fm-widget--cta">
-                <h3 class="fm-widget__title">🚀 Bạn có project?</h3>
-                <p>Showcase project của bạn cho cộng đồng Game Dev Việt Nam</p>
-                <a href="{{ route('forum.posts.create') }}" class="fm-btn fm-btn--primary fm-btn--sm">Đăng project →</a>
+                <h3 class="fm-widget__title">{{ __('lamgame.forum.cta_title') }}</h3>
+                <p>{{ __('lamgame.forum.cta_sub') }}</p>
+                <a href="{{ route('forum.posts.create') }}" class="fm-btn fm-btn--primary fm-btn--sm">{{ __('lamgame.forum.cta_post') }}</a>
             </div>
         </aside>
     </div>
@@ -142,7 +142,7 @@
 
 {{-- MOBILE STICKY CTA --}}
 <div class="fm-mobile-cta">
-    <a href="{{ route('forum.posts.create') }}" class="fm-btn fm-btn--primary">+ Đăng bài</a>
+    <a href="{{ route('forum.posts.create') }}" class="fm-btn fm-btn--primary">{{ __('lamgame.forum.post_new') }}</a>
 </div>
 
 </div>

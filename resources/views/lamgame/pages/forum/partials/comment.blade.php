@@ -9,7 +9,7 @@
             @endif
             <span class="fp-cmt-time">{{ $comment->time_ago }}</span>
             @if($comment->is_best_answer)
-            <span class="fp-best-badge"><i class="fas fa-check"></i> Câu trả lời tốt nhất</span>
+            <span class="fp-best-badge"><i class="fas fa-check"></i> {{ __('lamgame.forum.best_answer') }}</span>
             @endif
         </div>
         @if($comment->likes_count > 0)
