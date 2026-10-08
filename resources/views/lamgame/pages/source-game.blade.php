@@ -55,12 +55,12 @@
     <div class="sg-hero__bg"></div>
     <div class="sg-container sg-hero__inner">
         <span class="sg-hero__badge">🎮 Source Game Marketplace</span>
-        <h1 class="sg-hero__title">Build game nhanh hơn với <br><span class="sg-glow">source code có thông tin rõ ràng</span></h1>
-        <p class="sg-hero__sub">Giá, demo, thông số và trạng thái gói tải được công khai theo dữ liệu hiện có.</p>
+        <h1 class="sg-hero__title">{{ __('lamgame.catalog.hero_title_1') }} <br><span class="sg-glow">{{ __('lamgame.catalog.hero_title_2') }}</span></h1>
+        <p class="sg-hero__sub">{{ __('lamgame.catalog.hero_sub') }}</p>
         <form action="{{ route('lamgame.source-game') }}" method="GET" class="sg-search">
             <svg class="sg-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Tìm source game, engine, genre..." class="sg-search__input">
-            <button type="submit" class="sg-search__btn">Tìm kiếm</button>
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('lamgame.catalog.search_ph') }}" class="sg-search__input">
+            <button type="submit" class="sg-search__btn">{{ __('lamgame.catalog.search') }}</button>
         </form>
     </div>
 </section>
@@ -69,10 +69,10 @@
 <section class="sg-trust">
     <div class="sg-container">
         <div class="sg-trust__grid">
-            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['published_sources'] ?? 0) }}</strong><span>Source công khai</span></div>
-            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['registered_users'] ?? 0) }}</strong><span>Tài khoản hoạt động</span></div>
-            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['total_orders'] ?? 0) }}</strong><span>Đơn hoàn tất</span></div>
-            <div class="sg-trust__item"><strong>{{ $siteMetrics['job_listings'] ?? 0 }}</strong><span>Việc làm đang mở</span></div>
+            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['published_sources'] ?? 0) }}</strong><span>{{ __('lamgame.catalog.stat_source') }}</span></div>
+            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['registered_users'] ?? 0) }}</strong><span>{{ __('lamgame.catalog.stat_users') }}</span></div>
+            <div class="sg-trust__item"><strong>{{ number_format($siteMetrics['total_orders'] ?? 0) }}</strong><span>{{ __('lamgame.catalog.stat_orders') }}</span></div>
+            <div class="sg-trust__item"><strong>{{ $siteMetrics['job_listings'] ?? 0 }}</strong><span>{{ __('lamgame.catalog.stat_jobs') }}</span></div>
         </div>
     </div>
 </section>
@@ -82,8 +82,8 @@
 <section class="sg-sec">
     <div class="sg-container">
         <div class="sg-sec__head">
-            <h2 class="sg-sec__title">🔥 Đang được mua</h2>
-            <a href="{{ route('lamgame.source-game', ['sort' => 'popular']) }}" class="sg-sec__link">Xem tất cả →</a>
+            <h2 class="sg-sec__title">{{ __('lamgame.catalog.buying_now') }}</h2>
+            <a href="{{ route('lamgame.source-game', ['sort' => 'popular']) }}" class="sg-sec__link">{{ __('lamgame.catalog.view_all') }}</a>
         </div>
         <div class="sg-scroll">
             @foreach(($trendingSources ?? array_slice($featuredSources, 0, 4)) as $source)
@@ -99,8 +99,8 @@
 <section class="sg-sec">
     <div class="sg-container">
         <div class="sg-sec__head">
-            <h2 class="sg-sec__title">✅ Source đã kiểm chứng</h2>
-            <a href="{{ route('lamgame.source-game', ['sort' => 'featured']) }}" class="sg-sec__link">Xem tất cả →</a>
+            <h2 class="sg-sec__title">{{ __('lamgame.catalog.verified') }}</h2>
+            <a href="{{ route('lamgame.source-game', ['sort' => 'featured']) }}" class="sg-sec__link">{{ __('lamgame.catalog.view_all') }}</a>
         </div>
         <div class="sg-scroll">
             @foreach(($bestSellingSources ?? array_slice($featuredSources, 0, 4)) as $source)
@@ -139,14 +139,14 @@
             </select>
             <select name="pricing" class="sg-select" onchange="this.form.submit()">
                 <option value="">Pricing</option>
-                <option value="free" {{ request('pricing') == 'free' ? 'selected' : '' }}>Miễn phí</option>
-                <option value="paid" {{ request('pricing') == 'paid' ? 'selected' : '' }}>Trả phí</option>
+                <option value="free" {{ request('pricing') == 'free' ? 'selected' : '' }}>{{ __('lamgame.catalog.free') }}</option>
+                <option value="paid" {{ request('pricing') == 'paid' ? 'selected' : '' }}>{{ __('lamgame.catalog.paid') }}</option>
             </select>
             <select name="sort" class="sg-select" onchange="this.form.submit()">
-                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Mới nhất</option>
-                <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Phổ biến</option>
-                <option value="price-asc" {{ request('sort') == 'price-asc' ? 'selected' : '' }}>Giá thấp → cao</option>
-                <option value="price-desc" {{ request('sort') == 'price-desc' ? 'selected' : '' }}>Giá cao → thấp</option>
+                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>{{ __('lamgame.catalog.sort_newest') }}</option>
+                <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>{{ __('lamgame.catalog.sort_popular') }}</option>
+                <option value="price-asc" {{ request('sort') == 'price-asc' ? 'selected' : '' }}>{{ __('lamgame.catalog.sort_price_asc') }}</option>
+                <option value="price-desc" {{ request('sort') == 'price-desc' ? 'selected' : '' }}>{{ __('lamgame.catalog.sort_price_desc') }}</option>
             </select>
             @if(request('search'))<input type="hidden" name="search" value="{{ request('search') }}">@endif
         </form>
@@ -157,7 +157,7 @@
 <section class="sg-sec">
     <div class="sg-container">
         @if(request('search'))
-        <p class="sg-results-info">Kết quả cho "<strong>{{ request('search') }}</strong>"</p>
+        <p class="sg-results-info">{{ __('lamgame.catalog.results_for') }} "<strong>{{ request('search') }}</strong>"</p>
         @endif
 
         @if(count($featuredSources) > 0)
@@ -170,18 +170,18 @@
         @if($pagination['has_more'] ?? false)
         <div class="sg-pager">
             @if($pagination['current_page'] > 1)
-                <a href="{{ route('lamgame.source-game', array_merge(request()->query(), ['page' => $pagination['current_page'] - 1])) }}" class="sg-pager__btn">← Trước</a>
+                <a href="{{ route('lamgame.source-game', array_merge(request()->query(), ['page' => $pagination['current_page'] - 1])) }}" class="sg-pager__btn">{{ __('lamgame.catalog.prev') }}</a>
             @endif
             <span class="sg-pager__info">Trang {{ $pagination['current_page'] }}</span>
             @if($pagination['has_more'])
-                <a href="{{ route('lamgame.source-game', array_merge(request()->query(), ['page' => $pagination['current_page'] + 1])) }}" class="sg-pager__btn">Tiếp →</a>
+                <a href="{{ route('lamgame.source-game', array_merge(request()->query(), ['page' => $pagination['current_page'] + 1])) }}" class="sg-pager__btn">{{ __('lamgame.catalog.next') }}</a>
             @endif
         </div>
         @endif
         @else
         <div class="sg-empty">
-            <h3>Chưa có source game nào</h3>
-            <p>Hãy quay lại sau hoặc <a href="{{ route('lamgame.lien-he') }}">liên hệ</a> để đóng góp source game.</p>
+            <h3>{{ __('lamgame.catalog.empty_title') }}</h3>
+            <p>{{ __('lamgame.catalog.back_later') }} <a href="{{ route('lamgame.lien-he') }}">{{ __('lamgame.catalog.contact') }}</a> {{ __('lamgame.catalog.empty_contribute') }}</p>
         </div>
         @endif
     </div>
@@ -190,12 +190,12 @@
 {{-- TRUST SECTION --}}
 <section class="sg-sec sg-sec--alt">
     <div class="sg-container">
-        <h2 class="sg-sec__title" style="text-align:center;margin-bottom:32px">Tại sao chọn LamGame Marketplace?</h2>
+        <h2 class="sg-sec__title" style="text-align:center;margin-bottom:32px">{{ __('lamgame.catalog.why_title') }}</h2>
         <div class="sg-why">
-            <div class="sg-why__item"><span>🔎</span><h3>Thông tin minh bạch</h3><p>Giá, engine, ngày cập nhật, demo và nội dung gói tải được hiển thị theo dữ liệu hiện có.</p></div>
-            <div class="sg-why__item"><span>🔐</span><h3>Tải qua tài khoản</h3><p>File trả phí được cấp theo đơn hàng và giới hạn tải của người mua.</p></div>
-            <div class="sg-why__item"><span>📄</span><h3>Điều khoản công khai</h3><p>Chính sách hoàn tiền, bảo mật và điều khoản Marketplace có thể xem trước khi mua.</p></div>
-            <div class="sg-why__item"><span>💬</span><h3>Kênh hỗ trợ rõ ràng</h3><p>Gửi câu hỏi qua Forum hoặc email; phạm vi hỗ trợ cụ thể tùy từng sản phẩm.</p></div>
+            <div class="sg-why__item"><span>🔎</span><h3>{{ __('lamgame.catalog.why_1_t') }}</h3><p>{{ __('lamgame.catalog.why_1_d') }}</p></div>
+            <div class="sg-why__item"><span>🔐</span><h3>{{ __('lamgame.catalog.why_2_t') }}</h3><p>{{ __('lamgame.catalog.why_2_d') }}</p></div>
+            <div class="sg-why__item"><span>📄</span><h3>{{ __('lamgame.catalog.why_3_t') }}</h3><p>{{ __('lamgame.catalog.why_3_d') }}</p></div>
+            <div class="sg-why__item"><span>💬</span><h3>{{ __('lamgame.catalog.why_4_t') }}</h3><p>{{ __('lamgame.catalog.why_4_d') }}</p></div>
         </div>
     </div>
 </section>
@@ -217,9 +217,9 @@
     <div class="sg-container">
         <h2 class="sg-sec__title" style="text-align:center;margin-bottom:32px">Dịch vụ Game Development</h2>
         <div class="sg-services">
-            <div class="sg-svc"><span class="sg-svc__icon">💻</span><h3>Thuê Game Developer</h3><p>Trao đổi phạm vi Unity, Unreal, Godot và nhận estimate theo dự án</p><a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">Liên hệ →</a></div>
-            <div class="sg-svc"><span class="sg-svc__icon">💡</span><h3>Chia sẻ ý tưởng Game</h3><p>Đăng ý tưởng game, tìm đội ngũ phát triển cùng bạn</p><a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">Gửi ý tưởng →</a></div>
-            <div class="sg-svc"><span class="sg-svc__icon">📦</span><h3>Đăng bán Source Game</h3><p>Bán source code game của bạn cho cộng đồng developer</p><a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">Đăng bán →</a></div>
+            <div class="sg-svc"><span class="sg-svc__icon">💻</span><h3>{{ __('lamgame.catalog.hire_t') }}</h3><p>{{ __('lamgame.catalog.hire_d') }}</p><a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">{{ __('lamgame.catalog.contact_arrow') }}</a></div>
+            <div class="sg-svc"><span class="sg-svc__icon">💡</span><h3>{{ __('lamgame.catalog.idea_t') }}</h3><p>{{ __('lamgame.catalog.idea_d') }}</p><a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">{{ __('lamgame.catalog.idea_arrow') }}</a></div>
+            <div class="sg-svc"><span class="sg-svc__icon">📦</span><h3>{{ __('lamgame.catalog.sell_t') }}</h3><p>{{ __('lamgame.catalog.sell_d') }}</p><a href="{{ route('lamgame.lien-he') }}" class="sg-svc__link">{{ __('lamgame.catalog.sell_arrow') }}</a></div>
         </div>
     </div>
 </section>
@@ -227,9 +227,9 @@
 {{-- FINAL CTA --}}
 <section class="sg-cta">
     <div class="sg-container" style="text-align:center">
-        <h2>Bạn có source game muốn bán?</h2>
-        <p>Đăng ký seller, công khai thông tin sản phẩm và tiếp cận cộng đồng developer</p>
-        <a href="{{ route('lamgame.lien-he') }}" class="sg-btn sg-btn--primary">Đăng bán source game →</a>
+        <h2>{{ __('lamgame.catalog.sell_banner_t') }}</h2>
+        <p>{{ __('lamgame.catalog.sell_banner_d') }}</p>
+        <a href="{{ route('lamgame.lien-he') }}" class="sg-btn sg-btn--primary">{{ __('lamgame.catalog.sell_banner_cta') }}</a>
     </div>
 </section>
 
@@ -237,16 +237,16 @@
 <section class="sg-sec" style="padding:24px 0 40px">
     <div class="sg-container">
         <nav aria-label="Khám phá thêm">
-            <h3 style="font-size:.85rem;color:#7A8599;margin-bottom:10px;font-weight:500">Khám phá thêm trên LamGame</h3>
+            <h3 style="font-size:.85rem;color:#7A8599;margin-bottom:10px;font-weight:500">{{ __('lamgame.catalog.explore_more') }}</h3>
             <div style="display:flex;flex-wrap:wrap;gap:8px">
                 <a href="{{ route('lamgame.blog') }}" class="sg-tag">📝 Blog Game Dev</a>
-                <a href="{{ route('lamgame.viec-lam-game') }}" class="sg-tag">💼 Việc làm Game</a>
+                <a href="{{ route('lamgame.viec-lam-game') }}" class="sg-tag">{{ __('lamgame.catalog.link_jobs') }}</a>
                 <a href="{{ route('forum.index') }}" class="sg-tag">💬 Forum</a>
                 <a href="{{ route('lamgame.ai-tools') }}" class="sg-tag">🤖 AI Tools</a>
-                <a href="{{ route('mini-game.index') }}" class="sg-tag">🕹️ Chơi Game Online</a>
-                <a href="{{ route('lamgame.thue-team-dev') }}" class="sg-tag">👨‍💻 Thuê Team Dev</a>
-                <a href="/khoa-hoc/unity" class="sg-tag">🎓 Khóa học Unity</a>
-                <a href="/khoa-hoc/unreal" class="sg-tag">🎓 Khóa học Unreal</a>
+                <a href="{{ route('mini-game.index') }}" class="sg-tag">{{ __('lamgame.catalog.link_play') }}</a>
+                <a href="{{ route('lamgame.thue-team-dev') }}" class="sg-tag">{{ __('lamgame.catalog.link_hire') }}</a>
+                <a href="/khoa-hoc/unity" class="sg-tag">{{ __('lamgame.catalog.link_unity') }}</a>
+                <a href="/khoa-hoc/unreal" class="sg-tag">{{ __('lamgame.catalog.link_unreal') }}</a>
                 <a href="{{ route('seller.register') }}" class="sg-tag">🏪 Đăng ký Seller</a>
                 <a href="{{ route('employer.register') }}" class="sg-tag">🏢 Đăng tuyển dụng</a>
             </div>
