@@ -1,7 +1,7 @@
 {{-- Saved Jobs — Bookmarked job postings --}}
 @extends('layouts.master')
 
-@section('page_title', $page_title ?? 'Việc làm đã lưu')
+@section('page_title', $page_title ?? __('lamgame.jobs2.page_saved'))
 @section('page_description', $page_description ?? '')
 
 @push('meta')
@@ -12,16 +12,16 @@
 <div class="sj-page">
     <div class="sj-container">
         <div class="sj-header">
-            <h1 class="sj-header__title">🔖 Việc làm đã lưu</h1>
-            <p class="sj-header__desc">Xem lại các vị trí bạn quan tâm</p>
+            <h1 class="sj-header__title">{{ __('lamgame.jobs2.saved_title') }}</h1>
+            <p class="sj-header__desc">{{ __('lamgame.jobs2.saved_desc') }}</p>
         </div>
 
         @if($savedJobs->isEmpty())
         <div class="sj-empty">
             <div class="sj-empty__icon">💼</div>
-            <h3>Chưa lưu việc làm nào</h3>
-            <p>Nhấn nút "Lưu việc làm" trên trang chi tiết để lưu lại xem sau.</p>
-            <a href="{{ route('lamgame.viec-lam-game') }}" class="sj-btn">🎮 Tìm việc làm Game</a>
+            <h3>{{ __('lamgame.jobs2.saved_empty') }}</h3>
+            <p>{{ __('lamgame.jobs2.saved_empty_d') }}</p>
+            <a href="{{ route('lamgame.viec-lam-game') }}" class="sj-btn">{{ __('lamgame.jobs2.find_jobs') }}</a>
         </div>
         @else
         <div class="sj-grid">
@@ -33,14 +33,14 @@
                     <h3 class="sj-card__title">
                         <a href="{{ route('lamgame.job.detail', $job->slug) }}">{{ $job->title }}</a>
                     </h3>
-                    <button class="sj-card__unsave" onclick="unsaveJob({{ $job->id }}, this)" title="Bỏ lưu">
+                    <button class="sj-card__unsave" onclick="unsaveJob({{ $job->id }}, this)" title="{{ __('lamgame.jobs2.unsave') }}">
                         <i class="fa fa-heart"></i>
                     </button>
                 </div>
-                <p class="sj-card__company">{{ $job->company_name ?? 'Công ty' }}</p>
+                <p class="sj-card__company">{{ $job->company_name ?? __('lamgame.jobs2.company') }}</p>
                 <div class="sj-card__meta">
-                    <span>💰 {{ $job->salary_range ?? 'Thỏa thuận' }}</span>
-                    <span>📍 {{ $job->location ?? 'Việt Nam' }}</span>
+                    <span>💰 {{ $job->salary_range ?? __('lamgame.jobs2.negotiable') }}</span>
+                    <span>📍 {{ $job->location ?? __('lamgame.jobs2.vietnam') }}</span>
                     <span>💼 {{ $job->job_type ?? 'Full-time' }}</span>
                 </div>
                 @if($job->skills && $job->skills->count())
@@ -51,11 +51,11 @@
                 </div>
                 @endif
                 <div class="sj-card__footer">
-                    <span class="sj-card__time">Lưu {{ $saved->saved_at->diffForHumans() }}</span>
-                    <a href="{{ route('lamgame.job.detail', $job->slug) }}" class="sj-card__apply">Xem & Ứng tuyển →</a>
+                    <span class="sj-card__time">{{ __('lamgame.jobs2.saved_at') }} {{ $saved->saved_at->diffForHumans() }}</span>
+                    <a href="{{ route('lamgame.job.detail', $job->slug) }}" class="sj-card__apply">{{ __('lamgame.jobs2.view_apply') }}</a>
                 </div>
                 @if($job->application_deadline && $job->application_deadline->isFuture() && $job->application_deadline->diffInDays() <= 3)
-                <div class="sj-card__urgent">⚡ Còn {{ $job->application_deadline->diffInDays() }} ngày</div>
+                <div class="sj-card__urgent">⚡ {{ $job->application_deadline->diffInDays() }} {{ __('lamgame.jobs2.days_left') }}</div>
                 @endif
             </div>
             @endif
@@ -69,18 +69,18 @@
 
         {{-- Job Alerts section --}}
         <div class="sj-alerts">
-            <h2 class="sj-alerts__title">🔔 Thông báo việc làm</h2>
-            <p class="sj-alerts__desc">Nhận email khi có job mới phù hợp với bạn</p>
+            <h2 class="sj-alerts__title">{{ __('lamgame.jobs2.alert_title') }}</h2>
+            <p class="sj-alerts__desc">{{ __('lamgame.jobs2.alert_desc') }}</p>
 
             <form class="sj-alert-form" onsubmit="createAlert(event)">
                 <div class="sj-alert-form__row">
                     <input type="text" name="keywords" placeholder="Keywords (Unity, Senior, Remote...)" class="sj-input">
-                    <input type="text" name="location" placeholder="Địa điểm" class="sj-input sj-input--sm">
+                    <input type="text" name="location" placeholder="{{ __('lamgame.jobs2.alert_loc_ph') }}" class="sj-input sj-input--sm">
                     <select name="frequency" class="sj-select">
-                        <option value="daily">Hàng ngày</option>
-                        <option value="weekly">Hàng tuần</option>
+                        <option value="daily">{{ __('lamgame.jobs2.daily') }}</option>
+                        <option value="weekly">{{ __('lamgame.jobs2.weekly') }}</option>
                     </select>
-                    <button type="submit" class="sj-btn sj-btn--sm">+ Tạo alert</button>
+                    <button type="submit" class="sj-btn sj-btn--sm">{{ __('lamgame.jobs2.create_alert') }}</button>
                 </div>
             </form>
 

@@ -1,13 +1,13 @@
 @extends('layouts.master')
-@section('page_title', ($job ? 'Sửa: ' . $job->title : 'Đăng Job Mới') . ' - Employer')
+@section('page_title', ($job ? __('lamgame.jobs2.form_edit_t') . ': ' . $job->title : __('lamgame.jobs2.form_new_t')) . ' - Employer')
 @push('meta')<meta name="robots" content="noindex, nofollow">@endpush
 
 @section('content')
 <div class="emp-page">
     <div class="emp-container" style="max-width:750px">
         <div class="emp-header">
-            <h1>{{ $job ? '✏️ Sửa Job' : '➕ Đăng Job Mới' }}</h1>
-            <a href="{{ route('employer.jobs') }}" class="emp-btn-sm">← Quay lại</a>
+            <h1>{{ $job ? __('lamgame.jobs2.form_edit') : __('lamgame.jobs2.form_new') }}</h1>
+            <a href="{{ route('employer.jobs') }}" class="emp-btn-sm">{{ __('lamgame.jobs2.back') }}</a>
         </div>
 
         @if($errors->any())
@@ -21,13 +21,13 @@
             @if($job) @method('PUT') @endif
 
             <div class="emp-field">
-                <label>Tiêu đề job *</label>
+                <label>{{ __('lamgame.jobs2.f_title') }}</label>
                 <input type="text" name="title" value="{{ old('title', $job->title ?? '') }}" required placeholder="VD: Senior Unity Developer">
             </div>
 
             <div class="emp-row">
                 <div class="emp-field">
-                    <label>Loại công việc *</label>
+                    <label>{{ __('lamgame.jobs2.f_type') }}</label>
                     <select name="job_type" required>
                         <option value="full-time" {{ old('job_type', $job->job_type ?? '') == 'full-time' ? 'selected' : '' }}>Full-time</option>
                         <option value="part-time" {{ old('job_type', $job->job_type ?? '') == 'part-time' ? 'selected' : '' }}>Part-time</option>
@@ -44,14 +44,14 @@
 
             <div class="emp-row">
                 <div class="emp-field">
-                    <label>Địa điểm</label>
+                    <label>{{ __('lamgame.jobs2.f_location') }}</label>
                     <input type="text" name="location" value="{{ old('location', $job->location ?? '') }}" placeholder="Hồ Chí Minh">
                 </div>
                 <div class="emp-field">
-                    <label>Remote?</label>
+                    <label>{{ __('lamgame.jobs2.f_remote') }}</label>
                     <select name="is_remote">
-                        <option value="0" {{ old('is_remote', $job->is_remote ?? 0) == 0 ? 'selected' : '' }}>Không</option>
-                        <option value="1" {{ old('is_remote', $job->is_remote ?? 0) == 1 ? 'selected' : '' }}>Có (Remote)</option>
+                        <option value="0" {{ old('is_remote', $job->is_remote ?? 0) == 0 ? 'selected' : '' }}>{{ __('lamgame.jobs2.no') }}</option>
+                        <option value="1" {{ old('is_remote', $job->is_remote ?? 0) == 1 ? 'selected' : '' }}>{{ __('lamgame.jobs2.yes_remote') }}</option>
                     </select>
                 </div>
             </div>
@@ -59,7 +59,7 @@
             <div class="emp-row">
                 <div class="emp-field">
                     <label>Salary Range (text)</label>
-                    <input type="text" name="salary_range" value="{{ old('salary_range', $job->salary_range ?? '') }}" placeholder="15-25 triệu">
+                    <input type="text" name="salary_range" value="{{ old('salary_range', $job->salary_range ?? '') }}" placeholder="{{ __('lamgame.jobs2.f_salary_ph') }}">
                 </div>
                 <div class="emp-field">
                     <label>Deadline</label>
@@ -68,28 +68,28 @@
             </div>
 
             <div class="emp-field">
-                <label>Mô tả ngắn</label>
-                <textarea name="short_description" rows="2" placeholder="Mô tả 1-2 câu...">{{ old('short_description', $job->short_description ?? '') }}</textarea>
+                <label>{{ __('lamgame.jobs2.f_short') }}</label>
+                <textarea name="short_description" rows="2" placeholder="{{ __('lamgame.jobs2.f_short_ph') }}">{{ old('short_description', $job->short_description ?? '') }}</textarea>
             </div>
 
             <div class="emp-field">
-                <label>Mô tả chi tiết *</label>
-                <textarea name="description" rows="12" required placeholder="Mô tả công việc, yêu cầu, quyền lợi...">{{ old('description', $job->description ?? '') }}</textarea>
+                <label>{{ __('lamgame.jobs2.f_desc') }}</label>
+                <textarea name="description" rows="12" required placeholder="{{ __('lamgame.jobs2.f_desc_ph') }}">{{ old('description', $job->description ?? '') }}</textarea>
             </div>
 
             <div class="emp-field">
-                <label>Skills (cách nhau bởi dấu phẩy)</label>
+                <label>{{ __('lamgame.jobs2.f_skills') }}</label>
                 <input type="text" name="skills" value="{{ old('skills', $job ? $job->skills->pluck('skill_name')->implode(', ') : '') }}" placeholder="Unity, C#, Photoshop, Blender">
             </div>
 
             <div class="emp-field">
-                <label>Benefits (cách nhau bởi dấu phẩy)</label>
-                <input type="text" name="benefits" value="{{ old('benefits', $job ? $job->benefits->pluck('benefit_name')->implode(', ') : '') }}" placeholder="Lương tháng 13, Bảo hiểm, Remote">
+                <label>{{ __('lamgame.jobs2.f_benefits') }}</label>
+                <input type="text" name="benefits" value="{{ old('benefits', $job ? $job->benefits->pluck('benefit_name')->implode(', ') : '') }}" placeholder="{{ __('lamgame.jobs2.f_benefits_ph') }}">
             </div>
 
             <div class="emp-actions">
-                <button type="submit" class="emp-btn emp-btn--primary">{{ $job ? '💾 Lưu thay đổi' : '📝 Tạo Job (Draft)' }}</button>
-                <a href="{{ route('employer.jobs') }}" class="emp-btn emp-btn--ghost">Hủy</a>
+                <button type="submit" class="emp-btn emp-btn--primary">{{ $job ? __('lamgame.jobs2.save_changes') : __('lamgame.jobs2.create_draft') }}</button>
+                <a href="{{ route('employer.jobs') }}" class="emp-btn emp-btn--ghost">{{ __('lamgame.jobs2.cancel') }}</a>
             </div>
         </form>
     </div>

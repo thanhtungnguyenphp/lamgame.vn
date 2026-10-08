@@ -1,18 +1,18 @@
 @extends('layouts.master')
-@section('page_title', 'Quản lý Jobs - Employer')
+@section('page_title', __('lamgame.jobs2.emp_page'))
 @push('meta')<meta name="robots" content="noindex, nofollow">@endpush
 
 @section('content')
 <div class="emp-page">
     <div class="emp-container">
         <div class="emp-header">
-            <h1>📋 Quản lý Jobs</h1>
-            <a href="{{ route('employer.jobs.create') }}" class="emp-btn emp-btn--primary">+ Đăng Job Mới</a>
+            <h1>{{ __('lamgame.jobs2.emp_manage') }}</h1>
+            <a href="{{ route('employer.jobs.create') }}" class="emp-btn emp-btn--primary">{{ __('lamgame.jobs2.emp_new') }}</a>
         </div>
 
         {{-- Status tabs --}}
         <div class="emp-tabs">
-            <a href="{{ route('employer.jobs') }}" class="emp-tab {{ !$status ? 'emp-tab--active' : '' }}">Tất cả</a>
+            <a href="{{ route('employer.jobs') }}" class="emp-tab {{ !$status ? 'emp-tab--active' : '' }}">{{ __('lamgame.jobs2.emp_all') }}</a>
             <a href="{{ route('employer.jobs', ['status' => 'active']) }}" class="emp-tab {{ $status === 'active' ? 'emp-tab--active' : '' }}">Active</a>
             <a href="{{ route('employer.jobs', ['status' => 'draft']) }}" class="emp-tab {{ $status === 'draft' ? 'emp-tab--active' : '' }}">Draft</a>
             <a href="{{ route('employer.jobs', ['status' => 'paused']) }}" class="emp-tab {{ $status === 'paused' ? 'emp-tab--active' : '' }}">Paused</a>
@@ -24,7 +24,7 @@
         @endif
 
         @if($jobs->isEmpty())
-        <div class="emp-empty"><p>Chưa có job nào. <a href="{{ route('employer.jobs.create') }}">Tạo job đầu tiên →</a></p></div>
+        <div class="emp-empty"><p>{{ __('lamgame.jobs2.emp_no_job') }} <a href="{{ route('employer.jobs.create') }}">{{ __('lamgame.jobs2.emp_first') }}</a></p></div>
         @else
         <div class="emp-table">
             @foreach($jobs as $job)
@@ -34,7 +34,7 @@
                     <div class="emp-job-row__meta">
                         <span>📍 {{ $job->location ?? 'Remote' }}</span>
                         <span>👁 {{ $job->view_count }} views</span>
-                        <span>📨 {{ $job->application_count }} ứng viên</span>
+                        <span>📨 {{ $job->application_count }} {{ __('lamgame.jobs2.emp_apps') }}</span>
                         <span>📅 {{ $job->created_at->format('d/m/Y') }}</span>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                         @csrf
                         <button type="submit" class="emp-btn-sm">{{ $job->status === 'active' ? '⏸ Pause' : '▶ Publish' }}</button>
                     </form>
-                    <a href="{{ route('employer.jobs.applications', $job->id) }}" class="emp-btn-sm">👤 Ứng viên</a>
+                    <a href="{{ route('employer.jobs.applications', $job->id) }}" class="emp-btn-sm">{{ __('lamgame.jobs2.emp_candidates') }}</a>
                 </div>
             </div>
             @endforeach
