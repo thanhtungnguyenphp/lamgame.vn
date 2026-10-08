@@ -82,6 +82,10 @@ return Application::configure(basePath: dirname(__DIR__))
         
         // Add site metrics injection to web group
         $middleware->appendToGroup('web', \App\Http\Middleware\InjectSiteMetrics::class);
+
+        // Áp dụng Locale middleware của Bagisto cho toàn bộ route web (gồm các trang
+        // custom lamgame) để đổi ngôn ngữ ?locale= + session hoạt động trên mọi trang.
+        $middleware->appendToGroup('web', \Webkul\Shop\Http\Middleware\Locale::class);
     })
     ->withSchedule(function (Schedule $schedule) {
         $schedule->command('blog:publish-scheduled')->everyFiveMinutes();

@@ -106,6 +106,27 @@
                 </button>
             </div>
 
+            {{-- Language switcher --}}
+            @php
+                $langs = ['vi' => ['🇻🇳', 'VI'], 'en' => ['🇬🇧', 'EN'], 'de' => ['🇩🇪', 'DE']];
+                $curLang = app()->getLocale();
+                $curLang = isset($langs[$curLang]) ? $curLang : 'vi';
+            @endphp
+            <div class="nav-redesign__lang" onclick="this.classList.toggle('open')">
+                <button type="button" class="nav-redesign__lang-btn" aria-label="Chọn ngôn ngữ">
+                    <span>{{ $langs[$curLang][0] }}</span>
+                    <span>{{ $langs[$curLang][1] }}</span>
+                    <i class="fa fa-angle-down" style="font-size:0.8rem"></i>
+                </button>
+                <div class="nav-redesign__lang-menu">
+                    @foreach($langs as $code => $info)
+                        <a href="{{ request()->fullUrlWithQuery(['locale' => $code]) }}" class="{{ $code === $curLang ? 'active' : '' }}">
+                            <span>{{ $info[0] }}</span> {{ $code === 'vi' ? 'Tiếng Việt' : ($code === 'en' ? 'English' : 'Deutsch') }}
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+
             {{-- Dark mode --}}
             <button class="nav-redesign__theme-btn" data-theme-toggle aria-label="Chuyển đổi giao diện sáng/tối">
                 <i class="fa fa-moon-o"></i>
@@ -200,4 +221,32 @@ function toggleNavSearch() {
     }
 }
 </script>
+@endpush
+
+@push('styles')
+<style>
+.nav-redesign__lang { position: relative; cursor: pointer; }
+.nav-redesign__lang-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(124,92,255,.08); border: 1px solid rgba(124,92,255,.2);
+    color: #F5F7FA; padding: 7px 12px; border-radius: 10px; cursor: pointer;
+    font-size: 0.85rem; font-weight: 600; transition: all .18s;
+}
+.nav-redesign__lang-btn:hover { background: rgba(124,92,255,.18); }
+.nav-redesign__lang-menu {
+    position: absolute; top: calc(100% + 8px); right: 0;
+    background: #1A1A2E; border: 1px solid rgba(124,92,255,.2);
+    border-radius: 10px; min-width: 180px; padding: 6px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4); z-index: 1000;
+    display: none;
+}
+.nav-redesign__lang.open .nav-redesign__lang-menu { display: block; }
+.nav-redesign__lang-menu a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 16px; color: #B7C0D1; text-decoration: none; font-size: 0.9rem;
+    transition: background .15s;
+}
+.nav-redesign__lang-menu a:hover { background: rgba(124,92,255,.1); color: #fff; }
+.nav-redesign__lang-menu a.active { color: #00D1FF; font-weight: 600; }
+</style>
 @endpush

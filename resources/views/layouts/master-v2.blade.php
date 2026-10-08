@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
+    <style>[x-cloak]{display:none!important}</style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#0D0D1A">
@@ -21,7 +22,7 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:site_name" content="LamGame.vn">
-    <meta property="og:locale" content="vi_VN">
+    <meta property="og:locale" content="{{ ['vi' => 'vi_VN', 'en' => 'en_US', 'de' => 'de_DE'][app()->getLocale()] ?? 'vi_VN' }}">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">

@@ -98,6 +98,25 @@
                     <kbd class="lg-v2-nav__kbd">⌘K</kbd>
                 </button>
 
+                {{-- Language switcher --}}
+                @php
+                    $langsV2 = ['vi' => ['🇻🇳', 'Tiếng Việt'], 'en' => ['🇬🇧', 'English'], 'de' => ['🇩🇪', 'Deutsch']];
+                    $curLangV2 = isset($langsV2[app()->getLocale()]) ? app()->getLocale() : 'vi';
+                @endphp
+                <div class="lg-v2-lang" x-data="{ langOpen: false }" @click.outside="langOpen = false" style="position:relative">
+                    <button @click="langOpen = !langOpen" class="lg-v2-nav__action-btn" title="Ngôn ngữ" style="gap:5px">
+                        <span>{{ $langsV2[$curLangV2][0] }}</span>
+                        <span style="font-size:0.8rem;font-weight:600;text-transform:uppercase">{{ $curLangV2 }}</span>
+                    </button>
+                    <div x-show="langOpen" x-transition style="position:absolute;top:calc(100% + 8px);right:0;background:#111827;border:1px solid rgba(124,92,255,.2);border-radius:10px;min-width:170px;padding:6px 0;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:1000" x-cloak>
+                        @foreach($langsV2 as $code => $info)
+                            <a href="{{ request()->fullUrlWithQuery(['locale' => $code]) }}" style="display:flex;align-items:center;gap:10px;padding:9px 16px;color:{{ $code === $curLangV2 ? '#00D1FF' : '#B7C0D1' }};text-decoration:none;font-size:0.9rem">
+                                <span>{{ $info[0] }}</span> {{ $info[1] }}
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+
                 {{-- Cart --}}
                 <a href="/checkout/cart" class="lg-v2-nav__action-btn lg-v2-nav__action-btn--icon" title="Giỏ hàng">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>

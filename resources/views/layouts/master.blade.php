@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="dark">
+<html lang="{{ app()->getLocale() }}" data-theme="dark">
 <head>
     <style>html,body{background:#070B14;color:#F5F7FA}</style>
     <meta charset="UTF-8">
@@ -24,7 +24,12 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:site_name" content="LamGame.vn">
-    <meta property="og:locale" content="vi_VN">
+    <meta property="og:locale" content="{{ ['vi' => 'vi_VN', 'en' => 'en_US', 'de' => 'de_DE'][app()->getLocale()] ?? 'vi_VN' }}">
+    @foreach(['vi' => 'vi_VN', 'en' => 'en_US', 'de' => 'de_DE'] as $lc => $og)
+        @if($lc !== app()->getLocale())
+            <meta property="og:locale:alternate" content="{{ $og }}">
+        @endif
+    @endforeach
     @stack('og_extra')
 
     <!-- Twitter Card Meta Tags -->
