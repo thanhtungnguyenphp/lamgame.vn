@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('page_title', $page_title ?? 'Chia sẻ ý tưởng Game - Cộng đồng Làm Game')
+@section('page_title', $page_title ?? __('lamgame.ideas.page_title'))
 
 @section('page_description', $page_description ?? 'Nơi gamer chia sẻ ý tưởng game độc đáo và tìm kiếm đội ngũ phát triển. Biến ý tưởng thành hiện thực.')
 
@@ -9,7 +9,7 @@
     <section class="idea-hero">
         <div class="container">
             <div class="hero-content">
-                <h1>💡 Chia Sẻ Ý Tưởng Game</h1>
+                <h1>{{ __('lamgame.ideas.hero') }}</h1>
                 <p class="hero-subtitle">
                     Nơi những ý tưởng game tuyệt vời được sinh ra và phát triển. 
                     Chia sẻ ý tưởng của bạn, tìm kiếm đồng đội và biến giấc mơ thành hiện thực.
@@ -33,22 +33,22 @@
                 <div class="stat-card">
                     <div class="stat-icon">💡</div>
                     <div class="stat-number">{{ count($ideaPosts) }}+</div>
-                    <div class="stat-label">Ý tưởng game</div>
+                    <div class="stat-label">{{ __('lamgame.ideas.stat_ideas') }}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">👥</div>
                     <div class="stat-number">45+</div>
-                    <div class="stat-label">Team đã được thành lập</div>
+                    <div class="stat-label">{{ __('lamgame.ideas.stat_teams') }}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">🚀</div>
                     <div class="stat-number">12+</div>
-                    <div class="stat-label">Game đã ra mắt</div>
+                    <div class="stat-label">{{ __('lamgame.ideas.stat_games') }}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">💰</div>
                     <div class="stat-number">3+</div>
-                    <div class="stat-label">Dự án thành công</div>
+                    <div class="stat-label">{{ __('lamgame.ideas.stat_success') }}</div>
                 </div>
             </div>
         </div>
@@ -57,31 +57,31 @@
     <!-- How It Works -->
     <section class="how-it-works">
         <div class="container">
-            <h2 class="section-title">Cách thức hoạt động</h2>
+            <h2 class="section-title">{{ __('lamgame.ideas.how') }}</h2>
             <div class="steps-grid">
                 <div class="step-card">
                     <div class="step-number">1</div>
                     <div class="step-icon">💡</div>
-                    <h3>Chia sẻ ý tưởng</h3>
-                    <p>Đăng ý tưởng game của bạn với mô tả chi tiết, thể loại, nền tảng và vision.</p>
+                    <h3>{{ __('lamgame.ideas.how1') }}</h3>
+                    <p>{{ __('lamgame.ideas.how1_d') }}</p>
                 </div>
                 <div class="step-card">
                     <div class="step-number">2</div>
                     <div class="step-icon">👀</div>
-                    <h3>Nhận phản hồi</h3>
-                    <p>Cộng đồng sẽ comment, đánh giá và cho feedback về tính khả thi của ý tưởng.</p>
+                    <h3>{{ __('lamgame.ideas.how2') }}</h3>
+                    <p>{{ __('lamgame.ideas.how2_d') }}</p>
                 </div>
                 <div class="step-card">
                     <div class="step-number">3</div>
                     <div class="step-icon">🤝</div>
-                    <h3>Tìm team</h3>
-                    <p>Kết nối với các developer, artist, designer quan tâm đến ý tưởng của bạn.</p>
+                    <h3>{{ __('lamgame.ideas.how3') }}</h3>
+                    <p>{{ __('lamgame.ideas.how3_d') }}</p>
                 </div>
                 <div class="step-card">
                     <div class="step-number">4</div>
                     <div class="step-icon">🎮</div>
-                    <h3>Phát triển game</h3>
-                    <p>Cùng team mới, bắt đầu hành trình biến ý tưởng thành sản phẩm game thật sự.</p>
+                    <h3>{{ __('lamgame.ideas.how4') }}</h3>
+                    <p>{{ __('lamgame.ideas.how4_d') }}</p>
                 </div>
             </div>
         </div>
@@ -91,13 +91,13 @@
     <section id="trending-ideas" class="trending-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">🔥 Ý Tưởng Đang Hot</h2>
+                <h2 class="section-title">{{ __('lamgame.ideas.trending') }}</h2>
                 <div class="filter-tabs">
-                    <button class="filter-tab active" onclick="filterIdeas('all')">Tất cả</button>
+                    <button class="filter-tab active" onclick="filterIdeas('all')">{{ __('lamgame.ideas.all') }}</button>
                     <button class="filter-tab" onclick="filterIdeas('mobile')">Mobile</button>
                     <button class="filter-tab" onclick="filterIdeas('pc')">PC</button>
                     <button class="filter-tab" onclick="filterIdeas('vr')">VR</button>
-                    <button class="filter-tab" onclick="filterIdeas('need-team')">Cần team</button>
+                    <button class="filter-tab" onclick="filterIdeas('need-team')">{{ __('lamgame.ideas.need_team') }}</button>
                 </div>
             </div>
             
@@ -164,15 +164,15 @@
     <!-- Success Stories -->
     <section class="success-stories">
         <div class="container">
-            <h2 class="section-title">🏆 Câu chuyện thành công</h2>
+            <h2 class="section-title">{{ __('lamgame.ideas.success') }}</h2>
             <div class="stories-grid">
                 <div class="story-card">
                     <div class="story-image">
                         <img src="{{ asset('images/placeholder-game.svg') }}" alt="Game thành công" />
                     </div>
                     <div class="story-content">
-                        <h3>"Sky Adventure" - Từ ý tưởng đến top 10 App Store</h3>
-                        <p>Bắt đầu từ một ý tưởng được chia sẻ trên LamGame, Sky Adventure đã thu hút được team 5 người và sau 8 tháng phát triển, game đã đạt top 10 trên App Store với hơn 100k downloads.</p>
+                        <h3>{{ __('lamgame.ideas.story1_t') }}</h3>
+                        <p>{{ __('lamgame.ideas.story1_d') }}</p>
                         <div class="story-author">
                             <span>Nguyễn Minh Tuấn - Game Designer</span>
                         </div>
@@ -184,8 +184,8 @@
                         <img src="{{ asset('images/placeholder-game.svg') }}" alt="Team success" />
                     </div>
                     <div class="story-content">
-                        <h3>"Legends of Vietnam" - Đoạt giải Game Jam 2024</h3>
-                        <p>Ý tưởng game RPG về thần thoại Việt Nam được chia sẻ và nhận được sự quan tâm lớn. Team 6 người được thành lập và đã đoạt giải nhất Game Jam Việt Nam 2024.</p>
+                        <h3>{{ __('lamgame.ideas.story2_t') }}</h3>
+                        <p>{{ __('lamgame.ideas.story2_d') }}</p>
                         <div class="story-author">
                             <span>Trần Văn Hùng - Unity Developer</span>
                         </div>
@@ -199,21 +199,21 @@
     <div id="ideaModal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>💡 Chia sẻ ý tưởng game mới</h2>
+                <h2>{{ __('lamgame.ideas.form_title') }}</h2>
                 <button class="close-btn" onclick="closeIdeaModal()">&times;</button>
             </div>
             
             <form id="ideaForm" class="idea-form" onsubmit="submitIdea(event)">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="ideaTitle">Tên game / Ý tưởng *</label>
-                        <input type="text" id="ideaTitle" name="title" required placeholder="VD: Nông trại thông minh VN">
+                        <label for="ideaTitle">{{ __('lamgame.ideas.f_name') }}</label>
+                        <input type="text" id="ideaTitle" name="title" required placeholder="{{ __('lamgame.ideas.f_name_ph') }}">
                     </div>
                     
                     <div class="form-group">
-                        <label for="ideaGenre">Thể loại *</label>
+                        <label for="ideaGenre">{{ __('lamgame.ideas.f_genre') }}</label>
                         <select id="ideaGenre" name="genre" required>
-                            <option value="">Chọn thể loại</option>
+                            <option value="">{{ __('lamgame.ideas.choose_genre') }}</option>
                             <option value="Action">Action</option>
                             <option value="RPG">RPG</option>
                             <option value="Strategy">Strategy</option>
@@ -228,9 +228,9 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="ideaPlatform">Nền tảng *</label>
+                        <label for="ideaPlatform">{{ __('lamgame.ideas.f_platform') }}</label>
                         <select id="ideaPlatform" name="platform" required>
-                            <option value="">Chọn nền tảng</option>
+                            <option value="">{{ __('lamgame.ideas.choose_plat') }}</option>
                             <option value="Mobile">Mobile (iOS/Android)</option>
                             <option value="PC">PC (Windows/Mac/Linux)</option>
                             <option value="Console">Console (PS/Xbox/Nintendo)</option>
@@ -240,25 +240,25 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="teamSize">Quy mô team dự kiến</label>
+                        <label for="teamSize">{{ __('lamgame.ideas.f_team') }}</label>
                         <select id="teamSize" name="team_size">
-                            <option value="">Chọn quy mô</option>
-                            <option value="Solo">Solo (1 người)</option>
-                            <option value="Small">Nhỏ (2-5 người)</option>
-                            <option value="Medium">Vừa (6-15 người)</option>
-                            <option value="Large">Lớn (15+ người)</option>
+                            <option value="">{{ __('lamgame.ideas.choose_size') }}</option>
+                            <option value="Solo">{{ __('lamgame.ideas.size_solo') }}</option>
+                            <option value="Small">{{ __('lamgame.ideas.size_small') }}</option>
+                            <option value="Medium">{{ __('lamgame.ideas.size_medium') }}</option>
+                            <option value="Large">{{ __('lamgame.ideas.size_large') }}</option>
                         </select>
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="ideaDescription">Mô tả chi tiết ý tưởng *</label>
+                    <label for="ideaDescription">{{ __('lamgame.ideas.f_desc') }}</label>
                     <textarea id="ideaDescription" name="description" required rows="6" 
-                              placeholder="Mô tả chi tiết về gameplay, cốt truyện, tính năng đặc biệt, target audience..."></textarea>
+                              placeholder="{{ __('lamgame.ideas.f_desc_ph') }}"></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label>Vai trò cần tìm (chọn nhiều)</label>
+                    <label>{{ __('lamgame.ideas.f_roles') }}</label>
                     <div class="roles-grid">
                         <label class="role-checkbox">
                             <input type="checkbox" name="team_needed[]" value="Unity Developer">
@@ -296,8 +296,8 @@
                 </div>
                 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeIdeaModal()">Hủy</button>
-                    <button type="submit" class="btn btn-primary">🚀 Đăng ý tưởng</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeIdeaModal()">{{ __('lamgame.ideas.cancel') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('lamgame.ideas.submit') }}</button>
                 </div>
             </form>
         </div>
@@ -820,7 +820,7 @@
             console.log('Submitting idea:', data);
             
             // Here you would normally send to server
-            alert('Ý tưởng của bạn đã được đăng thành công! Chúng tôi sẽ xem xét và phê duyệt trong thời gian sớm nhất.');
+            alert(LG_I18N.posted);
             closeIdeaModal();
             event.target.reset();
         }
@@ -854,17 +854,17 @@
         
         function likeIdea(id) {
             console.log('Like idea:', id);
-            alert('Đã thích ý tưởng này!');
+            alert(LG_I18N.liked);
         }
         
         function joinTeam(id) {
             console.log('Join team for idea:', id);
-            alert('Tính năng tham gia team đang được phát triển! Vui lòng liên hệ trực tiếp với tác giả ý tưởng.');
+            alert(LG_I18N.joinTeam);
         }
         
         function viewIdeaDetail(id) {
             console.log('View idea detail:', id);
-            alert('Trang chi tiết ý tưởng đang được phát triển!');
+            alert(LG_I18N.detail);
         }
         
         // Close modal when clicking outside
