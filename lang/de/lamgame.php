@@ -452,5 +452,7 @@ return [
         'privacy_desc' => 'Datenschutz- und Datenverarbeitungsrichtlinie auf LamGame.vn.',
         'terms_title' => 'Nutzungsbedingungen',
         'terms_desc' => 'Allgemeine Geschäftsbedingungen für die Nutzung der LamGame.vn-Dienste.',
+        'mp_title' => 'Marktplatz-Bedingungen',
+        'mp_desc' => 'Bedingungen für Käufer und Verkäufer auf dem LamGame.vn-Marktplatz.',
     ],
 ];

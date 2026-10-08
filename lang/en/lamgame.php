@@ -452,5 +452,7 @@ return [
         'privacy_desc' => 'Privacy and personal data processing policy on LamGame.vn.',
         'terms_title' => 'Terms of Use',
         'terms_desc' => 'Terms and conditions for using LamGame.vn services.',
+        'mp_title' => 'Marketplace Terms',
+        'mp_desc' => 'Terms for buyers and sellers on the LamGame.vn marketplace.',
     ],
 ];
