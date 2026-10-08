@@ -39,8 +39,8 @@
         .lic-empty a { color: #00D1FF; font-weight: 600; text-decoration: none; }
     </style>
 
-    <div class="lic-head">🔑 License của tôi</div>
-    <p class="lic-sub">Giấy phép (license key) cho các source game bạn đã mua.</p>
+    <div class="lic-head">{{ __('lamgame.license.title') }}</div>
+    <p class="lic-sub">{{ __('lamgame.license.subtitle') }}</p>
 
     @forelse($licenses as $license)
         <div class="lic-card">
@@ -57,18 +57,18 @@
 
             <div class="lic-key-row">
                 <code id="lk-{{ $license->id }}" class="lic-key">{{ $license->key }}</code>
-                <button type="button" class="lic-copy" onclick="lgCopyLicense('lk-{{ $license->id }}', this)">📋 Sao chép</button>
+                <button type="button" class="lic-copy" onclick="lgCopyLicense('lk-{{ $license->id }}', this)">{{ __('lamgame.license.copy') }}</button>
             </div>
 
             <div class="lic-meta">
-                Kích hoạt: {{ optional($license->activated_at)->format('d/m/Y') ?? '—' }}
-                @if($license->expires_at) · Hết hạn: {{ $license->expires_at->format('d/m/Y') }} @else · Vĩnh viễn @endif
+                {{ __('lamgame.license.activated') }}: {{ optional($license->activated_at)->format('d/m/Y') ?? '—' }}
+                @if($license->expires_at) · {{ __('lamgame.license.expires') }}: {{ $license->expires_at->format('d/m/Y') }} @else · {{ __('lamgame.license.lifetime') }} @endif
             </div>
         </div>
     @empty
         <div class="lic-empty">
-            <p style="margin-bottom:1rem">Bạn chưa có license nào. Khi mua source game, license key sẽ xuất hiện ở đây.</p>
-            <a href="{{ route('lamgame.source-game') }}">🎮 Khám phá Source Game →</a>
+            <p style="margin-bottom:1rem">{{ __('lamgame.license.empty') }}</p>
+            <a href="{{ route('lamgame.source-game') }}">{{ __('lamgame.license.explore') }}</a>
         </div>
     @endforelse
 
@@ -82,7 +82,7 @@
         if(!el) return;
         navigator.clipboard.writeText(el.textContent.trim()).then(() => {
             const orig = btn.textContent;
-            btn.textContent = 'Đã sao chép ✓';
+            btn.textContent = @json(__('lamgame.license.copied'));
             setTimeout(() => { btn.textContent = orig; }, 1500);
         });
     }

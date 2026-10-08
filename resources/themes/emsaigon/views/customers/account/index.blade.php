@@ -44,49 +44,49 @@
         .dash-shortcut:hover { background: rgba(124,92,255,.1); border-color: rgba(124,92,255,.4); }
     </style>
 
-    <div class="dash-hello">👋 Xin chào, {{ trim(($customer->first_name ?? '') . ' ' . ($customer->last_name ?? '')) ?: 'bạn' }}!</div>
-    <p class="dash-sub">Đây là tổng quan tài khoản của bạn.</p>
+    <div class="dash-hello">👋 {{ __('lamgame.account.hello') }}, {{ trim(($customer->first_name ?? '') . ' ' . ($customer->last_name ?? '')) ?: __('lamgame.account.guest') }}!</div>
+    <p class="dash-sub">{{ __('lamgame.account.dash_sub') }}</p>
 
     <!-- Thống kê nhanh -->
     <div class="dash-stats">
         <div class="dash-stat">
             <div class="dash-stat__icon">📦</div>
             <div class="dash-stat__num">{{ number_format($ordersCount) }}</div>
-            <div class="dash-stat__label">Đơn hàng</div>
+            <div class="dash-stat__label">{{ __('lamgame.account.stat_orders') }}</div>
         </div>
         <div class="dash-stat">
             <div class="dash-stat__icon">⬇️</div>
             <div class="dash-stat__num">{{ number_format($downloadCount) }}</div>
-            <div class="dash-stat__label">Sản phẩm tải về</div>
+            <div class="dash-stat__label">{{ __('lamgame.account.stat_downloads') }}</div>
         </div>
         <div class="dash-stat">
             <div class="dash-stat__icon">🔑</div>
             <div class="dash-stat__num">{{ number_format($licenseCount) }}</div>
-            <div class="dash-stat__label">License</div>
+            <div class="dash-stat__label">{{ __('lamgame.account.stat_licenses') }}</div>
         </div>
         <div class="dash-stat">
             <div class="dash-stat__icon">💰</div>
             <div class="dash-stat__num">${{ number_format($totalSpent, 2) }}</div>
-            <div class="dash-stat__label">Tổng chi tiêu</div>
+            <div class="dash-stat__label">{{ __('lamgame.account.stat_spent') }}</div>
         </div>
     </div>
 
     <!-- Đơn hàng gần đây -->
-    <h2 class="dash-section-title">Đơn hàng gần đây</h2>
+    <h2 class="dash-section-title">{{ __('lamgame.account.recent_orders') }}</h2>
     @if($recentOrders->isEmpty())
         <div class="dash-empty">
-            <p style="margin-bottom:0.75rem">Bạn chưa có đơn hàng nào.</p>
-            <a href="{{ route('lamgame.source-game') }}" class="dash-link">🎮 Khám phá Source Game →</a>
+            <p style="margin-bottom:0.75rem">{{ __('lamgame.account.no_orders') }}</p>
+            <a href="{{ route('lamgame.source-game') }}" class="dash-link">{{ __('lamgame.account.explore_source') }}</a>
         </div>
     @else
         <div style="overflow-x:auto">
             <table class="dash-table">
                 <thead>
                     <tr>
-                        <th>Mã đơn</th>
-                        <th>Ngày</th>
-                        <th>Trạng thái</th>
-                        <th>Tổng tiền</th>
+                        <th>{{ __('lamgame.account.col_order') }}</th>
+                        <th>{{ __('lamgame.account.col_date') }}</th>
+                        <th>{{ __('lamgame.account.col_status') }}</th>
+                        <th>{{ __('lamgame.account.col_total') }}</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -98,22 +98,22 @@
                             <td>{{ $o->created_at?->format('d/m/Y') }}</td>
                             <td><span class="dash-badge" style="background:{{ $st[1] }};color:{{ $st[2] }}">{{ $st[0] }}</span></td>
                             <td style="font-weight:700;color:#00D1FF">${{ number_format($o->grand_total, 2) }}</td>
-                            <td><a href="{{ route('shop.customers.account.orders.view', $o->id) }}" class="dash-link">Xem</a></td>
+                            <td><a href="{{ route('shop.customers.account.orders.view', $o->id) }}" class="dash-link">{{ __('lamgame.account.view') }}</a></td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
         <div style="margin-top:1rem">
-            <a href="{{ route('shop.customers.account.orders.index') }}" class="dash-link">Xem tất cả đơn hàng →</a>
+            <a href="{{ route('shop.customers.account.orders.index') }}" class="dash-link">{{ __('lamgame.account.view_all_orders') }}</a>
         </div>
     @endif
 
     <!-- Shortcut -->
     <div class="dash-shortcuts">
-        <a href="{{ route('shop.customers.account.profile.index') }}" class="dash-shortcut"><span>👤</span> Thông tin cá nhân</a>
-        <a href="{{ route('shop.customers.account.downloadable_products.index') }}" class="dash-shortcut"><span>⬇️</span> Sản phẩm tải về</a>
-        <a href="{{ route('lamgame.my-licenses') }}" class="dash-shortcut"><span>🔑</span> License của tôi</a>
-        <a href="{{ route('lamgame.source-game') }}" class="dash-shortcut"><span>🛒</span> Tiếp tục mua sắm</a>
+        <a href="{{ route('shop.customers.account.profile.index') }}" class="dash-shortcut"><span>👤</span> {{ __('lamgame.account.profile') }}</a>
+        <a href="{{ route('shop.customers.account.downloadable_products.index') }}" class="dash-shortcut"><span>⬇️</span> {{ __('lamgame.account.downloads') }}</a>
+        <a href="{{ route('lamgame.my-licenses') }}" class="dash-shortcut"><span>🔑</span> {{ __('lamgame.account.licenses') }}</a>
+        <a href="{{ route('lamgame.source-game') }}" class="dash-shortcut"><span>🛒</span> {{ __('lamgame.cart.continue') }}</a>
     </div>
 </x-layouts.account>

@@ -7,40 +7,40 @@
         <!-- Header -->
         <div class="profile-header">
             <div>
-                <h1 class="profile-title">Thông tin cá nhân</h1>
-                <p class="profile-subtitle">Quản lý thông tin cá nhân của bạn</p>
+                <h1 class="profile-title">{{ __('lamgame.profile.title') }}</h1>
+                <p class="profile-subtitle">{{ __('lamgame.profile.subtitle') }}</p>
             </div>
             <a href="{{ route('shop.customers.account.profile.edit') }}" class="btn-edit-profile">
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                 </svg>
-                Chỉnh sửa
+                {{ __('lamgame.profile.edit') }}
             </a>
         </div>
 
         <!-- Profile Info Card -->
         <div class="profile-card">
             <div class="profile-section">
-                <h2 class="section-title">👤 Thông tin cơ bản</h2>
+                <h2 class="section-title">{{ __('lamgame.profile.basic_info') }}</h2>
                 
                 <div class="info-grid">
                     <div class="info-item">
-                        <label class="info-label">Họ</label>
+                        <label class="info-label">{{ __('lamgame.profile.first_name') }}</label>
                         <p class="info-value">{{ $customer->first_name }}</p>
                     </div>
 
                     <div class="info-item">
-                        <label class="info-label">Tên</label>
+                        <label class="info-label">{{ __('lamgame.profile.last_name') }}</label>
                         <p class="info-value">{{ $customer->last_name }}</p>
                     </div>
 
                     <div class="info-item">
-                        <label class="info-label">Giới tính</label>
+                        <label class="info-label">{{ __('lamgame.profile.gender') }}</label>
                         <p class="info-value">
                             @if($customer->gender === 'Male')
-                                Nam
+                                {{ __('lamgame.profile.male') }}
                             @elseif($customer->gender === 'Female')
-                                Nữ
+                                {{ __('lamgame.profile.female') }}
                             @else
                                 Chưa cập nhật
                             @endif
@@ -48,8 +48,8 @@
                     </div>
 
                     <div class="info-item">
-                        <label class="info-label">Ngày sinh</label>
-                        <p class="info-value">{{ $customer->date_of_birth ? date('d/m/Y', strtotime($customer->date_of_birth)) : 'Chưa cập nhật' }}</p>
+                        <label class="info-label">{{ __('lamgame.profile.dob') }}</label>
+                        <p class="info-value">{{ $customer->date_of_birth ? date('d/m/Y', strtotime($customer->date_of_birth)) : __('lamgame.profile.not_updated') }}</p>
                     </div>
                 </div>
             </div>
@@ -57,17 +57,17 @@
             <div class="profile-divider"></div>
 
             <div class="profile-section">
-                <h2 class="section-title">📞 Thông tin liên hệ</h2>
+                <h2 class="section-title">{{ __('lamgame.profile.contact_info') }}</h2>
                 
                 <div class="info-grid">
                     <div class="info-item">
-                        <label class="info-label">Email</label>
+                        <label class="info-label">{{ __('lamgame.profile.email') }}</label>
                         <p class="info-value">{{ $customer->email }}</p>
                     </div>
 
                     <div class="info-item">
-                        <label class="info-label">Số điện thoại</label>
-                        <p class="info-value">{{ $customer->phone ?? 'Chưa cập nhật' }}</p>
+                        <label class="info-label">{{ __('lamgame.profile.phone') }}</label>
+                        <p class="info-value">{{ $customer->phone ?? __('lamgame.profile.not_updated') }}</p>
                     </div>
                 </div>
             </div>
@@ -77,19 +77,19 @@
         <div class="danger-zone">
             <div class="danger-zone-content">
                 <div>
-                    <h3 class="danger-title">Xóa tài khoản</h3>
-                    <p class="danger-description">Xóa vĩnh viễn tài khoản và tất cả dữ liệu của bạn. Hành động này không thể hoàn tác.</p>
+                    <h3 class="danger-title">{{ __('lamgame.profile.danger_title') }}</h3>
+                    <p class="danger-description">{{ __('lamgame.profile.danger_desc') }}</p>
                 </div>
 
                 <button type="button" class="btn-danger" onclick="document.getElementById('deleteAccountModal').style.display='flex'">
-                    Xóa tài khoản
+                    {{ __('lamgame.profile.danger_title') }}
                 </button>
 
                 <!-- Delete account modal (thuần, không dùng Vue component) -->
                 <div id="deleteAccountModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:1rem">
                     <div style="background:#111827;border:1px solid rgba(124,92,255,.2);border-radius:14px;max-width:440px;width:100%;padding:1.75rem;color:#F5F7FA">
-                        <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:0.75rem">Xác nhận xóa tài khoản</h2>
-                        <p style="color:#B7C0D1;margin-bottom:1rem;font-size:0.9rem">Hành động này không thể hoàn tác. Vui lòng nhập mật khẩu để xác nhận.</p>
+                        <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:0.75rem">{{ __('lamgame.profile.confirm_delete') }}</h2>
+                        <p style="color:#B7C0D1;margin-bottom:1rem;font-size:0.9rem">{{ __('lamgame.profile.confirm_desc') }}</p>
                         <form method="POST" action="{{ route('shop.customers.account.profile.destroy') }}">
                             @csrf
                             @method('DELETE')
@@ -97,12 +97,12 @@
                                 type="password"
                                 name="password"
                                 required
-                                placeholder="Nhập mật khẩu"
+                                placeholder="{{ __('lamgame.profile.password_ph') }}"
                                 style="width:100%;padding:0.75rem;border:1px solid rgba(124,92,255,.2);border-radius:10px;background:#070B14;color:#F5F7FA;margin-bottom:1rem"
                             >
                             <div style="display:flex;gap:0.75rem;justify-content:flex-end">
-                                <button type="button" onclick="document.getElementById('deleteAccountModal').style.display='none'" style="padding:0.6rem 1.2rem;border:1px solid rgba(124,92,255,.2);border-radius:10px;background:transparent;color:#B7C0D1;cursor:pointer">Hủy</button>
-                                <button type="submit" style="padding:0.6rem 1.2rem;border:none;border-radius:10px;background:#F87171;color:#fff;font-weight:600;cursor:pointer">Xác nhận xóa</button>
+                                <button type="button" onclick="document.getElementById('deleteAccountModal').style.display='none'" style="padding:0.6rem 1.2rem;border:1px solid rgba(124,92,255,.2);border-radius:10px;background:transparent;color:#B7C0D1;cursor:pointer">{{ __('lamgame.profile.cancel') }}</button>
+                                <button type="submit" style="padding:0.6rem 1.2rem;border:none;border-radius:10px;background:#F87171;color:#fff;font-weight:600;cursor:pointer">{{ __('lamgame.profile.confirm_btn') }}</button>
                             </div>
                         </form>
                     </div>

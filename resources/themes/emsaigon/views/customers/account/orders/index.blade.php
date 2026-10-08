@@ -40,18 +40,18 @@
 
         @if($myOrders->isEmpty())
             <div style="padding:3rem 1rem;text-align:center;color:#6b7280;border:1px dashed #e5e7eb;border-radius:12px">
-                <p style="margin-bottom:1rem">Bạn chưa có đơn hàng nào.</p>
-                <a href="{{ route('lamgame.source-game') }}" style="color:#2c5f41;font-weight:600">🎮 Khám phá Source Game</a>
+                <p style="margin-bottom:1rem">{{ __('lamgame.account.no_orders') }}</p>
+                <a href="{{ route('lamgame.source-game') }}" style="color:#2c5f41;font-weight:600">{{ __('lamgame.account.explore_source') }}</a>
             </div>
         @else
             <div style="overflow-x:auto">
                 <table style="width:100%;border-collapse:collapse;font-size:0.95rem">
                     <thead>
                         <tr style="text-align:left;border-bottom:2px solid #e5e7eb;color:#374151">
-                            <th style="padding:12px 10px">Mã đơn</th>
-                            <th style="padding:12px 10px">Ngày đặt</th>
-                            <th style="padding:12px 10px">Trạng thái</th>
-                            <th style="padding:12px 10px">Tổng tiền</th>
+                            <th style="padding:12px 10px">{{ __('lamgame.account.col_order') }}</th>
+                            <th style="padding:12px 10px">{{ __('lamgame.account.col_date') }}</th>
+                            <th style="padding:12px 10px">{{ __('lamgame.account.col_status') }}</th>
+                            <th style="padding:12px 10px">{{ __('lamgame.account.col_total') }}</th>
                             <th style="padding:12px 10px"></th>
                         </tr>
                     </thead>
@@ -75,7 +75,7 @@
                                 </td>
                                 <td style="padding:12px 10px;font-weight:700;color:#2c5f41">${{ number_format($o->grand_total, 2) }}</td>
                                 <td style="padding:12px 10px">
-                                    <a href="{{ route('shop.customers.account.orders.view', $o->id) }}" style="color:#2c5f41;font-weight:600">Xem</a>
+                                    <a href="{{ route('shop.customers.account.orders.view', $o->id) }}" style="color:#2c5f41;font-weight:600">{{ __('lamgame.account.view') }}</a>
                                 </td>
                             </tr>
                         @endforeach

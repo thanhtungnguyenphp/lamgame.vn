@@ -1,17 +1,17 @@
 <x-layouts.account>
-    <x-slot:title>Chỉnh sửa thông tin</x-slot>
+    <x-slot:title>{{ __('lamgame.profile.edit_title') }}</x-slot>
 
     <div class="edit-profile-container">
         <div class="edit-header">
             <div>
-                <h1 class="edit-title">Chỉnh sửa thông tin cá nhân</h1>
-                <p class="edit-subtitle">Cập nhật thông tin của bạn</p>
+                <h1 class="edit-title">{{ __('lamgame.profile.edit_title') }}</h1>
+                <p class="edit-subtitle">{{ __('lamgame.profile.edit_sub') }}</p>
             </div>
             <a href="{{ route('shop.customers.account.profile.index') }}" class="btn-back">
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
                 </svg>
-                Quay lại
+                {{ __('lamgame.profile.back') }}
             </a>
         </div>
 
@@ -42,27 +42,27 @@
 
             <!-- Basic Info -->
             <div class="form-card">
-                <h2 class="form-section-title">👤 Thông tin cơ bản</h2>
+                <h2 class="form-section-title">{{ __('lamgame.profile.basic_info') }}</h2>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Họ *</label>
-                        <input type="text" name="first_name" value="{{ old('first_name', $customer->first_name) }}" required class="form-input" placeholder="Nhập họ">
+                        <label class="form-label">{{ __('lamgame.profile.first_name') }} *</label>
+                        <input type="text" name="first_name" value="{{ old('first_name', $customer->first_name) }}" required class="form-input" placeholder="{{ __('lamgame.profile.first_name') }}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Tên *</label>
-                        <input type="text" name="last_name" value="{{ old('last_name', $customer->last_name) }}" required class="form-input" placeholder="Nhập tên">
+                        <label class="form-label">{{ __('lamgame.profile.last_name') }} *</label>
+                        <input type="text" name="last_name" value="{{ old('last_name', $customer->last_name) }}" required class="form-input" placeholder="{{ __('lamgame.profile.last_name') }}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Giới tính</label>
+                        <label class="form-label">{{ __('lamgame.profile.gender') }}</label>
                         <select name="gender" class="form-input">
-                            <option value="">Chọn giới tính</option>
-                            <option value="Male" {{ old('gender', $customer->gender) == 'Male' ? 'selected' : '' }}>Nam</option>
-                            <option value="Female" {{ old('gender', $customer->gender) == 'Female' ? 'selected' : '' }}>Nữ</option>
-                            <option value="Other" {{ old('gender', $customer->gender) == 'Other' ? 'selected' : '' }}>Khác</option>
+                            <option value="">{{ __('lamgame.profile.choose_gender') }}</option>
+                            <option value="Male" {{ old('gender', $customer->gender) == 'Male' ? 'selected' : '' }}>{{ __('lamgame.profile.male') }}</option>
+                            <option value="Female" {{ old('gender', $customer->gender) == 'Female' ? 'selected' : '' }}>{{ __('lamgame.profile.female') }}</option>
+                            <option value="Other" {{ old('gender', $customer->gender) == 'Other' ? 'selected' : '' }}>{{ __('lamgame.profile.other') }}</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Ngày sinh</label>
+                        <label class="form-label">{{ __('lamgame.profile.dob') }}</label>
                         <input type="date" name="date_of_birth" value="{{ old('date_of_birth', $customer->date_of_birth) }}" class="form-input">
                     </div>
                 </div>
@@ -70,21 +70,21 @@
 
             <!-- Contact Info -->
             <div class="form-card">
-                <h2 class="form-section-title">📞 Thông tin liên hệ</h2>
+                <h2 class="form-section-title">{{ __('lamgame.profile.contact_info') }}</h2>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Email *</label>
+                        <label class="form-label">{{ __('lamgame.profile.email') }} *</label>
                         <input type="email" name="email" value="{{ old('email', $customer->email) }}" required class="form-input" placeholder="email@example.com">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Số điện thoại</label>
+                        <label class="form-label">{{ __('lamgame.profile.phone') }}</label>
                         <input type="text" name="phone" value="{{ old('phone', $customer->phone) }}" class="form-input" placeholder="0912345678">
                     </div>
                 </div>
 
                 <label class="checkbox-wrapper" style="margin-top:1.25rem">
                     <input type="checkbox" name="subscribed_to_news_letter" value="1" {{ $customer->subscribed_to_news_letter ? 'checked' : '' }}>
-                    <span class="checkbox-label">Đăng ký nhận bản tin</span>
+                    <span class="checkbox-label">{{ __('lamgame.profile.newsletter') }}</span>
                 </label>
             </div>
 
@@ -95,7 +95,7 @@
                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"/>
                     </svg>
-                    Lưu thông tin
+                    {{ __('lamgame.profile.save_info') }}
                 </button>
             </div>
         </form>
@@ -114,19 +114,19 @@
             @endif
 
             <div class="form-card">
-                <h2 class="form-section-title">🔒 Đổi mật khẩu</h2>
-                <p class="form-section-desc">Chỉ điền khi bạn muốn thay đổi mật khẩu.</p>
+                <h2 class="form-section-title">{{ __('lamgame.profile.change_password') }}</h2>
+                <p class="form-section-desc">{{ __('lamgame.profile.change_pw_desc') }}</p>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Mật khẩu hiện tại</label>
+                        <label class="form-label">{{ __('lamgame.profile.current_pw') }}</label>
                         <input type="password" name="current_password" class="form-input" placeholder="••••••••" autocomplete="current-password">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Mật khẩu mới</label>
+                        <label class="form-label">{{ __('lamgame.profile.new_pw') }}</label>
                         <input type="password" name="new_password" class="form-input" placeholder="••••••••" autocomplete="new-password">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Xác nhận mật khẩu mới</label>
+                        <label class="form-label">{{ __('lamgame.profile.confirm_pw') }}</label>
                         <input type="password" name="new_password_confirmation" class="form-input" placeholder="••••••••" autocomplete="new-password">
                     </div>
                 </div>
@@ -136,7 +136,7 @@
                         <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
                         </svg>
-                        Đổi mật khẩu
+                        {{ __('lamgame.profile.change_pw_btn') }}
                     </button>
                 </div>
             </div>
@@ -201,7 +201,7 @@
                     const btn = form.querySelector('.btn-save');
                     if (btn) {
                         btn.disabled = true;
-                        btn.innerHTML = '<span>Đang lưu...</span>';
+                        btn.innerHTML = '<span>' + @json(__('lamgame.checkout.processing')) + '</span>';
                     }
                 });
             });

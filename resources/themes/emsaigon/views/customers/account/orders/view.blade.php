@@ -48,12 +48,12 @@
         @media (max-width:768px){ .od-grid { grid-template-columns:1fr; } }
     </style>
 
-    <a href="{{ route('shop.customers.account.orders.index') }}" class="od-back">← Quay lại đơn hàng</a>
+    <a href="{{ route('shop.customers.account.orders.index') }}" class="od-back">{{ __('lamgame.order_detail.back') }}</a>
 
     <div class="od-head">
         <div>
-            <div class="od-head__id">Đơn hàng #{{ $order->increment_id }}</div>
-            <div class="od-head__date">Đặt ngày {{ $order->created_at?->format('d/m/Y H:i') }}</div>
+            <div class="od-head__id">{{ __('lamgame.order_detail.order') }} #{{ $order->increment_id }}</div>
+            <div class="od-head__date">{{ __('lamgame.order_detail.placed_on') }} {{ $order->created_at?->format('d/m/Y H:i') }}</div>
         </div>
         <span class="od-badge" style="background:{{ $st[1] }};color:{{ $st[2] }}">{{ $st[0] }}</span>
     </div>
@@ -62,7 +62,7 @@
         <!-- Cột trái: sản phẩm -->
         <div>
             <div class="od-card">
-                <h3 class="od-card__title">Sản phẩm ({{ $order->items->count() }})</h3>
+                <h3 class="od-card__title">{{ __('lamgame.order_detail.products') }} ({{ $order->items->count() }})</h3>
                 @foreach($order->items as $item)
                     <div class="od-item">
                         <div style="flex:1">
@@ -76,13 +76,13 @@
 
             <!-- Thông tin khách hàng -->
             <div class="od-card">
-                <h3 class="od-card__title">Thông tin khách hàng</h3>
+                <h3 class="od-card__title">{{ __('lamgame.order_detail.customer') }}</h3>
                 @if($billing)
-                    <div class="od-info-row"><span>Họ tên</span><span>{{ trim($billing->first_name . ' ' . $billing->last_name) }}</span></div>
-                    <div class="od-info-row"><span>Email</span><span>{{ $billing->email }}</span></div>
-                    @if($billing->phone)<div class="od-info-row"><span>Điện thoại</span><span>{{ $billing->phone }}</span></div>@endif
+                    <div class="od-info-row"><span>{{ __('lamgame.order_detail.full_name') }}</span><span>{{ trim($billing->first_name . ' ' . $billing->last_name) }}</span></div>
+                    <div class="od-info-row"><span>{{ __('lamgame.order_detail.email') ?? 'Email' }}</span><span>{{ $billing->email }}</span></div>
+                    @if($billing->phone)<div class="od-info-row"><span>{{ __('lamgame.order_detail.phone') }}</span><span>{{ $billing->phone }}</span></div>@endif
                 @else
-                    <div class="od-info-row"><span>Email</span><span>{{ $order->customer_email }}</span></div>
+                    <div class="od-info-row"><span>{{ __('lamgame.order_detail.email') ?? 'Email' }}</span><span>{{ $order->customer_email }}</span></div>
                 @endif
             </div>
         </div>
@@ -90,30 +90,30 @@
         <!-- Cột phải: tóm tắt thanh toán -->
         <div>
             <div class="od-card">
-                <h3 class="od-card__title">Tóm tắt thanh toán</h3>
-                <div class="od-sum-row"><span>Tạm tính</span><span>{{ $cur($order->sub_total) }}</span></div>
+                <h3 class="od-card__title">{{ __('lamgame.order_detail.pay_summary') }}</h3>
+                <div class="od-sum-row"><span>{{ __('lamgame.order_detail.subtotal') }}</span><span>{{ $cur($order->sub_total) }}</span></div>
                 @if($order->discount_amount > 0)
-                    <div class="od-sum-row"><span>Giảm giá</span><span style="color:#34D399">-{{ $cur($order->discount_amount) }}</span></div>
+                    <div class="od-sum-row"><span>{{ __('lamgame.order_detail.discount') }}</span><span style="color:#34D399">-{{ $cur($order->discount_amount) }}</span></div>
                 @endif
                 @if($order->tax_amount > 0)
-                    <div class="od-sum-row"><span>Thuế</span><span>{{ $cur($order->tax_amount) }}</span></div>
+                    <div class="od-sum-row"><span>{{ __('lamgame.order_detail.tax') }}</span><span>{{ $cur($order->tax_amount) }}</span></div>
                 @endif
                 @if($order->shipping_amount > 0)
-                    <div class="od-sum-row"><span>Vận chuyển</span><span>{{ $cur($order->shipping_amount) }}</span></div>
+                    <div class="od-sum-row"><span>{{ __('lamgame.order_detail.shipping') }}</span><span>{{ $cur($order->shipping_amount) }}</span></div>
                 @endif
-                <div class="od-sum-row od-sum-total"><span>Tổng cộng</span><span>{{ $cur($order->grand_total) }}</span></div>
+                <div class="od-sum-row od-sum-total"><span>{{ __('lamgame.order_detail.total') }}</span><span>{{ $cur($order->grand_total) }}</span></div>
             </div>
 
             <div class="od-card">
-                <h3 class="od-card__title">Thanh toán</h3>
-                <div class="od-info-row"><span>Phương thức</span><span>{{ $payMethod }}</span></div>
-                <div class="od-info-row"><span>Trạng thái đơn</span><span>{{ $st[0] }}</span></div>
+                <h3 class="od-card__title">{{ __('lamgame.order_detail.payment') }}</h3>
+                <div class="od-info-row"><span>{{ __('lamgame.order_detail.method') }}</span><span>{{ $payMethod }}</span></div>
+                <div class="od-info-row"><span>{{ __('lamgame.order_detail.order_status') }}</span><span>{{ $st[0] }}</span></div>
             </div>
 
             @if($order->status === 'completed' || $order->status === 'processing')
                 <a href="{{ route('shop.customers.account.downloadable_products.index') }}"
                    style="display:block;text-align:center;padding:0.9rem;background:linear-gradient(135deg,#7C5CFF,#00D1FF);color:#fff;border-radius:10px;font-weight:700;text-decoration:none">
-                    ⬇ Tải source đã mua
+                    {{ __('lamgame.order_detail.download_src') }}
                 </a>
             @endif
         </div>

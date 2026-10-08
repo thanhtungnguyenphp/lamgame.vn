@@ -87,7 +87,7 @@
                 <div class="account-user">
                     <div class="account-user__avatar">{{ strtoupper(mb_substr($acCustomer->first_name ?? 'U', 0, 1)) }}</div>
                     <div>
-                        <div class="account-user__name">{{ trim(($acCustomer->first_name ?? '') . ' ' . ($acCustomer->last_name ?? '')) ?: 'Khách' }}</div>
+                        <div class="account-user__name">{{ trim(($acCustomer->first_name ?? '') . ' ' . ($acCustomer->last_name ?? '')) ?: __('lamgame.account.guest') }}</div>
                         <div class="account-user__email">{{ $acCustomer->email ?? '' }}</div>
                     </div>
                 </div>
@@ -95,37 +95,37 @@
                 <ul class="account-nav">
                     <li>
                         <a href="{{ route('shop.customers.account.profile.index') }}" class="{{ request()->routeIs('shop.customers.account.index') || request()->routeIs('shop.customers.account.profile.*') ? 'active' : '' }}">
-                            <span>👤</span> Thông tin cá nhân
+                            <span>👤</span> {{ __('lamgame.account.profile') }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('shop.customers.account.orders.index') }}" class="{{ request()->routeIs('shop.customers.account.orders.*') ? 'active' : '' }}">
-                            <span>📦</span> Đơn hàng
+                            <span>📦</span> {{ __('lamgame.account.orders') }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('shop.customers.account.downloadable_products.index') }}" class="{{ request()->routeIs('shop.customers.account.downloadable_products.*') ? 'active' : '' }}">
-                            <span>⬇️</span> Sản phẩm tải về
+                            <span>⬇️</span> {{ __('lamgame.account.downloads') }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('lamgame.my-licenses') }}" class="{{ request()->routeIs('lamgame.my-licenses') ? 'active' : '' }}">
-                            <span>🔑</span> License của tôi
+                            <span>🔑</span> {{ __('lamgame.account.licenses') }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('shop.customers.account.addresses.index') }}" class="{{ request()->routeIs('shop.customers.account.addresses.*') ? 'active' : '' }}">
-                            <span>📍</span> Địa chỉ
+                            <span>📍</span> {{ __('lamgame.account.addresses') }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('shop.customers.account.wishlist.index') }}" class="{{ request()->routeIs('shop.customers.account.wishlist.*') ? 'active' : '' }}">
-                            <span>❤️</span> Yêu thích
+                            <span>❤️</span> {{ __('lamgame.account.wishlist') }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('shop.customers.account.reviews.index') }}" class="{{ request()->routeIs('shop.customers.account.reviews.*') ? 'active' : '' }}">
-                            <span>⭐</span> Đánh giá
+                            <span>⭐</span> {{ __('lamgame.account.reviews') }}
                         </a>
                     </li>
 
@@ -135,19 +135,19 @@
                         @if($currentSeller && $currentSeller->isActive())
                             <li>
                                 <a href="{{ route('seller.dashboard') }}" class="{{ request()->routeIs('seller.*') ? 'active' : '' }}" style="color: var(--ac-success);">
-                                    <span>🏪</span> Seller Dashboard
+                                    <span>🏪</span> {{ __('lamgame.account.seller_dashboard') }}
                                 </a>
                             </li>
                         @elseif($currentSeller && $currentSeller->isPending())
                             <li>
                                 <a href="{{ route('seller.pending') }}" style="color: #FBBF24;">
-                                    <span>⏳</span> Seller (Chờ duyệt)
+                                    <span>⏳</span> {{ __('lamgame.account.seller_pending') }}
                                 </a>
                             </li>
                         @else
                             <li>
                                 <a href="{{ route('seller.register') }}" style="color: var(--ac-accent-2);">
-                                    <span>➕</span> Đăng ký Seller
+                                    <span>➕</span> {{ __('lamgame.account.seller_register') }}
                                 </a>
                             </li>
                         @endif
@@ -158,7 +158,7 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" style="color: var(--ac-error);">
-                                    <span>🚪</span> Đăng xuất
+                                    <span>🚪</span> {{ __('lamgame.account.logout') }}
                                 </button>
                             </form>
                         </li>

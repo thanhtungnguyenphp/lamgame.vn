@@ -40,17 +40,17 @@
 
         @if($myDownloads->isEmpty())
             <div style="padding:3rem 1rem;text-align:center;color:#6b7280;border:1px dashed #e5e7eb;border-radius:12px">
-                <p style="margin-bottom:1rem">Bạn chưa có sản phẩm tải về nào.</p>
-                <a href="{{ route('lamgame.source-game') }}" style="color:#2c5f41;font-weight:600">🎮 Khám phá Source Game</a>
+                <p style="margin-bottom:1rem">{{ __('lamgame.account.no_downloads') }}</p>
+                <a href="{{ route('lamgame.source-game') }}" style="color:#2c5f41;font-weight:600">{{ __('lamgame.account.explore_source') }}</a>
             </div>
         @else
             <div style="overflow-x:auto">
                 <table style="width:100%;border-collapse:collapse;font-size:0.95rem">
                     <thead>
                         <tr style="text-align:left;border-bottom:2px solid #e5e7eb;color:#374151">
-                            <th style="padding:12px 10px">Sản phẩm</th>
-                            <th style="padding:12px 10px">Mã đơn</th>
-                            <th style="padding:12px 10px">Trạng thái</th>
+                            <th style="padding:12px 10px">{{ __('lamgame.account.col_product') }}</th>
+                            <th style="padding:12px 10px">{{ __('lamgame.account.col_order') }}</th>
+                            <th style="padding:12px 10px">{{ __('lamgame.account.col_status') }}</th>
                             <th style="padding:12px 10px"></th>
                         </tr>
                     </thead>
@@ -64,14 +64,14 @@
                                 <td style="padding:12px 10px;color:#6b7280">#{{ optional($dl->order)->increment_id ?? $dl->order_id }}</td>
                                 <td style="padding:12px 10px">
                                     @if($canDownload)
-                                        <span style="padding:3px 10px;border-radius:12px;font-size:0.8rem;background:#dcfce7;color:#166534">Sẵn sàng</span>
+                                        <span style="padding:3px 10px;border-radius:12px;font-size:0.8rem;background:#dcfce7;color:#166534">{{ __('lamgame.account.ready') }}</span>
                                     @else
-                                        <span style="padding:3px 10px;border-radius:12px;font-size:0.8rem;background:#fef9c3;color:#854d0e">Chờ xử lý</span>
+                                        <span style="padding:3px 10px;border-radius:12px;font-size:0.8rem;background:#fef9c3;color:#854d0e">{{ __('lamgame.account.pending') }}</span>
                                     @endif
                                 </td>
                                 <td style="padding:12px 10px">
                                     @if($canDownload)
-                                        <a href="{{ route('shop.customers.account.downloadable_products.download', $dl->id) }}" style="color:#2c5f41;font-weight:600">⬇ Tải về</a>
+                                        <a href="{{ route('shop.customers.account.downloadable_products.download', $dl->id) }}" style="color:#2c5f41;font-weight:600">⬇ {{ __('lamgame.account.download') }}</a>
                                     @else
                                         <span style="color:#9ca3af">—</span>
                                     @endif
