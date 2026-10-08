@@ -450,5 +450,7 @@ return [
         'refund_desc' => 'Chính sách hoàn tiền và đổi trả cho sản phẩm số trên LamGame.vn.',
         'privacy_title' => 'Chính sách Bảo mật',
         'privacy_desc' => 'Chính sách bảo mật và xử lý dữ liệu cá nhân trên LamGame.vn.',
+        'terms_title' => 'Điều khoản Sử dụng',
+        'terms_desc' => 'Điều khoản và điều kiện sử dụng dịch vụ LamGame.vn.',
     ],
 ];

@@ -450,5 +450,7 @@ return [
         'refund_desc' => 'Refund and return policy for digital products on LamGame.vn.',
         'privacy_title' => 'Privacy Policy',
         'privacy_desc' => 'Privacy and personal data processing policy on LamGame.vn.',
+        'terms_title' => 'Terms of Use',
+        'terms_desc' => 'Terms and conditions for using LamGame.vn services.',
     ],
 ];
