@@ -444,4 +444,9 @@ return [
         'connect'     => '🌐 Kết nối với chúng tôi',
         'quick_links' => '🔗 Liên kết nhanh',
     ],
+
+    'legal' => [
+        'refund_title' => 'Chính sách Hoàn tiền',
+        'refund_desc' => 'Chính sách hoàn tiền và đổi trả cho sản phẩm số trên LamGame.vn.',
+    ],
 ];

@@ -444,4 +444,9 @@ return [
         'connect'     => '🌐 Connect With Us',
         'quick_links' => '🔗 Quick Links',
     ],
+
+    'legal' => [
+        'refund_title' => 'Refund Policy',
+        'refund_desc' => 'Refund and return policy for digital products on LamGame.vn.',
+    ],
 ];

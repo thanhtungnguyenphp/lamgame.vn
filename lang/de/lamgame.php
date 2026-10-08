@@ -444,4 +444,9 @@ return [
         'connect'     => '🌐 Verbinden Sie sich mit uns',
         'quick_links' => '🔗 Schnelllinks',
     ],
+
+    'legal' => [
+        'refund_title' => 'Rückerstattungsrichtlinie',
+        'refund_desc' => 'Rückerstattungs- und Rückgaberichtlinie für digitale Produkte auf LamGame.vn.',
+    ],
 ];
