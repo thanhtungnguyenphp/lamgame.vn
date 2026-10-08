@@ -13,7 +13,7 @@
                     </svg>
                     <span class="lg-v2-nav__logo-name">LAMGAME<span style="color:var(--lg-accent)">.VN</span></span>
                 </a>
-                <p class="lg-v2-footer__desc">Cộng đồng Game Developer Việt Nam.<br>Nơi chia sẻ và phát triển cùng nhau.</p>
+                <p class="lg-v2-footer__desc">{!! __('lamgame.footer.desc') !!}</p>
                 <div class="lg-v2-footer__social">
                     <a href="https://discord.gg/lamgame" title="Discord" class="lg-v2-footer__social-link" target="_blank" rel="noopener">
                         <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg>
@@ -32,7 +32,7 @@
 
             {{-- Khám phá --}}
             <div class="lg-v2-footer__col">
-                <h4 class="lg-v2-footer__col-title">Khám phá</h4>
+                <h4 class="lg-v2-footer__col-title">{{ __('lamgame.footer.explore') }}</h4>
                 <a href="{{ route('lamgame.source-game') }}" class="lg-v2-footer__link">Source Game</a>
                 <a href="{{ route('lamgame.ai-tools') }}" class="lg-v2-footer__link">AI Tools</a>
                 <a href="/blog" class="lg-v2-footer__link">Blog</a>
@@ -41,21 +41,21 @@
 
             {{-- Hỗ trợ --}}
             <div class="lg-v2-footer__col">
-                <h4 class="lg-v2-footer__col-title">Hỗ trợ</h4>
-                <a href="/chinh-sach-hoan-tien" class="lg-v2-footer__link">Chính sách hoàn tiền</a>
-                <a href="/dieu-khoan-su-dung" class="lg-v2-footer__link">Điều khoản sử dụng</a>
-                <a href="/dieu-khoan-marketplace" class="lg-v2-footer__link">Điều khoản Marketplace</a>
-                <a href="/lien-he" class="lg-v2-footer__link">Liên hệ</a>
+                <h4 class="lg-v2-footer__col-title">{{ __('lamgame.footer.support') }}</h4>
+                <a href="/chinh-sach-hoan-tien" class="lg-v2-footer__link">{{ __('lamgame.footer.refund') }}</a>
+                <a href="/dieu-khoan-su-dung" class="lg-v2-footer__link">{{ __('lamgame.footer.terms_of_use') }}</a>
+                <a href="/dieu-khoan-marketplace" class="lg-v2-footer__link">{{ __('lamgame.footer.marketplace_terms') }}</a>
+                <a href="/lien-he" class="lg-v2-footer__link">{{ __('lamgame.footer.contact') }}</a>
             </div>
 
             {{-- Pháp lý --}}
             <div class="lg-v2-footer__col">
-                <h4 class="lg-v2-footer__col-title">Pháp lý</h4>
-                <a href="/chinh-sach-bao-mat" class="lg-v2-footer__link">Chính sách bảo mật</a>
-                <a href="/dieu-khoan-ai" class="lg-v2-footer__link">Điều khoản AI Tools</a>
-                <a href="/chinh-sach-bien-tap" class="lg-v2-footer__link">Chính sách biên tập</a>
-                <a href="/tac-gia" class="lg-v2-footer__link">Đội ngũ tác giả</a>
-                <button type="button" class="lg-v2-footer__link" onclick="window.openPrivacyPreferences?.()" style="border:0;background:none;padding:0;text-align:left;cursor:pointer">Tùy chọn cookie</button>
+                <h4 class="lg-v2-footer__col-title">{{ __('lamgame.footer.legal') }}</h4>
+                <a href="/chinh-sach-bao-mat" class="lg-v2-footer__link">{{ __('lamgame.footer.privacy') }}</a>
+                <a href="/dieu-khoan-ai" class="lg-v2-footer__link">{{ __('lamgame.footer.ai_terms') }}</a>
+                <a href="/chinh-sach-bien-tap" class="lg-v2-footer__link">{{ __('lamgame.footer.editorial') }}</a>
+                <a href="/tac-gia" class="lg-v2-footer__link">{{ __('lamgame.footer.authors') }}</a>
+                <button type="button" class="lg-v2-footer__link" onclick="window.openPrivacyPreferences?.()" style="border:0;background:none;padding:0;text-align:left;cursor:pointer">{{ __('lamgame.footer.cookie_prefs') }}</button>
             </div>
 
             {{-- International (English) --}}

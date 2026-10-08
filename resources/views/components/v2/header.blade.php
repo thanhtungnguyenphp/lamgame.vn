@@ -17,73 +17,73 @@
             <div class="lg-v2-nav__menu">
                 {{-- Source Game dropdown --}}
                 <div class="lg-v2-nav__dropdown">
-                    <a href="{{ route('lamgame.source-game') }}" class="lg-v2-nav__link">Source Game <svg width="10" height="10" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg></a>
+                    <a href="{{ route('lamgame.source-game') }}" class="lg-v2-nav__link">{{ __('lamgame.nav.source_game') }} <svg width="10" height="10" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg></a>
                     <div class="lg-v2-nav__mega">
                         <a href="{{ route('lamgame.source-game') }}?cat=unity" class="lg-v2-nav__mega-item">
                             <span class="lg-v2-nav__mega-icon">🎮</span>
-                            <div><strong>Unity Source</strong><span>Game templates & kits</span></div>
+                            <div><strong>{{ __('lamgame.nav.unity_source') }}</strong><span>{{ __('lamgame.nav.unity_source_desc') }}</span></div>
                         </a>
                         <a href="{{ route('lamgame.source-game') }}?cat=unreal" class="lg-v2-nav__mega-item">
                             <span class="lg-v2-nav__mega-icon">🏗️</span>
-                            <div><strong>Unreal Engine</strong><span>Blueprints & projects</span></div>
+                            <div><strong>{{ __('lamgame.nav.unreal') }}</strong><span>{{ __('lamgame.nav.unreal_desc') }}</span></div>
                         </a>
                         <a href="{{ route('lamgame.source-game') }}?cat=2d" class="lg-v2-nav__mega-item">
                             <span class="lg-v2-nav__mega-icon">🎨</span>
-                            <div><strong>2D Games</strong><span>Platformer, puzzle, RPG</span></div>
+                            <div><strong>{{ __('lamgame.nav.games_2d') }}</strong><span>{{ __('lamgame.nav.games_2d_desc') }}</span></div>
                         </a>
                         <a href="{{ route('lamgame.source-game') }}?cat=3d" class="lg-v2-nav__mega-item">
                             <span class="lg-v2-nav__mega-icon">🌐</span>
-                            <div><strong>3D Games</strong><span>FPS, racing, adventure</span></div>
+                            <div><strong>{{ __('lamgame.nav.games_3d') }}</strong><span>{{ __('lamgame.nav.games_3d_desc') }}</span></div>
                         </a>
                     </div>
                 </div>
 
                 {{-- AI Tools dropdown --}}
                 <div class="lg-v2-nav__dropdown">
-                    <a href="{{ route('lamgame.ai-tools') }}" class="lg-v2-nav__link">AI Tools <svg width="10" height="10" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg></a>
+                    <a href="{{ route('lamgame.ai-tools') }}" class="lg-v2-nav__link">{{ __('lamgame.nav.ai_tools') }} <svg width="10" height="10" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg></a>
                     <div class="lg-v2-nav__mega">
                         <a href="{{ route('lamgame.ai-tools') }}#gdd" class="lg-v2-nav__mega-item">
                             <span class="lg-v2-nav__mega-icon">📝</span>
-                            <div><strong>GDD Generator</strong><span>Tạo Game Design Document</span></div>
+                            <div><strong>{{ __('lamgame.nav.gdd') }}</strong><span>{{ __('lamgame.nav.gdd_desc') }}</span></div>
                         </a>
                         <a href="{{ route('lamgame.ai-tools') }}#asset" class="lg-v2-nav__mega-item">
                             <span class="lg-v2-nav__mega-icon">🖼️</span>
-                            <div><strong>Asset Generator</strong><span>Tạo game assets bằng AI</span></div>
+                            <div><strong>{{ __('lamgame.nav.asset_gen') }}</strong><span>{{ __('lamgame.nav.asset_gen_desc') }}</span></div>
                         </a>
                         <a href="{{ route('lamgame.ai-tools') }}#name" class="lg-v2-nav__mega-item">
                             <span class="lg-v2-nav__mega-icon">💡</span>
-                            <div><strong>Name Generator</strong><span>Đặt tên game sáng tạo</span></div>
+                            <div><strong>{{ __('lamgame.nav.name_gen') }}</strong><span>{{ __('lamgame.nav.name_gen_desc') }}</span></div>
                         </a>
                         <a href="{{ route('lamgame.ai-tools') }}#story" class="lg-v2-nav__mega-item">
                             <span class="lg-v2-nav__mega-icon">📖</span>
-                            <div><strong>Story Writer</strong><span>Viết cốt truyện game</span></div>
+                            <div><strong>{{ __('lamgame.nav.story_writer') }}</strong><span>{{ __('lamgame.nav.story_writer_desc') }}</span></div>
                         </a>
                     </div>
                 </div>
 
-                <a href="/blog" class="lg-v2-nav__link">Blog</a>
-                <a href="{{ route('forum.index') }}" class="lg-v2-nav__link">Forum</a>
-                <a href="/viec-lam-game" class="lg-v2-nav__link">Việc làm</a>
+                <a href="/blog" class="lg-v2-nav__link">{{ __('lamgame.nav.blog') }}</a>
+                <a href="{{ route('forum.index') }}" class="lg-v2-nav__link">{{ __('lamgame.nav.forum') }}</a>
+                <a href="/viec-lam-game" class="lg-v2-nav__link">{{ __('lamgame.nav.jobs') }}</a>
 
                 {{-- Giải trí dropdown --}}
                 <div class="lg-v2-nav__dropdown">
-                    <a href="#" class="lg-v2-nav__link">Giải trí <svg width="10" height="10" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg></a>
+                    <a href="#" class="lg-v2-nav__link">{{ __('lamgame.nav.entertainment') }} <svg width="10" height="10" fill="currentColor" viewBox="0 0 20 20"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg></a>
                     <div class="lg-v2-nav__mega">
                         <a href="{{ route('lamgame.blog') }}?category=game-industry" class="lg-v2-nav__mega-item lg-v2-nav__mega-item--hot">
                             <span class="lg-v2-nav__mega-icon">🎮</span>
-                            <div><strong>Game Industry <span class="lg-v2-nav__hot-tag">HOT</span></strong><span>Tin tức, xu hướng ngành game</span></div>
+                            <div><strong>Game Industry <span class="lg-v2-nav__hot-tag">HOT</span></strong><span>{{ __('lamgame.nav.game_industry_desc') }}</span></div>
                         </a>
                         <a href="/choi-game" class="lg-v2-nav__mega-item">
                             <span class="lg-v2-nav__mega-icon">🕹️</span>
-                            <div><strong>Chơi Game</strong><span>50+ mini games HTML5</span></div>
+                            <div><strong>{{ __('lamgame.nav.play_game') }}</strong><span>{{ __('lamgame.nav.play_game_desc') }}</span></div>
                         </a>
                         <a href="{{ route('lamgame.ai-tools') }}" class="lg-v2-nav__mega-item">
                             <span class="lg-v2-nav__mega-icon">📰</span>
-                            <div><strong>Game Industry</strong><span>Tin tức ngành game</span></div>
+                            <div><strong>{{ __('lamgame.nav.game_industry') }}</strong><span>{{ __('lamgame.nav.game_industry_desc') }}</span></div>
                         </a>
                         <a href="{{ route('lamgame.blog') }}?category=ai-game-dev" class="lg-v2-nav__mega-item">
                             <span class="lg-v2-nav__mega-icon">🤖</span>
-                            <div><strong>AI Game Dev</strong><span>AI tools & tutorials</span></div>
+                            <div><strong>{{ __('lamgame.nav.ai_game_dev') }}</strong><span>{{ __('lamgame.nav.ai_game_dev_desc') }}</span></div>
                         </a>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
                 {{-- Search --}}
                 <button @click="searchOpen = true" class="lg-v2-nav__action-btn" title="Tìm kiếm (Ctrl+K)">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                    <span class="lg-v2-nav__search-hint">Tìm kiếm...</span>
+                    <span class="lg-v2-nav__search-hint">{{ __('lamgame.nav.search') }}</span>
                     <kbd class="lg-v2-nav__kbd">⌘K</kbd>
                 </button>
 
@@ -124,7 +124,7 @@
 
                 {{-- Auth --}}
                 @guest
-                <a href="{{ route('shop.customer.session.index') }}" class="lg-v2-btn lg-v2-btn--primary lg-v2-btn--sm">Đăng nhập</a>
+                <a href="{{ route('shop.customer.session.index') }}" class="lg-v2-btn lg-v2-btn--primary lg-v2-btn--sm">{{ __('lamgame.nav.login') }}</a>
                 @else
                 <a href="/customer/account" class="lg-v2-nav__action-btn lg-v2-nav__action-btn--icon">
                     <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -147,14 +147,14 @@
         <a href="{{ route('lamgame.ai-tools') }}" class="lg-v2-nav__mobile-link">🤖 AI Tools</a>
         <a href="/blog" class="lg-v2-nav__mobile-link">📝 Blog</a>
         <a href="{{ route('forum.index') }}" class="lg-v2-nav__mobile-link">💬 Forum</a>
-        <a href="/viec-lam-game" class="lg-v2-nav__mobile-link">💼 Việc làm</a>
+        <a href="/viec-lam-game" class="lg-v2-nav__mobile-link">💼 {{ __('lamgame.nav.jobs') }}</a>
         <div class="lg-v2-nav__mobile-divider"></div>
-        <a href="/choi-game" class="lg-v2-nav__mobile-link">🕹️ Chơi Game</a>
+        <a href="/choi-game" class="lg-v2-nav__mobile-link">🕹️ {{ __('lamgame.nav.play_game') }}</a>
         <a href="{{ route('lamgame.blog') }}?category=game-industry" class="lg-v2-nav__mobile-link">📰 Game Industry</a>
         <a href="{{ route('lamgame.blog') }}?category=ai-game-dev" class="lg-v2-nav__mobile-link">🤖 AI Game Dev</a>
         <div class="lg-v2-nav__mobile-divider"></div>
         @guest
-        <a href="{{ route('shop.customer.session.index') }}" class="lg-v2-btn lg-v2-btn--primary" style="width:100%;justify-content:center;">Đăng nhập</a>
+        <a href="{{ route('shop.customer.session.index') }}" class="lg-v2-btn lg-v2-btn--primary" style="width:100%;justify-content:center;">{{ __('lamgame.nav.login') }}</a>
         @endguest
     </div>
 
