@@ -448,5 +448,7 @@ return [
     'legal' => [
         'refund_title' => 'Chính sách Hoàn tiền',
         'refund_desc' => 'Chính sách hoàn tiền và đổi trả cho sản phẩm số trên LamGame.vn.',
+        'privacy_title' => 'Chính sách Bảo mật',
+        'privacy_desc' => 'Chính sách bảo mật và xử lý dữ liệu cá nhân trên LamGame.vn.',
     ],
 ];

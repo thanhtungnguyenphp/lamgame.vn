@@ -448,5 +448,7 @@ return [
     'legal' => [
         'refund_title' => 'Rückerstattungsrichtlinie',
         'refund_desc' => 'Rückerstattungs- und Rückgaberichtlinie für digitale Produkte auf LamGame.vn.',
+        'privacy_title' => 'Datenschutzrichtlinie',
+        'privacy_desc' => 'Datenschutz- und Datenverarbeitungsrichtlinie auf LamGame.vn.',
     ],
 ];
