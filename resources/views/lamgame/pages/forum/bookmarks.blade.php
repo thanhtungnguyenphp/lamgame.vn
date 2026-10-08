@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('page_title', 'Bài viết đã lưu - Forum')
+@section('page_title', __('lamgame.forum.bm_title'))
 
 @section('content')
 <div class="fm-page">
@@ -8,11 +8,11 @@
         <div class="container">
             <div class="fm-hdr-row">
                 <div>
-                    <h1 class="fm-hdr-title">🔖 Bài viết đã lưu</h1>
-                    <p class="fm-hdr-desc">Các bài viết bạn đã bookmark</p>
+                    <h1 class="fm-hdr-title">{{ __('lamgame.forum.bm_h') }}</h1>
+                    <p class="fm-hdr-desc">{{ __('lamgame.forum.bm_sub') }}</p>
                 </div>
                 <a href="{{ route('forum.index') }}" class="fm-btn-create" style="background:#64748b;">
-                    <i class="fas fa-arrow-left"></i> Quay lại Forum
+                    <i class="fas fa-arrow-left"></i> {{ __('lamgame.forum.back_forum5') }}
                 </a>
             </div>
         </div>
@@ -25,8 +25,8 @@
             @empty
             <div style="text-align:center;padding:3rem 1rem;color:#94a3b8;">
                 <div style="font-size:2.5rem;margin-bottom:0.75rem;">📑</div>
-                <h3 style="color:#475569;">Chưa có bài viết nào được lưu</h3>
-                <p>Nhấn nút <i class="far fa-bookmark"></i> trên bài viết để lưu lại.</p>
+                <h3 style="color:#475569;">{{ __('lamgame.forum.bm_empty') }}</h3>
+                <p><i class="far fa-bookmark"></i> {{ __('lamgame.forum.bm_empty_s') }}</p>
             </div>
             @endforelse
 

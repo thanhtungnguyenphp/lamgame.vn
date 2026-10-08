@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('page_title', '🏆 Bảng xếp hạng - Forum')
+@section('page_title', __('lamgame.forum.lb_title'))
 
 @section('content')
 <div class="fm-page">
@@ -8,8 +8,8 @@
         <div class="container">
             <div class="fm-hdr-row">
                 <div>
-                    <h1 class="fm-hdr-title">🏆 Bảng xếp hạng</h1>
-                    <p class="fm-hdr-desc">Thành viên đóng góp nhiều nhất cho cộng đồng</p>
+                    <h1 class="fm-hdr-title">{{ __('lamgame.forum.lb_h') }}</h1>
+                    <p class="fm-hdr-desc">{{ __('lamgame.forum.lb_sub') }}</p>
                 </div>
                 <a href="{{ route('forum.index') }}" class="fm-btn-back"><i class="fas fa-arrow-left"></i> Forum</a>
             </div>
@@ -19,8 +19,8 @@
     <div class="container">
         <div style="max-width:600px;margin:1.5rem auto;">
             <div class="fl-tabs">
-                <a href="{{ route('forum.leaderboard', ['period' => 'all']) }}" class="fl-tab {{ $period === 'all' ? 'active' : '' }}">Tổng</a>
-                <a href="{{ route('forum.leaderboard', ['period' => 'month']) }}" class="fl-tab {{ $period === 'month' ? 'active' : '' }}">Tháng này</a>
+                <a href="{{ route('forum.leaderboard', ['period' => 'all']) }}" class="fl-tab {{ $period === 'all' ? 'active' : '' }}">{{ __('lamgame.forum.lb_total') }}</a>
+                <a href="{{ route('forum.leaderboard', ['period' => 'month']) }}" class="fl-tab {{ $period === 'month' ? 'active' : '' }}">{{ __('lamgame.forum.lb_month') }}</a>
             </div>
 
             @forelse($leaders as $i => $leader)
@@ -44,7 +44,7 @@
             @empty
             <div style="text-align:center;padding:3rem;color:#94a3b8;">
                 <div style="font-size:2.5rem;">🏅</div>
-                <p>Chưa có dữ liệu xếp hạng.</p>
+                <p>{{ __('lamgame.forum.lb_empty') }}</p>
             </div>
             @endforelse
         </div>

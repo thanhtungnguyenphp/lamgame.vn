@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('page_title', 'Tin nhắn - Forum')
+@section('page_title', __('lamgame.forum.msg_title'))
 
 @push('styles')
 <style>
@@ -32,17 +32,18 @@
 @section('content')
 <div class="msg-layout">
     <div class="msg-sidebar">
-        <div class="msg-sidebar-hdr">💬 Tin nhắn</div>
-        <div class="msg-list" id="convList"><div style="padding:20px;text-align:center;color:#94a3b8">Đang tải...</div></div>
+        <div class="msg-sidebar-hdr">{{ __('lamgame.forum.msg_header') }}</div>
+        <div class="msg-list" id="convList"><div style="padding:20px;text-align:center;color:#94a3b8">{{ __('lamgame.forum.msg_loading') }}</div></div>
     </div>
     <div class="msg-chat" id="chatPanel">
-        <div class="msg-empty">Chọn cuộc trò chuyện để bắt đầu</div>
+        <div class="msg-empty">{{ __('lamgame.forum.msg_select') }}</div>
     </div>
 </div>
 @endsection
 
 @push('scripts')
 <script>
+const LG_I18N = { empty: @json(__('lamgame.forum.msg_empty')), inputPh: @json(__('lamgame.forum.msg_input_ph')), send: @json(__('lamgame.forum.msg_send')) };
 const API_BASE = '/api/v1/forum';
 const headers = {'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]')?.content||''};
 let activeConv = null;
@@ -51,7 +52,7 @@ async function loadConversations() {
     const r = await fetch(API_BASE + '/conversations', {headers});
     const data = await r.json();
     const list = document.getElementById('convList');
-    if (!data.length) { list.innerHTML = '<div style="padding:20px;text-align:center;color:#94a3b8">Chưa có tin nhắn</div>'; return; }
+    if (!data.length) { list.innerHTML = '<div style="padding:20px;text-align:center;color:#94a3b8">'+LG_I18N.empty+'</div>'; return; }
     list.innerHTML = data.map(c => `
         <div class="msg-item" onclick="openConv(${c.id}, '${c.other_user?.name||'User'}')">
             <div class="avatar">${(c.other_user?.name||'U')[0].toUpperCase()}</div>
@@ -64,7 +65,7 @@ async function openConv(id, name) {
     activeConv = id;
     const panel = document.getElementById('chatPanel');
     panel.innerHTML = `<div class="msg-chat-hdr">${name}</div><div class="msg-messages" id="msgList"></div>
-        <div class="msg-input"><input id="msgInput" placeholder="Nhập tin nhắn..." onkeydown="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Gửi</button></div>`;
+        <div class="msg-input"><input id="msgInput" placeholder="${LG_I18N.inputPh}" onkeydown="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">${LG_I18N.send}</button></div>`;
     const r = await fetch(API_BASE + '/conversations/' + id + '/messages', {headers});
     const msgs = await r.json();
     const list = document.getElementById('msgList');

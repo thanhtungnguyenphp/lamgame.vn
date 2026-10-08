@@ -54,7 +54,7 @@
 
         {{-- Discussion Stats --}}
         <div class="fp-stats-bar">
-            <div class="fp-stat"><i class="far fa-eye"></i> {{ number_format($post->views_count) }} lượt xem</div>
+            <div class="fp-stat"><i class="far fa-eye"></i> {{ number_format($post->views_count) }} {{ __('lamgame.forum.views') }}</div>
             <div class="fp-stat"><i class="far fa-comment"></i> {{ number_format($post->comments_count) }} bình luận</div>
             <div class="fp-stat"><i class="far fa-heart"></i> {{ number_format($post->likes_count) }} thích</div>
             <div class="fp-stat">🕐 {{ $post->created_at->diffForHumans() }}</div>
@@ -131,7 +131,7 @@
                     @auth('customer')
                     <button class="fp-action-btn {{ $post->isBookmarkedBy(auth('customer')->id()) ? 'active' : '' }}" onclick="toggleBookmark(this)" data-post="{{ $post->slug }}">
                         <i class="{{ $post->isBookmarkedBy(auth('customer')->id()) ? 'fas' : 'far' }} fa-bookmark"></i>
-                        <span>{{ $post->isBookmarkedBy(auth('customer')->id()) ? 'Đã lưu' : 'Lưu' }}</span>
+                        <span>{{ $post->isBookmarkedBy(auth('customer')->id()) ? __('lamgame.forum.bookmarked') : __('lamgame.forum.bookmark') }}</span>
                     </button>
                     @endauth
                 </div>
@@ -147,16 +147,16 @@
                     @csrf
                     <div class="fp-avatar">{{ strtoupper(substr(auth('customer')->user()->first_name, 0, 1)) }}</div>
                     <div class="fp-comment-form__body">
-                        <textarea name="content" placeholder="Chia sẻ suy nghĩ của bạn..." required rows="3" maxlength="2000" class="fp-textarea">{{ old('content') }}</textarea>
+                        <textarea name="content" placeholder="{{ __('lamgame.forum.comment_ph') }}" required rows="3" maxlength="2000" class="fp-textarea">{{ old('content') }}</textarea>
                         <div class="fp-comment-form__footer">
-                            <small>Trao đổi văn minh và tôn trọng</small>
-                            <button type="submit" class="fp-btn fp-btn--primary"><i class="fas fa-paper-plane"></i> Đăng</button>
+                            <small>{{ __('lamgame.forum.be_civil') }}</small>
+                            <button type="submit" class="fp-btn fp-btn--primary"><i class="fas fa-paper-plane"></i> {{ __('lamgame.forum.submit_comment') }}</button>
                         </div>
                     </div>
                 </form>
                 @else
                 <div class="fp-login-prompt">
-                    <p>🔐 <a href="{{ route('auth.login') }}">Đăng nhập</a> hoặc <a href="{{ route('auth.register') }}">tạo tài khoản</a> để bình luận</p>
+                    <p>🔐 <a href="{{ route('auth.login') }}">{{ __('lamgame.forum.login') }}</a> / <a href="{{ route('auth.register') }}">{{ __('lamgame.forum.or_register') }}</a> {{ __('lamgame.forum.to_comment') }}</p>
                 </div>
                 @endauth
 
@@ -165,7 +165,7 @@
                     @forelse($post->rootComments as $comment)
                         @include('lamgame.pages.forum.partials.comment', ['comment' => $comment])
                     @empty
-                    <div class="fp-empty">💭 Chưa có bình luận. Hãy là người đầu tiên!</div>
+                    <div class="fp-empty">{{ __('lamgame.forum.no_comment') }}</div>
                     @endforelse
                 </div>
             </section>
@@ -176,7 +176,7 @@
             {{-- Related threads --}}
             @if($relatedPosts->count() > 0)
             <div class="fp-widget">
-                <h3 class="fp-widget__title">🔗 Thảo luận liên quan</h3>
+                <h3 class="fp-widget__title">{{ __('lamgame.forum.related') }}</h3>
                 @foreach($relatedPosts as $rp)
                 <a href="{{ route('forum.posts.show', $rp->slug) }}" class="fp-related-item">
                     <span class="fp-related-item__title">{{ Str::limit($rp->title, 50) }}</span>
@@ -188,13 +188,13 @@
 
             {{-- Community CTA --}}
             <div class="fp-widget fp-widget--cta">
-                <h3 class="fp-widget__title">🚀 Tham gia thảo luận</h3>
-                <p>Chia sẻ kiến thức, hỏi đáp và kết nối với cộng đồng Game Dev</p>
-                <a href="{{ route('forum.posts.create') }}" class="fp-btn fp-btn--primary fp-btn--sm">Đăng bài mới →</a>
+                <h3 class="fp-widget__title">{{ __('lamgame.forum.join') }}</h3>
+                <p>{{ __('lamgame.forum.join_sub') }}</p>
+                <a href="{{ route('forum.posts.create') }}" class="fp-btn fp-btn--primary fp-btn--sm">{{ __('lamgame.forum.post_new3') }}</a>
             </div>
 
             {{-- Back --}}
-            <a href="{{ route('forum.index') }}" class="fp-back-link">← Quay lại forum</a>
+            <a href="{{ route('forum.index') }}" class="fp-back-link">{{ __('lamgame.forum.back_forum4') }}</a>
         </aside>
     </div>
 </div>
@@ -222,7 +222,7 @@ function toggleBookmark(btn) {
             const label = btn.querySelector('span');
             btn.classList.toggle('active', data.bookmarked);
             icon.className = data.bookmarked ? 'fas fa-bookmark' : 'far fa-bookmark';
-            label.textContent = data.bookmarked ? 'Đã lưu' : 'Lưu';
+            label.textContent = data.bookmarked ? @json(__('lamgame.forum.bookmarked')) : @json(__('lamgame.forum.bookmark'));
         }
     });
 }

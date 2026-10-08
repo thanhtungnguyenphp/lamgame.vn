@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('page_title', 'Thông báo - Forum')
+@section('page_title', __('lamgame.forum.notif_title'))
 
 @section('content')
 <div class="fm-page">
@@ -8,13 +8,13 @@
         <div class="container">
             <div class="fm-hdr-row">
                 <div>
-                    <h1 class="fm-hdr-title">🔔 Thông báo</h1>
-                    <p class="fm-hdr-desc">{{ $unreadCount }} thông báo chưa đọc</p>
+                    <h1 class="fm-hdr-title">{{ __('lamgame.forum.notif_h') }}</h1>
+                    <p class="fm-hdr-desc">{{ $unreadCount }} {{ __('lamgame.forum.notif_unread') }}</p>
                 </div>
                 <div style="display:flex;gap:0.75rem;align-items:center;">
                     @if($unreadCount > 0)
                     <button onclick="markAllRead()" class="fm-btn-create" style="background:#64748b;font-size:0.85rem;padding:0.5rem 1rem;">
-                        <i class="fas fa-check-double"></i> Đọc tất cả
+                        <i class="fas fa-check-double"></i> {{ __('lamgame.forum.read_all') }}
                     </button>
                     @endif
                     <a href="{{ route('forum.index') }}" class="fm-btn-create" style="background:#64748b;font-size:0.85rem;padding:0.5rem 1rem;">
@@ -48,8 +48,8 @@
             @empty
             <div style="text-align:center;padding:3rem 1rem;color:#94a3b8;">
                 <div style="font-size:2.5rem;margin-bottom:0.75rem;">🔕</div>
-                <h3 style="color:#475569;">Chưa có thông báo nào</h3>
-                <p>Bạn sẽ nhận thông báo khi có người trả lời hoặc nhắc đến bạn.</p>
+                <h3 style="color:#475569;">{{ __('lamgame.forum.notif_empty') }}</h3>
+                <p>{{ __('lamgame.forum.notif_empty_s') }}</p>
             </div>
             @endforelse
 
