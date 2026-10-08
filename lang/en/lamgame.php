@@ -454,5 +454,7 @@ return [
         'terms_desc' => 'Terms and conditions for using LamGame.vn services.',
         'mp_title' => 'Marketplace Terms',
         'mp_desc' => 'Terms for buyers and sellers on the LamGame.vn marketplace.',
+        'ai_title' => 'AI Tools Terms',
+        'ai_desc' => 'Terms for using the AI tools on LamGame.vn.',
     ],
 ];

@@ -454,5 +454,7 @@ return [
         'terms_desc' => 'Điều khoản và điều kiện sử dụng dịch vụ LamGame.vn.',
         'mp_title' => 'Điều khoản Marketplace',
         'mp_desc' => 'Điều khoản cho người mua và người bán trên marketplace LamGame.vn.',
+        'ai_title' => 'Điều khoản AI Tools',
+        'ai_desc' => 'Điều khoản sử dụng các công cụ AI trên LamGame.vn.',
     ],
 ];

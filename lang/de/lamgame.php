@@ -454,5 +454,7 @@ return [
         'terms_desc' => 'Allgemeine Geschäftsbedingungen für die Nutzung der LamGame.vn-Dienste.',
         'mp_title' => 'Marktplatz-Bedingungen',
         'mp_desc' => 'Bedingungen für Käufer und Verkäufer auf dem LamGame.vn-Marktplatz.',
+        'ai_title' => 'KI-Tools-Bedingungen',
+        'ai_desc' => 'Bedingungen für die Nutzung der KI-Tools auf LamGame.vn.',
     ],
 ];
