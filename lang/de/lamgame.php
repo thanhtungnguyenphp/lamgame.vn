@@ -1118,4 +1118,11 @@ return [
         'rule3'       => 'Kein Spam oder Werbung',
         'rule4'       => 'Teilen Sie nützliches Wissen',
     ],
+
+    'policy' => [
+        'editorial_title' => 'Redaktionsrichtlinie — LamGame.vn',
+        'editorial_desc'  => 'Erfahren Sie mehr über den Redaktionsprozess, Inhaltsstandards und das Qualitätsversprechen des LamGame.vn-Teams',
+        'revision_title'  => 'Korrekturrichtlinie — LamGame.vn',
+        'revision_desc'   => 'Wie wir Anfragen zur Korrektur und Aktualisierung von Inhalten bei LamGame.vn bearbeiten',
+    ],
 ];

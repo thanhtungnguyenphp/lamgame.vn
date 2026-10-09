@@ -1118,4 +1118,11 @@ return [
         'rule3'       => 'No spam or advertising',
         'rule4'       => 'Share useful knowledge',
     ],
+
+    'policy' => [
+        'editorial_title' => 'Editorial Policy — LamGame.vn',
+        'editorial_desc'  => 'Learn about the editorial process, content standards and quality commitment of the LamGame.vn team',
+        'revision_title'  => 'Revision Policy — LamGame.vn',
+        'revision_desc'   => 'How we handle content correction and update requests at LamGame.vn',
+    ],
 ];
