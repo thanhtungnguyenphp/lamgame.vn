@@ -256,12 +256,24 @@ class SubscriptionController extends Controller
     /**
      * GET /subscription/paypal/return — PayPal redirect sau approve
      */
-    public function paypalReturn(Request $request): JsonResponse
+    public function paypalReturn(Request $request)
     {
+        $redirect = function (string $url, string $msg): \Illuminate\Http\Response {
+            $safeMsg = e($msg);
+            $safeUrl = e($url);
+            $html = '<!DOCTYPE html><html><head><meta charset="utf-8">'
+                . '<meta http-equiv="refresh" content="2;url=' . $safeUrl . '">'
+                . '<title>LamGame</title></head><body style="font-family:sans-serif;text-align:center;padding:60px;background:#070B14;color:#F5F7FA">'
+                . '<p style="font-size:1.1rem">' . $safeMsg . '</p>'
+                . '<p><a href="' . $safeUrl . '" style="color:#7C5CFF">Nhấn vào đây nếu không được chuyển hướng</a></p>'
+                . '</body></html>';
+            return response($html);
+        };
+
         $subscriptionId = $request->query('subscription_id');
 
         if (!$subscriptionId) {
-            return response()->json(['status' => 'error', 'error' => 'Missing subscription_id'], 400);
+            return $redirect('/ai-tools', 'Thiếu thông tin thanh toán. Đang quay lại trang gói dịch vụ...');
         }
 
         // Verify trạng thái trực tiếp với PayPal trước khi activate
@@ -275,7 +287,7 @@ class SubscriptionController extends Controller
 
         if (!$tokenResponse->successful()) {
             Log::error('PayPal return: failed to get access token');
-            return response()->json(['status' => 'error', 'error' => 'Payment verification failed'], 500);
+            return $redirect('/ai-tools', 'Không xác minh được thanh toán. Vui lòng liên hệ hỗ trợ nếu đã bị trừ tiền.');
         }
 
         $token = $tokenResponse->json('access_token');
@@ -286,15 +298,12 @@ class SubscriptionController extends Controller
                 'subscription_id' => $subscriptionId,
                 'paypal_status' => $verifyResponse->json('status'),
             ]);
-            return response()->json(['status' => 'error', 'error' => 'Subscription not confirmed by PayPal'], 400);
+            return $redirect('/ai-tools', 'Thanh toán chưa được PayPal xác nhận. Vui lòng thử lại.');
         }
 
-        $sub = $this->service->activateSubscription($subscriptionId);
+        $this->service->activateSubscription($subscriptionId);
 
-        return response()->json([
-            'status' => 'ok',
-            'data'   => ['message' => 'Subscription activated successfully.'],
-        ]);
+        return $redirect('/ai-tools/dashboard', '✅ Thanh toán thành công! Đang mở AI Tools...');
     }
 
     /**

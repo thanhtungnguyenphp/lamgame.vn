@@ -949,24 +949,54 @@ HTML;
      */
     public function aiSubscribe(Request $request)
     {
-        $request->validate(['plan' => 'required|in:free,pro,business']);
-
-        $customer = Auth::guard('customer')->user();
-        $service = app(\App\Services\SubscriptionService::class);
+        $request->validate(['plan' => 'required|string|max:50']);
         $planSlug = $request->input('plan');
 
-        if ($planSlug === 'free') {
+        // Chưa đăng nhập: nhớ gói đang chọn rồi đưa sang trang đăng nhập.
+        // Sau khi đăng nhập, InjectSiteMetrics middleware sẽ tự đưa khách quay lại
+        // route này để hoàn tất thanh toán (xử lý pending_plan).
+        if (! Auth::guard('customer')->check()) {
+            session(['pending_plan' => $planSlug]);
+
+            return redirect()->route('shop.customer.session.index')
+                ->with('info', 'Vui lòng đăng nhập để tiếp tục đăng ký gói ' . ucfirst($planSlug) . '.');
+        }
+
+        $customer = Auth::guard('customer')->user();
+
+        // Chỉ cho phép các gói đang active trong DB
+        $plan = \App\Models\SubscriptionPlan::where('slug', $planSlug)->active()->first();
+        if (! $plan) {
+            return redirect()->route('lamgame.ai-tools')->with('error', 'Gói đăng ký không tồn tại hoặc đã ngừng cung cấp.');
+        }
+
+        // Gói cần báo giá riêng
+        if ($plan->slug === 'enterprise') {
+            return redirect()->route('lamgame.thue-team-dev');
+        }
+
+        $service = app(\App\Services\SubscriptionService::class);
+
+        // Đã có gói active cùng loại → vào thẳng dashboard, tránh mua trùng
+        $current = $service->getActiveSubscription($customer->id);
+        if ($current && $current->plan && $current->plan->slug === $plan->slug) {
+            return redirect()->route('lamgame.ai-tools-dashboard')->with('info', 'Bạn đang sử dụng gói ' . $plan->name . '.');
+        }
+
+        // Gói miễn phí: kích hoạt ngay, vào thẳng dashboard
+        if ((float) $plan->price <= 0.0) {
             $service->subscribeFree($customer->id);
-            return redirect()->route('lamgame.ai-subscription')->with('success', 'Đăng ký gói Free thành công!');
+            return redirect()->route('lamgame.ai-tools-dashboard')->with('success', 'Đã kích hoạt gói Free. Bắt đầu trải nghiệm ngay!');
         }
 
-        $result = $service->createPaypalSubscription($customer->id, $planSlug);
+        // Gói trả phí: tạo subscription PayPal và chuyển sang trang thanh toán
+        $result = $service->createPaypalSubscription($customer->id, $plan->slug);
 
-        if (!$result || !($result['approval_url'] ?? null)) {
-            return redirect()->route('lamgame.ai-subscription')->with('error', 'Không thể tạo subscription. Vui lòng thử lại.');
+        if (! $result || empty($result['approval_url'])) {
+            return redirect()->route('lamgame.ai-tools')->with('error', 'Không thể khởi tạo thanh toán. Vui lòng thử lại sau ít phút.');
         }
 
-        return redirect($result['approval_url']);
+        return redirect()->away($result['approval_url']);
     }
 
     /**

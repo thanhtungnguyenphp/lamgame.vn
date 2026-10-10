@@ -7,6 +7,20 @@
 @section('content')
 <div class="ai-page">
 
+@if(session('success') || session('error') || session('info'))
+<div class="ai-container" style="padding-top:20px">
+    @if(session('success'))
+    <div style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35);color:#34D399;padding:12px 18px;border-radius:10px;font-size:.95rem">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+    <div style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);color:#F87171;padding:12px 18px;border-radius:10px;font-size:.95rem">{{ session('error') }}</div>
+    @endif
+    @if(session('info'))
+    <div style="background:rgba(124,92,255,.12);border:1px solid rgba(124,92,255,.35);color:#B7A6FF;padding:12px 18px;border-radius:10px;font-size:.95rem">{{ session('info') }}</div>
+    @endif
+</div>
+@endif
+
 {{-- HERO --}}
 <section class="ai-hero">
     <div class="ai-hero__bg"></div>
@@ -116,11 +130,16 @@
                 </ul>
                 @if($plan->slug === 'enterprise')
                     <a href="/hire" class="ai-btn ai-btn--outline" data-ai-plan="enterprise">{{ __('lamgame.ai.contact_sales') }}</a>
+                @elseif((float) $plan->price === 0.0)
+                    <a href="{{ route('lamgame.ai-tools-dashboard') }}"
+                       class="ai-btn ai-btn--outline" data-ai-plan="{{ $plan->slug }}">
+                        {{ __('lamgame.ai.start_free') }}
+                    </a>
                 @else
-                    <a href="{{ route('lamgame.ai-tools-dashboard') }}?subscribe={{ $plan->slug }}"
+                    <a href="{{ route('lamgame.ai-subscribe', ['plan' => $plan->slug]) }}"
                        class="ai-btn {{ $plan->slug === 'pro' ? 'ai-btn--primary' : 'ai-btn--outline' }}"
                        data-ai-plan="{{ $plan->slug }}">
-                        {{ $plan->slug === 'free' ? __('lamgame.ai.start_free') : __('lamgame.ai.choose') . $plan->name }}
+                        {{ __('lamgame.ai.choose') . $plan->name }}
                     </a>
                 @endif
             </div>
