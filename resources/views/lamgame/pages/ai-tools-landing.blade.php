@@ -206,7 +206,7 @@
 .ai-outcome p{font-size:.85rem;color:var(--ai-muted);margin:0;line-height:1.5}
 
 /* PRICING — 5 plans */
-.ai-pricing{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;max-width:1200px;margin:0 auto}
+.ai-pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:900px;margin:0 auto}
 .ai-plan{background:rgba(17,24,39,.6);border:1px solid var(--ai-border);border-radius:16px;padding:32px 18px;text-align:center;position:relative;transition:all .3s}
 .ai-plan:hover{border-color:var(--ai-purple);transform:translateY(-4px)}
 .ai-plan--pop{border:2px solid var(--ai-purple);box-shadow:0 0 40px rgba(124,92,255,.12);transform:scale(1.03)}
@@ -242,16 +242,15 @@
 .ai-final-cta p{color:var(--ai-muted);margin-bottom:32px;font-size:1.05rem}
 
 /* RESPONSIVE */
-@media(max-width:1024px){
-    .ai-pricing{grid-template-columns:repeat(3,1fr)}
+@media(max-width:900px){
+    .ai-pricing{grid-template-columns:1fr;max-width:420px}
+    .ai-plan--pop{transform:none}
+    .ai-plan--pop:hover{transform:translateY(-4px)}
 }
 @media(max-width:768px){
     .ai-outcomes,.ai-testimonials{grid-template-columns:1fr}
-    .ai-pricing{grid-template-columns:1fr;max-width:360px}
     .ai-trust__grid{grid-template-columns:repeat(2,1fr);gap:16px}
     .ai-hero{padding:60px 20px 50px}
-    .ai-plan--pop{transform:none}
-    .ai-plan--pop:hover{transform:translateY(-4px)}
 }
 </style>
 @endpush
