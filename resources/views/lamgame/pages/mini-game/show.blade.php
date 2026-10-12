@@ -5,6 +5,11 @@
 @section('canonical_url', $game->url)
 @section('og_type', 'game')
 
+{{-- Trang chơi game nhúng iframe không có nội dung biên tập -> noindex (giữ follow để truyền link) --}}
+@push('meta')
+<meta name="robots" content="noindex, follow">
+@endpush
+
 @push('og_extra')
 <meta property="og:type" content="game">
 <meta name="keywords" content="{{ $game->keywords }}">

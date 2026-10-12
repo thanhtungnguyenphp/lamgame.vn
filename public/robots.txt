@@ -43,6 +43,9 @@ Disallow: /tag/
 # Block mini-game M7 prediction (no SEO value)
 Disallow: /m7/
 
+# Block raw game asset files (HTML5 game bundles, not content pages)
+Disallow: /games/
+
 Sitemap: https://lamgame.vn/sitemap.xml
 
 # Preferred host (canonical domain)

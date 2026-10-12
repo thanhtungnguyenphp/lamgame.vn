@@ -3,6 +3,13 @@
 @section('page_title', $post->meta_title ?: ($post->title . ' - Forum'))
 @section('page_description', $post->meta_description ?: $post->excerpt)
 
+{{-- Bài forum nội dung mỏng (<200 ký tự) không đủ giá trị để index -> noindex --}}
+@if(mb_strlen(trim(strip_tags($post->content ?? ''))) < 200)
+@push('meta')
+<meta name="robots" content="noindex, follow">
+@endpush
+@endif
+
 @push('schema_markup')
 <script type="application/ld+json">
 {
