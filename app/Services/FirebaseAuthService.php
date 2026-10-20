@@ -18,8 +18,20 @@ class FirebaseAuthService
      */
     public function verifyIdToken(string $idToken): string
     {
+        return $this->verifyIdTokenClaims($idToken)['uid'];
+    }
+
+    /**
+     * Verify signature and, for the sharing boundary, Firebase account state.
+     * The account lookup catches disabled users and tokens revoked after auth_time.
+     * It deliberately fails closed when this check cannot be performed.
+     *
+     * @return array{uid:string,email:?string,email_verified:bool}
+     */
+    public function verifyIdTokenClaims(string $idToken, bool $requireAccountLookup = false): array
+    {
         $keys = $this->getPublicKeys();
-        $projectId = config('services.firebase.project_id');
+        $projectId = config('services.firebase.project_id') ?: config('firebase.project_id');
 
         $decoded = JWT::decode($idToken, JWK::parseKeySet($keys));
 
@@ -34,7 +46,50 @@ class FirebaseAuthService
             throw new \Exception('Token expired');
         }
 
-        return $decoded->sub;
+        if (!isset($decoded->sub) || !is_string($decoded->sub) || $decoded->sub === '') {
+            throw new \Exception('Invalid subject');
+        }
+
+        $claims = [
+            'uid' => $decoded->sub,
+            'email' => isset($decoded->email) && is_string($decoded->email) ? $decoded->email : null,
+            'email_verified' => (bool) ($decoded->email_verified ?? false),
+            'name' => isset($decoded->name) && is_string($decoded->name) ? $decoded->name : null,
+        ];
+
+        if ($requireAccountLookup) {
+            $this->verifyAccountState($idToken, $decoded);
+        }
+
+        return $claims;
+    }
+
+    private function verifyAccountState(string $idToken, object $decoded): void
+    {
+        $apiKey = config('firebase.web.apiKey') ?: env('FIREBASE_WEB_API_KEY');
+        if (!$apiKey) {
+            throw new \Exception('Firebase account lookup is not configured');
+        }
+
+        try {
+            $response = Http::timeout(5)->post(
+                'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' . urlencode($apiKey),
+                ['idToken' => $idToken],
+            );
+            $user = $response->json('users.0');
+
+            if (!$response->successful() || !is_array($user) || ($user['disabled'] ?? false)) {
+                throw new \Exception('Firebase account unavailable');
+            }
+
+            // validSince is the Firebase token-revocation boundary (seconds since epoch).
+            if (isset($user['validSince']) && isset($decoded->auth_time)
+                && (int) $decoded->auth_time < (int) $user['validSince']) {
+                throw new \Exception('Firebase token revoked');
+            }
+        } catch (\Exception $e) {
+            throw new \Exception('Firebase account lookup failed', previous: $e);
+        }
     }
 
     private function getPublicKeys(): array

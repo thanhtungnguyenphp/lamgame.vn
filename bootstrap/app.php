@@ -74,6 +74,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'employer'        => \App\Http\Middleware\CheckEmployer::class,
             'quota'           => \App\Http\Middleware\CheckSubscriptionQuota::class,
             'firebase.auth'   => \App\Http\Middleware\FirebaseAuth::class,
+            'sharing.firebase.auth' => \App\Http\Middleware\SharingFirebaseAuth::class,
+            'sharing.rate'    => \App\Http\Middleware\SharingRateLimit::class,
             'api.key'         => \App\Http\Middleware\ApiKeyAuth::class,
             'forum.rate'      => \App\Http\Middleware\ForumRateLimiter::class,
             'forum.honeypot'  => \App\Http\Middleware\ForumHoneypot::class,
@@ -153,6 +155,8 @@ return Application::configure(basePath: dirname(__DIR__))
             ->withoutOverlapping()
             ->appendOutputTo(storage_path('logs/lottery-scrape.log'));
 
+        $schedule->command('sharing:maintain')->everyFiveMinutes()->withoutOverlapping();
+
         // === SPORT CRAWL ===
         $schedule->command('sport:sync-fixtures')->dailyAt('06:00')->withoutOverlapping();
         $schedule->command('sport:sync-live')->everyThirtySeconds()->withoutOverlapping()
@@ -174,6 +178,17 @@ return Application::configure(basePath: dirname(__DIR__))
         })->everyMinute()->name('sport-match-start-notify')->withoutOverlapping();
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->render(function (\App\Exceptions\SharingException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('api/v1/sharing/v1/*')) {
+                return response()->json(['status' => 'error', 'error' => ['code' => $e->errorCode]], $e->status);
+            }
+        });
+        $exceptions->render(function (\Illuminate\Validation\ValidationException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('api/v1/sharing/v1/*')) {
+                return response()->json(['status' => 'error', 'error' => ['code' => 'invalid_ticket']], 422);
+            }
+        });
+
         if (class_exists(\Sentry\Laravel\Integration::class)) {
             \Sentry\Laravel\Integration::handles($exceptions);
         }

@@ -50,6 +50,9 @@ require __DIR__ . '/api/auth.php';
 // Include lottery routes
 require __DIR__ . '/api/lottery.php';
 
+// Lotto Live private sharing namespace (kept separate from legacy lottery APIs)
+require __DIR__ . '/api/sharing.php';
+
 // Include subscription routes
 require __DIR__ . '/api/subscription.php';
 

@@ -1,0 +1,71 @@
+openapi: 3.0.3
+info:
+  title: Lotto Live Sharing API
+  version: 1.0.0
+  description: Private ticket-sharing API. All non-image endpoints require a verified, non-revoked Firebase ID token. See LOTTO_LIVE_SHARING_API_STATUS.md for the Vietnamese integration guide, operational status, examples, and error semantics.
+servers:
+  - url: https://lamgame.vn/api/v1/sharing/v1
+security:
+  - FirebaseBearer: []
+components:
+  securitySchemes:
+    FirebaseBearer: { type: http, scheme: bearer, bearerFormat: Firebase-ID-token }
+  schemas:
+    Envelope:
+      type: object
+      required: [status, data]
+      properties: { status: { type: string, enum: [ok] }, data: { type: object } }
+    Error:
+      type: object
+      required: [status, error]
+      properties: { status: { type: string, enum: [error] }, error: { type: object, properties: { code: { type: string } } } }
+    TicketShare:
+      type: object
+      required: [share_id, version, viewer_role, sender, recipient_label, ticket, share_percent, message, status, result_status, result_final, matched_prizes, created_at, expires_at, terms_version, sender_blocked]
+      properties:
+        share_id: { type: string, example: sh_a1b2c3 }
+        version: { type: integer, example: 1 }
+        viewer_role: { type: string, enum: [sender, recipient] }
+        sender: { type: object, properties: { public_id: { type: string }, display_name: { type: string } } }
+        recipient_label: { type: string }
+        ticket: { type: object, properties: { number: { type: string, example: '012345' }, province: { type: string }, province_code: { type: string }, region: { type: string }, draw_date: { type: string, format: date }, image_url: { type: string, nullable: true } } }
+        share_percent: { type: integer, minimum: 10, maximum: 50 }
+        message: { type: string, nullable: true }
+        status: { type: string, enum: [awaiting_registration, pending, accepted, declined, cancelled, expired] }
+        result_status: { type: string, enum: [pending, checking, won, lost, correction_pending] }
+        result_final: { type: boolean }
+        matched_prizes: { type: array, items: { type: string } }
+        created_at: { type: string, format: date-time }
+        expires_at: { type: string, format: date-time }
+        terms_version: { type: string }
+        sender_blocked: { type: boolean }
+paths:
+  /me:
+    get: { summary: Get or initialise public profile, responses: { '200': { description: OK } } }
+  /recipients/resolve:
+    post:
+      summary: Resolve a public ID or email to a one-time recipient token
+      parameters: [{ name: Idempotency-Key, in: header, required: true, schema: { type: string, pattern: '^[a-f0-9]{32}$' } }]
+      responses: { '200': { description: OK }, '409': { description: Idempotency conflict } }
+  /shares:
+    get: { summary: List sent or received shares, parameters: [{ name: box, in: query, required: true, schema: { type: string, enum: [sent, received] } }, { name: cursor, in: query, schema: { type: string } }, { name: limit, in: query, schema: { type: integer, maximum: 50 } }], responses: { '200': { description: OK } } }
+    post:
+      summary: Create immutable ticket snapshot
+      parameters: [{ name: Idempotency-Key, in: header, required: true, schema: { type: string, pattern: '^[a-f0-9]{32}$' } }]
+      requestBody: { required: true, content: { multipart/form-data: { schema: { type: object, required: [payload, image], properties: { payload: { type: string, description: JSON contract payload }, image: { type: string, format: binary } } } } } }
+      responses: { '201': { description: Created }, '409': { description: ticket_already_shared, draw_closed, or stale idempotency key } }
+  /shares/{shareId}:
+    get: { summary: Get share visible only to a participant, parameters: [{ name: shareId, in: path, required: true, schema: { type: string } }], responses: { '200': { description: OK }, '404': { description: Not found } } }
+  /shares/{shareId}/accept:
+    post: { summary: Accept a pending share, parameters: [{ name: Idempotency-Key, in: header, required: true, schema: { type: string } }], responses: { '200': { description: OK }, '409': { description: stale_version or invalid_transition } } }
+  /shares/{shareId}/decline:
+    post: { summary: Decline a pending share, parameters: [{ name: Idempotency-Key, in: header, required: true, schema: { type: string } }], responses: { '200': { description: OK } } }
+  /shares/{shareId}/cancel:
+    post: { summary: Cancel a sender-owned pending share, parameters: [{ name: Idempotency-Key, in: header, required: true, schema: { type: string } }], responses: { '200': { description: OK } } }
+  /devices/{installationId}:
+    put: { summary: Bind FCM device to authenticated account, responses: { '200': { description: OK } } }
+    delete: { summary: Unbind only caller-owned installation, responses: { '200': { description: OK } } }
+  /blocks/{sender_public_id}:
+    put: { summary: Block or unblock another profile, responses: { '200': { description: OK } } }
+  /reports:
+    post: { summary: Report a participant-visible share, responses: { '200': { description: OK } } }

@@ -27,7 +27,7 @@ class FcmNotificationService
         if (!empty($data)) {
             $message['data'] = $this->stringifyData($data);
         }
-        return $this->send(['message' => $message]);
+        return $this->send(['message' => $message]) === 'sent';
     }
 
     public function sendToToken(string $token, array $notification, array $data = []): bool
@@ -39,13 +39,22 @@ class FcmNotificationService
         if (!empty($data)) {
             $message['data'] = $this->stringifyData($data);
         }
+        return $this->send(['message' => $message]) === 'sent';
+    }
+
+    /** @return 'sent'|'invalid'|'failed' */
+    public function sendToTokenDetailed(string $token, array $notification, array $data = []): string
+    {
+        $message = ['token' => $token, 'notification' => $notification];
+        if (!empty($data)) $message['data'] = $this->stringifyData($data);
         return $this->send(['message' => $message]);
     }
 
-    private function send(array $payload): bool
+    /** @return 'sent'|'invalid'|'failed' */
+    private function send(array $payload): string
     {
         $token = $this->getAccessToken();
-        if (!$token) return false;
+        if (!$token) return 'failed';
 
         $url = "https://fcm.googleapis.com/v1/projects/{$this->projectId}/messages:send";
 
@@ -61,17 +70,20 @@ class FcmNotificationService
             ])->post($url, $payload);
 
             if ($response->successful()) {
-                return true;
+                return 'sent';
             }
+
+            $fcmStatus = $response->json('error.status');
+            if (in_array($fcmStatus, ['UNREGISTERED', 'INVALID_ARGUMENT'], true)) return 'invalid';
 
             Log::error('FCM v1 send failed', [
                 'status' => $response->status(),
                 'body'   => $response->body(),
             ]);
-            return false;
+            return 'failed';
         } catch (\Exception $e) {
             Log::error('FCM v1 send exception', ['error' => $e->getMessage()]);
-            return false;
+            return 'failed';
         }
     }
 
