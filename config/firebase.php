@@ -28,6 +28,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Firebase Identity Toolkit
+    |--------------------------------------------------------------------------
+    |
+    | The sharing API uses accounts:lookup to enforce disabled/revoked account
+    | state. Keep this explicit so API verification does not accidentally depend
+    | on browser/FCM configuration. When omitted, an existing web API key is a
+    | backwards-compatible fallback.
+    |
+    */
+    'identity_toolkit_api_key' => env('FIREBASE_IDENTITY_TOOLKIT_API_KEY', env('FIREBASE_WEB_API_KEY')),
+
+    /*
+    |--------------------------------------------------------------------------
     | FCM Project ID
     |--------------------------------------------------------------------------
     | Firebase project ID, used for FCM v1 API endpoint.

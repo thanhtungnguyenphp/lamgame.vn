@@ -8,7 +8,7 @@
 |---|---|---|
 | Route API | Sẵn sàng | 13 route đã được Laravel đăng ký dưới namespace mới. |
 | Cơ sở dữ liệu | Đã chạy local | Migration `2026_10_20_090000_create_ticket_sharing_tables` chạy batch 38 trên MySQL local. |
-| Firebase auth | Sẵn sàng, cần cấu hình | Bắt buộc `FIREBASE_WEB_API_KEY` để kiểm tra tài khoản disabled/revoked; thiếu khóa thì API fail-closed. |
+| Firebase auth | Sẵn sàng, cần cấu hình | Bắt buộc `FIREBASE_IDENTITY_TOOLKIT_API_KEY` (hoặc fallback `FIREBASE_WEB_API_KEY`) để kiểm tra tài khoản disabled/revoked; thiếu khóa thì API fail-closed. |
 | Ảnh vé | Sẵn sàng | Lưu ở private disk, JPEG tối đa 8 MB/24 MP, URL có chữ ký 5 phút. |
 | Notification | Sẵn sàng | Outbox + queue + FCM device riêng; token FCM invalid bị gỡ. |
 | Kết quả vé | Sẵn sàng | `sharing:maintain` chạy mỗi 5 phút, chỉ kết luận thua khi nguồn xổ số hoàn chỉnh. |
@@ -21,6 +21,7 @@
 - Token phải hợp lệ, chưa hết hạn, email đã xác minh và Firebase account không bị disabled/revoked.
 - Thành công: `{"status":"ok","data":{...}}`; API không trả `204`.
 - Lỗi: `{"status":"error","error":{"code":"..."}}`; không trả stack trace/HTML cho lỗi nghiệp vụ.
+- `401 unauthorized` nghĩa là thiếu/không hợp lệ token; `403 email_unverified` nghĩa là email Firebase chưa xác minh. `503 auth_verification_unavailable` nghĩa là backend chưa kiểm tra được Firebase account state (cấu hình, cache, API-key restriction hoặc mạng); Flutter có thể retry, không đăng xuất người dùng.
 - Thời gian là ISO-8601 UTC (`Z`); `draw_date` là `YYYY-MM-DD` theo Asia/Ho_Chi_Minh.
 - ID hợp lệ: `[A-Za-z0-9_-]`, dài 1–128. Không dùng Firebase UID/email làm public ID.
 - `Idempotency-Key` là 32 ký tự hex thường (`^[a-f0-9]{32}$`), được lưu ít nhất 7 ngày. Dùng lại key với payload khác trả `409`.
@@ -220,10 +221,12 @@ Push chỉ chứa `type`, `share_id`, `event_id`, `result_version`; không chứ
 ## Cấu hình deploy bắt buộc
 
 ```dotenv
+FIREBASE_IDENTITY_TOOLKIT_API_KEY=...
+# Hoặc giữ FIREBASE_WEB_API_KEY=... để dùng fallback tương thích cũ.
 FIREBASE_WEB_API_KEY=...
 SHARING_IMAGE_DISK=private
 SHARING_REQUIRE_FIREBASE_ACCOUNT_LOOKUP=true
 SHARING_TERMS_VERSION=2026-10-19.v1
 ```
 
-Sau deploy cần chạy migration, queue worker và scheduler. Chi tiết schema máy đọc được nằm tại [openapi-sharing-v1.yaml](openapi-sharing-v1.yaml).
+Sau khi đặt biến môi trường hoặc đổi API key, chạy `php artisan config:clear` rồi `php artisan sharing:check-firebase`. Lệnh này không in secret và chỉ thành công khi project ID, chứng thư Firebase, API key và outbound Identity Toolkit đều hợp lệ. Sau deploy cần chạy migration, queue worker và scheduler. Chi tiết schema máy đọc được nằm tại [openapi-sharing-v1.yaml](openapi-sharing-v1.yaml).

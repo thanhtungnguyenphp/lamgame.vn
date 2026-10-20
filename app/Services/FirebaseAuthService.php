@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Http;
 
 class FirebaseAuthService
 {
-    private const GOOGLE_CERTS_URL = 'https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com';
+    public const GOOGLE_CERTS_URL = 'https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com';
 
     /**
      * Verify Firebase ID Token và trả về uid.
@@ -46,15 +46,15 @@ class FirebaseAuthService
             throw new \Exception('Token expired');
         }
 
-        if (!isset($decoded->sub) || !is_string($decoded->sub) || $decoded->sub === '') {
+        if (! isset($decoded->sub) || ! is_string($decoded->sub) || $decoded->sub === '') {
             throw new \Exception('Invalid subject');
         }
 
         $claims = [
-            'uid' => $decoded->sub,
-            'email' => isset($decoded->email) && is_string($decoded->email) ? $decoded->email : null,
+            'uid'            => $decoded->sub,
+            'email'          => isset($decoded->email) && is_string($decoded->email) ? $decoded->email : null,
             'email_verified' => (bool) ($decoded->email_verified ?? false),
-            'name' => isset($decoded->name) && is_string($decoded->name) ? $decoded->name : null,
+            'name'           => isset($decoded->name) && is_string($decoded->name) ? $decoded->name : null,
         ];
 
         if ($requireAccountLookup) {
@@ -66,19 +66,23 @@ class FirebaseAuthService
 
     private function verifyAccountState(string $idToken, object $decoded): void
     {
-        $apiKey = config('firebase.web.apiKey') ?: env('FIREBASE_WEB_API_KEY');
-        if (!$apiKey) {
-            throw new \Exception('Firebase account lookup is not configured');
+        $apiKey = config('firebase.identity_toolkit_api_key');
+        if (! $apiKey) {
+            throw new FirebaseAccountLookupUnavailable('Firebase account lookup is not configured');
         }
 
         try {
-            $response = Http::timeout(5)->post(
-                'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' . urlencode($apiKey),
+            $response = Http::acceptJson()->timeout(5)->post(
+                'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='.urlencode($apiKey),
                 ['idToken' => $idToken],
             );
             $user = $response->json('users.0');
 
-            if (!$response->successful() || !is_array($user) || ($user['disabled'] ?? false)) {
+            if (! $response->successful()) {
+                throw new FirebaseAccountLookupUnavailable("Firebase account lookup returned HTTP {$response->status()}");
+            }
+
+            if (! is_array($user) || ($user['disabled'] ?? false)) {
                 throw new \Exception('Firebase account unavailable');
             }
 
@@ -87,8 +91,10 @@ class FirebaseAuthService
                 && (int) $decoded->auth_time < (int) $user['validSince']) {
                 throw new \Exception('Firebase token revoked');
             }
-        } catch (\Exception $e) {
-            throw new \Exception('Firebase account lookup failed', previous: $e);
+        } catch (FirebaseAccountLookupUnavailable $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            throw new FirebaseAccountLookupUnavailable('Firebase account lookup failed', previous: $e);
         }
     }
 
